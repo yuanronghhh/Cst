@@ -1,0 +1,55 @@
+#ifndef __FR_EVENT_H__
+#define __FR_EVENT_H__
+
+#include <Framework/FRCommon.h>
+#include <Framework/Event/FREventMapping.h>
+
+#define FR_EVENT(o) ((FREvent *)o)
+#define FR_EVENT_KEY(o) ((FREventKey *)fr_event_cast_check(o, FR_EVENT_KEYBOARD))
+#define FR_EVENT_MOUSE_KEY(o) ((FREventMouseKey *)fr_event_cast_check(o, FR_EVENT_MOUSE_KEY))
+#define FR_EVENT_CURSOR_MOVE(o) ((FREventCursorMove *)fr_event_cast_check(o, FR_EVENT_CURSOR_MOVE))
+
+#define FR_EVENT_FUNC(func) void func(FREvent *e, FRApplication *app)
+
+SYS_BEGIN_DECLS
+
+typedef struct _FREventNode FREventNode;
+
+typedef void (*FREventFunc) (FREvent *e, SysPointer user_data);
+
+SYS_API void fr_events_setup (void);
+SYS_API void fr_events_teardown (void);
+
+FREventNode *fr_event_node_new(SysInt etype, FREventFunc func);
+void fr_event_node_add(SysInt etype, FREventFunc func);
+
+SYS_API void fr_events_push_head(FREvent * event);
+SYS_API void fr_events_set_handler (FREventFunc    func,    SysPointer  user_data);
+SYS_API SysBool fr_events_check (void);
+
+SYS_API void fr_event_ref(FREvent *event);
+SYS_API void fr_event_unref(FREvent *event);
+SYS_API void fr_event_free (FREvent*       event);
+SYS_API void fr_event_dispatch (FREvent*       event);
+SYS_API FREvent* fr_event_get (void);
+SYS_API FRWindow* fr_event_get_window(FREvent *e);
+SYS_API SysInt fr_event_get_event_type(FREvent *e);
+
+void* fr_event_cast_check(FREvent *e, SysInt type);
+SysInt fr_event_key_scancode(FREventKey *e);
+SysInt fr_event_key_key(FREventKey *e);
+SysInt fr_event_key_action(FREventKey *e);
+FREvent* fr_event_key_new( FRWindow* window, SysInt key, SysInt scancode, SysInt action, SysInt mods);
+
+SysInt fr_event_mouse_key_key(FREventMouseKey *e);
+SysInt fr_event_mouse_key_action(FREventMouseKey *e);
+FREvent* fr_event_mouse_key_new(FRWindow* window, SysInt button, SysInt action, SysInt mods);
+
+void fr_event_cusor_move_pos(FREventCursorMove *e, SysDouble *x, SysDouble *y);
+FREvent* fr_event_cusor_move_new(FRWindow* window, SysDouble x, SysDouble y);
+FREvent* fr_event_any_new(FRWindow* window, FR_EVENT_ENUM type);
+
+SYS_END_DECLS
+
+#endif
+

@@ -1,0 +1,33 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/lib/x86_64-linux-gnu/
+  /usr/local
+  /usr
+)
+
+FIND_PATH(PIXMAN_INCLUDE_DIR
+  NAMES pixman.h pixman-version.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES pixman/include/pixman-1 include/pixman-1
+)
+
+FIND_LIBRARY(PIXMAN_LIBRARY
+  NAMES pixman-1
+  HINTS ${search_dirs}
+  PATH_SUFFIXES pixman/lib
+)
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PIXMAN DEFAULT_MSG
+  PIXMAN_LIBRARY PIXMAN_INCLUDE_DIR)
+
+IF(PIXMAN_FOUND)
+  SET(PIXMAN_LIBRARIES ${PIXMAN_LIBRARY})
+  SET(PIXMAN_INCLUDE_DIRS ${PIXMAN_INCLUDE_DIR})
+ENDIF(PIXMAN_FOUND)
+
+MARK_AS_ADVANCED(
+  PIXMAN_INCLUDE_DIR
+  PIXMAN_LIBRARY
+)
+

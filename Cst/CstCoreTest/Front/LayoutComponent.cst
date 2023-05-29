@@ -1,0 +1,17 @@
+Component<id: "layout-component">: {
+  Style: {
+    "box1": {
+      margin: [10,10,10,10],
+      padding: [10,10,10,10]
+    },
+    "text1": {
+      font-family: "consolas"
+    }
+  },
+
+  Layout: {
+    LBox<id: "box1">: {
+      Text<id: "text1", value: "a">: null
+    }
+  }
+}

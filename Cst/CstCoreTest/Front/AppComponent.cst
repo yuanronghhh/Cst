@@ -1,0 +1,61 @@
+import AppButton from "./AppButton.cst";
+
+{%
+  #include <AppComponent.h>
+%}
+
+GStyle: {
+  text-g: {
+    "color": "#ff00ff"
+  }
+}
+
+/**
+ * 测试 comment
+ */
+Component<id: "app-component">: {
+  Function: {%
+    // generate in module env
+    CST_ANODE_FUNC(app_btn_clicked) {
+      sys_debug_N("%s", "hello key up");
+    }
+  %},
+
+  Style: {
+    text1: {
+      margin: [10,10,10,10],
+      padding: [10,10,10,10],
+      color: "#0000ff",
+      font-size: 30
+    }
+  },
+
+  ActionNodes: {
+    CssValues: {
+      /**
+       * because we don't know which is background in button component layout.
+       * so css_button_background_func will correctly handle it.
+       */
+      background: "css_button_background_func"
+    }
+  },
+
+  Layout: {
+    LBox<id: "box1">: {
+      AppButton: null,
+      Text<id: "text1", value: "text1">: null
+    }
+  },
+
+  LifeCycle: {
+    /**
+     * this will create MapNode with function type.
+     */
+    Created<name: "app_on_created">: {%
+    %},
+    Mouted<name: "app_on_mounted">: {%
+    %},
+
+    UnMounted: null
+  }
+}

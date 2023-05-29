@@ -1,0 +1,30 @@
+#ifndef __CST_ACTION_H__
+#define __CST_ACTION_H__
+
+#include <CstCore/Driver/CstCommon.h>
+
+#define CST_ACTION(o) ((FRAction *)o)
+
+SYS_BEGIN_DECLS
+
+struct _CstActionClass {
+  FRAction *node;
+  void    (*create)      (FRAction *action);
+  void    (*destroy)     (FRAction *action);
+  void    (*emit)        (FRAction *action);
+  SysBool (*check_awatch) (FRAction *action, FRAWatch *awatch);
+};
+
+void cst_action_setup(void);
+void cst_action_teardown(void);
+
+FRAction* cst_action_get_by_event(FREvent *ebase);
+SysInt cst_action_type(FRAction *action);
+
+void cst_action_emit(FRAction *action);
+void cst_action_emit_event(FREvent *evt);
+
+SYS_END_DECLS
+
+#endif
+

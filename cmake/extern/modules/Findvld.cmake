@@ -1,0 +1,52 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(VLD_INCLUDE_DIR
+  NAMES vld.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES vld/include
+)
+
+FIND_LIBRARY(VLD_LIBRARY
+  NAMES vld
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib vld/lib
+)
+
+set(VLD_FILES "")
+set(VLD_FILE_COMPONENTS
+  "vld_x64.dll"
+  "dbghelp.dll"
+  "Microsoft.DTfW.DHL.manifest"
+)
+
+if(WIN32)
+  FOREACH(COMPONENT ${VLD_FILE_COMPONENTS})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+    FIND_FILE(VLD_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES vld/bin
+    )
+
+    LIST(APPEND VLD_FILES "${VLD_${COMPONENT}_FILE}")
+  ENDFOREACH()
+endif()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(VLD DEFAULT_MSG
+  VLD_LIBRARY VLD_INCLUDE_DIR)
+
+IF(VLD_FOUND)
+  SET(VLD_LIBRARIES ${VLD_LIBRARY})
+  SET(VLD_INCLUDE_DIRS ${VLD_INCLUDE_DIR})
+ENDIF(VLD_FOUND)
+
+MARK_AS_ADVANCED(
+  VLD_INCLUDE_DIR
+  VLD_LIBRARY
+)

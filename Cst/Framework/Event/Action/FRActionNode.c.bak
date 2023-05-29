@@ -1,0 +1,101 @@
+#include <Framework/Event/Action/FRActionNode.h>
+
+
+struct _FRActionNodePrivate {
+  SysChar *name;
+  FREventCheckFunc check;
+  FREventFunc func;
+  SysPointer anode;
+};
+
+SYS_DEFINE_TYPE(FR_ACTION_NODE_TYPE, FRActionNode, fr_action_node);
+
+static SysHashTable *g_action_ht = NULL;
+
+FRActionNode *fr_action_node_get_by_name(const SysChar *name) {
+  sys_return_val_if_fail(g_action_ht != NULL, NULL);
+
+  FRActionNode *action = sys_hash_table_lookup(g_action_ht, (SysPointer)name);
+
+  if (action == NULL) {
+    sys_warning_N("Not found action: %s", name);
+  }
+
+  return action;
+}
+
+FREvent* fr_action_node_get_event(FRActionNode *action) {
+  sys_return_val_if_fail(action != NULL, NULL);
+
+  return action->ebase;
+}
+
+void fr_action_node_unbind_anode(FRActionNode *action, SysList *action_link) {
+  sys_return_if_fail(action != NULL);
+  sys_return_if_fail(action_link != NULL);
+
+  action->anodes = sys_list_delete_link(action->anodes, action_link);
+}
+
+SysList *fr_action_node_bind_anode(FRActionNode *action, SysPointer anode) {
+  sys_return_val_if_fail(action != NULL, NULL);
+  sys_return_val_if_fail(anode != NULL, NULL);
+
+  action->anodes = sys_list_prepend(action->anodes, anode);
+
+  return action->anodes;
+}
+
+/* object api */
+static void fr_action_node_construct(SysObject *o, const SysChar *name, SysPointer anode) {
+  SYS_OBJECT_CLASS(fr_action_node_parent_class)->construct(o, FR_EVENT_TYPE);
+
+  FRActionNode* self = FR_ACTION_NODE(o);
+  FRActionNodePrivate* priv = self->priv;
+
+  priv->name = sys_strdup(name);
+  priv->anode = anode;
+}
+
+FRActionNode* fr_action_node_new(void) {
+  return sys_object_new(FR_ACTION_NODE_TYPE, NULL);
+}
+
+FRActionNode *fr_action_node_new_I(const SysChar *name, SysPointer anode) {
+  FRActionNode *o = fr_action_node_new();
+
+  fr_action_node_construct(SYS_OBJECT(o), name, anode);
+
+  return o;
+}
+
+static void fr_action_node_dispose(SysObject* o) {
+  FRActionNode *self = FR_ACTION_NODE(o);
+  FRActionNodePrivate* priv = self->priv;
+
+  sys_free_N(priv->name);
+
+  SYS_OBJECT_CLASS(fr_action_node_parent_class)->dispose(o);
+}
+
+static void fr_action_node_class_init(FRActionNodeClass* cls) {
+  SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+
+  ocls->construct = (SysObjectFunc)fr_action_node_construct;
+  ocls->dispose = fr_action_node_dispose;
+}
+
+void fr_action_node_init(SysObject* o) {
+  FRActionNode *self = FR_ACTION_NODE(o);
+  self->priv = fr_action_node_get_private(self);
+}
+
+void fr_action_node_setup(void) {
+  FRActionNode *node;
+
+  g_action_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+
+  node = fr_action_node_key_new();
+
+  fr_events_prepend(node);
+}

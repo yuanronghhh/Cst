@@ -1,0 +1,39 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local/
+  /usr/
+  /usr/lib/x86_64-linux-gnu/
+)
+
+FIND_PATH(ZLIB_INCLUDE_DIR
+  NAMES zlib.h zconf.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES zlib/include include
+)
+
+FIND_LIBRARY(ZLIB_LIBRARY
+  NAMES z zlib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES zlib/lib)
+
+if(WIN32)
+  FIND_FILE(ZLIB_FILE
+    NAMES zlib1
+    HINTS ${search_dirs}
+    PATH_SUFFIXES zlib/bin)
+endif()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(ZLIB DEFAULT_MSG
+  ZLIB_LIBRARY ZLIB_INCLUDE_DIR)
+
+IF(ZLIB_FOUND)
+  SET(ZLIB_FILES ${ZLIB_FILE})
+  SET(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+  SET(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+ENDIF(ZLIB_FOUND)
+
+MARK_AS_ADVANCED(
+  ZLIB_INCLUDE_DIR
+  ZLIB_LIBRARY
+)

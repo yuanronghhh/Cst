@@ -1,0 +1,34 @@
+#ifndef __FR_ACTION_WATCH_H__
+#define __FR_ACTION_WATCH_H__
+
+#include <Framework/FRCommon.h>
+
+SYS_BEGIN_DECLS
+
+#define FR_ACTION_WATCH_TYPE (fr_action_watch_get_type())
+#define FR_ACTION_WATCH(o) ((FRActionWatch* )sys_object_cast_check(o, FR_ACTION_WATCH_TYPE))
+#define FR_ACTION_WATCH_CLASS(o) ((FRActionWatchClass *)sys_class_cast_check(o, FR_ACTION_WATCH_TYPE))
+#define FR_ACTION_WATCH_GET_CLASS(o) sys_instance_get_class(o, FRActionWatchClass)
+
+struct _FRActionWatchClass {
+  FRActionClass parent;
+
+  SysBool (*check) (FRActionWatch *self, FREvent *e);
+  void (*dispatch) (FRActionWatch *self, FREvent *e);
+};
+
+struct _FRActionWatch {
+  FRAction parent;
+
+  FRActionWatchPrivate *priv;
+};
+
+SYS_API SysType fr_action_watch_get_type(void);
+SYS_API void fr_action_watch_emit(FRActionWatch *self, FREvent *e);
+SYS_API FRActionWatch * fr_action_watch_new_I(void);
+SYS_API void fr_action_watch_bind_action_watch(FRActionWatch *self, FRActionWatch* action_watch);
+
+SYS_END_DECLS
+
+#endif
+

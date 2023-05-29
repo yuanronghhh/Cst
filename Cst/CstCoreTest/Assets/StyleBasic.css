@@ -1,0 +1,25 @@
+Style: {
+  "CstDiv": {
+    color: "#fefefe",
+  },
+
+  ".btn": {
+    x: "parent_x + 2",
+    height: 20,
+  },
+
+  ".btn-active"<base: ".btn">: {
+    color: "#fefefe",
+    x: "parent_x",
+  },
+
+  ".btn-red"<base: [".btn", ".red"]>: {
+    width: "20",
+  }
+}
+
+Style<component: "DemoComponent">: {
+  ".root": {
+    color: "#0a0a0a",
+  }
+}

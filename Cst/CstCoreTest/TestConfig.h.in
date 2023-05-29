@@ -1,0 +1,7 @@
+#ifndef __TEST_CONFIG_H__
+#define __TEST_CONFIG_H__
+
+#define TEST_FILE1 "${CMAKE_CURRENT_LIST_DIR}/Front/AppButton.cst"
+#define TEST_FILE2 "${CMAKE_CURRENT_LIST_DIR}/Front/AppComponent.cst"
+
+#endif

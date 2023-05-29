@@ -1,0 +1,25 @@
+GStyle: {
+  button: {
+    background: "#ffffff",
+    height: 20,
+    width: 30
+  },
+  blue-btn<base:["button"]>: {
+    background: "#00ff00"
+  }
+}
+
+GStyle<static:true>: {
+  LBox: {
+    data-direction: "out-to-in",
+    child: {
+      width: "parent - 2",
+      height: "parent - 2"
+    }
+  },
+  LGrid: {
+    data-direction: "out-to-in",
+    width: "child + 2",
+    height: "child + 2"
+  }
+}

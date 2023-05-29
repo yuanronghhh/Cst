@@ -1,0 +1,26 @@
+
+
+Component<id: "mini-menubase">: {
+  Style: {
+    "ma0": {
+      padding: [10, 10, 10, 10]
+    },
+    "ma1": {
+      font-size: 15
+    }
+  },
+
+  Data: {
+    id: "menu base"
+  },
+
+  Props: {
+    id: ""
+  },
+
+  Layout: {
+    LBox: {
+      Text<value: "{{ id }}">: null
+    }
+  }
+}

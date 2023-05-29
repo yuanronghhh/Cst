@@ -1,0 +1,32 @@
+{%
+  #include "AppButton.h"
+
+  CST_ANODE_FUNC(app_btn_clicked) {
+    FREvent *e = cst_action_get_event(action);
+    FREventKey *ekey = FR_EVENT_KEY(e);
+
+    sys_debug_N("key release: %d,%d", fr_event_key_key(ekey), fr_event_key_scancode(ekey));
+  }
+
+  CST_ANODE_FUNC(app_btn_press) {
+    FREvent *e = cst_action_get_event(action);
+    FREventMouseKey *ekey = FR_EVENT_MOUSE_KEY(e);
+
+    sys_debug_N("key press: %d,%d", fr_event_mouse_key_key(ekey), fr_event_mouse_key_action(ekey));
+  }
+%}
+
+
+Component<id: "app-button">: {
+  Style: {
+    button-box: {
+      padding: [20, 20, 20, 20]
+    }
+  },
+
+  Layout: {
+    LBox<id: "button-box", "@mouse_release": "app_btn_press">: {
+      Text<id: "text0", value:"text0">: null
+    }
+  }
+}

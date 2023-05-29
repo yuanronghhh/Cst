@@ -1,0 +1,20 @@
+{
+
+
+
+  this is a txt block;
+
+
+
+
+
+}
+
+void test_line_macro() {
+  printf("%s\n", "ok2");
+}
+
+
+{
+  this is a txt block;
+}

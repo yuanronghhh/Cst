@@ -1,0 +1,20 @@
+GStyle: {
+  Base: {
+    width: "100%",
+    height: "100%"
+  },
+  Text: {
+    font-family: "微软雅黑",
+    font-size: 12,
+    color: "#ff0000"
+  },
+  LBody: {
+    color: "#ffffff"
+  },
+  LGrid: null,
+  LBox: null,
+  "Component": {
+    width: "100%",
+    height: "100%"
+  }
+}

@@ -1,0 +1,79 @@
+include_dep_dirs(
+  ../
+
+  ${FONTCONFIG_INCLUDE_DIRS}
+  ${FREETYPE_INCLUDE_DIRS}
+  ${BDWGC_INCLUDE_DIRS}
+  ${NANOMSG_INCLUDE_DIRS}
+  ${GCORUTINE_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${CGLM_INCLUDE_DIRS}
+  ${GLAD_INCLUDE_DIRS}
+  ${GLFW3_INCLUDE_DIRS}
+  ${PIXMAN_INCLUDE_DIR}
+  ${UNITY_INCLUDE_DIRS}
+  ${VKVG_INCLUDE_DIRS}
+  ${MONO_INCLUDE_DIRS}
+  ${CLANG_INCLUDE_DIRS}
+  ${CZMQ_INCLUDE_DIRS}
+  ${GTK_INCLUDE_DIRS}
+  ${VLD_INCLUDE_DIRS}
+  ${PTHREAD_INCLUDE_DIRS}
+  ${LLVM_INCLUDE_DIRS}
+  ${MONO_INCLUDE_DIRS}
+)
+
+set(TEST_SRC
+  ./DemoConfig.h.in
+  ./DemoConfig.h
+  ./DemoCommon.h
+  ./Demo.h
+  ./Demo.c
+
+  ./TestGlib.c
+  ./TestGlib.h
+)
+
+add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")
+set_property(TARGET CstDemo PROPERTY FOLDER "CstProject")
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/DemoConfig.h.in
+               ${CMAKE_CURRENT_LIST_DIR}/DemoConfig.h)
+
+add_dependencies(CstDemo
+  System
+)
+
+target_link_libraries(CstDemo
+  System
+  ${BDWGC_LIBRARIES}
+  ${PTHREAD_LIBRARIES}
+  ${NANOMSG_LIBRARIES}
+  ${VLD_LIBRARIES}
+  ${GTK_LIBRARIES}
+  ${CZMQ_LIBRARIES}
+  ${GCORUTINE_LIBRARIES}
+  ${CLANG_LIBRARIES}
+  ${LLVM_LIBRARIES}
+  ${MONO_LIBRARIES}
+  ${UNITY_LIBRARIES}
+  ${GLIB_LIBRARIES}
+  ${GLFW3_LIBRARIES}
+  ${VKVG_LIBRARIES}
+  ${CGLM_LIBRARIES}
+  ${M_LIBARIES}
+  ${DL_LIBRARIES}
+  ${X11_LIBRARIES}
+  ${CRT_LIBRAREIS}
+  ${FREETYPE_LIBRARIES}
+  ${DBG_LIBRAREIS}
+  ${MONO_LIBRARIES}
+  ${PANGO_LIBRARIES}
+)
+
+target_copy_files(CstDemo
+  "${VLD_FILES}"
+  "${GLIB_FILES}"
+  "${PTHREAD_FILES}"
+  "${MONO_FILES}"
+)

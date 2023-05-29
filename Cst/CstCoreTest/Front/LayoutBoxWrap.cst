@@ -1,0 +1,16 @@
+Component<id: "layout-component">: {
+  Style: {
+    "box1": {
+      margin: [10,10,10,10],
+      padding: [10,10,10,10]
+    }
+  },
+
+  Layout: {
+    LBox<id: "box1">: {
+      Text<id: "text1", value: "a">: null,
+      Text<id: "text2", value: "a">: null,
+      Text<id: "text3", value: "a">: null
+    }
+  }
+}

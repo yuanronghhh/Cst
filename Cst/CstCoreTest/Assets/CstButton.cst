@@ -1,0 +1,11 @@
+Component<name:"CButton">: {
+  Layout: {
+    Box<id:"menu-bg">: null
+  }
+}
+
+Component<name: "KButton">: {
+  Layout: {
+    Box<id:"menu-bg">:null
+  }
+}

@@ -1,0 +1,9 @@
+#ifndef __CST_DEMO_CONFIG_H__
+#define __CST_DEMO_CONFIG_H__
+
+#define APP_NAME "Cst"
+#define CST_CAIRO_API 1
+#define GETTEXT_PACKAGE APP_NAME
+#define PROJECT_DIR "${CMAKE_CURRENT_LIST_DIR}"
+
+#endif

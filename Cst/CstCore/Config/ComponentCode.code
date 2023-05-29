@@ -1,0 +1,41 @@
+/***
+ * ${TypeName} auto generated from ComponentCode.code
+ */
+
+#include "${TypeName}.h"
+
+struct _${TypeName}Private {
+  SysInt reserved;
+};
+
+static void ${type_name}_dispose(SysObject *self);
+
+SYS_DEFINE_TYPE(CST_COMONENT_TYPE, ${TypeName}, ${type_name})
+
+${TypeName}* ${type_name}_new(void) {
+  return sys_object_new(${TYPE_NAME}_TYPE);
+}
+
+static void ${type_name}_init(SysObject *o) {
+  ${TypeName} *self = ${TYPE_NAME}(o);
+  ${TypeName}Private *priv = self->priv = ${type_name}_get_private(${TYPE_NAME}(self));
+}
+
+static void ${type_name}_class_init(${TypeName}Class *cls) {
+  SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  CstComponentClass *mcls = (CstComponentClass *)cls;
+
+  ocls->dispose = ${type_name}_dispose;
+}
+
+static void ${type_name}_dispose(SysObject *o) {
+  SysObjectClass *ocls = SYS_OBJECT_GET_CLASS(o);
+
+  SYS_OBJECT_CLASS(${type_name}_parent_class)->dispose(o);
+}
+
+static void ${type_name}_finalize(SysObject *o) {
+  ${TypeName} *self = ${TYPE_NAME}(o);
+
+  SYS_OBJECT_CLASS(${type_name}_parent_class)->finalize(o);
+}

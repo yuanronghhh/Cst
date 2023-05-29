@@ -1,0 +1,19 @@
+Animation<name: "basic">: {
+  easeInOutExpo<type: "timer", duration:200>: {%
+    if(target == 1) {
+      target->x = time;
+    } else {
+      target->x = 0;
+    }
+  %},
+  easeInOutExpo1<buildin: "easeInOutExpo", duration: 100>: null,
+  frameAnimation<type: "frame">: {%
+    if (frame == 20) {
+      target->src = "image1";
+    }
+
+    if (target->x == 30) {
+      target->src = "image1";
+    }
+  %}
+}

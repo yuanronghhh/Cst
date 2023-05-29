@@ -1,0 +1,58 @@
+# TEST
+include_dep_dirs(
+  ./
+  ../system
+  ${NANOMSG_INCLUDE_DIRS}
+  ${VLD_INCLUDE_DIRS}
+  ${GCORUTINE_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${CGLM_INCLUDE_DIRS}
+  ${GLAD_INCLUDE_DIRS}
+  ${GLFW3_INCLUDE_DIRS}
+  ${PIXMAN_INCLUDE_DIR}
+  ${UNITY_INCLUDE_DIRS}
+  ${VULKAN_INCLUDE_DIRS}
+  ${VKVG_INCLUDE_DIRS}
+  ${MONO_INCLUDE_DIRS}
+  ${LLVM_INCLUDE_DIRS}
+  ${CLANG_INCLUDE_DIRS}
+  ${CZMQ_INCLUDE_DIRS}
+  ${GTK_INCLUDE_DIRS}
+)
+
+set(TEST_SRC
+  ./Config.h.in
+
+  ./Config.h
+  ./CstClient.h
+  ./CstClient.c
+
+  ./TestNanoMsg.h
+  ./TestNanoMsg.c
+)
+
+add_executable(CstClient "${TEST_SRC}" "${TEST_INC}" "")
+set_property(TARGET CstClient PROPERTY FOLDER CstProject)
+
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.h.in
+               ${CMAKE_CURRENT_LIST_DIR}/Config.h)
+
+target_link_libraries(CstClient
+  system
+  ${NANOMSG_LIBRARIES}
+  ${VLD_LIBRARIES}
+  ${GTK_LIBRARIES}
+  ${CZMQ_LIBRARIES}
+  ${GCORUTINE_LIBRARIES}
+  ${CLANG_LIBRARIES}
+  ${LLVM_LIBRARIES}
+  ${MONO_LIBRARIES}
+  ${UNITY_LIBRARIES}
+  ${GLIB_LIBRARIES}
+  ${VULKAN_LIBRARIES}
+  ${GLFW3_LIBRARIES}
+  ${CGLM_LIBRARIES}
+  ${M_LIBARIES}
+  ${X11_LIBRARIES}
+)

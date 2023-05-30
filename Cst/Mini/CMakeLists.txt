@@ -16,6 +16,7 @@ include_dep_dirs(
   ${PIXMAN_INCLUDE_DIRS}
   ${GLIB_INCLUDE_DIRS}
   ${TINYEXPR_INCLUDE_DIRS}
+  ${FRIBIDI_INCLUDE_DIRS}
   # ${MONO_INCLUDE_DIRS}
 )
 
@@ -61,6 +62,7 @@ target_link_libraries(Mini
   ${PNG_LIBRARIES}
   ${X11_LIBRARIES}
   ${PANGOCAIRO_LIBRARIES}
+  ${FRIBIDI_LIBRARIES}
 )
 
 target_copy_files(Mini
@@ -71,5 +73,9 @@ target_copy_files(Mini
   "${CAIRO_FILES}"
   "${GLFW3_FILES}"
   "${FREETYPE_FILES}"
+  "${GLIB_FILES}"
+  "${PNG_FILES}"
+  "${HARFBUZZ_FILES}"
+  "${FRIBIDI_FILES}"
   # "${MONO_FILES}"
 )

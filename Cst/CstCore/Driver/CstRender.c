@@ -200,6 +200,7 @@ static void cst_render_dispose(SysObject* o) {
   sys_object_unref(priv->abs_layer);
 
   sys_clear_pointer(&priv->draw, fr_draw_destroy);
+  sys_queue_free_full(priv->draw_queue, (SysDestroyFunc)_sys_object_unref);
 
   if (priv->window) {
     sys_object_unref(priv->window);

@@ -48,18 +48,12 @@ void cst_box_layer_append(CstLayer *layer, CstNode *parent, CstNode *child) {
   sys_object_ref(child);
 }
 
-void box_layer_mark(CstNode *v_parent, CstNode *v_node, CstRender *v_render, FRRect *bound) {
-  sys_return_if_fail(v_node != NULL);
-
-  CstNode *v_children = cst_node_children(v_node);
-  CstNode *v_next = cst_node_next(v_node);
+void box_node_mark_dirty(CstNode *v_node, FRRect *bound) {
   const FRRect *nbound = cst_node_get_bound(v_node);
+  CstNode *parent = cst_node_parent(v_node);
+  CstNode *node = v_node;
 
-  if (v_children) {
-    box_layer_mark(v_node, v_children, v_render, bound);
-  }
-
-  if (!cst_node_layer_is(v_node, CST_LAYER_ABS)) {
+  if (cst_node_get_is_dirty(v_node)) {
     return;
   }
 
@@ -67,12 +61,39 @@ void box_layer_mark(CstNode *v_parent, CstNode *v_node, CstRender *v_render, FRR
     return;
   }
 
+  if (!cst_node_layer_is(v_node, CST_LAYER_ABS)) {
+    return;
+  }
+
   if (fr_rect_is_overlap(bound, nbound)) {
     cst_node_set_is_dirty(v_node, true);
   }
+}
 
-  if (v_next) {
-    box_layer_mark(v_parent, v_next, v_render, bound);
+void bfs_box_layer_mark(CstNode *v_node, CstRender *v_render, FRRect *bound) {
+  sys_return_if_fail(v_node != NULL);
+
+  CstNode *nnode;
+  CstNode *nchild;
+  SysInt len = 0;
+  SysInt level = 0;
+  const FRRect *nbound;
+  SysQueue *nqueue = sys_queue_new();
+
+  sys_queue_push_head(nqueue, v_node);
+
+  while (sys_queue_get_length(nqueue) > 0) {
+    nnode = sys_queue_pop_head(nqueue);
+
+    nchild = cst_node_children(nnode);
+    while (nchild) {
+      sys_queue_push_head(nqueue, nchild);
+
+      nchild = cst_node_next(nchild);
+    }
+
+    sys_queue_push_head(nqueue, nchild);
+
   }
 }
 
@@ -86,7 +107,7 @@ void cst_box_layer_check_i(CstLayer *layer, CstRender *v_render, FRRect *bound) 
 
   v_node = priv->tree;
 
-  box_layer_mark(NULL, v_node, v_render, bound);
+  bfs_box_layer_mark(v_node, v_render, bound);
 }
 
 static void cst_box_layer_render_i(CstLayer *layer, CstModule *v_module, CstRender *v_render) {

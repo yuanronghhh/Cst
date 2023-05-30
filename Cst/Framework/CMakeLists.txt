@@ -128,7 +128,6 @@ add_dependencies(FRFramework
   System
 )
 
-log("${GLFW3_LIBRARIES}")
 target_link_libraries(FRFramework
   System
   ${GLIB_LIBRARIES}

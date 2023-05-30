@@ -13,8 +13,6 @@ FIND_PATH(PANGO_INCLUDE_DIR
   PATH_SUFFIXES include/pango-1.0 pango2/include pango/include/pango-1.0
 )
 
-log("${PANGO_INCLUDE_DIR}")
-
 set(PANGO_COMPONENTS
   "pango"
   "pangocairo"

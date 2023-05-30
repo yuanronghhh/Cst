@@ -22,6 +22,7 @@ find_package(pthread REQUIRED)
 find_package(vld REQUIRED)
 find_package(harfbuzz REQUIRED)
 find_package(pango REQUIRED)
+find_package(png REQUIRED)
 find_package(zlib REQUIRED)
 find_package(cairo REQUIRED)
 

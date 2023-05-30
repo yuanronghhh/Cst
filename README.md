@@ -148,3 +148,7 @@ $ cmake -B build -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017 Win64"
 5. build
 
 see `CstCoreTest` project
+
+## License
+
+LGPL

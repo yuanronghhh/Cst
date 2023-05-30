@@ -3,11 +3,14 @@
 ## 这是什么?
 
 `Cst` 是一个基于组件这一概念, 使用c语言开发的，在LGPL下发布的GUI框架。
+本项目为试验，尝试使用c语言开发vue中的概念组件。
+
+当前版本刚开始，仅适合学习使用
 
 ## 特性
-1. 使用原生编译器c语言编译代码。
-2. 能使用css进行简单的布局
-3. 使用组件(Component)的组装代码．
+1. 使用编译器c语言编译代码。
+2. 能使用css进行布局
+3. 使用组件(Component)的组装代码。
 
 ## Build && Debug
 
@@ -35,7 +38,7 @@ cairo
 glfw
 ```
 
-可以直接到release下载 `windows-zip.zip`文件夹，然后在项目外一层解压，比如：
+可以直接到release下载 `windows-deps.zip`文件夹，然后在项目外一层解压，比如：
 ```text
   Cst/
   lib/win64_vc14/cairo

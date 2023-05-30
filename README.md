@@ -32,7 +32,7 @@ cairo
 glfw
 ```
 
-Download `windows-zip` in releases. and unzip it outside of this project.
+Download `windows-deps.zip` in releases. and unzip it outside of this project.
 
 like below:
 ```text
@@ -42,6 +42,7 @@ like below:
   lib/win64_vc14/cairo/bin
   lib/win64_vc14/cairo/lib
 ```
+add `make.exe` and `tools/win_flex_bison-2.5.25/` to your system path enviroment.
 
 4. generate project use cmake.
 ```shell

@@ -136,7 +136,7 @@ void bfs_box_layer_mark(CstNode *v_node, CstRender *v_render, FRRect *bound) {
   do {
     while (bfs_level_get_length(old_level) > 0) {
       nnode = bfs_level_pop(old_level);
-      
+
       status = box_node_mark_dirty(nnode, bound);
       if (status < 0) {
         continue;

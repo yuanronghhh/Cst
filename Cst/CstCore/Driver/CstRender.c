@@ -157,6 +157,7 @@ void cst_render_queue_draw_node(CstRender *self, CstNode *node) {
   CstRenderPrivate *priv = self->priv;
 
   sys_queue_push_head(priv->draw_queue, node);
+  sys_object_ref(node);
 }
 
 /* object api */

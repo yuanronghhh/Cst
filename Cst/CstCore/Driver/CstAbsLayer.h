@@ -13,13 +13,13 @@ SYS_BEGIN_DECLS
 
 
 struct _CstAbsLayer {
-  SysObject parent;
+  CstLayer parent;
 
   CstAbsLayerPrivate *priv;
 };
 
 struct _CstAbsLayerClass {
-  SysObjectClass parent;
+  CstLayerClass parent;
 };
 
 SYS_API SysType cst_abs_layer_get_type(void);

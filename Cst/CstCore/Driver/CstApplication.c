@@ -23,7 +23,6 @@ static CstApplication *g_application = NULL;
 
 void cst_application_stop (CstApplication *self) {
   sys_return_if_fail(self != NULL);
-  sys_debug_N("%s", "app stop");
 
   CstApplicationPrivate *priv = self->priv;
 
@@ -93,7 +92,7 @@ static void cst_application_active(CstApplication* self) {
   FRAWatchProps props = { 0 };
 
   priv->render = v_render;
-  
+
   props.key = FR_KEY_R;
   // pres r for debug render check
   cst_module_add_awatch(v_module, (SysPointer)self, "key_press", "app_window_resize_test", app_window_resize_test, &props);

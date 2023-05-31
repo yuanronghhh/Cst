@@ -87,8 +87,6 @@ SysBool fr_main_is_running(FRMain *self) {
 static void fr_main_destroy(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
-  sys_debug_N("%s", "destroy");
-
   FRMainPrivate* priv = self->priv;
 
   sys_assert(priv->is_running == false);

@@ -11,9 +11,7 @@ void cst_layer_check(CstLayer *self, CstRender *v_render, FRRect *bound) {
 
   CstLayerClass *cls = CST_LAYER_GET_CLASS(self);
 
-  if (cls->check) {
-    cls->check(self, v_render, bound);
-  }
+  cls->check(self, v_render, bound);
 }
 
 void cst_layer_render(CstLayer *self, CstModule *v_module, CstRender *v_render) {

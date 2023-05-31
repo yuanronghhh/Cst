@@ -68,34 +68,29 @@ void cst_node_relayout_root(CstModule *v_module, CstNode *v_node, CstRender *v_r
   cst_node_render_leave(v_node, cr, CST_RENDER_STATE_LAYOUT);
 }
 
-static void node_repaint_node(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void node_repaint_node_r(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
   sys_return_if_fail(v_node != NULL);
 
   CstNode *v_children = cst_node_children(v_node);
   CstNode *v_next = cst_node_next(v_node);
 
   cst_node_render_enter(v_node, cr, CST_RENDER_STATE_PAINT);
-
-  if (cst_node_is_changed(v_node)) {
-    cst_node_repaint(v_module, v_parent, v_node, cr);
-    cst_node_set_changed(v_node, false);
-  }
-
+  cst_node_repaint(v_module, v_parent, v_node, cr);
   cst_node_render_leave(v_node, cr, CST_RENDER_STATE_PAINT);
 
   if (v_children) {
-    node_repaint_node(v_module, v_node, v_children, cr);
+    node_repaint_node_r(v_module, v_node, v_children, cr);
   }
 
   if (v_next) {
-    node_repaint_node(v_module, v_parent, v_next, cr);
+    node_repaint_node_r(v_module, v_parent, v_next, cr);
   }
 }
 
 void cst_node_repaint_root(CstModule *v_module, CstNode* node, CstRender *v_render) {
   FRContext *cr = cst_render_get_cr(v_render);
 
-  node_repaint_node(v_module, NULL, node, cr);
+  node_repaint_node_r(v_module, NULL, node, cr);
 }
 
 void cst_node_render_enter(CstNode *node, FRContext *cr, CST_RENDER_STATE_ENUM state) {

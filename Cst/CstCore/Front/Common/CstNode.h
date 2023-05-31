@@ -74,6 +74,7 @@ void cst_node_set_mbp(CstNode *node);
 void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr);
 CstNode * cst_node_realize(CstModule * v_module, CstComNode * ncomp_node, CstNode * v_parent, CstNode * v_node, CstRender * v_render);
 CstNode *cst_node_children(CstNode *node);
+CstNode * cst_node_prev(CstNode * node);
 CstNode * cst_node_next(CstNode * node);
 CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);

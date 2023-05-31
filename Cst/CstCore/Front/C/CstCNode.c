@@ -368,6 +368,12 @@ CstNode *cst_node_children(CstNode *node) {
   return node->children;
 }
 
+CstNode *cst_node_prev(CstNode *node) {
+  sys_return_val_if_fail(node != NULL, NULL);
+
+  return node->prev;
+}
+
 CstNode *cst_node_next(CstNode *node) {
   sys_return_val_if_fail(node != NULL, NULL);
 
@@ -977,17 +983,13 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
   CstNodePrivate *ppriv = v_parent->priv;
 
   cst_node_render_enter(v_node, cr, CST_RENDER_STATE_LAYOUT);
+  cst_node_set_mbp(v_node);
 
-  if (cst_node_get_is_dirty(v_node)) {
-    cst_css_closure_calc(priv->width_calc, v_parent, v_node, cr);
-    cst_css_closure_calc(priv->height_calc, v_parent, v_node, cr);
+  cst_css_closure_calc(priv->width_calc, v_parent, v_node, cr);
+  cst_css_closure_calc(priv->height_calc, v_parent, v_node, cr);
 
-    cst_node_render_css(v_node, cr, CST_RENDER_STATE_LAYOUT);
-    cst_node_set_mbp(v_node);
-
-    priv->bound.x = ppriv->bound.x + ppriv->mbp3 + ppriv->offset_w;
-    priv->bound.y = ppriv->bound.y + ppriv->mbp0 + ppriv->offset_h;
-  }
+  priv->bound.x = ppriv->bound.x + ppriv->mbp3 + ppriv->offset_w;
+  priv->bound.y = ppriv->bound.y + ppriv->mbp0 + ppriv->offset_h;
 
   if (v_node->children) {
     cst_node_layout(v_module, v_node, v_node->children, cr);
@@ -1001,15 +1003,12 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
     cst_node_set_height(v_node, priv->prefer_height);
   }
 
-  // priv
   cst_node_relayout(v_module, v_parent, v_node, cr);
-  // sys_debug_N("%s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 
   if (v_node->next) {
     cst_node_layout(v_module, v_parent, v_node->next, cr);
   }
 
-  cst_node_set_is_dirty(v_node, false);
   cst_node_render_leave(v_node, cr, CST_RENDER_STATE_LAYOUT);
 }
 
@@ -1127,8 +1126,8 @@ static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, Cs
     cst_node_bind(v_node, com_node);
   }
 
-  priv->is_changed = true;
-  priv->is_dirty = true;
+  priv->is_changed = false;
+  priv->is_dirty = false;
   priv->realized = true;
 
   return v_node;

@@ -2,6 +2,13 @@
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Front/Common/CstNode.h>
 
+typedef struct _BFSLevel BFSLevel;
+
+struct _BFSLevel {
+  SysUInt level;
+  SysQueue *lqueue;
+};
+
 
 struct _CstBoxLayerPrivate {
   /**
@@ -48,26 +55,67 @@ void cst_box_layer_append(CstLayer *layer, CstNode *parent, CstNode *child) {
   sys_object_ref(child);
 }
 
-void box_node_mark_dirty(CstNode *v_node, FRRect *bound) {
+SysInt box_node_mark_dirty(CstNode *v_node, FRRect *bound) {
   const FRRect *nbound = cst_node_get_bound(v_node);
   CstNode *parent = cst_node_parent(v_node);
   CstNode *node = v_node;
 
   if (cst_node_get_is_dirty(v_node)) {
-    return;
+    return -1;
   }
 
   if (!cst_node_is_visible(v_node)) {
-    return;
+    return -1;
   }
 
   if (!cst_node_layer_is(v_node, CST_LAYER_ABS)) {
-    return;
+    return -2;
   }
 
-  if (fr_rect_is_overlap(bound, nbound)) {
-    cst_node_set_is_dirty(v_node, true);
+  if (!fr_rect_is_overlap(bound, nbound)) {
+    return -3;
   }
+  
+  cst_node_set_is_dirty(v_node, true);
+
+  return 1;
+}
+
+static BFSLevel *bfs_level_new(SysUInt level) {
+  BFSLevel *nlevel = sys_new0_N(BFSLevel, 1);
+
+  nlevel->lqueue = sys_queue_new();
+  nlevel->level = level;
+
+  return nlevel;
+}
+
+static void bfs_level_push(BFSLevel *self, SysPointer ptr) {
+  sys_queue_push_head(self->lqueue, ptr);
+}
+
+static SysUInt bfs_level_get_length(BFSLevel *self) {
+  return sys_queue_get_length(self->lqueue);
+}
+
+static SysPointer bfs_level_pop(BFSLevel *self) {
+  return sys_queue_pop_head(self->lqueue);
+}
+
+static void bfs_level_push_tail(BFSLevel *self, SysPointer ptr) {
+  sys_queue_push_tail(self->lqueue, ptr);
+}
+
+static SysUInt bfs_level_get_level(BFSLevel *self) {
+  return self->level;
+}
+
+static void bfs_level_free(BFSLevel *self) {
+  sys_free_N(self);
+}
+
+static void bfs_level_set_level(BFSLevel *self, SysUInt level) {
+  self->level = level;
 }
 
 void bfs_box_layer_mark(CstNode *v_node, CstRender *v_render, FRRect *bound) {
@@ -75,26 +123,42 @@ void bfs_box_layer_mark(CstNode *v_node, CstRender *v_render, FRRect *bound) {
 
   CstNode *nnode;
   CstNode *nchild;
-  SysInt len = 0;
-  SysInt level = 0;
-  const FRRect *nbound;
-  SysQueue *nqueue = sys_queue_new();
+  SysInt status;
 
-  sys_queue_push_head(nqueue, v_node);
+  BFSLevel *old_level;
+  BFSLevel *next_level, *tlevel;
 
-  while (sys_queue_get_length(nqueue) > 0) {
-    nnode = sys_queue_pop_head(nqueue);
+  old_level = bfs_level_new(1);
+  next_level = bfs_level_new(2);
 
-    nchild = cst_node_children(nnode);
-    while (nchild) {
-      sys_queue_push_head(nqueue, nchild);
+  bfs_level_push(old_level, v_node);
 
-      nchild = cst_node_next(nchild);
+  do {
+    while (bfs_level_get_length(old_level) > 0) {
+      nnode = bfs_level_pop(old_level);
+      
+      status = box_node_mark_dirty(nnode, bound);
+      if (status < 0) {
+        continue;
+      }
+
+      nchild = cst_node_children(nnode);
+      while (nchild) {
+        bfs_level_push_tail(next_level, nchild);
+
+        nchild = cst_node_next(nchild);
+      }
     }
 
-    sys_queue_push_head(nqueue, nchild);
+    tlevel = old_level;
+    old_level = next_level;
+    next_level = tlevel;
+    bfs_level_set_level(next_level, bfs_level_get_level(old_level) + 1);
 
-  }
+  } while (bfs_level_get_length(old_level) > 0);
+
+  sys_clear_pointer(&next_level, (SysDestroyFunc)bfs_level_free);
+  sys_clear_pointer(&old_level, (SysDestroyFunc)bfs_level_free);
 }
 
 void cst_box_layer_check_i(CstLayer *layer, CstRender *v_render, FRRect *bound) {

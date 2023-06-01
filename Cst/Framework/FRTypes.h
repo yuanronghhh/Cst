@@ -70,6 +70,10 @@ typedef  struct  _FRText              FRText;
 typedef  struct  _FRTextClass         FRTextClass;
 typedef  struct  _FRTextPrivate       FRTextPrivate;
 
+typedef  struct  _FRDraw              FRDraw;
+typedef  struct  _FRDrawClass         FRDrawClass;
+typedef  struct  _FRDrawPrivate       FRDrawPrivate;
+
 typedef  struct  _FRWindow           FRWindow;
 typedef  struct  _FRWindowClass      FRWindowClass;
 typedef  struct  _FRWindowPrivate    FRWindowPrivate;

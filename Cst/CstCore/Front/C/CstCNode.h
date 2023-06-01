@@ -22,9 +22,9 @@ struct _CstNodeClass {
   void (*construct) (CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props);
  CstNode * (*dclone) (CstNode *node);
  CstNode *(*realize) (CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render);
- void (*relayout) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr);
+ void (*relayout) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
  void (*relayout_down) (CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr);
- void (*repaint) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr);
+ void (*repaint) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 };
 
 

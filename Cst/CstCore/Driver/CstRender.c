@@ -9,7 +9,6 @@ struct _CstRenderPrivate {
   FRWindow *window;
 
   FRDraw *draw;
-  SysQueue *draw_queue;
 
   CstLayer *box_layer;
   CstLayer *abs_layer;
@@ -21,27 +20,19 @@ CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
 }
 
-void cst_render_get_size(CstRender *self, SysInt *width, SysInt *height) {
-  sys_return_if_fail(self != NULL);
-
+FRDraw *cst_render_get_draw(CstRender *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
   CstRenderPrivate *priv = self->priv;
 
-  SysInt w = 0, h = 0;
-
-  if (priv->window) {
-    fr_window_get_size(priv->window, &w, &h);
-  }
-
-  *width = w;
-  *height = h;
+  return priv->draw;
 }
 
 CstBoxLayer *cst_render_get_box_layer(CstRender *self) {
-sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self != NULL, NULL);
 
-CstRenderPrivate *priv = self->priv;
+  CstRenderPrivate *priv = self->priv;
 
-return CST_BOX_LAYER(priv->box_layer);
+  return CST_BOX_LAYER(priv->box_layer);
 }
 
 CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
@@ -52,20 +43,29 @@ CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
   return CST_ABS_LAYER(priv->abs_layer);
 }
 
-void cst_render_render(CstModule *v_module, CstRender *self) {
+void cst_render_render(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
   CstRenderPrivate *priv = self->priv;
 
-  cst_layer_render(priv->box_layer, v_module, self);
-}
+  FRRect bound;
+  FRRegion *region;
+  FRDraw *draw = priv->draw;
+  FRContext *cr;
 
-FRContext *cst_render_get_cr(CstRender *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  fr_window_get_size(priv->window, &bound.width, &bound.height);
+  region = fr_region_create_rectangle(&bound);
 
-  CstRenderPrivate *priv = self->priv;
+  fr_draw_frame_begin(draw, region);
 
-  return fr_draw_get_cr(priv->draw);
+  cr = fr_draw_create_cr(draw);
+  cst_layer_render(priv->box_layer, draw, cr);
+  cst_layer_render(priv->abs_layer, draw, cr);
+  fr_context_destroy(cr);
+
+  fr_draw_frame_end(draw, region);
+
+  fr_region_destroy(region);
 }
 
 void cst_render_set_node(CstRender *self, CstNode *parent, CstNode *node) {
@@ -82,82 +82,52 @@ void cst_render_set_node(CstRender *self, CstNode *parent, CstNode *node) {
   cst_node_set_last_child(parent, node);
 }
 
-FRRegion * cst_render_create_region(CstRender *self, const FRRect *n_rect) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return fr_region_create_rectangle(n_rect);
-}
-
-void cst_render_frame_begin(CstRender *self, FRRegion *region) {
+void cst_render_resize_window(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
+  SysInt width = 0;
+  SysInt height = 0;
   CstRenderPrivate *priv = self->priv;
 
-  fr_draw_frame_begin(priv->draw, region);
-}
+  fr_window_get_size(priv->window, &width, &height);
 
-void cst_render_frame_end(CstRender *self, FRRegion *region) {
-  sys_return_if_fail(self != NULL);
-
-  CstRenderPrivate *priv = self->priv;
-
-  fr_draw_frame_end(priv->draw, region);
+  cst_render_request_resize_window(self, width, height);
 }
 
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
 
+  FRRegion *region;
   FRRect bound = { 0 };
   CstRenderPrivate *priv = self->priv;
 
-  bound.width = width;
-  bound.height = height;
+  bound.width = width; // width;
+  bound.height = height; // height;
 
-  fr_window_set_size(priv->window, width, height);
-
-  cst_render_request_redraw(self, &bound);
+  region = fr_region_create_rectangle(&bound);
+  cst_render_rerender(self, region);
+  fr_region_destroy(region);
 }
 
-void cst_render_resize_window(CstRender *self) {
-  sys_return_if_fail(self != NULL);
-
-  FRRect bound = { 0 };
-  CstRenderPrivate *priv = self->priv;
-  CstNode *root = cst_box_layer_get_root(CST_BOX_LAYER(priv->box_layer));
-
-  fr_window_get_size(priv->window, &(bound.width), &(bound.height));
-
-  cst_node_set_prefer_size(root, bound.width, bound.height);
-  cst_node_set_size(root, bound.width, bound.height);
-
-  cst_render_request_redraw(self, &bound);
-}
-
-void cst_render_rerender(CstRender *self) {
-  sys_return_if_fail(self != NULL);
-  CstRenderPrivate *priv = self->priv;
-
-  if (sys_queue_get_length(priv->draw_queue) > 0) {
-  }
-}
-
-void cst_render_request_redraw(CstRender *self, FRRect *bound) {
-  sys_return_if_fail(self != NULL);
-  CstRenderPrivate *priv = self->priv;
-
-  cst_layer_check(priv->box_layer, self, bound);
-  cst_layer_check(priv->abs_layer, self, bound);
-
-  cst_render_rerender(self);
-}
-
-void cst_render_queue_draw_node(CstRender *self, CstNode *node) {
+void cst_render_rerender(CstRender *self, FRRegion *region) {
   sys_return_if_fail(self != NULL);
 
   CstRenderPrivate *priv = self->priv;
+  FRDraw *draw = priv->draw;
+  FRContext *cr;
 
-  sys_queue_push_head(priv->draw_queue, node);
-  sys_object_ref(node);
+  fr_draw_frame_begin(draw, region);
+
+  cr = fr_draw_create_cr(draw);
+  cst_layer_check(priv->box_layer, draw, region);
+  cst_layer_check(priv->abs_layer, draw, region);
+
+  cst_layer_rerender(priv->box_layer, draw, cr);
+  cst_layer_rerender(priv->abs_layer, draw, cr);
+  fr_context_destroy(cr);
+
+  fr_draw_frame_end(draw, region);
+
 }
 
 /* object api */
@@ -165,7 +135,6 @@ void cst_render_construct(SysObject *o, SysBool is_offscreen) {
   SYS_OBJECT_CLASS(cst_render_parent_class)->construct(o);
 
   CstRender *self = CST_RENDER(o);
-
   CstRenderPrivate *priv = self->priv;
 
   if (is_offscreen) {
@@ -177,8 +146,7 @@ void cst_render_construct(SysObject *o, SysBool is_offscreen) {
     priv->window = fr_window_top_new(priv->display);
   }
 
-  priv->draw = fr_canvas_create_draw(priv->window);
-  priv->draw_queue = sys_queue_new();
+  priv->draw = fr_draw_new_I(priv->window);
 
   priv->box_layer = cst_box_layer_new_I();
   priv->abs_layer = cst_abs_layer_new_I();
@@ -205,8 +173,7 @@ static void cst_render_dispose(SysObject* o) {
   sys_object_unref(priv->box_layer);
   sys_object_unref(priv->abs_layer);
 
-  sys_clear_pointer(&priv->draw, fr_draw_destroy);
-  sys_queue_free_full(priv->draw_queue, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&priv->draw, _sys_object_unref);
 
   if (priv->window) {
     sys_object_unref(priv->window);

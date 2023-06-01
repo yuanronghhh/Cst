@@ -55,10 +55,14 @@ void cst_box_layer_append(CstLayer *layer, CstNode *parent, CstNode *child) {
   sys_object_ref(child);
 }
 
-SysInt box_node_mark_dirty(CstNode *v_node, FRRect *bound) {
+SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
   const FRRect *nbound = cst_node_get_bound(v_node);
   CstNode *parent = cst_node_parent(v_node);
   CstNode *node = v_node;
+
+  if(fr_region_is_empty(region)) {
+    return -4;
+  }
 
   if (cst_node_get_is_dirty(v_node)) {
     return -1;
@@ -68,11 +72,12 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRect *bound) {
     return -1;
   }
 
-  if (!cst_node_layer_is(v_node, CST_LAYER_ABS)) {
+  if (cst_node_layer_has_flag(v_node, CST_LAYER_ABS)) {
     return -2;
   }
 
-  if (!fr_rect_is_overlap(bound, nbound)) {
+  SysInt s = fr_region_contains_rectangle(region, nbound);
+  if (s == CAIRO_REGION_OVERLAP_OUT) {
     return -3;
   }
   
@@ -81,6 +86,7 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRect *bound) {
   return 1;
 }
 
+/* bfs level */
 static BFSLevel *bfs_level_new(SysUInt level) {
   BFSLevel *nlevel = sys_new0_N(BFSLevel, 1);
 
@@ -112,58 +118,47 @@ static SysUInt bfs_level_get_level(BFSLevel *self) {
 
 static void bfs_level_free(BFSLevel *self) {
   sys_free_N(self);
+  sys_queue_free(self->lqueue);
 }
 
 static void bfs_level_set_level(BFSLevel *self, SysUInt level) {
   self->level = level;
 }
 
-void bfs_box_layer_mark(CstNode *v_node, CstRender *v_render, FRRect *bound) {
+void bfs_box_layer_mark(CstLayer *layer, CstNode *v_node, FRRegion *region) {
   sys_return_if_fail(v_node != NULL);
 
   CstNode *nnode;
   CstNode *nchild;
   SysInt status;
+  SysQueue *nqueue = sys_queue_new();
 
-  BFSLevel *old_level;
-  BFSLevel *next_level, *tlevel;
+  sys_queue_push_head(nqueue, v_node);
 
-  old_level = bfs_level_new(1);
-  next_level = bfs_level_new(2);
+  while (sys_queue_get_length(nqueue) > 0) {
+    nnode = sys_queue_pop_head(nqueue);
 
-  bfs_level_push(old_level, v_node);
-
-  do {
-    while (bfs_level_get_length(old_level) > 0) {
-      nnode = bfs_level_pop(old_level);
-
-      status = box_node_mark_dirty(nnode, bound);
-      if (status < 0) {
-        continue;
-      }
-
-      cst_render_queue_draw_node(v_render, nnode);
-
-      nchild = cst_node_children(nnode);
-      while (nchild) {
-        bfs_level_push_tail(next_level, nchild);
-
-        nchild = cst_node_next(nchild);
-      }
+    const FRRect *nbound = cst_node_get_bound(nnode);
+    status = box_node_mark_dirty(nnode, region);
+    if (status < 0) {
+      continue;
     }
+    sys_debug_N("%s<%d,%d>", cst_node_get_id(nnode), nbound->width, nbound->height);
 
-    tlevel = old_level;
-    old_level = next_level;
-    next_level = tlevel;
-    bfs_level_set_level(next_level, bfs_level_get_level(old_level) + 1);
+    cst_layer_queue_draw_node(layer, nnode);
 
-  } while (bfs_level_get_length(old_level) > 0);
+    nchild = cst_node_children(nnode);
+    while (nchild) {
+      sys_queue_push_tail(nqueue, nchild);
 
-  sys_clear_pointer(&next_level, (SysDestroyFunc)bfs_level_free);
-  sys_clear_pointer(&old_level, (SysDestroyFunc)bfs_level_free);
+      nchild = cst_node_next(nchild);
+    }
+  }
+
+  sys_queue_free(nqueue);
 }
 
-void cst_box_layer_check_i(CstLayer *layer, CstRender *v_render, FRRect *bound) {
+void cst_box_layer_check_i(CstLayer *layer, FRDraw *draw, FRRegion *region) {
   CstNode *v_node;
 
   CstBoxLayer *self = CST_BOX_LAYER(layer);
@@ -173,15 +168,13 @@ void cst_box_layer_check_i(CstLayer *layer, CstRender *v_render, FRRect *bound) 
 
   v_node = priv->tree;
 
-  bfs_box_layer_mark(v_node, v_render, bound);
+  bfs_box_layer_mark(layer, v_node, region);
 }
 
-static void cst_box_layer_render_i(CstLayer *layer, CstModule *v_module, CstRender *v_render) {
+static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, FRContext *cr) {
   sys_return_if_fail(layer != NULL);
 
   CstNode *v_node;
-  FRRegion *region;
-  const FRRect *rect;
   CstBoxLayer *self = CST_BOX_LAYER(layer);
   CstBoxLayerPrivate *priv = self->priv;
 
@@ -189,17 +182,8 @@ static void cst_box_layer_render_i(CstLayer *layer, CstModule *v_module, CstRend
 
   v_node = priv->tree;
 
-  rect = cst_node_get_bound(v_node);
-  region = cst_render_create_region(v_render, rect);
-
-  cst_render_frame_begin(v_render, region);
-
-  cst_node_relayout_root(v_module, v_node, v_render);
-  cst_node_repaint_root(v_module, v_node, v_render);
-
-  cst_render_frame_end(v_render, region);
-
-  fr_region_destroy(region);
+  cst_node_relayout_root(NULL, v_node, cr, draw, CST_RENDER_STATE_LAYOUT);
+  cst_node_paint_root(NULL, v_node, cr, draw, CST_RENDER_STATE_PAINT);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {

@@ -25,19 +25,14 @@ SYS_API CstRender* cst_render_new_I(SysBool is_offscreen);
 
 SYS_API void cst_render_resize_window(CstRender *self);
 SYS_API void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
-SYS_API void cst_render_request_redraw(CstRender *self, FRRect *bound);
-SYS_API void cst_render_queue_draw_node(CstRender * self, CstNode * node);
+SYS_API void cst_render_rerender(CstRender *self, FRRegion *region);
+SYS_API void cst_render_render(CstRender *render);
 
-SYS_API FRContext *cst_render_get_cr(CstRender *render);
 SYS_API void cst_render_set_node(CstRender * self, CstNode * parent, CstNode * node);
-SYS_API FRRegion * cst_render_create_region(CstRender * self, const FRRect * n_rect);
-SYS_API void cst_render_get_size(CstRender *render, SysInt *width, SysInt *height);
+SYS_API FRDraw *cst_render_get_draw(CstRender *self);
 SYS_API CstBoxLayer *cst_render_get_box_layer(CstRender *render);
 SYS_API CstAbsLayer *cst_render_get_abs_layer(CstRender *render);
 
-SYS_API void cst_render_render (CstModule *v_module, CstRender *render);
-SYS_API void cst_render_frame_begin (CstRender *self, FRRegion *region);
-SYS_API void cst_render_frame_end (CstRender *self, FRRegion *region);
 
 SYS_END_DECLS
 

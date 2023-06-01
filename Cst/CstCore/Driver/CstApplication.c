@@ -98,7 +98,7 @@ static void cst_application_active(CstApplication* self) {
   cst_module_add_awatch(v_module, (SysPointer)self, "key_press", "app_window_resize_test", app_window_resize_test, &props);
 
   cst_manager_realize(v_manager, v_module, v_render);
-  cst_render_render(v_module, v_render);
+  cst_render_render(v_render);
 }
 
 void cst_application_mono_setup(const SysChar *managed_path) {

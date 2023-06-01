@@ -98,20 +98,10 @@ static void cst_text_construct_i(CstModule *v_module, CstComponent *v_component,
 CstNode *cst_text_realize_i (CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
   CstNode *nnode = CST_NODE_CLASS(cst_text_parent_class)->realize(v_module, ncomp_node, v_parent, v_node, v_render);
 
-  CstText *self = CST_TEXT(nnode);
-
-  CstTextPrivate* priv = self->priv;
-  FRContext *cr = cst_render_get_cr(v_render);
-
-  sys_assert(priv->layout == NULL && "layout should be null before realize");
-
-  sys_debug_N("%d", pthread_self());
-  priv->layout = pango_cairo_create_layout (cr);
-
   return nnode;
 }
 
-static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   CstText *self = CST_TEXT(v_node);
   CstTextPrivate *priv = self->priv;
   SysInt m0, m1, m2, m3;
@@ -124,17 +114,17 @@ static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   pango_cairo_show_layout (cr, layout);
   sys_clear_pointer(&priv->layout, g_object_unref);
 
-  CST_NODE_CLASS(cst_text_parent_class)->repaint(v_module, v_parent, v_node, cr);
+  CST_NODE_CLASS(cst_text_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 }
 
-static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   CstText *self = CST_TEXT(v_node);
   CstTextPrivate* priv = self->priv;
 
   SysInt width = 0;
   SysInt height = 0;
 
-  PangoLayout *layout = priv->layout;
+  PangoLayout *layout = priv->layout = pango_cairo_create_layout (cr);
   PangoFontDescription *font_desc = priv->font_desc;
 
   pango_layout_set_text (layout, priv->text, -1);
@@ -145,9 +135,9 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
   pango_layout_get_pixel_size (layout, &width, &height);
   cst_node_set_size(v_node, width, height);
 
-  cst_node_relayout_h(v_module, v_parent, v_node, cr);
+  cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
 
-  CST_NODE_CLASS(cst_text_parent_class)->relayout(v_module, v_parent, v_node, cr);
+  CST_NODE_CLASS(cst_text_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 
 /* object api */

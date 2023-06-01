@@ -21,7 +21,7 @@ void cst_css_value_set_double(CstCssValue * value, SysDouble v);
 void cst_css_value_set_color(CstCssValue * value, FRColor * v);
 void cst_css_value_set_closure(CstCssValue * value, CstCssClosure * v);
 CstCssValue * cst_css_value_new(CstCssValueNode * node);
-CST_CSS_GTYPE_ENUM cst_css_value_get_g_type(CstCssValue * value);
+CST_RENDER_STATE_ENUM cst_css_value_get_g_type(CstCssValue * value);
 SysInt cst_css_value_parse(JNode * jnode, CstCssValue * value);
 
 SYS_API void cst_css_value_node_add(const SysChar* name, CstCssValueNode *node);

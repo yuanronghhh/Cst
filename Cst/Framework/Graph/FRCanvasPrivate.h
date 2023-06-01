@@ -5,16 +5,6 @@
 
 SYS_BEGIN_DECLS
 
-struct _FRDrawContext {
-  SysPointer v;
-
-  /* not support double buffer now */
-  FRContext *cr;
-  FRSurface *surface;
-  FRDisplay *display;
-  FRWindow *window;
-};
-
 
 SYS_END_DECLS
 

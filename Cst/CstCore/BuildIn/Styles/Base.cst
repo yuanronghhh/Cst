@@ -12,7 +12,9 @@ GStyle: {
     color: "#ffffff"
   },
   LGrid: null,
-  LBox: null,
+  LBox: {
+    color: "#ffeeff"
+  },
   "Component": {
     width: "100%",
     height: "100%"

@@ -9,6 +9,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FRGraph.h>
 #include <Framework/Graph/FRCanvasPrivate.h>
 #include <Framework/Graph/FRCanvas.h>
+#include <Framework/Graph/FRDraw.h>
 
 #include <Framework/DataType/FRMain.h>
 #include <Framework/DataType/FRSource.h>

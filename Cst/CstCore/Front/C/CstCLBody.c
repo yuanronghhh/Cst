@@ -30,7 +30,11 @@ static void cst_lbody_init(CstLBody *self) {
   cst_node_set_name(node, "LBody");
 }
 
-static void cst_lbody_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void cst_lbody_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+  SysInt width = 0, height = 0;
+
+  fr_draw_get_size(draw, &width, &height);
+  cst_node_set_size(v_node, width, height);
 }
 
 static void cst_lbody_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
@@ -39,10 +43,10 @@ static void cst_lbody_relayout_down_i(CstModule *v_module, CstComponent *v_compo
   }
 }
 
-static void cst_lbody_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void cst_lbody_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   const FRRect *rect;
 
-  CST_NODE_CLASS(cst_lbody_parent_class)->repaint(v_module, v_parent, v_node, cr);
+  CST_NODE_CLASS(cst_lbody_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 
   rect = cst_node_get_bound(v_node);
 
@@ -54,11 +58,6 @@ static CstNode* cst_lbody_realize_i(CstModule *v_module, CstComNode *ncomp_node,
   sys_return_val_if_fail(v_node != NULL, NULL);
 
   CST_NODE_CLASS(cst_lbody_parent_class)->realize(v_module, ncomp_node, v_parent, v_node, v_render);
-
-  SysInt width = 0, height = 0;
-
-  cst_render_get_size(v_render, &width, &height);
-  cst_node_set_size(v_node, width, height);
 
   return v_node;
 }

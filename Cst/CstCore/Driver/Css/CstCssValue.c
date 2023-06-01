@@ -34,7 +34,7 @@ struct _CstCssValue {
 struct _CstCssValueNode {
   SysChar *name;
   
-  CST_CSS_GTYPE_ENUM g_type;
+  CST_RENDER_STATE_ENUM g_type;
   CST_CSS_PROP_ENUM p_type;
 
   CstCssValueClass *cls_ptr;
@@ -134,7 +134,7 @@ CstCssValue* cst_css_value_new(CstCssValueNode *node) {
   return v;
 }
 
-CST_CSS_GTYPE_ENUM cst_css_value_get_g_type(CstCssValue *value) {
+CST_RENDER_STATE_ENUM cst_css_value_get_g_type(CstCssValue *value) {
   return value->cls->node->g_type;
 }
 
@@ -231,7 +231,7 @@ static SysInt cst_css_set_x(CstNode *node, FRContext *cr, CstCssValue *v) {
   
   const FRRect *bound = cst_node_get_bound(parent);
 
-  if (cst_node_layer_is(node, CST_LAYER_ABS)) {
+  if (cst_node_layer_has_flag(node, CST_LAYER_ABS)) {
 
     cst_node_set_x(node, v->v.v_int);
   } else {
@@ -250,7 +250,7 @@ static SysInt cst_css_set_y(CstNode *node, FRContext *cr, CstCssValue *v) {
 
   const FRRect *bound = cst_node_get_bound(parent);
 
-  if (cst_node_layer_is(node, CST_LAYER_ABS)) {
+  if (cst_node_layer_has_flag(node, CST_LAYER_ABS)) {
 
     cst_node_set_y(node, v->v.v_int);
   } else {
@@ -437,7 +437,7 @@ static  CstCssValueClass  font_family_class  =  {  &font_family_node,  ast_css_v
 static  CstCssValueClass  font_size_class    =  {  &font_size_node,    ast_css_value_parse,         cst_css_set_font_size,    NULL                         };
 static  CstCssValueClass  wrap_class         =  {  &wrap_node,         ast_css_value_parse,         cst_css_set_wrap,         NULL                         };
 
-void cst_css_value_bind_class(const SysChar *name, CST_CSS_PROP_ENUM prop_type, CST_CSS_GTYPE_ENUM g_type, CstCssValueClass *cls) {
+void cst_css_value_bind_class(const SysChar *name, CST_CSS_PROP_ENUM prop_type, CST_RENDER_STATE_ENUM g_type, CstCssValueClass *cls) {
   CstCssValueNode *node = cls->node;
 
   node->name = (SysChar *)name;
@@ -453,16 +453,16 @@ void cst_css_value_setup(void) {
 
   gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);
 
-  cst_css_value_bind_class("x",            CST_CSS_PROP_X,            CST_CSS_GTYPE_LAYOUT,  &x_class            );
-  cst_css_value_bind_class("y",            CST_CSS_PROP_Y,            CST_CSS_GTYPE_LAYOUT,  &y_class            );
-  cst_css_value_bind_class("padding",      CST_CSS_PROP_PADDING,      CST_CSS_GTYPE_LAYOUT,  &padding_class      );
-  cst_css_value_bind_class("margin",       CST_CSS_PROP_MARGIN,       CST_CSS_GTYPE_LAYOUT,  &margin_class       );
-  cst_css_value_bind_class("width",        CST_CSS_PROP_W,            CST_CSS_GTYPE_LAYOUT,  &width_class        );
-  cst_css_value_bind_class("height",       CST_CSS_PROP_H,            CST_CSS_GTYPE_LAYOUT,  &height_class       );
-  cst_css_value_bind_class("font-family",  CST_CSS_PROP_FONT_FAMILY,  CST_CSS_GTYPE_LAYOUT,  &font_family_class  );
-  cst_css_value_bind_class("font-size",    CST_CSS_PROP_FONT_SIZE,    CST_CSS_GTYPE_LAYOUT,  &font_size_class    );
-  cst_css_value_bind_class("wrap",         CST_CSS_PROP_WRAP,         CST_CSS_GTYPE_LAYOUT,  &wrap_class         );
-  cst_css_value_bind_class("color",        CST_CSS_PROP_COLOR,        CST_CSS_GTYPE_PAINT,   &color_class        );
+  cst_css_value_bind_class("x",            CST_CSS_PROP_X,            CST_RENDER_STATE_LAYOUT,  &x_class            );
+  cst_css_value_bind_class("y",            CST_CSS_PROP_Y,            CST_RENDER_STATE_LAYOUT,  &y_class            );
+  cst_css_value_bind_class("padding",      CST_CSS_PROP_PADDING,      CST_RENDER_STATE_LAYOUT,  &padding_class      );
+  cst_css_value_bind_class("margin",       CST_CSS_PROP_MARGIN,       CST_RENDER_STATE_LAYOUT,  &margin_class       );
+  cst_css_value_bind_class("width",        CST_CSS_PROP_W,            CST_RENDER_STATE_LAYOUT,  &width_class        );
+  cst_css_value_bind_class("height",       CST_CSS_PROP_H,            CST_RENDER_STATE_LAYOUT,  &height_class       );
+  cst_css_value_bind_class("font-family",  CST_CSS_PROP_FONT_FAMILY,  CST_RENDER_STATE_LAYOUT,  &font_family_class  );
+  cst_css_value_bind_class("font-size",    CST_CSS_PROP_FONT_SIZE,    CST_RENDER_STATE_LAYOUT,  &font_size_class    );
+  cst_css_value_bind_class("wrap",         CST_CSS_PROP_WRAP,         CST_RENDER_STATE_LAYOUT,  &wrap_class         );
+  cst_css_value_bind_class("color",        CST_CSS_PROP_COLOR,        CST_RENDER_STATE_PAINT,   &color_class        );
 }
 
 void cst_css_value_teardown(void) {

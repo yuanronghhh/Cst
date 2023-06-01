@@ -21,16 +21,16 @@ static void cst_widget_init(CstWidget *self) {
   priv->component_node = NULL;
 }
 
-static void cst_widget_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  CST_NODE_CLASS(cst_widget_parent_class)->relayout(v_module, v_parent, v_node, cr);
+static void cst_widget_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+  CST_NODE_CLASS(cst_widget_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 
 static void cst_widget_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
   CST_NODE_CLASS(cst_widget_parent_class)->relayout_down(v_module, v_component, v_parent, v_node, cr);
 }
 
-static void cst_widget_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  CST_NODE_CLASS(cst_widget_parent_class)->repaint(v_module, v_parent, v_node, cr);
+static void cst_widget_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+  CST_NODE_CLASS(cst_widget_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 }
 
 static CstNode* cst_widget_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {

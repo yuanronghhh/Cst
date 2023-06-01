@@ -26,7 +26,10 @@ struct _FRRGBA {
 SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FRColor *color);
 SYS_API FRColor* fr_color_rgba_new(const SysChar *rgba);
 SYS_API SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y) ;
-SYS_API SysBool fr_rect_is_overlap(const FRRect * rc1, const FRRect * rc2);
+#define fr_region_contains_rectangle cairo_region_contains_rectangle
+#define fr_region_intersect_rectangle cairo_region_intersect_rectangle
+
+#define fr_region_is_empty cairo_region_is_empty
 
 SYS_END_DECLS
 

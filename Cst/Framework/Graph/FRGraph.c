@@ -56,14 +56,3 @@ FRColor *fr_color_rgba_new(const SysChar *rgba) {
 SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y) {
   return (x >= rect->x && y >= rect->y && x <= rect->x + rect->width && y <= rect->y + rect->height);
 }
-
-SysBool fr_rect_is_overlap(const FRRect *rc1, const FRRect *rc2) {
-  if (rc1->x + rc1->width > rc2->x
-    && rc1->y + rc1->height > rc2->y
-    && rc2->x + rc2->width > rc1->x
-    && rc2->y + rc2->height > rc1->y) {
-    return true;
-  }
-
-  return false;
-}

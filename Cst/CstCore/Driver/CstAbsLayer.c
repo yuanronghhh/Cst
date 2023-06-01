@@ -7,10 +7,10 @@ struct _CstAbsLayerPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstAbsLayer, cst_abs_layer, CST_TYPE_LAYER);
 
-void cst_abs_layer_check_i(CstLayer *layer, CstRender *v_render, FRRect *bound) {
+void cst_abs_layer_check_i(CstLayer *self, FRDraw *draw, FRRegion *region) {
 }
 
-static void cst_abs_layer_render_i(CstLayer *layer, CstModule *v_module, CstRender *v_render) {
+static void cst_abs_layer_render_i(CstLayer *self, FRDraw *v_draw, FRContext *cr) {
 }
 
 /* object api */

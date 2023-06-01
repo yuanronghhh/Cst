@@ -28,24 +28,24 @@ static void cst_lgrid_init(CstLGrid *self) {
   cst_node_set_name(node, "LGrid");
 }
 
-static void _cst_lgrid_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void cst_lgrid_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   SysInt w, h;
 
   cst_node_get_prefer_size(v_node, &w, &h);
   cst_node_set_size(v_node, w, h);
-  cst_node_relayout_h(v_module, v_parent, v_node, cr);
+  cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
 
-  CST_NODE_CLASS(cst_lgrid_parent_class)->relayout(v_module, v_parent, v_node, cr);
+  CST_NODE_CLASS(cst_lgrid_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 
-static void _cst_lgrid_relayout_down(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+static void cst_lgrid_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
   // set avg width, same max height.
 
   CST_NODE_CLASS(cst_lgrid_parent_class)->relayout_down(v_module, v_component, v_parent, v_node, cr);
 }
 
-static void _cst_lgrid_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  CST_NODE_CLASS(cst_lgrid_parent_class)->repaint(v_module, v_parent, v_node, cr);
+static void cst_lgrid_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+  CST_NODE_CLASS(cst_lgrid_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 
   cst_node_stroke_rectangle(v_node, cr);
 }
@@ -65,7 +65,7 @@ static void cst_lgrid_class_init(CstLGridClass* cls) {
   ocls->dispose = cst_lgrid_dispose;
 
   ncls->construct = cst_lgrid_construct;
-  ncls->relayout = _cst_lgrid_relayout;
-  ncls->relayout_down = _cst_lgrid_relayout_down;
-  ncls->repaint = _cst_lgrid_repaint;
+  ncls->relayout = cst_lgrid_relayout_i;
+  ncls->relayout_down = cst_lgrid_relayout_down_i;
+  ncls->repaint = cst_lgrid_repaint_i;
 }

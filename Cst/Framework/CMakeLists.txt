@@ -96,6 +96,8 @@ set(SRC
 
   ./Graph/FRGraph.c
   ./Graph/FRGraph.h
+  ./Graph/FRDraw.c
+  ./Graph/FRDraw.h
   ./Graph/FRText.c
   ./Graph/FRText.h
   ./Graph/FRCanvasPrivate.h

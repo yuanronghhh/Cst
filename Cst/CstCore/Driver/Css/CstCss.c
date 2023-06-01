@@ -268,10 +268,10 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CST_RE
       // sys_debug_N("%s,%s", cst_node_get_id(node), pair->key);
 
       switch (state) {
-        case CST_CSS_GTYPE_LAYOUT:
+        case CST_RENDER_STATE_LAYOUT:
           cst_css_value_layout(pair->value, cr, node);
           break;
-        case CST_CSS_GTYPE_PAINT:
+        case CST_RENDER_STATE_PAINT:
           cst_css_value_paint(pair->value, cr, node);
           break;
         default:

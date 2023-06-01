@@ -142,6 +142,8 @@ void bfs_box_layer_mark(CstNode *v_node, CstRender *v_render, FRRect *bound) {
         continue;
       }
 
+      cst_render_queue_draw_node(v_render, nnode);
+
       nchild = cst_node_children(nnode);
       while (nchild) {
         bfs_level_push_tail(next_level, nchild);

@@ -68,6 +68,10 @@ void cst_node_relayout_root(CstModule *v_module, CstNode *v_node, CstRender *v_r
   cst_node_render_leave(v_node, cr, CST_RENDER_STATE_LAYOUT);
 }
 
+void cst_node_rerender(CstNode *v_parent, CstNode *v_node, FRContext *cr) {
+}
+
+
 static void node_repaint_node_r(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
   sys_return_if_fail(v_node != NULL);
 

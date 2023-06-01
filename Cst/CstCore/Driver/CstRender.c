@@ -37,11 +37,11 @@ void cst_render_get_size(CstRender *self, SysInt *width, SysInt *height) {
 }
 
 CstBoxLayer *cst_render_get_box_layer(CstRender *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+sys_return_val_if_fail(self != NULL, NULL);
 
-  CstRenderPrivate *priv = self->priv;
+CstRenderPrivate *priv = self->priv;
 
-  return CST_BOX_LAYER(priv->box_layer);
+return CST_BOX_LAYER(priv->box_layer);
 }
 
 CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
@@ -107,7 +107,7 @@ void cst_render_frame_end(CstRender *self, FRRegion *region) {
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  FRRect bound = {0};
+  FRRect bound = { 0 };
   CstRenderPrivate *priv = self->priv;
 
   bound.width = width;
@@ -121,7 +121,7 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 void cst_render_resize_window(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
-  FRRect bound = {0};
+  FRRect bound = { 0 };
   CstRenderPrivate *priv = self->priv;
   CstNode *root = cst_box_layer_get_root(CST_BOX_LAYER(priv->box_layer));
 
@@ -134,6 +134,11 @@ void cst_render_resize_window(CstRender *self) {
 }
 
 void cst_render_rerender(CstRender *self) {
+  sys_return_if_fail(self != NULL);
+  CstRenderPrivate *priv = self->priv;
+
+  if (sys_queue_get_length(priv->draw_queue) > 0) {
+  }
 }
 
 void cst_render_request_redraw(CstRender *self, FRRect *bound) {

@@ -227,16 +227,38 @@ const SysChar *cst_css_value_node_name(CstCssValueNode *node) {
 /* css basic api */
 static SysInt cst_css_set_x(CstNode *node, FRContext *cr, CstCssValue *v) {
   sys_return_val_if_fail(v->d_type == CST_CSS_VALUE_INT, SYS_FAILED);
+  CstNode *parent = cst_node_parent(node);
+  
+  const FRRect *bound = cst_node_get_bound(parent);
 
-  cst_node_set_x(node, v->v.v_int);
+  if (cst_node_layer_is(node, CST_LAYER_ABS)) {
+
+    cst_node_set_x(node, v->v.v_int);
+  } else {
+
+    if (parent) {
+      cst_node_set_x(node, bound->x + v->v.v_int);
+    }
+  }
 
   return SYS_SUCCESS;
 }
 
 static SysInt cst_css_set_y(CstNode *node, FRContext *cr, CstCssValue *v) {
   sys_return_val_if_fail(v->d_type == CST_CSS_VALUE_INT, SYS_FAILED);
+  CstNode *parent = cst_node_parent(node);
 
-  cst_node_set_y(node, v->v.v_int);
+  const FRRect *bound = cst_node_get_bound(parent);
+
+  if (cst_node_layer_is(node, CST_LAYER_ABS)) {
+
+    cst_node_set_y(node, v->v.v_int);
+  } else {
+    if (parent) {
+
+      cst_node_set_y(node, bound->y + v->v.v_int);
+    }
+  }
 
   return SYS_SUCCESS;
 }

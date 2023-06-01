@@ -108,6 +108,7 @@ void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, F
 void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr);
 void cst_node_relayout_down(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr);
 void cst_node_relayout_root(CstModule * v_module, CstNode * v_node, CstRender * v_render);
+void cst_node_rerender(CstNode * v_parent, CstNode * v_node, FRContext * cr);
 void cst_node_render_enter(CstNode * node, FRContext * cr, CST_RENDER_STATE_ENUM state);
 void cst_node_render_leave(CstNode * node, FRContext * cr, CST_RENDER_STATE_ENUM state);
 void cst_node_repaint_root(CstModule * v_module, CstNode * node, CstRender * v_render);

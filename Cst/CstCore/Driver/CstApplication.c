@@ -89,11 +89,11 @@ static void cst_application_active(CstApplication* self) {
 
   CstModule* v_module = priv->main_module;
   CstManager *v_manager = priv->manager;
-  CstRender *v_render = cst_render_new_I(false);;
+  CstRender *v_render = cst_render_new_I(false);
   FRAWatchProps props = { 0 };
 
   priv->render = v_render;
-
+  
   props.key = FR_KEY_R;
   // pres r for debug render check
   cst_module_add_awatch(v_module, (SysPointer)self, "key_press", "app_window_resize_test", app_window_resize_test, &props);

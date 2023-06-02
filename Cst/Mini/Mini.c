@@ -19,7 +19,7 @@ static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_cou
 }
 
 int main(int argc, char* argv[]) {
-  int status;
+  int status = 0;
   CstApplication *app;
 
   sys_setup();

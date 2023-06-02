@@ -19,10 +19,27 @@ if(UNIX)
 endif()
 
 if(WIN32)
+  set(PTHREAD_FILE_COMPONENTS
+    "pthreadVC3.dll"
+    "pthreadVCE3.dll"
+    "pthreadVSE3.dll")
+
   FIND_LIBRARY(PTHREAD_LIBRARY
     NAMES pthreadVC3 pthreadVCE3 pthreadVSE3
     HINTS ${search_dirs}
     PATH_SUFFIXES pthreads/lib lib64 lib)
+
+  FOREACH(COMPONENT ${PTHREAD_FILE_COMPONENTS})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+    FIND_FILE(PTHREAD_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES pthreads/bin
+      )
+
+    LIST(APPEND PTHREAD_FILES "${PTHREAD_${COMPONENT}_FILE}")
+  ENDFOREACH()
 endif()
 
 INCLUDE(FindPackageHandleStandardArgs)

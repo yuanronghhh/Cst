@@ -169,7 +169,7 @@ void cst_css_value_free(CstCssValue *value) {
   case CST_CSS_VALUE_POINTER:
     break;
   case CST_CSS_VALUE_CLOSURE:
-    cst_css_closure_unref(value->v.v_closure);
+    sys_clear_pointer(&value->v.v_closure, cst_css_closure_unref);
     break;
   }
 

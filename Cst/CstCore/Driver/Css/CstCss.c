@@ -30,7 +30,8 @@ void cst_css_pair_free(CstCssPair *pair) {
   sys_return_if_fail(pair != NULL);
 
   sys_free_N(pair->key);
-  cst_css_value_free(pair->value);
+
+  sys_clear_pointer(&pair->value, cst_css_value_free);
   sys_free_N(pair);
 }
 
@@ -328,11 +329,10 @@ static void cst_css_group_dispose(SysObject* o) {
   CstCssGroupPrivate* priv = self->priv;
 
   if (priv->base != NULL) {
-    sys_ptr_array_unref(priv->base);
+    sys_clear_pointer(&priv->base, sys_ptr_array_unref);
   }
 
-  sys_ptr_array_unref(priv->pairs);
-
+  sys_clear_pointer(&priv->pairs, sys_ptr_array_unref);
   sys_free_N(priv->id);
 
   SYS_OBJECT_CLASS(cst_css_group_parent_class)->dispose(o);

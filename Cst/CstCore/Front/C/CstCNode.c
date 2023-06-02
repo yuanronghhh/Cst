@@ -1230,6 +1230,7 @@ static void cst_node_dispose(SysObject* o) {
   }
 
   sys_ptr_array_unref(priv->css_groups);
+
   sys_list_free_full(priv->awatches, (SysDestroyFunc)_sys_object_unref);
   sys_list_free_full(priv->node_maps, (SysDestroyFunc)_sys_object_unref);
 

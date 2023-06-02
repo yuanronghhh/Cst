@@ -98,7 +98,7 @@ static SysUInt bfs_level_get_length(BFSLevel *self) {
   return sys_queue_get_length(self->lqueue);
 }
 
-static SysPointer bfs_level_pop(BFSLevel *self) {
+static SYS_INLINE SysPointer bfs_level_pop(BFSLevel *self) {
   return sys_queue_pop_head(self->lqueue);
 }
 

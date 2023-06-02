@@ -26,7 +26,6 @@ if(WIN32)
     HINTS ${search_dirs}
     PATH_SUFFIXES fribidi/bin)
 
-  log("${FRIBIDI_FILE}")
   LIST(APPEND FRIBIDI_FILES "${FRIBIDI_FILE}")
 endif()
 

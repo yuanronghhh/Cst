@@ -105,6 +105,7 @@ CstNode *cst_text_realize_i (CstModule *v_module, CstComNode *ncomp_node, CstNod
 
   sys_assert(priv->layout == NULL && "layout should be null before realize");
 
+  sys_debug_N("%d", pthread_self());
   priv->layout = pango_cairo_create_layout (cr);
 
   return nnode;

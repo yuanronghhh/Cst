@@ -53,6 +53,8 @@ void fr_main_iter_next(FRMain *self, FRSource **source) {
   FRMainPrivate* priv = self->priv;
   SysList *next = NULL;
 
+  fr_main_lock(self);
+
   if(priv->sources) {
     if(priv->current) {
 
@@ -70,6 +72,8 @@ void fr_main_iter_next(FRMain *self, FRSource **source) {
 
     *source = NULL;
   }
+
+  fr_main_unlock(self);
 }
 
 SysBool fr_main_is_running(FRMain *self) {

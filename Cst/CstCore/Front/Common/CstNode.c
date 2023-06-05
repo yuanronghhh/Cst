@@ -50,13 +50,13 @@ void cst_node_stroke_rectangle(CstNode *node, FRContext *cr) {
 }
 
 /* object api */
-void cst_node_relayout_root(CstModule *v_module, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNode *v_children = cst_node_children(v_node);
 
   cst_node_render_enter(v_node, cr, state);
-  cst_node_relayout(v_module, NULL, v_node, cr, draw, state);
+  cst_node_relayout(v_module, v_parent, v_node, cr, draw, state);
 
   if(v_children) {
     cst_node_layout(v_module, v_node, v_children, cr, draw, state);
@@ -66,18 +66,28 @@ void cst_node_relayout_root(CstModule *v_module, CstNode *v_node, FRContext *cr,
   cst_node_set_need_relayout(v_node, false);
 }
 
+void cst_node_paint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+  sys_return_if_fail(v_node != NULL);
+
+  if (!cst_node_get_need_repaint(v_node)) {
+    sys_warning_N("%s", "repaint should not execute twice.");
+    return;
+  }
+
+  cst_node_render_enter(v_node, cr, state);
+  cst_node_repaint(v_module, v_parent, v_node, cr, draw, state);
+  cst_node_render_leave(v_node, cr, state);
+
+  cst_node_set_need_repaint(v_node, false);
+}
+
 static void node_repaint_node_r(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNode *v_children = cst_node_children(v_node);
   CstNode *v_next = cst_node_next(v_node);
 
-  cst_node_render_enter(v_node, cr, state);
-  
-  cst_node_repaint(v_module, v_parent, v_node, cr, draw, state);
-  
-  cst_node_render_leave(v_node, cr, state);
-  cst_node_set_need_repaint(v_node, false);
+  cst_node_paint(v_module, v_parent, v_node, cr, draw, state);
 
   if (v_children) {
     node_repaint_node_r(v_module, v_node, v_children, cr, draw, state);
@@ -88,9 +98,9 @@ static void node_repaint_node_r(CstModule *v_module, CstNode *v_parent, CstNode 
   }
 }
 
-void cst_node_paint_root(CstModule *v_module, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
 
-  node_repaint_node_r(v_module, NULL, v_node, cr, draw, state);
+  node_repaint_node_r(v_module, v_parent, v_node, cr, draw, state);
 }
 
 void cst_node_render_enter(CstNode *node, FRContext *cr, SysInt state) {

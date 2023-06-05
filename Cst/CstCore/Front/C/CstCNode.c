@@ -756,7 +756,7 @@ SysBool cst_node_get_is_dirty(CstNode *node) {
 
   CstNodePrivate *priv = node->priv;
 
-  return priv->dirty_bit == (priv->dirty_bit | CST_DIRTY_DIRTY);
+  return priv->dirty_bit & CST_DIRTY_DIRTY;
 }
 
 void cst_node_set_is_dirty(CstNode *node, SysBool is_dirty) {

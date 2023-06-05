@@ -65,6 +65,7 @@ FR_FUNC_DEFINE_EVENT(app_window_resize_test) {
   CstApplicationPrivate *priv = app->priv;
   CstRender *render = priv->render;
 
+  sys_debug_N("%s", "app_window_resize_test");
   cst_render_resize_window(render);
 
   return 0;

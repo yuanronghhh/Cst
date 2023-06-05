@@ -261,7 +261,7 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CST_RE
       pair = priv->pairs->pdata[j];
       g_type = cst_css_value_get_g_type(pair->value);
 
-      if (state != g_type) {
+      if (!(state & g_type)) {
         continue;
       }
 
@@ -269,9 +269,11 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CST_RE
 
       switch (state) {
         case CST_RENDER_STATE_LAYOUT:
+        case CST_RENDER_STATE_RELAYOUT:
           cst_css_value_layout(pair->value, cr, node);
           break;
         case CST_RENDER_STATE_PAINT:
+        case CST_RENDER_STATE_REPAINT:
           cst_css_value_paint(pair->value, cr, node);
           break;
         default:

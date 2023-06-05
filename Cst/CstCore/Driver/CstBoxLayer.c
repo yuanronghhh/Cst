@@ -182,8 +182,8 @@ static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, FRContext *cr)
 
   v_node = priv->tree;
 
-  cst_node_relayout_root(NULL, v_node, cr, draw, CST_RENDER_STATE_LAYOUT);
-  cst_node_paint_root(NULL, v_node, cr, draw, CST_RENDER_STATE_PAINT);
+  cst_node_relayout_root(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_LAYOUT);
+  cst_node_repaint_root(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_PAINT);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {

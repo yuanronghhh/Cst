@@ -453,16 +453,16 @@ void cst_css_value_setup(void) {
 
   gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);
 
-  cst_css_value_bind_class("x",            CST_CSS_PROP_X,            CST_RENDER_STATE_LAYOUT,  &x_class            );
-  cst_css_value_bind_class("y",            CST_CSS_PROP_Y,            CST_RENDER_STATE_LAYOUT,  &y_class            );
-  cst_css_value_bind_class("padding",      CST_CSS_PROP_PADDING,      CST_RENDER_STATE_LAYOUT,  &padding_class      );
-  cst_css_value_bind_class("margin",       CST_CSS_PROP_MARGIN,       CST_RENDER_STATE_LAYOUT,  &margin_class       );
-  cst_css_value_bind_class("width",        CST_CSS_PROP_W,            CST_RENDER_STATE_LAYOUT,  &width_class        );
-  cst_css_value_bind_class("height",       CST_CSS_PROP_H,            CST_RENDER_STATE_LAYOUT,  &height_class       );
-  cst_css_value_bind_class("font-family",  CST_CSS_PROP_FONT_FAMILY,  CST_RENDER_STATE_LAYOUT,  &font_family_class  );
-  cst_css_value_bind_class("font-size",    CST_CSS_PROP_FONT_SIZE,    CST_RENDER_STATE_LAYOUT,  &font_size_class    );
-  cst_css_value_bind_class("wrap",         CST_CSS_PROP_WRAP,         CST_RENDER_STATE_LAYOUT,  &wrap_class         );
-  cst_css_value_bind_class("color",        CST_CSS_PROP_COLOR,        CST_RENDER_STATE_PAINT,   &color_class        );
+  cst_css_value_bind_class("x",            CST_CSS_PROP_X,            CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &x_class            );
+  cst_css_value_bind_class("y",            CST_CSS_PROP_Y,            CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &y_class            );
+  cst_css_value_bind_class("padding",      CST_CSS_PROP_PADDING,      CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &padding_class      );
+  cst_css_value_bind_class("margin",       CST_CSS_PROP_MARGIN,       CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &margin_class       );
+  cst_css_value_bind_class("width",        CST_CSS_PROP_W,            CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &width_class        );
+  cst_css_value_bind_class("height",       CST_CSS_PROP_H,            CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &height_class       );
+  cst_css_value_bind_class("font-family",  CST_CSS_PROP_FONT_FAMILY,  CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &font_family_class  );
+  cst_css_value_bind_class("font-size",    CST_CSS_PROP_FONT_SIZE,    CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &font_size_class    );
+  cst_css_value_bind_class("wrap",         CST_CSS_PROP_WRAP,         CST_RENDER_STATE_LAYOUT | CST_RENDER_STATE_RELAYOUT,  &wrap_class         );
+  cst_css_value_bind_class("color",        CST_CSS_PROP_COLOR,        CST_RENDER_STATE_PAINT  | CST_RENDER_STATE_REPAINT,   &color_class        );
 }
 
 void cst_css_value_teardown(void) {

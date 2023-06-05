@@ -51,37 +51,28 @@ void cst_layer_rerender_i(CstLayer *self, FRDraw *draw, FRContext *cr) {
   CstNode *v_node;
   CstNode *v_parent;
   CstLayerPrivate *priv = self->priv;
+  SysQueue *draw_queue = priv->draw_queue;
 
-  sys_queue_foreach(priv->draw_queue, item) {
+  sys_debug_N("%s", "rerender");
+
+  for (SysList *item = draw_queue->head; item; item = item->next) {
     v_node = item->data;
     v_parent = cst_node_parent(v_node);
 
-    cst_node_render_enter(v_node, cr, CST_RENDER_STATE_RELAYOUT);
     if (v_parent == NULL) {
-      cst_node_relayout_reset(v_node);
-      cst_node_relayout(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_RELAYOUT);
+      cst_node_relayout_root(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_RELAYOUT);
 
     } else {
       cst_node_layout(NULL, v_parent, v_node, cr, draw, CST_RENDER_STATE_RELAYOUT);
     }
-
-    cst_node_render_leave(v_node, cr, CST_RENDER_STATE_RELAYOUT);
   }
 
-  sys_queue_foreach(priv->draw_queue, item) {
-    v_node = item->data;
+  while(sys_queue_get_length(draw_queue) > 0) {
+    v_node = sys_queue_pop_head(draw_queue);
     v_parent = cst_node_parent(v_node);
 
-    cst_node_render_enter(v_node, cr, CST_RENDER_STATE_REPAINT);
-    if (v_parent == NULL) {
-      cst_node_repaint(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_REPAINT);
-      cairo_surface_flush(fr_draw_get_surface(draw));
-
-    } else {
-      
-      cst_node_repaint(NULL, v_parent, v_node, cr, draw, CST_RENDER_STATE_REPAINT);
-    }
-    cst_node_render_leave(v_node, cr, CST_RENDER_STATE_REPAINT);
+    cst_node_paint(NULL, v_parent, v_node, cr, draw, CST_RENDER_STATE_REPAINT);
+    sys_object_unref(v_node);
   }
 }
 

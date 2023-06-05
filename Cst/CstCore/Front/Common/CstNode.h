@@ -106,12 +106,13 @@ CstNode *cst_node_deep_clone(CstNode *v_node);
 void cst_node_bind(CstNode *self, CstComNode *com_node);
 void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props);
 void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_paint(CstModule * v_module, CstNode * v_parent, CstNode * v_node, FRContext * cr, FRDraw * draw, SysInt state);
 void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 void cst_node_relayout_down(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr);
-void cst_node_relayout_root(CstModule *v_module, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 void cst_node_render_enter(CstNode *node, FRContext *cr, SysInt state);
 void cst_node_render_leave(CstNode *node, FRContext *cr, SysInt state);
-void cst_node_paint_root(CstModule *v_module, CstNode *node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *node, FRContext *cr, FRDraw *draw, SysInt state);
 
 SYS_END_DECLS
 

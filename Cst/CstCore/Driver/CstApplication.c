@@ -65,7 +65,7 @@ FR_FUNC_DEFINE_EVENT(app_window_resize_test) {
   CstApplicationPrivate *priv = app->priv;
   CstRender *render = priv->render;
 
-  sys_debug_N("%s", "app_window_resize_test");
+  // sys_debug_N("%s", "app_window_resize_test");
   cst_render_resize_window(render);
 
   return 0;
@@ -94,9 +94,8 @@ static void cst_application_active(CstApplication* self) {
 
   priv->render = v_render;
 
-  props.key = FR_KEY_R;
-  // pres r for debug render check
-  cst_module_add_awatch(v_module, (SysPointer)self, "key_press", "app_window_resize_test", app_window_resize_test, &props);
+  props.etype = FR_TYPE_EVENT;
+  cst_module_add_awatch(v_module, (SysPointer)self, "window_resize", "app_window_resize_test", app_window_resize_test, &props);
 
   cst_manager_realize(v_manager, v_module, v_render);
   cst_render_render(v_render);

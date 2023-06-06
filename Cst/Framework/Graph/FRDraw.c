@@ -6,6 +6,9 @@
 struct _FRDrawPrivate {
   SysPointer v;
 
+  SysInt64 last_clock;
+  SysDouble rate_time;
+
   /* not support double buffer now */
   FRSurface *surface;
   FRDisplay *display;
@@ -13,6 +16,21 @@ struct _FRDrawPrivate {
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRDraw, fr_draw, SYS_TYPE_OBJECT);
+
+SysBool fr_draw_frame_need_draw(FRDraw *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  FRDrawPrivate *priv = self->priv;
+  SysInt64 current = sys_get_monoic_time();
+
+  if (priv->last_clock > 0) {
+    return (current - priv->last_clock) > priv->rate_time;
+  }
+
+  priv->last_clock = current;
+
+  return false;
+}
 
 /* FRDraw */
 
@@ -123,6 +141,7 @@ static void fr_draw_construct(SysObject *o, FRWindow *window) {
 
   priv->window = window;
   priv->surface = NULL;
+  priv->rate_time = 1 / 60 * 1e6;
 }
 
 FRDraw* fr_draw_new(void) {
@@ -140,8 +159,6 @@ FRDraw *fr_draw_new_I(FRWindow *window) {
 static void fr_draw_dispose(SysObject* o) {
   FRDraw *self = FR_DRAW(o);
   FRDrawPrivate *priv = self->priv;
-
-  sys_clear_pointer(&priv->surface, cairo_surface_destroy);
 
   SYS_OBJECT_CLASS(fr_draw_parent_class)->dispose(o);
 }

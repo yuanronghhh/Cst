@@ -3,6 +3,7 @@
 #include <Framework/Event/Action/FRAWatchMousePress.h>
 #include <Framework/Event/Action/FRAWatchKey.h>
 #include <Framework/Event/Action/FRAWatchKeyPress.h>
+#include <Framework/Event/Action/FRAWatchAny.h>
 
 
 struct _FRAWatchPrivate {
@@ -198,6 +199,7 @@ void fr_awatch_setup(void) {
   fr_action_watch_register_type("mouse_press", FR_TYPE_AWATCH_MOUSE_PRESS);
   fr_action_watch_register_type("key", FR_TYPE_AWATCH_KEY);
   fr_action_watch_register_type("key_press", FR_TYPE_AWATCH_KEY_PRESS);
+  fr_action_watch_register_type("window_resize", FR_TYPE_AWATCH_ANY);
 }
 
 void fr_awatch_teardown(void) {

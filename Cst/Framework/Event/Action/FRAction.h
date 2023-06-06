@@ -5,6 +5,7 @@
 
 SYS_BEGIN_DECLS
 
+#define FR_ACTION_STATIC (fr_action_get_static())
 #define FR_TYPE_ACTION (fr_action_get_type())
 #define FR_ACTION(o) ((FRAction* )sys_object_cast_check(o, FR_TYPE_ACTION))
 #define FR_ACTION_CLASS(o) ((FRActionClass *)sys_class_cast_check(o, FR_TYPE_ACTION))
@@ -24,8 +25,9 @@ struct _FRAction {
   FRActionPrivate *priv;
 };
 
-SYS_API FRAction* fr_action_new(void);
+SYS_API FRAction* fr_action_new_I(void);
 SYS_API SysType fr_action_get_type(void);
+SYS_API FRAction* fr_action_get_static(void);
 
 SYS_API void fr_action_dispatch(FRAction *self, FREvent *e);
 SYS_API SysBool fr_action_check(FRAction *self, FREvent *e);

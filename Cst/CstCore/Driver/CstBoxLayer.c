@@ -143,7 +143,7 @@ void bfs_box_layer_mark(CstLayer *layer, CstNode *v_node, FRRegion *region) {
     if (status < 0) {
       continue;
     }
-    sys_debug_N("%s<%d,%d>", cst_node_get_id(nnode), nbound->width, nbound->height);
+    // sys_debug_N("%s<%d,%d>", cst_node_get_id(nnode), nbound->width, nbound->height);
 
     cst_layer_queue_draw_node(layer, nnode);
 

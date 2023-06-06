@@ -95,10 +95,12 @@ typedef  struct  _FRAWatchProps              FRAWatchProps;
 typedef  struct  _FRAWatch                   FRAWatch;
 typedef  struct  _FRAWatchClass              FRAWatchClass;
 typedef  struct  _FRAWatchPrivate            FRAWatchPrivate;
+typedef  struct  _FRAWatchAny                FRAWatchAny;
+typedef  struct  _FRAWatchAnyClass           FRAWatchAnyClass;
+typedef  struct  _FRAWatchAnyPrivate         FRAWatchAnyPrivate;
 typedef  struct  _FRAWatchKey                FRAWatchKey;
 typedef  struct  _FRAWatchKeyClass           FRAWatchKeyClass;
 typedef  struct  _FRAWatchKeyPrivate         FRAWatchKeyPrivate;
-
 typedef  struct  _FRAWatchKeyPress                FRAWatchKeyPress;
 typedef  struct  _FRAWatchKeyPressClass           FRAWatchKeyPressClass;
 typedef  struct  _FRAWatchKeyPressPrivate         FRAWatchKeyPressPrivate;

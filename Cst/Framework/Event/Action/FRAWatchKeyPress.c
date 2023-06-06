@@ -9,7 +9,6 @@ struct _FRAWatchKeyPressPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRAWatchKeyPress, fr_awatch_key_press, FR_TYPE_AWATCH);
 
-
 static SysBool fr_awatch_key_press_check_i(FRAWatch *o, FREvent *e) {
   FREventKey *ekey;
   FRAWatchKeyPress *self = FR_AWATCH_KEY_PRESS(o);

@@ -54,6 +54,7 @@ void fr_events_setup(void) {
   fr_events_add_action(FR_AKEY_STATIC);
   fr_events_add_action(FR_AMOUSE_KEY_STATIC);
   fr_events_add_action(FR_ACURSOR_MOVE_STATIC);
+  fr_events_add_action(FR_ACTION_STATIC);
 }
 
 void fr_events_teardown(void) {

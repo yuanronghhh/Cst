@@ -7,7 +7,6 @@ struct _FREventPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FREvent, fr_event, SYS_TYPE_OBJECT);
 
-
 SysBool fr_event_is(FREvent *self, SysType ttype) {
   SysType type = sys_type_from_instance(self);
 

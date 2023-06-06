@@ -5,7 +5,7 @@ static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count
     return;
   }
 
-  sys_debug_N("%p\t%d", o, ref_count);
+  // sys_debug_N("%p\t%d", o, ref_count);
   sys_assert(ref_count > 0);
 }
 
@@ -14,7 +14,7 @@ static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_cou
     return;
   }
 
-  sys_debug_N("%p\t%d", o, ref_count);
+  // sys_debug_N("%p\t%d", o, ref_count);
   sys_assert(ref_count > 0);
 }
 

@@ -24,7 +24,7 @@ void fr_action_dispatch(FRAction *self, FREvent *e) {
 }
 
 SysBool fr_action_check_i(FRAction *self, FREvent *e) {
-  return false;
+  return true;
 }
 
 FRAction *fr_action_ref(FRAction *self) {
@@ -105,6 +105,14 @@ FRAction* fr_action_new(void) {
   return sys_object_new(FR_TYPE_ACTION, NULL);
 }
 
+FRAction *fr_action_new_I(void) {
+  FRAction *o = fr_action_new();
+
+  fr_action_create_i(o);
+
+  return o;
+}
+
 static void fr_action_dispose(SysObject* o) {
   FRAction *self = FR_ACTION(o);
   FRActionPrivate* priv = self->priv;
@@ -129,4 +137,17 @@ void fr_action_init(FRAction *self) {
   self->priv = fr_action_get_private(self);
 
   self->priv = fr_action_get_private(self);
+}
+
+
+FRAction* fr_action_get_static(void) {
+  static FRAction *node = NULL;
+
+  if(node != NULL) {
+    return node;
+  }
+
+  node = fr_action_new_I();
+
+  return node;
 }

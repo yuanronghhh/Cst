@@ -13,6 +13,7 @@ SYS_BEGIN_DECLS
 typedef void (*FRGetBoundFunc) (SysPointer user_data, FRRect *rect);
 
 struct _FRAWatchProps {
+  SysType etype;
   SysInt key;
   FRGetBoundFunc get_bound_func;
 };

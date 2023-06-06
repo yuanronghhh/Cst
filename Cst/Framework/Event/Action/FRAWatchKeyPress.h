@@ -21,7 +21,6 @@ struct _FRAWatchKeyPress {
 };
 
 SYS_API SysType fr_awatch_key_press_get_type(void);
-SYS_API FRAWatch * fr_awatch_key_press_new_I(SysPointer user_data, SysInt scancode, FREventFunc func);
 
 SYS_END_DECLS
 

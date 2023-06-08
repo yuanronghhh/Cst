@@ -101,8 +101,8 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   FRRect bound = { 0 };
   CstRenderPrivate *priv = self->priv;
 
-  bound.width = width; // width;
-  bound.height = height; // height;
+  bound.width = width;
+  bound.height = height;
 
   region = fr_region_create_rectangle(&bound);
   cst_render_rerender(self, region);
@@ -115,7 +115,6 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
   CstRenderPrivate *priv = self->priv;
   FRDraw *draw = priv->draw;
   FRContext *cr;
-
 
   if (fr_draw_frame_need_draw(draw)) {
     fr_draw_frame_begin(draw, region);

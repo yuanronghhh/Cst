@@ -1,4 +1,4 @@
-#include <TestInGtk.h>
+#include <CstDemo/TestGTK.h>
 #include "pixman.h"
 
 bool test_draw_callback(

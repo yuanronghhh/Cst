@@ -82,13 +82,16 @@ target_link_libraries(CstCoreTest
 )
 
 target_copy_files(CstCoreTest
-  ${VLD_FILES}
-  ${PTHREAD_FILES}
-  ${VKVG_FILES}
-  ${VULKAN_FILES}
-  # ${CAIRO_FILES}
-  ${GLFW3_FILES}
-  ${FREETYPE_FILES}
-  ${PNG_FILES}
-  ${PIXMAN_FILES}
+  "${VLD_FILES}"
+  "${CAIRO_FILES}"
+  "${PANGO_FILES}"
+  "${GLIB_FILES}"
+  "${PTHREAD_FILES}"
+  "${VKVG_FILES}"
+  "${VULKAN_FILES}"
+  # "${CAIRO_FILES}"
+  "${GLFW3_FILES}"
+  "${FREETYPE_FILES}"
+  "${PNG_FILES}"
+  "${PIXMAN_FILES}"
 )

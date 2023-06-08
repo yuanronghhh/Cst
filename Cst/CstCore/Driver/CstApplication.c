@@ -19,6 +19,7 @@ SYS_DEFINE_TYPE_WITH_PRIVATE(CstApplication, cst_application, SYS_TYPE_OBJECT);
 
 
 SysUInt64 last_time = 0;
+static SysBool env_inited = false;
 static CstApplication *g_application = NULL;
 
 void cst_application_stop (CstApplication *self) {
@@ -65,7 +66,6 @@ FR_FUNC_DEFINE_EVENT(app_window_resize_test) {
   CstApplicationPrivate *priv = app->priv;
   CstRender *render = priv->render;
 
-  // sys_debug_N("%s", "app_window_resize_test");
   cst_render_resize_window(render);
 
   return 0;
@@ -95,7 +95,7 @@ static void cst_application_active(CstApplication* self) {
   priv->render = v_render;
 
   props.etype = FR_TYPE_EVENT;
-  cst_module_add_awatch(v_module, (SysPointer)self, "window_resize", "app_window_resize_test", app_window_resize_test, &props);
+  cst_module_add_awatch(v_module, (SysPointer)self, "window_refresh", "app_window_resize_test", app_window_resize_test, &props);
 
   cst_manager_realize(v_manager, v_module, v_render);
   cst_render_render(v_render);
@@ -110,6 +110,11 @@ void cst_application_mono_setup(const SysChar *managed_path) {
 }
 
 void cst_application_env_setup(void) {
+  if (env_inited) {
+    return;
+  }
+
+  sys_setup();
   fr_window_setup();
   fr_canvas_setup();
   cst_css_setup();
@@ -121,9 +126,16 @@ void cst_application_env_setup(void) {
 #endif
 
   cst_context_setup(2, NULL);
+
+  env_inited = true;
 }
 
 void cst_application_env_teardown(void) {
+  if (!env_inited) {
+    sys_warning_N("%s", "application enviroment teardown must be after setup.");
+    return;
+  }
+
   cst_css_teardown();
 
   fr_canvas_teardown();
@@ -131,6 +143,8 @@ void cst_application_env_teardown(void) {
   fr_events_teardown();
 
   cst_context_teardown();
+
+  env_inited = false;
 }
 
 SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {

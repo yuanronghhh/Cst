@@ -23,13 +23,18 @@ SysBool fr_draw_frame_need_draw(FRDraw *self) {
   FRDrawPrivate *priv = self->priv;
   SysInt64 current = sys_get_monoic_time();
 
-  if (priv->last_clock > 0) {
-    return (current - priv->last_clock) > priv->rate_time;
+  if (priv->last_clock == 0) {
+    priv->last_clock = current;
+    return true;
   }
 
-  priv->last_clock = current;
+  SysBool r = (current - priv->last_clock) > priv->rate_time;
+  
+  printf("%lld\t%lld\t%lld\t%d\n", current, priv->last_clock, (current - priv->last_clock), r);
 
-  return false;
+  priv->last_clock = r ? current : priv->last_clock;
+
+  return r;
 }
 
 /* FRDraw */
@@ -141,7 +146,7 @@ static void fr_draw_construct(SysObject *o, FRWindow *window) {
 
   priv->window = window;
   priv->surface = NULL;
-  priv->rate_time = 1 / 60 * 1e6;
+  priv->rate_time = (1 / 24.0) * 1e3;
 }
 
 FRDraw* fr_draw_new(void) {

@@ -64,6 +64,8 @@ set(SRC
   ./Event/Action/FRAWatchKeyPress.h
   ./Event/Action/FRAWatchMousePress.c
   ./Event/Action/FRAWatchMousePress.h
+  ./Event/Action/FRAWatchMouseRelease.c
+  ./Event/Action/FRAWatchMouseRelease.h
 
   ./Event/Action/FRAction.c
   ./Event/Action/FRAction.h

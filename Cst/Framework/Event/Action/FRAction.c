@@ -108,6 +108,7 @@ FRAction* fr_action_new(void) {
 FRAction *fr_action_new_I(void) {
   FRAction *o = fr_action_new();
 
+  fr_action_set_name(o, "action");
   fr_action_create_i(o);
 
   return o;
@@ -117,7 +118,7 @@ static void fr_action_dispose(SysObject* o) {
   FRAction *self = FR_ACTION(o);
   FRActionPrivate* priv = self->priv;
 
-  sys_free_N(priv->name);
+  sys_clear_pointer(&priv->name, sys_free);
   sys_list_free_full(priv->awatch_list, (SysDestroyFunc)_sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_action_parent_class)->dispose(o);
@@ -135,10 +136,7 @@ static void fr_action_class_init(FRActionClass* cls) {
 
 void fr_action_init(FRAction *self) {
   self->priv = fr_action_get_private(self);
-
-  self->priv = fr_action_get_private(self);
 }
-
 
 FRAction* fr_action_get_static(void) {
   static FRAction *node = NULL;

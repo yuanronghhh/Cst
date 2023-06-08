@@ -1,6 +1,9 @@
 #include <Framework/Event/Action/FRAWatch.h>
 #include <Framework/Event/Action/FRAction.h>
+
+// watch list
 #include <Framework/Event/Action/FRAWatchMousePress.h>
+#include <Framework/Event/Action/FRAWatchMouseRelease.h>
 #include <Framework/Event/Action/FRAWatchKey.h>
 #include <Framework/Event/Action/FRAWatchKeyPress.h>
 #include <Framework/Event/Action/FRAWatchAny.h>
@@ -159,6 +162,10 @@ FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_n
   sys_return_val_if_fail(props != NULL, NULL);
 
   SysType type = fr_awatch_get_by_name(watch_name);
+  if (type == 0) {
+    return NULL;
+  }
+
   FRAWatch *o = sys_object_new(type, NULL);
 
   fr_awatch_create(o, func_name, func, props);
@@ -173,6 +180,11 @@ FRAWatch *fr_awatch_new_bind(SysPointer user_data, const SysChar *watch_name, co
   sys_return_val_if_fail(props != NULL, NULL);
 
   FRAWatch *awatch = fr_awatch_new_by_name(watch_name, func_name, func, props);
+  if (awatch == NULL) {
+    sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
+    return NULL;
+  }
+
   fr_awatch_bind(awatch, user_data);
 
   return awatch;
@@ -196,10 +208,12 @@ static void fr_awatch_init(FRAWatch *self) {
 void fr_awatch_setup(void) {
   g_awatch_nodes = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
 
+  fr_action_watch_register_type("mouse_release", FR_TYPE_AWATCH_MOUSE_RELEASE);
   fr_action_watch_register_type("mouse_press", FR_TYPE_AWATCH_MOUSE_PRESS);
   fr_action_watch_register_type("key", FR_TYPE_AWATCH_KEY);
   fr_action_watch_register_type("key_press", FR_TYPE_AWATCH_KEY_PRESS);
   fr_action_watch_register_type("window_resize", FR_TYPE_AWATCH_ANY);
+  fr_action_watch_register_type("window_refresh", FR_TYPE_AWATCH_ANY);
 }
 
 void fr_awatch_teardown(void) {

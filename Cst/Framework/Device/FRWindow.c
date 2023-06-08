@@ -124,11 +124,11 @@ static void fr_window_mouse_button_callback(GLFWwindow* gwindow, SysInt button, 
 }
 
 static void fr_window_cursor_pos_callback(GLFWwindow* gwindow, SysDouble xpos, SysDouble ypos) {
-  FRWindow *self = fr_glfw_get_window(gwindow);
+  // FRWindow *self = fr_glfw_get_window(gwindow);
 
-  FREvent *e = fr_event_cursor_move_new_I(self, xpos, ypos);
+  // FREvent *e = fr_event_cursor_move_new_I(self, xpos, ypos);
 
-  fr_events_push_head(e);
+  // fr_events_push_head(e);
 }
 
 static void fr_window_close_callback(GLFWwindow* gwindow) {
@@ -155,11 +155,11 @@ static void fr_window_maximize_callback(GLFWwindow* window, int maximized) {
 }
 
 static void fr_window_framebuffer_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
-  FRWindow *self = fr_glfw_get_window(gwindow);
-
-  FREventAny *e = fr_event_any_new_I(self, FR_EVENT_TFRAMEBUFFER_RESIZE);
-
-  fr_events_push_head(e);
+  // FRWindow *self = fr_glfw_get_window(gwindow);
+  // 
+  // FREventAny *e = fr_event_any_new_I(self, FR_EVENT_TFRAMEBUFFER_RESIZE);
+  // 
+  // fr_events_push_head(e);
 }
 
 static void fr_window_focus_callback(GLFWwindow* gwindow, SysInt focused) {
@@ -167,11 +167,11 @@ static void fr_window_focus_callback(GLFWwindow* gwindow, SysInt focused) {
 }
 
 static void fr_window_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
-  FRWindow *self = fr_glfw_get_window(gwindow);
-
-  FREventAny *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_RESIZE);
-
-  fr_events_push_head(e);
+  // FRWindow *self = fr_glfw_get_window(gwindow);
+  // 
+  // FREventAny *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_RESIZE);
+  // 
+  // fr_events_push_head(e);
 }
 
 static void fr_window_pos_callback(GLFWwindow* gwindow, SysInt xpos, SysInt ypos) {
@@ -179,11 +179,11 @@ static void fr_window_pos_callback(GLFWwindow* gwindow, SysInt xpos, SysInt ypos
 }
 
 static void fr_window_refresh_callback(GLFWwindow* gwindow) {
-  //FRWindow *self = fr_glfw_get_window(gwindow);
-  //
-  //FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_REFRESH);
+  FRWindow *self = fr_glfw_get_window(gwindow);
 
-  //fr_events_push_head(e);
+  FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_REFRESH);
+
+  fr_events_push_head(e);
 }
 
 static void fr_window_event_teardown(FRWindow *self) {

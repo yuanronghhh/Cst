@@ -705,6 +705,10 @@ static void node_parse_action(CstNodeProps *props, const SysChar *watch_name, co
   awatch_props.get_bound_func = (FRGetBoundFunc)cst_node_get_bound_bp;
 
   awatch = fr_awatch_new_by_name(watch_name, func_name, watch_func, &awatch_props);
+  if (awatch == NULL) {
+    sys_warning_N("Not found action: \"%s\" in \"%s\" component",
+      watch_name, cst_component_get_id(component));
+  }
 
   props->v_awatches = sys_list_prepend(props->v_awatches, awatch);
 }

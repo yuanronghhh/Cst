@@ -21,7 +21,7 @@ struct _FRAWatchAny {
 };
 
 SYS_API SysType fr_awatch_any_get_type(void);
-SYS_API FRAWatch * fr_awatch_any_new_I(SysPointer user_data, FREventFunc func);
+SYS_API FRAWatch *fr_awatch_any_new(void);
 
 SYS_END_DECLS
 

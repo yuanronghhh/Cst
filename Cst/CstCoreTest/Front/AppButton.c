@@ -10,7 +10,7 @@ struct _AppButtonPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(AppButton, app_button, CST_TYPE_COMPONENT);
 
-FR_EVENT_FUNC(app_btn_clicked) {
+FR_FUNC_DEFINE_EVENT(app_btn_clicked) {
   FREventKey *ekey = FR_EVENT_KEY(e);
 
   sys_debug_N("key release: %d,%d", fr_event_key_key(ekey), fr_event_key_scancode(ekey));
@@ -18,7 +18,7 @@ FR_EVENT_FUNC(app_btn_clicked) {
   return 0;
 }
 
-FR_EVENT_FUNC(app_btn_press) {
+FR_FUNC_DEFINE_EVENT(app_btn_press) {
   FREventMouseKey *ekey = FR_EVENT_MOUSEKEY(e);
 
   sys_debug_N("key press: %d,%d", fr_event_mousekey_key(ekey), fr_event_mousekey_action(ekey));
@@ -35,8 +35,8 @@ static void app_button_construct(CstComponent *self, CstModule *v_module, CstCom
 
   CST_COMPONENT_CLASS(app_button_parent_class)->construct(self, v_module, v_parent);
 
-  cst_component_set_function(self, FR_FUNC_DEFINE(FR_FUNC_ACTION, app_btn_clicked));
-  cst_component_set_function(self, FR_FUNC_DEFINE(FR_FUNC_ACTION, app_btn_press));
+  cst_component_set_function(self, FR_FUNC_EVENT(app_btn_clicked));
+  cst_component_set_function(self, FR_FUNC_EVENT(app_btn_press));
 }
 
 static void app_button_init(AppButton *self) {

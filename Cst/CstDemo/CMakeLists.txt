@@ -32,6 +32,8 @@ set(TEST_SRC
 
   ./TestGlib.c
   ./TestGlib.h
+  ./TestGTK.c
+  ./TestGTK.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")

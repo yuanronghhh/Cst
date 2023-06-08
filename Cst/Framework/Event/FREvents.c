@@ -24,6 +24,7 @@ void fr_events_dispatch(FREvent *e) {
     action = item->data;
 
     if(fr_action_check(action, e)) {
+
       fr_action_dispatch(action, e);
     }
   }

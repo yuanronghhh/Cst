@@ -25,6 +25,7 @@ find_package(pango REQUIRED)
 find_package(png REQUIRED)
 find_package(zlib REQUIRED)
 find_package(cairo REQUIRED)
+find_package(gtk REQUIRED)
 
 set(SDL2_MIXER_DIR ${SDL2_DIR})
 set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_INCLUDE_DIRS})

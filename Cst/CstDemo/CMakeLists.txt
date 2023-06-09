@@ -53,6 +53,7 @@ target_link_libraries(CstDemo
   ${NANOMSG_LIBRARIES}
   ${VLD_LIBRARIES}
   ${GTK_LIBRARIES}
+  ${CAIRO_LIBRARIES}
   ${CZMQ_LIBRARIES}
   ${GCORUTINE_LIBRARIES}
   ${CLANG_LIBRARIES}
@@ -69,13 +70,20 @@ target_link_libraries(CstDemo
   ${CRT_LIBRAREIS}
   ${FREETYPE_LIBRARIES}
   ${DBG_LIBRAREIS}
-  ${MONO_LIBRARIES}
   ${PANGO_LIBRARIES}
 )
 
 target_copy_files(CstDemo
   "${VLD_FILES}"
+  "${CAIRO_FILES}"
+  "${PANGO_FILES}"
   "${GLIB_FILES}"
   "${PTHREAD_FILES}"
-  "${MONO_FILES}"
+  "${VKVG_FILES}"
+  "${VULKAN_FILES}"
+  "${GLFW3_FILES}"
+  "${FREETYPE_FILES}"
+  "${PNG_FILES}"
+  "${PIXMAN_FILES}"
+  "${GTK_FILES}"
 )

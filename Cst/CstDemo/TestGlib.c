@@ -139,7 +139,6 @@ static GLogWriterOutput env_logger_callback(
 }
 
 static void env_init(void) {
-  sys_console_setup();
   g_log_set_writer_func(env_logger_callback, NULL, NULL);
 }
 

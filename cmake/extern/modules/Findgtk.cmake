@@ -4,61 +4,59 @@ set(search_dirs
   /usr
 )
 
-set(GTK_COMPONENTS
-  atk-1.0
-  cairo-gobject
-  cairo-script-interpreter
-  cairo
-  epoxy
-  gdk_pixbuf-2.0
-  gio-2.0
-  glib-2.0
-  gmodule-2.0
-  gobject-2.0
-  graphene-1.0
-  gthread-2.0
-  gtk-4
-  harfbuzz-subset
-  harfbuzz
-  intl
-  pango-1.0
-  pangocairo-1.0
-  pangoft2-1.0
-  pangowin32-1.0
-)
-
 FIND_PATH(GTK_INCLUDE_DIR
   NAMES gtk/gtk.h
   HINTS ${search_dirs}
-  PATH_SUFFIXES include/gtk-4.0 include
-)
+  PATH_SUFFIXES include/gtk-4.0 include gtk/include/gtk-4.0)
 
-FOREACH(COMPONENT ${GTK_COMPONENTS})
-  STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+FIND_LIBRARY(GTK_LIBRARY
+  NAMES gtk-4 gtk
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib gtk/lib)
 
-  FIND_LIBRARY(GTK_${UPPERCOMPONENT}_LIBRARY
-    NAMES ${COMPONENT}
-    HINTS ${search_dirs}
-    PATH_SUFFIXES lib64 lib
-  )
+if(WIN32)
+  set(GTK_FILE_COMPONENTS
+    "lzma.dll"
+    "lzo2.dll"
+    "zlib1.dll"
+    "atk-1.0-0.dll"
+    "tiff.dll"
+    "jpeg62.dll"
+    "epoxy-0.dll"
+    "gdk_pixbuf-2.0-0.dll"
+    "gio-2.0-0.dll"
+    "glib-2.0-0.dll"
+    "gmodule-2.0-0.dll"
+    "gobject-2.0-0.dll"
+    "graphene-1.0-0.dll"
+    "gthread-2.0-0.dll"
+    "gtk-4-1.dll"
+    "intl-8.dll")
 
-  LIST(APPEND GTK_LIBRARY "${GTK_${UPPERCOMPONENT}_LIBRARY}")
-ENDFOREACH()
+  FOREACH(COMPONENT ${GTK_FILE_COMPONENTS})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
 
-LIST(APPEND GTK_INCLUDE_DIR
-  "${GTK_INCLUDE_DIR}/../atk-1.0"
-  "${GTK_INCLUDE_DIR}/../cairo"
-  "${GTK_INCLUDE_DIR}/../epoxy"
-  "${GTK_INCLUDE_DIR}/../gdk"
-  "${GTK_INCLUDE_DIR}/../gdk-pixbuf-2.0"
-  "${GTK_INCLUDE_DIR}/../gio-win32-2.0"
-  "${GTK_INCLUDE_DIR}/../glib-2.0"
-  "${GTK_INCLUDE_DIR}/../graphene-1.0"
-  "${GTK_INCLUDE_DIR}/../gsk"
-  "${GTK_INCLUDE_DIR}/../gtk-4.0"
-  "${GTK_INCLUDE_DIR}/../harfbuzz"
-  "${GTK_INCLUDE_DIR}/../pango-1.0"
-)
+    FIND_FILE(GTK_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES gtk/bin gtk/tools/gtk)
+
+    LIST(APPEND GTK_FILE "${GTK_${COMPONENT}_FILE}")
+  ENDFOREACH()
+endif()
+
+LIST(APPEND GTK_INCLUDE_DIR "${CAIRO_INCLUDE_DIR}/cairo")
+LIST(APPEND GTK_INCLUDE_DIR "${PANGO_INCLUDE_DIRS}")
+LIST(APPEND GTK_INCLUDE_DIR "${PIXMAN_INCLUDE_DIRS}")
+LIST(APPEND GTK_INCLUDE_DIR "${FREETYPE_INCLUDE_DIRS}")
+LIST(APPEND GTK_INCLUDE_DIR "${PTHREAD_INCLUDE_DIRS}")
+LIST(APPEND GTK_INCLUDE_DIR "${HARFBUZZ_INCLUDE_DIRS}")
+LIST(APPEND GTK_INCLUDE_DIR "${LIBDIR}/gtk/include/gdk-pixbuf-2.0/")
+LIST(APPEND GTK_INCLUDE_DIR "${LIBDIR}/gtk/include/graphene-1.0/")
+LIST(APPEND GTK_INCLUDE_DIR "${LIBDIR}/gtk/include/gsk/")
+
+LIST(APPEND GTK_FILE "${PANGO_FILES}")
+LIST(APPEND GTK_FILE "${CAIRO_FILES}")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK DEFAULT_MSG
@@ -67,6 +65,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK DEFAULT_MSG
 IF(GTK_FOUND)
   SET(GTK_LIBRARIES ${GTK_LIBRARY})
   SET(GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIR})
+  SET(GTK_FILES ${GTK_FILE})
 ENDIF(GTK_FOUND)
 
 MARK_AS_ADVANCED(

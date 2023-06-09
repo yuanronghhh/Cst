@@ -89,7 +89,6 @@ target_copy_files(CstCoreTest
   "${PTHREAD_FILES}"
   "${VKVG_FILES}"
   "${VULKAN_FILES}"
-  # "${CAIRO_FILES}"
   "${GLFW3_FILES}"
   "${FREETYPE_FILES}"
   "${PNG_FILES}"

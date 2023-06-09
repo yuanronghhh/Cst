@@ -31,14 +31,8 @@ ENDFOREACH()
 
 set(CAIRO_FILE_COMPONENTS
   "cairo-2.dll"
-  # "bz2.dll"
-  # "brotlidec.dll"
-  # "brotlicommon.dll"
-  # "libexpat.dll"
-  # "fontconfig-1.dll"
-  # "freetype.dll"
-  # "libpng16.dll"
-)
+  "cairo-gobject-2.dll"
+  "cairo-script-interpreter-2.dll")
 
 if(WIN32)
   FOREACH(COMPONENT ${CAIRO_FILE_COMPONENTS})

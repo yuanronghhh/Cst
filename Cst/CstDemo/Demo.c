@@ -1,4 +1,5 @@
 #include <CstDemo/TestGlib.h>
+#include <CstDemo/TestGTK.h>
 #include <CstDemo/Demo.h>
 
 void setUp(void) {
@@ -21,9 +22,11 @@ static void callback1(char *a, char *b) {
 }
 
 int main(int argc, char *argv[]) {
-  sys_console_setup();
+  sys_setup();
 
-  test_glib_init(argc, argv);
+  test_gtk_init(argc, argv);
+
+  sys_teardown();
 
   return 0;
 }

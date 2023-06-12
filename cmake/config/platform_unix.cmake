@@ -16,18 +16,28 @@ pkg_check_modules(CAIRO REQUIRED cairo)
 pkg_check_modules(PANGO REQUIRED pango)
 pkg_check_modules(PANGOCAIRO REQUIRED pangocairo)
 pkg_check_modules(GLFW3 REQUIRED glfw3)
+pkg_check_modules(GLIB REQUIRED glib-2.0)
+pkg_check_modules(GTK REQUIRED gtk4)
+
 find_package(glad REQUIRED)
 find_package(tinyexpr REQUIRED)
+find_package(unity REQUIRED)
 
 set(MPG123_LIBRARIES "mpg123")
 
-set(GLIB_LIBRARIES
-  "/usr/lib/x86_64-linux-gnu/libgio-2.0.so"
-  "/usr/lib/x86_64-linux-gnu/libglib-2.0.so"
-  "/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so"
-  "/usr/lib/x86_64-linux-gnu/libgobject-2.0.so"
-  "/usr/lib/x86_64-linux-gnu/libgthread-2.0.so"
-)
+set(GTK_LIBRARIES
+  "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gtk/libgtk-4.so"
+  # gtk-4
+  pangocairo-1.0
+  pango-1.0
+  harfbuzz
+  gdk_pixbuf-2.0
+  cairo-gobject
+  cairo
+  graphene-1.0
+  gio-2.0
+  gobject-2.0
+  glib-2.0)
 
 set(PTHREAD_LIBRARIES "-lpthread")
 set(SYSTEM_LIBRARIES "-lexpat -lm -lrt -lrt -luuid")

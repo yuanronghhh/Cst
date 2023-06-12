@@ -5,7 +5,7 @@
 #include "AppButton.h"
 
 struct _AppButtonPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(AppButton, app_button, CST_TYPE_COMPONENT);

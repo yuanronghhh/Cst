@@ -29,7 +29,7 @@ struct _Import {
 };
 
 struct _Expression {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 struct _AstNode {

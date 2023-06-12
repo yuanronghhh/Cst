@@ -25,7 +25,7 @@ SYS_API SysType fr_main_get_type(void);
 SYS_API FRMain *fr_main_new_I(void);
 
 SYS_API void fr_main_run (FRMain *main);
-SYS_API void fr_main_stop_nolock(FRMain *self);
+SYS_API void fr_main_stop(FRMain *self);
 SYS_API void fr_main_attach(FRMain * main, FRSource * source);
 
 SYS_API void fr_main_lock(FRMain *main);

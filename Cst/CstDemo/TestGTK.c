@@ -92,7 +92,7 @@ void cairo_animation_active(GtkApplication* app, gpointer user_data) {
   int width = 400;
   int height = 200;
 
-  btn = gtk_button_new();
+  btn = gtk_button_new_with_label("hello");
 
   window_widget = gtk_application_window_new(app);
   window = GTK_WINDOW(window_widget);
@@ -109,7 +109,7 @@ void cairo_animation_active(GtkApplication* app, gpointer user_data) {
   gtk_widget_set_size_request(canvas, width, height);
   gtk_window_set_default_size(window, width, height);
 
-  gtk_window_set_child(window, canvas);
+  gtk_window_set_child(window, btn);
 
   gtk_window_present(window);
 }

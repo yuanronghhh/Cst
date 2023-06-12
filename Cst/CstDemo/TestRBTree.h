@@ -5,7 +5,7 @@
 #define __RB_TREE_H__
 
 #include <unity.h>
-#include <SysCore.h>
+#include <System/SysCore.h>
 
 void test_rbtree_init(int argc, char *argv[]);
 

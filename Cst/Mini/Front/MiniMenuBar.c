@@ -7,7 +7,7 @@
 
 
 struct _MiniMenuBarPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(MiniMenuBar, mini_menubar, CST_TYPE_COMPONENT);

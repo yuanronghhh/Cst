@@ -9,16 +9,23 @@ struct _FRACursorMovePrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRACursorMove, fr_acursor_move, FR_TYPE_ACTION);
 
-void fr_acursor_move_get_position (FRACursorMove *self, SysDouble *x, SysDouble *y) {
-  sys_return_if_fail(self != NULL);
+SysBool fr_acursor_move_get_position (FRACursorMove *self, SysDouble *x, SysDouble *y) {
+  sys_return_val_if_fail(self != NULL, false);
 
   FRACursorMovePrivate* priv = self->priv;
 
+  if(priv->x == 0 || priv->y == 0) {
+    return false;
+  }
+
   *x = priv->x;
   *y = priv->y;
+
+  return true;
 }
 
 static void fr_acursor_move_create_i (FRAction *o) {
+
   FR_ACTION_CLASS(fr_acursor_move_parent_class)->create(o);
 }
 

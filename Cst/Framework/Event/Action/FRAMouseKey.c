@@ -3,7 +3,7 @@
 
 
 struct _FRAMouseKeyPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRAMouseKey, fr_amouse_key, FR_TYPE_ACTION);

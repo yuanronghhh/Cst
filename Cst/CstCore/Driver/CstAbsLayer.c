@@ -2,7 +2,7 @@
 
 
 struct _CstAbsLayerPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstAbsLayer, cst_abs_layer, CST_TYPE_LAYER);

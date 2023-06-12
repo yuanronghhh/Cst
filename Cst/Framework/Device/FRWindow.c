@@ -124,11 +124,11 @@ static void fr_window_mouse_button_callback(GLFWwindow* gwindow, SysInt button, 
 }
 
 static void fr_window_cursor_pos_callback(GLFWwindow* gwindow, SysDouble xpos, SysDouble ypos) {
-  // FRWindow *self = fr_glfw_get_window(gwindow);
+  FRWindow *self = fr_glfw_get_window(gwindow);
 
-  // FREvent *e = fr_event_cursor_move_new_I(self, xpos, ypos);
+  FREvent *e = fr_event_cursor_move_new_I(self, xpos, ypos);
 
-  // fr_events_push_head(e);
+  fr_events_push_head(e);
 }
 
 static void fr_window_close_callback(GLFWwindow* gwindow) {

@@ -27,7 +27,7 @@ void cst_application_stop (CstApplication *self) {
 
   CstApplicationPrivate *priv = self->priv;
 
-  fr_main_stop_nolock(priv->main_loop);
+  fr_main_stop(priv->main_loop);
 }
 
 FR_FUNC_DEFINE_EVENT(cst_application_event_func) {

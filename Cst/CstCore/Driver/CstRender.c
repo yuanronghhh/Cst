@@ -99,7 +99,6 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 
   FRRegion *region;
   FRRect bound = { 0 };
-  CstRenderPrivate *priv = self->priv;
 
   bound.width = width;
   bound.height = height;

@@ -26,7 +26,7 @@ struct _FRACursorMove {
 SYS_API FRAction *fr_acursor_move_get_static(void);
 SYS_API FRAction* fr_acursor_move_new(void);
 SYS_API SysType fr_acursor_move_get_type(void);
-SYS_API void fr_acursor_move_get_position(FRACursorMove *self, SysDouble *x, SysDouble *y);
+SYS_API SysBool fr_acursor_move_get_position (FRACursorMove *self, SysDouble *x, SysDouble *y);
 
 SYS_END_DECLS
 

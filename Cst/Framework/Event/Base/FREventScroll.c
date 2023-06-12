@@ -1,7 +1,7 @@
 #include <Framework/Event/Base/FREventScroll.h>
 
 struct _FREventScrollPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 

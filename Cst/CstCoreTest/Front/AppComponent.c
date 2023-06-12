@@ -5,7 +5,7 @@
 #include "AppComponent.h"
 
 struct _AppComponentPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(AppComponent, app_component, CST_TYPE_COMPONENT);

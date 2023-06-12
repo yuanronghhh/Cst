@@ -35,7 +35,9 @@ static SysBool fr_awatch_mouse_release_check_i(FRAWatch *o, FREvent *e) {
     SysPointer user_data = fr_awatch_get_data(o);
     priv->get_bound_func(user_data, &bound);
 
-    fr_acursor_move_get_position(acursor, &x, &y);
+    if(!fr_acursor_move_get_position(acursor, &x, &y)) {
+      return false;
+    }
 
     if(!fr_rect_in_range(&bound, (SysInt)x, (SysInt)y)) {
       return false;

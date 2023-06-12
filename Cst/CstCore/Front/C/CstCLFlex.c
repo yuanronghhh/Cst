@@ -1,7 +1,7 @@
 #include <CstCore/Front/C/CstCLFlex.h>
 
 struct _CstLFlexPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLFlex, cst_lflex, CST_TYPE_WIDGET);

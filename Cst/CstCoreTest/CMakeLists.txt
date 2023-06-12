@@ -9,6 +9,7 @@ include_dep_dirs(
   ${PTHREAD_INCLUDE_DIRS}
   ${VKVG_INCLUDE_DIRS}
   ${VULKAN_INCLUDE_DIRS}
+  ${PANGO_INCLUDE_DIRS}
   ${CAIRO_INCLUDE_DIRS}
   ${GLAD_INCLUDE_DIRS}
   ${GLFW3_INCLUDE_DIRS}
@@ -79,6 +80,8 @@ target_link_libraries(CstCoreTest
   ${UNITY_LIBRARIES}
   ${TINYEXPR_LIBRARIES}
   ${GLIB_LIBRARIES}
+  ${PANGO_LIBRARIES}
+  ${PANGOCAIRO_LIBRARIES}
 )
 
 target_copy_files(CstCoreTest

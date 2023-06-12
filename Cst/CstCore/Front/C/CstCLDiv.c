@@ -3,7 +3,7 @@
 #include <CstCore/Driver/CstRender.h>
 
 struct _CstLDivPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLDiv, cst_ldiv, CST_TYPE_WIDGET);

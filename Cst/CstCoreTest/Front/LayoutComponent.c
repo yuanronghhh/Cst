@@ -5,7 +5,7 @@
 #include "LayoutComponent.h"
 
 struct _LayoutComponentPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 static void layout_component_dispose(SysObject *self);

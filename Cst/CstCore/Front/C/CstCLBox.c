@@ -3,7 +3,7 @@
 #include <CstCore/Driver/CstRender.h>
 
 struct _CstLBoxPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLBox, cst_lbox, CST_TYPE_WIDGET);

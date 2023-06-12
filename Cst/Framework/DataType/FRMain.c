@@ -26,7 +26,7 @@ void fr_main_unlock(FRMain *self) {
   sys_rec_mutex_unlock(&priv->mutex);
 }
 
-void fr_main_stop_nolock(FRMain *self) {
+void fr_main_stop(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
   FRMainPrivate* priv = self->priv;
@@ -102,7 +102,7 @@ void fr_main_run(FRMain *self) {
     fr_main_iter_next(self, &source);
 
     if(source == NULL) {
-      fr_main_stop_nolock(self);
+      fr_main_stop(self);
       continue;
     }
 

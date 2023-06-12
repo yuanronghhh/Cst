@@ -35,7 +35,9 @@ static SysBool fr_awatch_mouse_press_check_i(FRAWatch *o, FREvent *e) {
     SysPointer user_data = fr_awatch_get_data(o);
     priv->get_bound_func(user_data, &bound);
 
-    fr_acursor_move_get_position(acursor, &x, &y);
+    if(!fr_acursor_move_get_position(acursor, &x, &y)) {
+      return false;
+    }
 
     // sys_debug_N("<%d,%d,%d,%d> %lf,%lf,%d", bound.x, bound.y, bound.width, bound.height, x, y, fr_rect_in_range(&bound, x, y));
     if(!fr_rect_in_range(&bound, (SysInt)x, (SysInt)y)) {

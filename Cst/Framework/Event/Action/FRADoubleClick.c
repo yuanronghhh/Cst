@@ -1,7 +1,7 @@
 #include <Framework/Event/Action/FRADoubleClick.h>
 
 struct _FRADoubleClickPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRADoubleClick, fr_adouble_click, FR_TYPE_ACTION);

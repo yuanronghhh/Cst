@@ -29,9 +29,6 @@ SysBool fr_draw_frame_need_draw(FRDraw *self) {
   }
 
   SysBool r = (current - priv->last_clock) > priv->rate_time;
-  
-  printf("%lld\t%lld\t%lld\t%d\n", current, priv->last_clock, (current - priv->last_clock), r);
-
   priv->last_clock = r ? current : priv->last_clock;
 
   return r;
@@ -162,8 +159,6 @@ FRDraw *fr_draw_new_I(FRWindow *window) {
 }
 
 static void fr_draw_dispose(SysObject* o) {
-  FRDraw *self = FR_DRAW(o);
-  FRDrawPrivate *priv = self->priv;
 
   SYS_OBJECT_CLASS(fr_draw_parent_class)->dispose(o);
 }

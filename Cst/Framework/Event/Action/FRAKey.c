@@ -3,7 +3,7 @@
 
 
 struct _FRAKeyPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRAKey, fr_akey, FR_TYPE_ACTION);

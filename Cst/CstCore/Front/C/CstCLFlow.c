@@ -2,7 +2,7 @@
 #include <CstCore/Front/C/CstCLFlow.h>
 
 struct _CstLFlowPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLFlow, cst_lflow, CST_TYPE_WIDGET);

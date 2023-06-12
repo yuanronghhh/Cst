@@ -1,7 +1,7 @@
 #include <Framework/Event/Base/FREventPressed.h>
 
 struct _FREventPressedPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 

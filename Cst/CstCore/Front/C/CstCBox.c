@@ -1,7 +1,7 @@
 #include <CstCore/Front/CstBox.h>
 
 struct _CstBoxPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstBox, cst_box, CST_TYPE_WIDGET);

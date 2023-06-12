@@ -4,7 +4,7 @@
 #include <CstCore/Parser/CstParserCore.h>
 
 struct _CstCssEnvPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 static CstCssEnv *gcss_env = NULL;

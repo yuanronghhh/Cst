@@ -30,7 +30,9 @@ static SysBool fr_awatch_cursor_move_check_i(FRAWatch *o, FREvent *e) {
 
     priv->get_bound_func(user_data, &bound);
 
-    fr_acursor_move_get_position(FR_ACURSOR_MOVE_STATIC, &x, &y);
+    if(!fr_acursor_move_get_position(FR_ACURSOR_MOVE_STATIC, &x, &y)) {
+      return false;
+    }
 
     if(!fr_rect_in_range(&bound, x, y)) {
       return false;

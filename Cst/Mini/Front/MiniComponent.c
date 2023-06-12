@@ -5,7 +5,7 @@
 #include <Mini/Front/MiniComponent.h>
 
 struct _MiniComponentPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(MiniComponent, mini_component, CST_TYPE_COMPONENT);

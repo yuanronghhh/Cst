@@ -3,7 +3,7 @@
 
 
 struct _FRDisplayPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRDisplay, fr_display, SYS_TYPE_OBJECT);

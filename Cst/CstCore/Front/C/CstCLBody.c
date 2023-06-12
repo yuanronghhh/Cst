@@ -4,7 +4,7 @@
 
 
 struct _CstLBodyPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLBody, cst_lbody, CST_TYPE_NODE);

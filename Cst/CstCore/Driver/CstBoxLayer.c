@@ -57,8 +57,6 @@ void cst_box_layer_append(CstLayer *layer, CstNode *parent, CstNode *child) {
 
 SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
   const FRRect *nbound = cst_node_get_bound(v_node);
-  CstNode *parent = cst_node_parent(v_node);
-  CstNode *node = v_node;
 
   if(fr_region_is_empty(region)) {
     return -4;
@@ -138,12 +136,10 @@ void bfs_box_layer_mark(CstLayer *layer, CstNode *v_node, FRRegion *region) {
   while (sys_queue_get_length(nqueue) > 0) {
     nnode = sys_queue_pop_head(nqueue);
 
-    const FRRect *nbound = cst_node_get_bound(nnode);
     status = box_node_mark_dirty(nnode, region);
     if (status < 0) {
       continue;
     }
-    // sys_debug_N("%s<%d,%d>", cst_node_get_id(nnode), nbound->width, nbound->height);
 
     cst_layer_queue_draw_node(layer, nnode);
 

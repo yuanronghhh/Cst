@@ -4,7 +4,7 @@
 
 
 struct _CstLGridPrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLGrid, cst_lgrid, CST_TYPE_WIDGET);

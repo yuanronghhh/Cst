@@ -5,7 +5,7 @@
 #include <Mini/Front/MiniMenuBase.h>
 
 struct _MiniMenuBasePrivate {
-  SysInt reserved;
+  SysChar reserved;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(MiniMenuBase, mini_menubase, CST_TYPE_COMPONENT);

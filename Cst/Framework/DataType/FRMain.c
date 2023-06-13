@@ -10,6 +10,29 @@ struct _FRMainPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRMain, fr_main, SYS_TYPE_OBJECT);
 
+static FRMain *worker_loop = NULL;
+static FRMain *main_loop = NULL;
+
+/* worker thread */
+static SysPointer main_work_func(SysPointer data) {
+  FRSource *source = NULL;
+
+  while(fr_main_is_running(main_loop)) {
+
+    fr_main_iter_next(worker_loop, &source);
+  }
+
+  return NULL;
+}
+
+FRMain *fr_main_get_work_loop(void) {
+  return worker_loop;
+}
+
+FRMain *fr_main_get_main_loop(void) {
+  return main_loop;
+}
+
 void fr_main_lock(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
@@ -81,7 +104,7 @@ SysBool fr_main_is_running(FRMain *self) {
 
   FRMainPrivate* priv = self->priv;
 
-  return priv->is_running;
+  return (SysBool)sys_atomic_int_get(&priv->is_running);
 }
 
 static void fr_main_destroy(FRMain *self) {
@@ -118,6 +141,21 @@ void fr_main_run(FRMain *self) {
   }
 
   fr_main_destroy(self);
+}
+
+void fr_main_setup(void) {
+  FRMain *worker_loop = NULL;
+  SysThread *thread;
+
+  main_loop = fr_main_new_I();
+  worker_loop = fr_main_new_I();
+
+  thread = sys_thread_new(main_work_func, worker_loop);
+  sys_thread_join(thread);
+}
+
+void fr_main_teardown(void) {
+  sys_object_unref(worker_loop);
 }
 
 /* object api */

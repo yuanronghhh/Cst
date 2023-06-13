@@ -8,6 +8,7 @@
 struct _CstApplicationPrivate  {
   CstManager *manager;
   FRMain* main_loop;
+  FRMain* work_loop;
   FRApplication *app_source;
   CstRender *render;
   CstModule *main_module;
@@ -158,6 +159,7 @@ SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
 
   fr_main_run(priv->main_loop);
   sys_object_unref(priv->main_loop);
+  sys_object_unref(priv->work_loop);
 
   return priv->status;
 }
@@ -187,7 +189,8 @@ void cst_application_construct(SysObject* o, const SysChar *appname) {
   CstApplication* self = CST_APPLICATION(o);
   CstApplicationPrivate *priv = self->priv;
 
-  priv->main_loop = fr_main_new_I();
+  priv->main_loop = fr_main_get_main_loop();
+  priv->work_loop = fr_main_get_work_loop();
   priv->app_source = fr_application_new_I(self);
 
   fr_main_attach(priv->main_loop, FR_SOURCE(priv->app_source));

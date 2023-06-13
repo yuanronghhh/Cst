@@ -21,15 +21,22 @@ struct _FRMain {
   FRMainPrivate *priv;
 };
 
-SYS_API SysType fr_main_get_type(void);
-SYS_API FRMain *fr_main_new_I(void);
+SYS_API SysType fr_main_get_type (void);
+SYS_API FRMain *fr_main_get_work_loop (void);
+SYS_API FRMain *fr_main_get_main_loop (void);
+SYS_API FRMain *fr_main_new_I (void);
 
+SYS_API void fr_main_iter_next(FRMain *self, FRSource **source);
+SYS_API SysBool fr_main_is_running (FRMain *self);
 SYS_API void fr_main_run (FRMain *main);
-SYS_API void fr_main_stop(FRMain *self);
-SYS_API void fr_main_attach(FRMain * main, FRSource * source);
+SYS_API void fr_main_stop (FRMain *self);
+SYS_API void fr_main_attach (FRMain * main, FRSource * source);
 
-SYS_API void fr_main_lock(FRMain *main);
-SYS_API void fr_main_unlock(FRMain *main);
+SYS_API void fr_main_lock (FRMain *main);
+SYS_API void fr_main_unlock (FRMain *main);
+
+SYS_API void fr_main_setup (void);
+SYS_API void fr_main_teardown (void);
 
 SYS_END_DECLS
 

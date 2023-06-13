@@ -15,11 +15,16 @@ static FRMain *main_loop = NULL;
 
 /* worker thread */
 static SysPointer main_work_func(SysPointer data) {
+  sys_return_val_if_fail(worker_loop != NULL, NULL);
+
   FRSource *source = NULL;
 
   while(fr_main_is_running(main_loop)) {
 
     fr_main_iter_next(worker_loop, &source);
+
+    sys_sleep(1e6);
+    printf("%lld\t%p\n", sys_get_monoic_time(), sys_thread_self());
   }
 
   return NULL;
@@ -144,14 +149,12 @@ void fr_main_run(FRMain *self) {
 }
 
 void fr_main_setup(void) {
-  FRMain *worker_loop = NULL;
   SysThread *thread;
 
   main_loop = fr_main_new_I();
   worker_loop = fr_main_new_I();
 
   thread = sys_thread_new(main_work_func, worker_loop);
-  sys_thread_join(thread);
 }
 
 void fr_main_teardown(void) {

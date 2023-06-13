@@ -115,11 +115,10 @@ void cst_application_env_setup(void) {
     return;
   }
 
-  sys_setup();
+  fr_main_setup();
   fr_window_setup();
   fr_canvas_setup();
   cst_css_setup();
-
   fr_events_setup();
 
 #if CST_USE_MONO
@@ -142,7 +141,7 @@ void cst_application_env_teardown(void) {
   fr_canvas_teardown();
   fr_window_teardown();
   fr_events_teardown();
-
+  fr_main_teardown();
   cst_context_teardown();
 
   env_inited = false;

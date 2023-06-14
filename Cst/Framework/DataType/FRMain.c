@@ -155,6 +155,8 @@ void fr_main_setup(void) {
   worker_loop = fr_main_new_I();
 
   thread = sys_thread_new(main_work_func, worker_loop);
+
+  UNUSED(thread);
 }
 
 void fr_main_teardown(void) {

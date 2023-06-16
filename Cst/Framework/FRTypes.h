@@ -145,6 +145,11 @@ typedef  struct  _FRApplication           FRApplication;
 typedef  struct  _FRApplicationClass      FRApplicationClass;
 typedef  struct  _FRApplicationPrivate    FRApplicationPrivate;
 
+typedef  struct  _FRWorker           FRWorker;
+typedef  struct  _FRWorkerClass      FRWorkerClass;
+typedef  struct  _FRWorkerPrivate    FRWorkerPrivate;
+
+
 typedef  struct  _FRMonoContext   FRMonoContext;
 
 typedef SysBool (*FREventCheckFunc) (FREvent *e, SysPointer user_data);

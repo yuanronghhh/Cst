@@ -10,6 +10,7 @@ struct _CstApplicationPrivate  {
   FRMain* main_loop;
   FRMain* work_loop;
   FRApplication *app_source;
+  FRWorker *worker_source;
   CstRender *render;
   CstModule *main_module;
   SysInt status;
@@ -42,7 +43,7 @@ FR_FUNC_DEFINE_EVENT(cst_application_event_func) {
 #if 0
   CstApplicationPrivate *priv = app->priv;
   CstRender *render = priv->render;
-  SysUInt64 new_time = sys_get_monoic_time();
+  SysUInt64 new_time = sys_get_monotonic_time();
   SysInt etype = fr_event_get_event_type(self);
 
   switch (etype) {
@@ -191,8 +192,10 @@ void cst_application_construct(SysObject* o, const SysChar *appname) {
   priv->main_loop = fr_main_get_main_loop();
   priv->work_loop = fr_main_get_work_loop();
   priv->app_source = fr_application_new_I(self);
+  priv->worker_source = fr_worker_new_I(self);
 
   fr_main_attach(priv->main_loop, FR_SOURCE(priv->app_source));
+  fr_main_attach(priv->work_loop, FR_SOURCE(priv->worker_source));
 
   priv->manager = cst_manager_new_I();
 }

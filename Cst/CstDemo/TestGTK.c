@@ -124,7 +124,6 @@ void test_cairo_animation(void) {
   g_object_unref(app);
 }
 
-
 void test_gtk_init(int argc, char *argv[]) {
   UNITY_BEGIN();
   {

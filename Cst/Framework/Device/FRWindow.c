@@ -134,17 +134,17 @@ static void fr_window_cursor_pos_callback(GLFWwindow* gwindow, SysDouble xpos, S
 static void fr_window_close_callback(GLFWwindow* gwindow) {
   glfwSetWindowShouldClose(gwindow, 1);
 
-  //FRWindow *self = fr_glfw_get_window(gwindow);
+  FRWindow *self = fr_glfw_get_window(gwindow);
 
-  //FRWindowPrivate* priv = self->priv;
+  FRWindowPrivate* priv = self->priv;
 
-  //FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_CLOSE);
+  FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_CLOSE);
 
-  //fr_events_push_head(e);
+  fr_events_push_head(e);
 }
 
 static void fr_window_scroll_callback(GLFWwindow* gwindow, SysDouble xoffset, SysDouble yoffset) {
-  // sys_debug_N("%s", "window_scroll");
+  sys_debug_N("%s", "window_scroll");
 }
 
 static void fr_window_cursor_enter_callback(GLFWwindow* gwindow, SysInt entered) {

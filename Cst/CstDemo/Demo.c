@@ -20,7 +20,7 @@ struct _FREnv {
 int main(int argc, char *argv[]) {
   sys_setup();
 
-  test_rbtree_init(argc, argv);
+  test_gtk_init(argc, argv);
 
   sys_teardown();
 

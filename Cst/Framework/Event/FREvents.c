@@ -33,8 +33,7 @@ void fr_events_dispatch(FREvent *e) {
 }
 
 SysBool fr_events_check(void) {
-  SysUInt count = sys_queue_get_length(g_events);
-  return count > 0;
+  return sys_queue_get_length(g_events) > 0;
 }
 
 SysList* fr_events_prepend_action(FRAction *action) {

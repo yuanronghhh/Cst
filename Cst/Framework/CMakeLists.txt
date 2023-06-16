@@ -93,6 +93,8 @@ set(SRC
   ./DataType/FRSource.h
   ./DataType/FRApplication.c
   ./DataType/FRApplication.h
+  ./DataType/FRWorker.c
+  ./DataType/FRWorker.h
   ./DataType/FRPQueue.h
   ./DataType/FRPQueue.c
   ./DataType/FREnv.c

@@ -14,6 +14,7 @@ SYS_BEGIN_DECLS
 #include <Framework/DataType/FRMain.h>
 #include <Framework/DataType/FRSource.h>
 #include <Framework/DataType/FRApplication.h>
+#include <Framework/DataType/FRWorker.h>
 #include <Framework/DataType/FRPQueue.h>
 #include <Framework/DataType/FREnv.h>
 #include <Framework/DataType/FRFunc.h>

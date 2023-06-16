@@ -81,6 +81,4 @@ static void fr_application_class_init(FRApplicationClass* cls) {
 
 void fr_application_init(FRApplication *self) {
   self->priv = fr_application_get_private(self);
-
-  self->priv = fr_application_get_private(self);
 }

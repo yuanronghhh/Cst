@@ -1,0 +1,4 @@
+[submodule "Cst/System"]
+	url = /media/greyhound/UDISK/Git/System/
+	path = Cst/System
+	branch = dev

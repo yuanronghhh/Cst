@@ -21,7 +21,7 @@ SysBool fr_draw_frame_need_draw(FRDraw *self) {
   sys_return_val_if_fail(self != NULL, false);
 
   FRDrawPrivate *priv = self->priv;
-  SysInt64 current = sys_get_monoic_time();
+  SysInt64 current = sys_get_monotonic_time();
 
   if (priv->last_clock == 0) {
     priv->last_clock = current;

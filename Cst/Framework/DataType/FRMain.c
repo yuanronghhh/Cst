@@ -24,7 +24,7 @@ static SysPointer main_work_func(SysPointer data) {
     fr_main_iter_next(worker_loop, &source);
 
     sys_sleep(1e6);
-    printf("%lld\t%p\n", sys_get_monoic_time(), sys_thread_self());
+    printf("%lld\t%p\n", sys_get_monotonic_time(), sys_thread_self());
   }
 
   return NULL;
@@ -154,7 +154,7 @@ void fr_main_setup(void) {
   main_loop = fr_main_new_I();
   worker_loop = fr_main_new_I();
 
-  thread = sys_thread_new(main_work_func, worker_loop);
+  thread = sys_thread_new("worker thread", main_work_func, worker_loop);
 
   UNUSED(thread);
 }

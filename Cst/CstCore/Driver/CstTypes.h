@@ -168,7 +168,7 @@ typedef struct _CstPropMap CstPropMap;
 typedef struct _CstPropMapClass CstPropMapClass;
 typedef struct _CstPropMapPrivate CstPropMapPrivate;
 
-typedef void(*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, SysValue *value);
+typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, SysValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef void (*CstCssCalcFunc) (CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);
 

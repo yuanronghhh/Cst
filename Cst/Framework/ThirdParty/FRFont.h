@@ -9,6 +9,12 @@ SYS_BEGIN_DECLS
 #include <freetype/freetype.h>
 #include <pango/pango.h>
 #include <pango/pangocairo.h>
+#include <pango/pangofc-fontmap.h>
+
+
+void fr_font_setup(void);
+void fr_font_teardown(void);
+
 
 SYS_END_DECLS
 

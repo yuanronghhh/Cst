@@ -15,7 +15,6 @@ struct _FRTextPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRText, fr_text, SYS_TYPE_OBJECT);
 
-
 static void draw_text (cairo_t *cr, const SysChar *text) {
 #define RADIUS 150
 #define N_WORDS 2

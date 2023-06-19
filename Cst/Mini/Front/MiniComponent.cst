@@ -10,7 +10,7 @@ Component<id: "mini-component">: {
 
   Layout: {
     LBox<id: "menu">: {
-      MenuBar<value: "文件(F)", "@press1": "mini_btn_press2">: null,
+      MenuBar<value: "文件(F)", "@press1": "mini_component_press2">: null,
       MenuBar<value: "编辑(E)">: null,
       MenuBar<value: "视图(V)">: null,
       MenuBar<value: "图像(I)">: null,

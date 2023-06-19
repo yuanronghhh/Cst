@@ -12,6 +12,7 @@ SYS_DEFINE_TYPE_WITH_PRIVATE(FRMain, fr_main, SYS_TYPE_OBJECT);
 
 static FRMain *worker_loop = NULL;
 static FRMain *main_loop = NULL;
+static SysThread *work_thread = NULL;
 
 /* worker thread */
 static SysPointer main_work_func(SysPointer data) {
@@ -149,17 +150,20 @@ void fr_main_run(FRMain *self) {
 }
 
 void fr_main_setup(void) {
-  SysThread *thread;
 
   main_loop = fr_main_new_I();
   worker_loop = fr_main_new_I();
 
-  thread = sys_thread_new("worker thread", main_work_func, worker_loop);
-
-  UNUSED(thread);
+  work_thread = sys_thread_new("worker thread", main_work_func, worker_loop);
 }
 
 void fr_main_teardown(void) {
+  sys_assert(worker_loop != NULL && "worker should not be used before main teardown.");
+
+  fr_main_stop(main_loop);
+  sys_thread_join(work_thread);
+
+  sys_object_unref(main_loop);
   sys_object_unref(worker_loop);
 }
 

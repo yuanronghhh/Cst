@@ -8,7 +8,7 @@ Component<id: "mini-menubar", base: "mini-menubase">: {
     "ma1": {
       width: "100%",
       wrap: true,
-      font-size: 20
+      font-size: 10
     }
   },
 
@@ -19,11 +19,11 @@ Component<id: "mini-menubar", base: "mini-menubase">: {
   Props: {
     label: "",
     value: "",
-    "press1": null
+    "@press1": null
   },
 
   Layout: {
-    LBox<id: "ma0">: {
+    LBox<id: "ma0", "@mouse_release": "{{ @press1 }}">: {
       Text<id: "ma1", value: "{{ value }}", label: "{{ value }}">: null
     }
   }

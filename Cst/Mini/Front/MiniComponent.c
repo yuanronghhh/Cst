@@ -25,6 +25,7 @@ FR_FUNC_DEFINE_EVENT(mini_quit_key) {
 }
 
 FR_FUNC_DEFINE_EVENT(mini_component_press2) {
+  sys_debug_N("%s", "called");
   return 0;
 }
 
@@ -39,7 +40,7 @@ static void mini_component_construct(CstComponent *comp, CstModule *v_module, Cs
   props.key = FR_KEY_Q;
 
   cst_module_add_awatch(v_module, comp, "key", "mini_quit_key", mini_quit_key, &props);
-  cst_module_set_function(v_module, FR_FUNC_ANY(mini_component_press2));
+  cst_module_set_function(v_module, FR_FUNC_EVENT(mini_component_press2));
 }
 
 static void mini_component_init(MiniComponent *self) {

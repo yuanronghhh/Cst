@@ -375,7 +375,7 @@ void cst_node_props_destroy(CstNodeProps *props) {
   }
 }
 
-SysValue* ast_jnode_new_value(JNode *jnode) {
+SysValue* ast_jnode_new_value(SysChar *name) {
   SysValue* o = NULL;
 
   switch (jnode->type) {

@@ -102,6 +102,8 @@ set(SRC
   ./Front/Common/CstNodeMap.c
   ./Front/Common/CstPropMap.h
   ./Front/Common/CstPropMap.c
+  ./Front/Common/CstPropPair.h
+  ./Front/Common/CstPropPair.c
   ./Front/Common/CstNodeMapCore.h
   ./Front/Common/CstComponentPrivate.h
   ./Front/Common/CstComponent.h

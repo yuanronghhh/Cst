@@ -12,7 +12,6 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/CstApplication.h>
 #include <CstCore/Parser/CstParserCore.h>
-#include <CstCore/Driver/CstCommon.h>
 
 SYS_END_DECLS
 

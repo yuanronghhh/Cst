@@ -17,9 +17,9 @@ Component<id: "mini-menubar", base: "mini-menubase">: {
   },
 
   Props: {
-    label: "",
-    value: "",
-    "@press1": null
+    label: "string",
+    value: "string",
+    "@press1": "function"
   },
 
   Layout: {

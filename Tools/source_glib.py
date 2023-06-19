@@ -18,7 +18,7 @@ def rename_glib(file):
             .replace("GThread", "SysThread")\
             .replace("gsize", "SysSize")\
             .replace("GPrivate", "SysPrivate")\
-            .replace("gint", "SysInt")\
+            .replace(" gint", " SysInt")\
             .replace("guint", "SysUInt")\
             .replace("gchar", "SysChar")\
             .replace("gulong", "SysULong")\
@@ -43,4 +43,4 @@ def rename_glib(file):
     f.close()
 
 if __name__ == '__main__':
-    rename_glib("/home/greyhound/Git/Cst/Cst/System/Platform/Unix/SysThreadUnix.c")
+    rename_glib("D:/GreyHound/PRIVATE/Git/Cst/Cst/System/Platform/Win32/SysThreadWin32.c")

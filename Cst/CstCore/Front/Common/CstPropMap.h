@@ -27,7 +27,7 @@ SysType cst_prop_map_get_type(void);
 CstPropMap* cst_prop_map_new(void);
 const SysChar * cst_prop_map_key(CstPropMap * self);
 SysInt cst_prop_map_prop_data_type(CstPropMap * self);
-CstPropMap * cst_prop_map_new_I(const SysChar * key, SysValue * v_default);
+CstPropMap * cst_prop_map_new_I(const SysChar * key, SYS_VALUE_ENUM data_type);
 
 SYS_END_DECLS
 

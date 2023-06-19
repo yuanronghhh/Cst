@@ -9,7 +9,7 @@
 struct _CstComNodePrivate {
   CstComponent *component;
 
-  SysHashTable *values_ht;
+  SysPtrArray *values;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstComNode, cst_com_node, CST_TYPE_NODE);
@@ -40,36 +40,36 @@ CstComponent *cst_com_node_get_component(CstComNode *self) {
   return priv->component;
 }
 
-SysValue * cst_com_node_get_value(CstComNode * self, const SysChar *key) {
+CstPropPair * cst_com_node_get_value(CstComNode * self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstComNodePrivate *priv = self->priv;
 
-  return sys_hash_table_lookup(priv->values_ht, (SysPointer)key);
+  return sys_hash_table_lookup(priv->values, (SysPointer)key);
 }
 
-void com_node_set_value(CstComNode *self, const SysChar *key, SysValue * value) {
+void com_node_set_value(CstComNode *self, CstPropPair *value) {
   sys_return_if_fail(self != NULL);
 
   CstComNodePrivate *priv = self->priv;
 
-  sys_hash_table_insert(priv->values_ht, (SysPointer)sys_strdup(key), value);
+  sys_ptr_array_add(priv->values, (SysPointer)value);
 }
 
-static void text_set_text_i(CstNode *v_node, const SysChar *key, SysValue *value) {
+static void text_set_text_i(CstNode *v_node, const SysChar *key, CstPropPair *value) {
   CstText *text = CST_TEXT(v_node);
 
   cst_text_set_text(text, sys_value_v_string(value));
 }
 
-static void com_node_set_value_i(CstNode *v_node, const SysChar *key, SysValue *value) {
+static void com_node_set_value_i(CstNode *v_node, CstPropPair *pair) {
   CstComNode *com_node = CST_COM_NODE(v_node);
 
-  com_node_set_value(com_node, key, value);
+  com_node_set_value(com_node, pair);
 }
 
 CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type) {
-  if(data_type == SYS_STRING) {
+  if(data_type == CST_PROP_VALUE_STRING) {
     if(node_type == CST_TYPE_TEXT && prop_type == CST_NODE_PROP_VALUE) {
       return text_set_text_i;
     }
@@ -115,7 +115,7 @@ static void cst_com_node_dispose(SysObject* o) {
   CstComNodePrivate *priv = self->priv;
 
   sys_object_unref(priv->component);
-  sys_hash_table_unref(priv->values_ht);
+  sys_hash_table_unref(priv->values);
 
   SYS_OBJECT_CLASS(cst_com_node_parent_class)->dispose(o);
 }
@@ -126,5 +126,5 @@ static void cst_com_node_init(CstComNode *self) {
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)sys_value_unref);
 
-  priv->values_ht = ht;
+  priv->values = ht;
 }

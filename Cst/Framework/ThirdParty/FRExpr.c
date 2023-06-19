@@ -23,12 +23,12 @@ void fr_expr_array_push(FRExpr *expr) {
   gexpr.main  = sys_slist_append(gexpr.main, expr);
 }
 
-void fr_expr_array_delay_push(int *prop_value, FRExpr *expr) {
+void fr_expr_array_delay_push(int *prop_pair, FRExpr *expr) {
   gexpr.delay = sys_slist_append(gexpr.delay, expr);
 }
 
-void fr_expr_eval_item(double *prop_value, FRExpr *expr) {
-  *prop_value = te_eval(expr);
+void fr_expr_eval_item(double *prop_pair, FRExpr *expr) {
+  *prop_pair = te_eval(expr);
 }
 
 void fr_expr_array_eval() {

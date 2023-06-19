@@ -25,7 +25,7 @@ Parser* cst_parser_new(const SysChar* fullpath) {
 
   FILE* fp = sys_fopen(fullpath, "r");
   if (fp == NULL) {
-    sys_error_N("%s: %s\n", sys_strerr(errno), fullpath);
+    sys_error_N("%s: %s\n", sys_strerror(errno), fullpath);
     goto fail;
   }
 

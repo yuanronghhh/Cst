@@ -81,7 +81,7 @@ static void motion_cb(GtkEventControllerMotion *controller,
   double                    y,
   GtkWindow             *self)
 {
-  g_debug("%d,%d", x, y);
+  g_print("%d\n", (int)g_thread_self());
 }
 
 void cairo_animation_active(GtkApplication* app, gpointer user_data) {

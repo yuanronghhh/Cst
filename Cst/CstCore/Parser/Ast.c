@@ -278,11 +278,17 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
 
   JNode *nnode;
   CstComNode *v_com_node;
+  FREventFunc watch_func;
+  SysChar *func_name;
+  SysValue *value;
 
   CstNode * v_node = pass->v_com_node;
   sys_return_val_if_fail(v_node != NULL, false);
 
   v_com_node = CST_COM_NODE(v_node);
+
+  CstComponent *pcomponent = pass->v_component;
+  sys_return_val_if_fail(pcomponent != NULL, false);
 
   CstComponent *component = cst_com_node_get_component(v_com_node);
   sys_return_val_if_fail(component != NULL, false);
@@ -293,7 +299,29 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
     return false;
   }
 
-  SysValue *value = ast_jnode_new_value(nnode);
+  if(*pair->key == '@') {
+    if(nnode->type != AstJString) {
+      return false;
+    }
+
+    func_name = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, (nnode->v.v_string));
+    watch_func = cst_component_get_function(pcomponent, func_name);
+    sys_free_N(func_name);
+
+    if (watch_func == NULL) {
+      sys_warning_N("Not found function: \"%s\" in \"%s\" component",
+          (nnode->v.v_string), cst_component_get_id(pcomponent));
+
+      return false;
+    }
+
+    value = sys_value_new_pointer(watch_func);
+
+  } else {
+
+    value = ast_jnode_new_value(nnode);
+  }
+
   com_node_set_value(v_com_node, pair->key, value);
 
   return true;
@@ -379,8 +407,8 @@ static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pa
   }
 
   value = ast_jnode_new_value(nnode);
-
   prop_map = cst_prop_map_new_I(pair->key, value);
+
   cst_component_set_props_map(component, prop_map);
 
   return true;

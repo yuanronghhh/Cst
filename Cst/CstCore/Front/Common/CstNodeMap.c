@@ -74,7 +74,7 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstNode *v_node) 
 
   SysValue *value = cst_com_node_get_value(com_node, key);
   if (value == NULL) {
-    sys_warning_N("Not found key in \"%s\" component node \"%s\"", key, cst_node_get_name(CST_NODE(com_node)));
+    sys_warning_N("Not found key \"%s\" in component node \"%s\"", key, cst_node_get_name(CST_NODE(com_node)));
     return;
   }
 

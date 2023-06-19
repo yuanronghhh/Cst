@@ -78,7 +78,7 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
   if (s == CAIRO_REGION_OVERLAP_OUT) {
     return -3;
   }
-  
+
   cst_node_set_is_dirty(v_node, true);
 
   return 1;
@@ -94,7 +94,7 @@ static BFSLevel *bfs_level_new(SysUInt level) {
   return nlevel;
 }
 
-static void bfs_level_push(BFSLevel *self, SysPointer ptr) {
+static void bfs_level_push_head(BFSLevel *self, SysPointer ptr) {
   sys_queue_push_head(self->lqueue, ptr);
 }
 
@@ -102,7 +102,7 @@ static SysUInt bfs_level_get_length(BFSLevel *self) {
   return sys_queue_get_length(self->lqueue);
 }
 
-static SYS_INLINE SysPointer bfs_level_pop(BFSLevel *self) {
+static SYS_INLINE SysPointer bfs_level_pop_head(BFSLevel *self) {
   return sys_queue_pop_head(self->lqueue);
 }
 
@@ -115,8 +115,8 @@ static SysUInt bfs_level_get_level(BFSLevel *self) {
 }
 
 static void bfs_level_free(BFSLevel *self) {
-  sys_free_N(self);
   sys_queue_free(self->lqueue);
+  sys_free_N(self);
 }
 
 static void bfs_level_set_level(BFSLevel *self, SysUInt level) {

@@ -18,6 +18,9 @@ pkg_check_modules(PANGOCAIRO REQUIRED pangocairo)
 pkg_check_modules(GLFW3 REQUIRED glfw3)
 pkg_check_modules(GLIB REQUIRED glib-2.0)
 pkg_check_modules(GTK REQUIRED gtk4)
+pkg_check_modules(FREETYPE REQUIRED freetype2)
+pkg_check_modules(FONTCONFIG REQUIRED fontconfig)
+pkg_check_modules(PANGOFC REQUIRED pangofc)
 
 find_package(glad REQUIRED)
 find_package(tinyexpr REQUIRED)
@@ -27,6 +30,10 @@ set(MPG123_LIBRARIES "mpg123")
 
 set(GTK_LIBRARIES
   "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gtk/libgtk-4.so"
+  "/media/greyhound/Storage/Git/glib/_build/glib/libglib-2.0.so"
+  "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gdk/libgdk.a"
+  "/media/greyhound/Storage/Git/glib/_build/gio/libgio-2.0.so"
+  "/media/greyhound/Storage/Git/glib/_build/gobject/libgobject-2.0.so"
   # gtk-4
   pangocairo-1.0
   pango-1.0
@@ -35,9 +42,7 @@ set(GTK_LIBRARIES
   cairo-gobject
   cairo
   graphene-1.0
-  gio-2.0
-  gobject-2.0
-  glib-2.0)
+  gio-2.0)
 
 set(PTHREAD_LIBRARIES "-lpthread")
 set(SYSTEM_LIBRARIES "-lexpat -lm -lrt -lrt -luuid")

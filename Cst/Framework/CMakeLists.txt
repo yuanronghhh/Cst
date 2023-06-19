@@ -8,6 +8,7 @@ set(INC
   ${GLAD_INCLUDE_DIRS}
   ${GLFW3_INCLUDE_DIRS}
   ${TINYEXPR_INCLUDE_DIRS}
+  ${PANGOFC_INCLUDE_DIRS}
 )
 
 set(INC_SYS
@@ -93,8 +94,6 @@ set(SRC
   ./DataType/FRSource.h
   ./DataType/FRApplication.c
   ./DataType/FRApplication.h
-  ./DataType/FRWorker.c
-  ./DataType/FRWorker.h
   ./DataType/FRPQueue.h
   ./DataType/FRPQueue.c
   ./DataType/FREnv.c
@@ -138,6 +137,7 @@ add_dependencies(FRFramework
 
 target_link_libraries(FRFramework
   System
+  ${PANGOFC_LIBRARIES}
   ${GLIB_LIBRARIES}
   ${MONO_LIBRARIES}
   ${PIXMAN_LIBRARIES}

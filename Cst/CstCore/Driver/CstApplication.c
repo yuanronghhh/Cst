@@ -158,8 +158,6 @@ SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
   cst_application_active(self);
 
   fr_main_run(priv->main_loop);
-  sys_object_unref(priv->main_loop);
-  sys_object_unref(priv->work_loop);
 
   return priv->status;
 }

@@ -28,8 +28,8 @@ struct _MiniComponentClass {
   CstComponentClass parent;
 };
 
-SYS_API SysType mini_component_get_type(void);
-SYS_API MiniComponent* mini_component_new(void);
+SysType mini_component_get_type(void);
+MiniComponent* mini_component_new(void);
 
 SysInt mini_component_press2(FREvent *e, SysPointer user_data);
 

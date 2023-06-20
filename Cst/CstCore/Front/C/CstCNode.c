@@ -377,6 +377,28 @@ CstNode *cst_node_next(CstNode *node) {
   return node->next;
 }
 
+FRAWatch *cst_node_get_awatch(CstNode *node, SysType atype, const SysChar *bind_var) {
+  sys_return_val_if_fail(node != NULL, NULL);
+
+  CstNodePrivate *priv = node->priv;
+
+  FRAWatch *w;
+  const SysChar *wname = NULL;
+  sys_list_foreach(priv->awatches, item) {
+    w = item->data;
+    wname = fr_awatch_get_func_name(w);
+    if (wname == NULL) {
+      continue;
+    }
+
+    if (sys_object_is_a(w, atype) && sys_str_equal(bind_var, fr_awatch_get_func_name(w))) {
+      return w;
+    }
+  }
+
+  return NULL;
+}
+
 static SysPtrArray *node_new_css_groups(void) {
   SysPtrArray *ptr = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 
@@ -1108,6 +1130,13 @@ SysBool cst_node_layer_has_flag(CstNode *node, SysInt flag) {
   CstNodePrivate* priv = node->priv;
 
   return priv->layer_bit & flag;
+}
+
+void cst_node_add_awatch(CstNode *node, FRAWatch *awatch) {
+  sys_return_if_fail(node != NULL);
+  CstNodePrivate* priv = node->priv;
+
+  priv->awatches = sys_list_prepend(priv->awatches, awatch);
 }
 
 /* sys object api */

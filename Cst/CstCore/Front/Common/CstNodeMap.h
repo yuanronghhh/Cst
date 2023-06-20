@@ -25,7 +25,7 @@ struct _CstNodeMapClass {
 
 SysType cst_node_map_get_type(void);
 CstNodeMap* cst_node_map_new(void);
-CstNodeMap * cst_node_map_new_I(CstPropMap * prop_map, SysInt prop_type);
+CstNodeMap * cst_node_map_new_I(CstPropMap * prop_map, SysInt prop_type, const SysChar * prop_name);
 CstNodeMap* cst_node_map_clone(CstNodeMap* map);
 void cst_node_map_bind(CstNodeMap * self, CstComNode * com_node, CstNode * v_node);
 void cst_node_map_calc(CstNodeMap * self, CstNode * v_node);

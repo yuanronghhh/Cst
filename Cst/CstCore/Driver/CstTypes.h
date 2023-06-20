@@ -101,11 +101,7 @@ typedef enum _CST_DIRTY_STATE_ENUM {
   CST_DIRTY_DIRTY = CST_DIRTY_RELAYOUT | CST_DIRTY_REREPAINT,
 } CST_DIRTY_STATE_ENUM;
 
-typedef enum _CST_PROP_VALUE_ENUM {
-  CST_PROP_VALUE_BOOL = 1,
-  CST_PROP_VALUE_STRING,
-  CST_PROP_VALUE_POINTER,
-} CST_PROP_VALUE_ENUM;
+typedef SYS_VALUE_ENUM CST_PROP_VALUE_ENUM;
 
 typedef struct _CstContext CstContext;
 
@@ -175,10 +171,9 @@ typedef struct _CstPropMapClass CstPropMapClass;
 typedef struct _CstPropMapPrivate CstPropMapPrivate;
 
 typedef struct _CstPropPair CstPropPair;
-typedef struct _CstPropPairClass CstPropPairClass;
-typedef struct _CstPropPairPrivate CstPropPairPrivate;
+typedef SysValue CstPropValue;
 
-typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, SysValue *value);
+typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef void (*CstCssCalcFunc) (CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);
 

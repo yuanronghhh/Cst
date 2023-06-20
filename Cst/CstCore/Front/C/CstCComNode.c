@@ -9,7 +9,7 @@
 struct _CstComNodePrivate {
   CstComponent *component;
 
-  SysPtrArray *values;
+  SysHashTable *values_ht;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstComNode, cst_com_node, CST_TYPE_NODE);
@@ -40,45 +40,69 @@ CstComponent *cst_com_node_get_component(CstComNode *self) {
   return priv->component;
 }
 
-CstPropPair * cst_com_node_get_value(CstComNode * self, const SysChar *key) {
+CstPropValue * cst_com_node_get_value(CstComNode * self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstComNodePrivate *priv = self->priv;
 
-  return sys_hash_table_lookup(priv->values, (SysPointer)key);
+  return sys_hash_table_lookup(priv->values_ht, (SysPointer)key);
 }
 
-void com_node_set_value(CstComNode *self, CstPropPair *value) {
+void com_node_set_value(CstComNode *self, const SysChar *key, CstPropValue *value) {
   sys_return_if_fail(self != NULL);
 
   CstComNodePrivate *priv = self->priv;
 
-  sys_ptr_array_add(priv->values, (SysPointer)value);
+  sys_hash_table_insert(priv->values_ht, (SysPointer)sys_strdup(key), (SysPointer)value);
 }
 
-static void text_set_text_i(CstNode *v_node, const SysChar *key, CstPropPair *value) {
+static void text_set_text_i(CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
   CstText *text = CST_TEXT(v_node);
 
   cst_text_set_text(text, sys_value_v_string(value));
 }
 
-static void com_node_set_value_i(CstNode *v_node, CstPropPair *pair) {
+static void node_set_awatch_func_i(CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  SysType tp = fr_awatch_get_type_by_name(key);
+
+  FRAWatch *awatch = cst_node_get_awatch(v_node, tp, bind_var);
+  if (awatch == NULL) {
+    sys_warning_N("Not found awatch in node: %s, %s, %s", 
+      cst_node_get_name(v_node), 
+      cst_node_get_id(v_node), 
+      key);
+
+    return;
+  }
+
+  fr_awatch_set_function(awatch, (FREventFunc)sys_value_v_pointer(value));
+}
+
+static void com_node_set_value_i(CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
   CstComNode *com_node = CST_COM_NODE(v_node);
 
-  com_node_set_value(com_node, pair);
+  com_node_set_value(com_node, key, value);
 }
 
 CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type) {
-  if(data_type == CST_PROP_VALUE_STRING) {
-    if(node_type == CST_TYPE_TEXT && prop_type == CST_NODE_PROP_VALUE) {
-      return text_set_text_i;
-    }
+  switch(data_type) {
+    case SYS_STRING:
+      if(node_type == CST_TYPE_TEXT && prop_type == CST_NODE_PROP_VALUE) {
+        return text_set_text_i;
+      }
 
-    if(node_type == CST_TYPE_COM_NODE && prop_type == CST_NODE_PROP_VALUE) {
-      return com_node_set_value_i;
-    }
+      if(node_type == CST_TYPE_COM_NODE && prop_type == CST_NODE_PROP_VALUE) {
+        return com_node_set_value_i;
+      }
+      break;
+    case SYS_POINTER:
+      if (sys_type_is_a(node_type, CST_TYPE_WIDGET) && prop_type == CST_NODE_PROP_ACTION) {
+        return node_set_awatch_func_i;
+      }
+      break;
   }
 
+  sys_warning_N("Not support prop map for component node: %d,%d", prop_type, data_type);
   return NULL;
 }
 
@@ -115,7 +139,7 @@ static void cst_com_node_dispose(SysObject* o) {
   CstComNodePrivate *priv = self->priv;
 
   sys_object_unref(priv->component);
-  sys_hash_table_unref(priv->values);
+  sys_hash_table_unref(priv->values_ht);
 
   SYS_OBJECT_CLASS(cst_com_node_parent_class)->dispose(o);
 }
@@ -126,5 +150,5 @@ static void cst_com_node_init(CstComNode *self) {
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)sys_value_unref);
 
-  priv->values = ht;
+  priv->values_ht = ht;
 }

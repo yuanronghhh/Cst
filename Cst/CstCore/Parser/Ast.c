@@ -4,6 +4,7 @@
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstManager.h>
+#include <CstCore/Front/Common/CstPropPair.h>
 #include <CstCore/Driver/Css/CstCss.h>
 
 
@@ -280,7 +281,7 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
   CstComNode *v_com_node;
   FREventFunc watch_func;
   SysChar *func_name;
-  SysValue *value;
+  CstPropValue *svalue;
 
   CstNode * v_node = pass->v_com_node;
   sys_return_val_if_fail(v_node != NULL, false);
@@ -315,14 +316,14 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
       return false;
     }
 
-    value = sys_value_new_pointer(watch_func);
+    svalue = sys_value_new_pointer(watch_func);
 
   } else {
 
-    value = ast_jnode_new_value(nnode);
+    svalue = ast_jnode_new_value(nnode);
   }
 
-  com_node_set_value(v_com_node, pair->key, value);
+  com_node_set_value(v_com_node, pair->key, svalue);
 
   return true;
 }
@@ -375,12 +376,13 @@ void cst_node_props_destroy(CstNodeProps *props) {
   }
 }
 
-SysValue* ast_jnode_new_value(SysChar *name) {
-  SysValue* o = NULL;
+CstPropValue* ast_jnode_new_value(JNode *jnode) {
+  CstPropValue* o = NULL;
 
   switch (jnode->type) {
     case AstJString:
       o = sys_value_new_string(jnode->v.v_string);
+      break;
     default:
       break;
   }
@@ -395,7 +397,7 @@ static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pa
 
   JNode *nnode;
   CstPropMap *prop_map;
-  SysValue *value;
+  SysInt ptype;
 
   CstComponent *component = pass->v_component;
   sys_return_val_if_fail(component != NULL, false);
@@ -406,8 +408,9 @@ static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pa
     return false;
   }
 
-  value = ast_jnode_new_value(nnode);
-  prop_map = cst_prop_map_new_I(pair->key, value);
+
+  ptype = cst_prop_map_parse_type(pair->key, nnode->v.v_string);
+  prop_map = cst_prop_map_new_I(pair->key, ptype);
 
   cst_component_set_props_map(component, prop_map);
 
@@ -682,7 +685,7 @@ void ast_gstyle_parse(GStyle *gstyle, CstCssEnv *gcss_env, const SysChar *path) 
 }
 
 /* Node Ast */
-static void node_parse_action_bind(CstNodeProps *props, const SysChar *watch_name, const SysChar *func_name, CstComponent *component) {
+static void node_parse_action_bind(CstNodeProps *props, const SysChar *watch_name, const SysChar *func_name, CstComponent *component, SysChar **bind_var) {
   sys_return_if_fail(func_name != NULL);
 
   CstPropMap *pmap = NULL;
@@ -694,15 +697,17 @@ static void node_parse_action_bind(CstNodeProps *props, const SysChar *watch_nam
   if (index_name == NULL) {
     return;
   }
+  *bind_var = index_name;
 
   pmap = cst_component_get_props_map(component, index_name);
-  sys_free_N(index_name);
-
   if (pmap == NULL) {
+    sys_error_N("Not found props in component: %s, %s", cst_component_get_id(component), index_name);
+    *bind_var = NULL;
+    sys_free_N(index_name);
     return;
   }
 
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION);
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION, watch_name);
   props->v_node_maps = sys_list_prepend(props->v_node_maps, map);
 }
 
@@ -713,26 +718,32 @@ static void node_parse_action(CstNodeProps *props, const SysChar *watch_name, co
   SysChar *fname;
   FREventFunc watch_func;
   FRAWatch *awatch;
+  SysChar *bind_var = NULL;
 
   if(*func_name == '{') {
-    node_parse_action_bind(props, watch_name, func_name, component);
-    return;
-  }
+    node_parse_action_bind(props, watch_name, func_name, component, &bind_var);
+    watch_func = NULL;
+  } else {
 
-  fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
-  watch_func = cst_component_get_function(component, fname);
-  sys_free_N(fname);
+    fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
+    watch_func = cst_component_get_function(component, fname);
+    sys_free_N(fname);
 
-  if (watch_func == NULL) {
-    sys_warning_N("Not found function: \"%s\" in \"%s\" component",
-      func_name, cst_component_get_id(component));
-    return;
+    if (watch_func == NULL) {
+      sys_warning_N("Not found function: \"%s\" in \"%s\" component",
+        func_name, cst_component_get_id(component));
+      return;
+    }
+
+    bind_var = sys_strdup(func_name);
   }
 
   FRAWatchProps awatch_props = {0};
   awatch_props.get_bound_func = (FRGetBoundFunc)cst_node_get_bound_bp;
 
-  awatch = fr_awatch_new_by_name(watch_name, func_name, watch_func, &awatch_props);
+  awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
+  sys_clear_pointer(&bind_var, sys_free);
+
   if (awatch == NULL) {
     sys_warning_N("Not found action: \"%s\" in \"%s\" component",
       watch_name, cst_component_get_id(component));
@@ -762,7 +773,7 @@ static void node_parse_value_bind(CstNodeProps *props, CstComponent *component, 
     return;
   }
 
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE);
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE, "value");
   props->v_node_maps = sys_list_prepend(props->v_node_maps, map);
 }
 

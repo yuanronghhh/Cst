@@ -9,8 +9,6 @@ struct _FRActionPrivate {
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRAction, fr_action, SYS_TYPE_OBJECT);
 
-static SysHashTable *g_actions = NULL;
-
 SysBool fr_action_check(FRAction *self, FREvent *e) {
   FRActionClass *cls = FR_ACTION_GET_CLASS(self);
 
@@ -88,10 +86,6 @@ void fr_action_set_name(FRAction *self, const SysChar *name) {
   sys_assert(priv->name == NULL);
 
   priv->name = sys_strdup(name);
-}
-
-FRAction* fr_action_get_by_name(const SysChar *name) {
-  return sys_hash_table_lookup(g_actions, (SysPointer)name);
 }
 
 /* object api */

@@ -14,10 +14,7 @@ SYS_DEFINE_TYPE_WITH_PRIVATE(MiniComponent, mini_component, CST_TYPE_COMPONENT);
  * user functions
  */
 FR_FUNC_DEFINE_EVENT(mini_quit_key) {
-  FREventKey *ekey = FR_EVENT_KEY(e);
   CstApplication *app = cst_application_acquire();
-
-  sys_debug_N("key press: %d,%d", fr_event_key_scancode(ekey), fr_event_key_action(ekey));
 
   cst_application_stop(app);
 
@@ -41,6 +38,7 @@ static void mini_component_construct(CstComponent *comp, CstModule *v_module, Cs
 
   cst_module_add_awatch(v_module, comp, "key", "mini_quit_key", mini_quit_key, &props);
   cst_module_set_function(v_module, FR_FUNC_EVENT(mini_component_press2));
+  cst_module_set_function(v_module, FR_FUNC_EVENT(mini_quit_key));
 }
 
 static void mini_component_init(MiniComponent *self) {

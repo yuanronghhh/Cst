@@ -1,20 +1,20 @@
 #include <Mini/Mini.h>
 
 static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, CST_TYPE_NODE)) {
+  if (!sys_object_is_a(o, FR_TYPE_MAIN)) {
     return;
   }
 
-  // sys_debug_N("%p\t%d", o, ref_count);
+  sys_debug_N("%p\t%d", o, ref_count);
   sys_assert(ref_count > 0);
 }
 
 static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, CST_TYPE_NODE)) {
+  if (!sys_object_is_a(o, FR_TYPE_MAIN)) {
     return;
   }
 
-  // sys_debug_N("%p\t%d", o, ref_count);
+  sys_debug_N("%p\t%d", o, ref_count);
   sys_assert(ref_count > 0);
 }
 

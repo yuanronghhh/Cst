@@ -17,13 +17,12 @@ Component<id: "mini-menubar", base: "mini-menubase">: {
   },
 
   Props: {
-    label: "string",
     value: "string",
-    "@press1": "function"
+    "@press": "function"
   },
 
   Layout: {
-    LBox<id: "ma0", "@mouse_release": "{{ @press1 }}">: {
+    LBox<id: "ma0", "@mouse_release": "{{ @press }}">: {
       Text<id: "ma1", value: "{{ value }}", label: "{{ value }}">: null
     }
   }

@@ -12,6 +12,7 @@
 struct _FRAWatchPrivate {
   FRAction *action;
   FREventFunc func;
+  SysChar *func_name;
   SysPointer user_data;
   SysList *action_link;
 };
@@ -19,7 +20,6 @@ struct _FRAWatchPrivate {
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRAWatch, fr_awatch, SYS_TYPE_OBJECT);
 
 static SysHashTable *g_awatch_nodes = NULL;
-
 
 SysPointer fr_awatch_get_data(FRAWatch *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -49,7 +49,7 @@ void fr_action_watch_register_type(const SysChar *name, SysType type) {
   sys_hash_table_insert(g_awatch_nodes, (SysPointer)sys_strdup(name), (SysPointer)type);
 }
 
-static SysType fr_awatch_get_by_name(const SysChar *name) {
+SysType fr_awatch_get_type_by_name(const SysChar *name) {
   return (SysType)sys_hash_table_lookup(g_awatch_nodes, (SysPointer)name);
 }
 
@@ -77,8 +77,37 @@ static void fr_awatch_dispatch_i(FRAWatch *self, FREvent *e) {
   sys_return_if_fail(self != NULL);
 
   FRAWatchPrivate *priv = self->priv;
+  sys_return_if_fail(priv->func != NULL && "awatch bind is correct ?");
 
   priv->func(e, priv->user_data);
+}
+
+const SysChar *fr_awatch_get_func_name(FRAWatch *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  FRAWatchPrivate *priv = self->priv;
+
+  return priv->func_name;
+}
+
+void fr_awatch_set_func_name(FRAWatch *self, const SysChar *func_name) {
+  sys_return_if_fail(self != NULL);
+
+  FRAWatchPrivate *priv = self->priv;
+
+  if (priv->func_name) {
+    sys_clear_pointer(&priv->func_name, sys_free);
+  }
+
+  priv->func_name = sys_strdup(func_name);
+}
+
+void fr_awatch_set_function(FRAWatch *self, FREventFunc func) {
+  sys_return_if_fail(self != NULL);
+
+  FRAWatchPrivate *priv = self->priv;
+
+  priv->func = func;
 }
 
 FRAWatch *fr_awatch_new(void) {
@@ -103,6 +132,7 @@ static FRAWatch *fr_awatch_dclone_i(FRAWatch *old) {
   FRAWatchPrivate *npriv = nawatch->priv;
 
   npriv->func = opriv->func;
+  npriv->func_name = sys_strdup(opriv->func_name);
   npriv->user_data = opriv->user_data;
   npriv->action_link = NULL;
   npriv->action = fr_action_ref(opriv->action);
@@ -147,6 +177,10 @@ static void fr_awatch_dispose(SysObject* o) {
   priv->action_link = NULL;
   sys_object_unref(priv->action);
 
+  if (priv->func_name) {
+    sys_clear_pointer(&priv->func_name, sys_free);
+  }
+
   SYS_OBJECT_CLASS(fr_awatch_parent_class)->dispose(o);
 }
 
@@ -155,13 +189,15 @@ static void fr_awatch_create_i(FRAWatch* self, const SysChar *func_name, FREvent
 
   priv->user_data = NULL;
   priv->func = func;
+  priv->func_name = func_name != NULL ? sys_strdup(func_name) : NULL;
+
   sys_object_ref(priv->action);
 }
 
 FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
   sys_return_val_if_fail(props != NULL, NULL);
 
-  SysType type = fr_awatch_get_by_name(watch_name);
+  SysType type = fr_awatch_get_type_by_name(watch_name);
   if (type == 0) {
     return NULL;
   }

@@ -44,15 +44,15 @@ static void cst_prop_map_construct(SysObject *o, const SysChar *key, CST_PROP_VA
 }
 
 SysInt cst_prop_map_parse_type(const SysChar *key, const SysChar* type_str) {
-  if (sys_strcmp(type_str, "string")) {
+  if (sys_str_equal(type_str, "string")) {
 
-    return CST_PROP_VALUE_STRING;
-  } else if(sys_strcmp(type_str, "bool")) {
+    return SYS_STRING;
+  } else if(sys_str_equal(type_str, "bool")) {
 
-    return CST_PROP_VALUE_BOOL;
-  } else if(sys_strcmp(type_str, "function")) {
+    return SYS_BOOL;
+  } else if(sys_str_equal(type_str, "function")) {
 
-    return CST_PROP_VALUE_POINTER;
+    return SYS_POINTER;
   } else {
 
     sys_warning_N("Not found prop type: %s", type_str);

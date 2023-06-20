@@ -73,6 +73,7 @@ CstNode *cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *
 CstNode *cst_node_children(CstNode *node);
 CstNode *cst_node_prev(CstNode *node);
 CstNode *cst_node_next(CstNode *node);
+FRAWatch * cst_node_get_awatch(CstNode * node, SysType atype, const SysChar * bind_var);
 CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);
 FRPrioList *cst_node_get_abs_node(CstNode *node);
@@ -96,6 +97,7 @@ void cst_node_get_bound_bp(CstNode *node, FRRect *rect_bp);
 const FRRect *cst_node_get_bound(CstNode *node);
 void cst_node_set_bound(CstNode *node, const FRRect *rect);
 SysBool cst_node_layer_has_flag(CstNode *node, SysInt flag);
+void cst_node_add_awatch(CstNode * node, FRAWatch * awatch);
 void cst_node_stroke_rectangle(CstNode *node, FRContext *cr);
 SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g);
 void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode *root, CstNode *new_root, CstRender *v_render);

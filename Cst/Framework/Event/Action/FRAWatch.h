@@ -36,6 +36,10 @@ struct _FRAWatchClass {
 SYS_API FRAWatch* fr_awatch_new(void);
 SYS_API SysType fr_awatch_get_type(void);
 
+SYS_API const SysChar * fr_awatch_get_func_name(FRAWatch * self);
+SYS_API void fr_awatch_set_func_name(FRAWatch * self, const SysChar *func_name);
+SYS_API void fr_awatch_set_function(FRAWatch * self, FREventFunc func);
+SYS_API SysType fr_awatch_get_type_by_name(const SysChar * name);
 SYS_API void fr_awatch_dispatch(FRAWatch *self, FREvent *e);
 SYS_API FRAWatch * fr_awatch_new_bind(SysPointer user_data, const SysChar * watch_name, const SysChar * func_name, FREventFunc func, FRAWatchProps * props);
 SYS_API FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props);

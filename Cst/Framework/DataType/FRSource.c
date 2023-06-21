@@ -72,7 +72,7 @@ void fr_source_set_main(FRSource *source, FRMain *main) {
 }
 
 /* object api */
-void fr_source_construct(SysObject *o, SysPointer user_data) {
+static void fr_source_construct(SysObject *o, SysPointer user_data) {
   FRSource* self = FR_SOURCE(o);
   FRSourcePrivate* priv = self->priv;
 

@@ -7,7 +7,7 @@ BUILD_TYPE:=Debug
 PROJ_NAME_FILE:=
 SURFIX=.exe
 OS_BUILD_TYPE=${BUILD_TYPE}
-ENV=-G "Visual Studio 15 2017 Win64"
+ENV=-G "Visual Studio 16 2019" -A x64
 
 ifeq ($(OS), Linux)
 	OS_BUILD_TYPE=

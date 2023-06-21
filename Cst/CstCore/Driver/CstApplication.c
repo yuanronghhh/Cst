@@ -188,12 +188,9 @@ void cst_application_construct(SysObject* o, const SysChar *appname) {
   CstApplicationPrivate *priv = self->priv;
 
   priv->main_loop = fr_main_get_main_loop();
-  priv->work_loop = fr_main_get_work_loop();
   priv->app_source = fr_application_new_I(self);
-  priv->worker_source = fr_worker_new_I(self);
 
   fr_main_attach(priv->main_loop, FR_SOURCE(priv->app_source));
-  fr_main_attach(priv->work_loop, FR_SOURCE(priv->worker_source));
 
   priv->manager = cst_manager_new_I();
 }

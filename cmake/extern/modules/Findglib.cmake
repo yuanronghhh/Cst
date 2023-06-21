@@ -9,14 +9,14 @@ set(GLIB_FILES "")
 FIND_PATH(GLIB_INCLUDE_DIR
   NAMES glib.h
   HINTS ${search_dirs}
-  PATH_SUFFIXES glib/include include/glib-2.0
+  PATH_SUFFIXES include glib/include glib/include/glib-2.0
 )
 
 LIST(APPEND GLIB_INCLUDE_DIR
-  "${GLIB_INCLUDE_DIR}/gio"
-  "${GLIB_INCLUDE_DIR}/gio-win32-2.0"
-  "${GLIB_INCLUDE_DIR}/glib"
-  "${GLIB_INCLUDE_DIR}/gobject"
+  "${LIBDIR}/glib/include/glib-2.0/gio"
+  "${LIBDIR}/glib/include/glib-2.0/gmodule"
+  "${LIBDIR}/glib/include/glib-2.0/glib"
+  "${LIBDIR}/glib/include/glib-2.0/gobject"
 )
 
 if(UNIX)
@@ -35,33 +35,37 @@ set(GLIB_COMPONENTS
 
 
 if(WIN32)
-  LIST(APPEND GLIB_COMPONENTS
-    iconv
-    intl
-    libffi
-    pcre
-    pcre16
-    pcre32
-    pcrecpp
-    pcreposix
-    zlib
-  )
+  # LIST(APPEND GLIB_COMPONENTS
+  #   iconv
+  #   intl
+  #   libffi
+  #   pcre
+  #   pcre16
+  #   pcre32
+  #   pcrecpp
+  #   pcreposix
+  #   zlib
+  # )
 
 set(GLIB_FILE
   "brotlicommon.dll"
   "brotlidec.dll"
-  "brotlienc.dll"
+  # "brotlienc.dll"
   "bz2.dll"
   "charset-1.dll"
+
   "gio-2.0-0.dll"
   "glib-2.0-0.dll"
   "gmodule-2.0-0.dll"
   "gobject-2.0-0.dll"
   "gthread-2.0-0.dll"
+
   "iconv-2.dll"
   "intl-8.dll"
   "libexpat.dll"
   "libffi.dll"
+  "harfbuzz.dll"
+  "pcre2-8.dll"
   "pcre.dll"
   "pcre16.dll"
   "pcre32.dll"
@@ -75,7 +79,7 @@ FOREACH(COMPONENT ${GLIB_FILE})
     FIND_FILE(GLIB_${COMPONENT}_FILE
       NAMES ${COMPONENT}
       HINTS ${search_dirs}
-      PATH_SUFFIXES glib/bin
+      PATH_SUFFIXES glib/bin pango/tools/pango fontconfig/tools/fontconfig/ bzip2/bin libiconv/bin glib/tools/glib expat/bin/ pcre/bin
     )
 
     LIST(APPEND GLIB_FILES "${GLIB_${COMPONENT}_FILE}")

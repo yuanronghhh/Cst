@@ -12,32 +12,7 @@ SYS_DEFINE_TYPE_WITH_PRIVATE(FRMain, fr_main, SYS_TYPE_OBJECT);
 
 static void fr_main_destroy(FRMain * self);
 
-static FRMain *worker_loop = NULL;
 static FRMain *main_loop = NULL;
-static SysThread *work_thread = NULL;
-
-/* worker thread */
-static SysPointer main_work_func(SysPointer data) {
-  sys_return_val_if_fail(worker_loop != NULL, NULL);
-
-  FRSource *source = NULL;
-
-  while(fr_main_is_running(main_loop)) {
-
-    fr_main_iter_next(worker_loop, &source);
-
-    sys_sleep(1e6);
-    sys_debug_N("%lld\t%p", sys_get_monotonic_time(), sys_thread_self());
-  }
-
-  fr_main_destroy(worker_loop);
-
-  return NULL;
-}
-
-FRMain *fr_main_get_work_loop(void) {
-  return worker_loop;
-}
 
 FRMain *fr_main_get_main_loop(void) {
   return main_loop;
@@ -62,9 +37,12 @@ void fr_main_unlock(FRMain *self) {
 void fr_main_stop(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
+  fr_main_lock(self);
+  
   FRMainPrivate* priv = self->priv;
-
   priv->is_running = false;
+
+  fr_main_unlock(self);
 }
 
 void fr_main_attach(FRMain *self, FRSource *source) {
@@ -155,21 +133,13 @@ void fr_main_run(FRMain *self) {
 }
 
 void fr_main_setup(void) {
-
   main_loop = fr_main_new_I();
-  worker_loop = fr_main_new_I();
-  work_thread = sys_thread_new("worker thread", main_work_func, worker_loop);
 }
 
 void fr_main_teardown(void) {
-  sys_assert(worker_loop != NULL && "worker should not be used before main teardown.");
-
+  sys_assert(main_loop != NULL && "worker should not be used before main teardown.");
   fr_main_stop(main_loop);
-  sys_thread_join(work_thread);
-  sys_thread_unref(work_thread);
-
   sys_object_unref(main_loop);
-  sys_object_unref(worker_loop);
 }
 
 /* object api */

@@ -22,7 +22,6 @@ struct _FRMain {
 };
 
 SYS_API SysType fr_main_get_type (void);
-SYS_API FRMain *fr_main_get_work_loop (void);
 SYS_API FRMain *fr_main_get_main_loop (void);
 SYS_API FRMain *fr_main_new_I (void);
 

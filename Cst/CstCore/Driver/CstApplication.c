@@ -40,26 +40,6 @@ FR_FUNC_DEFINE_EVENT(cst_application_event_func) {
 
   sys_debug_N("%s", "ok");
 
-#if 0
-  CstApplicationPrivate *priv = app->priv;
-  CstRender *render = priv->render;
-  SysUInt64 new_time = sys_get_monotonic_time();
-  SysInt etype = fr_event_get_event_type(self);
-
-  switch (etype) {
-    case FR_EVENT_TWINDOW_CLOSE:
-      fr_main_stop_nolock(priv->main);
-      break;
-    case FR_EVENT_TWINDOW_RESIZE:
-      sys_debug_N("%ld,%ld", new_time, last_time);
-      last_time = new_time;
-
-      cst_manager_render(priv->manager, render);
-      break;
-    default:
-      break;
-  }
-#endif
   return 0;
 }
 

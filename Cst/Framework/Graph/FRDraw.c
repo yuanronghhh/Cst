@@ -10,7 +10,8 @@ struct _FRDrawPrivate {
   SysDouble rate_time;
 
   /* not support double buffer now */
-  FRSurface *surface;
+  FRSurface *window_surface;
+  FRSurface *paint_surface;
   FRDisplay *display;
   FRWindow *window;
 };
@@ -49,9 +50,9 @@ FRContext* fr_draw_create_cr(FRDraw* self) {
 
   FRDrawPrivate *priv = self->priv;
 
-  sys_assert(priv->surface != NULL && "priv->surface should set before create context.");
+  sys_assert(priv->paint_surface != NULL && "priv->paint_surface should set before create context.");
 
-  cr = cairo_create(priv->surface);
+  cr = cairo_create(priv->paint_surface);
   return cr;
 }
 
@@ -60,13 +61,12 @@ FRSurface *fr_draw_get_surface(FRDraw *self) {
 
   FRDrawPrivate *priv = self->priv;
 
-  return priv->surface;
+  return priv->paint_surface;
 }
 
-FRSurface* fr_draw_create_surface(FRDraw* self) {
+FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  SysInt fbw = 0, fbh = 0;
   FRSurface *surface;
   FRDrawPrivate *priv = self->priv;
 
@@ -83,9 +83,7 @@ FRSurface* fr_draw_create_surface(FRDraw* self) {
   Window xwindow = fr_window_get_x11_window(priv->window);
   Display *ndisplay = fr_display_get_x11_display(priv->display);
 
-  fr_window_get_framebuffer_size(priv->window, &fbw, &fbh);
-
-  surface = cairo_xlib_surface_create(ndisplay, xwindow, DefaultVisual(ndisplay, DefaultScreen(ndisplay)), fbw, fbh);
+  surface = cairo_xlib_surface_create(ndisplay, xwindow, DefaultVisual(ndisplay, DefaultScreen(ndisplay)), width, height);
 #endif
 
   return surface;
@@ -94,22 +92,27 @@ FRSurface* fr_draw_create_surface(FRDraw* self) {
 void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   sys_return_if_fail(self != NULL);
 
-  cairo_t *cr;
-  int n_boxes, i;
-  cairo_rectangle_int_t box;
-  cairo_surface_t *surface;
-
+  SysInt fbw = 0, fbh = 0;
   FRDrawPrivate *priv = self->priv;
 
-  surface = priv->surface = fr_draw_create_surface(self);
+  fr_window_get_framebuffer_size(priv->window, &fbw, &fbh);
 
-  cr = cairo_create(surface);
+  priv->window_surface = fr_draw_create_surface(self, fbw,fbh);
+  priv->paint_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, fbw, fbh);
+}
 
-  cairo_set_source_rgba(cr, 0.5, 0.5, 0.5, 1.0);
-  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
+  sys_return_if_fail(self != NULL);
+
+  int n_boxes, i;
+  cairo_rectangle_int_t box;
+
+  FRDrawPrivate *priv = self->priv;
+  cairo_t *cr = cairo_create(priv->window_surface);
+
+  cairo_set_source_surface (cr, priv->paint_surface, 0, 0);
 
   n_boxes = cairo_region_num_rectangles(region);
-
   for (i = 0; i < n_boxes; i++) {
     cairo_region_get_rectangle(region, i, &box);
     cairo_rectangle(cr, box.x, box.y, box.width, box.height);
@@ -118,15 +121,11 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   cairo_clip(cr);
   cairo_paint(cr);
   cairo_destroy(cr);
-}
 
-void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
-  sys_return_if_fail(self != NULL);
+  cairo_surface_flush(priv->window_surface);
 
-  FRDrawPrivate *priv = self->priv;
-
-  cairo_surface_flush(priv->surface);
-  sys_clear_pointer(&priv->surface, cairo_surface_destroy);
+  sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
+  sys_clear_pointer(&priv->paint_surface, cairo_surface_destroy);
 }
 
 /* object api */
@@ -142,8 +141,9 @@ static void fr_draw_construct(SysObject *o, FRWindow *window) {
   }
 
   priv->window = window;
-  priv->surface = NULL;
-  priv->rate_time = (1 / 24.0) * 1e3;
+  priv->paint_surface = NULL;
+  priv->window_surface = NULL;
+  priv->rate_time = (1 / 10.0) * 1e3;
 }
 
 FRDraw* fr_draw_new(void) {

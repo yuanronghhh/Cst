@@ -3,7 +3,6 @@
 
 #define G_LOG_USE_STRUCTURED 1
 #define PROJECT_DIR "${CMAKE_CURRENT_LIST_DIR}"
-#define SYS_DEBUG 0
 #define BINARY_DIR "${CMAKE_BINARY_DIR}"
 
 #endif

@@ -5,7 +5,10 @@ include_dep_dirs(
   ${FREETYPE_INCLUDE_DIRS}
   ${BDWGC_INCLUDE_DIRS}
   ${NANOMSG_INCLUDE_DIRS}
-  ${GCORUTINE_INCLUDE_DIRS} ${GLIB_INCLUDE_DIRS} ${CGLM_INCLUDE_DIRS} ${GLAD_INCLUDE_DIRS}
+  ${GCORUTINE_INCLUDE_DIRS} 
+  ${GLIB_INCLUDE_DIRS} 
+  ${CGLM_INCLUDE_DIRS} 
+  ${GLAD_INCLUDE_DIRS}
   ${GLFW3_INCLUDE_DIRS}
   ${PIXMAN_INCLUDE_DIR}
   ${UNITY_INCLUDE_DIRS}
@@ -33,6 +36,8 @@ set(TEST_SRC
   ./TestGTK.h
   ./TestRBTree.c
   ./TestRBTree.h
+  ./TestGlfw.c
+  ./TestGlfw.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")
@@ -70,6 +75,7 @@ target_link_libraries(CstDemo
   ${FREETYPE_LIBRARIES}
   ${DBG_LIBRAREIS}
   ${PANGO_LIBRARIES}
+  ${GLAD_LIBRARIES}
 )
 
 target_copy_files(CstDemo

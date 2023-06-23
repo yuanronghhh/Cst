@@ -43,7 +43,8 @@ clean:
 	@cd ./build/ && make clean
 
 run-linux:
-	@${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}
+	@export LSAN_OPTIONS=verbosity=1:log_threads=1
+	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}
 
 run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${RUN_ARGS}

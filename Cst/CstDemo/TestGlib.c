@@ -547,32 +547,30 @@ static SysPtrArray* get_tag_from_fp(FILE *tagfp) {
 }
 
 static void test_file_count(void) {
+#if 0
   SysPtrArray *infos;
   FILE *tagfp;
   char *filename = "E:/Codes/REPOSITORY/Demo/tags";
   char buffer[BSIZE] = { 0 };
-  // char *dirname = sys_strndup(filename, sys_path_rslash(filename));
-  // char *dot_filename = sys_strcat(filename, sys_path_rslash(filename), STR_LSTR("ttags.dot"));
+  char *dirname = sys_strndup(filename, sys_path_rslash(filename));
+  char *dot_filename = sys_strcat(filename, sys_path_rslash(filename), STR_LSTR("ttags.dot"));
 
   tagfp = sys_fopen(filename, "r");
 
-  //FILE *dotfp = sys_fopen(dot_filename, "w");
-
+  FILE *dotfp = sys_fopen(dot_filename, "w");
   assert(tagfp != NULL && "file not found");
-
   buffer[BSIZE - 1] = '\0';
 
-  //sys_fwrite_nstr(dotfp, STR_LSTR("digraph G {\n"));
-  //sys_fwrite_nstr(dotfp, STR_LSTR("    rankdir=\"LR\";\n    node[shape = \"point\", width = 0.1, height = 0.1];\n    edge[arrowhead = \"none\", style = \"dashed\"]\n"));
-
+  sys_fwrite_nstr(dotfp, STR_LSTR("digraph G {\n"));
+  sys_fwrite_nstr(dotfp, STR_LSTR("    rankdir=\"LR\";\n    node[shape = \"point\", width = 0.1, height = 0.1];\n    edge[arrowhead = \"none\", style = \"dashed\"]\n"));
   infos = get_tag_from_fp(tagfp);
+  sys_fwrite_nstr(dotfp, STR_LSTR("}\n"));
 
-  //sys_fwrite_nstr(dotfp, STR_LSTR("}\n"));
-
-  //fclose(dotfp);
+  fclose(dotfp);
   sys_fclose(tagfp);
 
   sys_ptr_array_unref(infos);
+#endif
 }
 
 static void test_fopen_leak(void) {
@@ -672,11 +670,151 @@ static void test_cpu_thread(void) {
     tharray[i] = th;
   }
 
+  for (int i = 0; i < NTHREAD; i++) {
+    th = tharray[i];
+
+    g_thread_join(th);
+  }
+
   getchar();
 }
 
 static void test_gobject_boxed(void) {
-  GString *string = g_string_new("ok");
+}
+
+static GMutex mlock;
+static GCond mcond;
+static int sint1 = 0;
+static int sint2 = 0;
+
+static void shared_func(int i, gpointer thread_id) {
+  int m = 0;
+  sint1 = i;
+
+  while(m < 1e6) {
+    m++;
+  }
+
+  sint2 = 0;
+}
+
+static gpointer cond_push_func(gpointer data) {
+  gpointer th1_id = g_thread_self();
+  while(1) {
+    g_usleep(1e6);
+
+    g_mutex_lock(&mlock);
+
+    sint2 = 1;
+    g_cond_broadcast(&mcond);
+
+    g_mutex_unlock(&mlock);
+
+    printf("%s,%d,%d\n", "cond_push_func called", sint1, sint2);
+  }
+
+  return NULL;
+}
+
+
+static gpointer cond_consume2_func(gpointer data) {
+  gpointer th1_id = g_thread_self();
+
+  while(1) {
+    g_mutex_lock(&mlock);
+
+    while(sint2 == 0) {
+      g_cond_wait(&mcond, &mlock);
+    }
+
+    shared_func(2, th1_id);
+
+    printf("%s,%d,%d\n", "cond_consume_func2", sint1, sint2);
+
+    g_mutex_unlock(&mlock);
+  }
+
+  return NULL;
+}
+
+static gpointer cond_consume3_func(gpointer data) {
+  gpointer th1_id = g_thread_self();
+
+  while(1) {
+    g_mutex_lock(&mlock);
+
+    while(sint2 == 0) {
+      g_cond_wait(&mcond, &mlock);
+    }
+
+    shared_func(3, th1_id);
+
+    printf("%s,%d,%d\n", "cond_consume_func3", sint1, sint2);
+
+    g_mutex_unlock(&mlock);
+  }
+
+  return NULL;
+}
+
+static void test_thread_cond(void) {
+  GThread *th1, *th2, *th3;
+
+  g_mutex_init(&mlock);
+  th1 = g_thread_new("cond_push_func", cond_push_func, NULL);
+  th2 = g_thread_new("cond_consume2_func", cond_consume2_func, NULL);
+  th3 = g_thread_new("cond_consume3_func", cond_consume3_func, NULL);
+
+  g_thread_join(th1);
+  g_thread_join(th2);
+  g_thread_join(th3);
+}
+
+static gpointer lock_func1(gpointer data) {
+  printf("%s\n", "lock_func1 called");
+  gpointer th1_id = g_thread_self();
+
+  while(1) {
+    g_usleep(1e5);
+
+    g_mutex_lock(&mlock);
+    shared_func(1, th1_id);
+    g_mutex_unlock(&mlock);
+
+    // printf("%s,%d,%d\n", "lock_func1 called", sint1, sint2);
+  }
+
+  return NULL;
+}
+
+static gpointer lock_func2(gpointer data) {
+  printf("%s\n", "lock_func2 called");
+
+  gpointer th1_id = g_thread_self();
+  while(1) {
+    g_usleep(1e5);
+
+    g_mutex_lock(&mlock);
+    shared_func(2, th1_id);
+    g_mutex_unlock(&mlock);
+
+    // printf("%s,%d,%d\n", "lock_func2 called", sint1, sint2);
+  }
+
+  return NULL;
+}
+
+static void test_thread_lock(void) {
+  GThread *th1, *th2;
+
+  g_mutex_init(&mlock);
+  th1 = g_thread_new("main", lock_func1, NULL);
+  th2 = g_thread_new("worker1", lock_func2, NULL);
+
+  g_thread_join(th1);
+  g_thread_join(th2);
+
+  getchar();
 }
 
 void test_glib_init(int argc, char *argv[]) {
@@ -694,7 +832,9 @@ void test_glib_init(int argc, char *argv[]) {
     // RUN_TEST(test_set_jump);
     // RUN_TEST(test_binary_print);
     // RUN_TEST(test_dump_memory);
-    RUN_TEST(test_cpu_thread);
+    // RUN_TEST(test_cpu_thread);
+    // RUN_TEST(test_thread_lock);
+    RUN_TEST(test_thread_cond);
   }
   UNITY_END();
 }

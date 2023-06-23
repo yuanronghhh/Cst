@@ -143,7 +143,7 @@ static void fr_draw_construct(SysObject *o, FRWindow *window) {
   priv->window = window;
   priv->paint_surface = NULL;
   priv->window_surface = NULL;
-  priv->rate_time = (1 / 10.0) * 1e3;
+  priv->rate_time = (1 / 60.0) * 1e3;
 }
 
 FRDraw* fr_draw_new(void) {

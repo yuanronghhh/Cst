@@ -181,7 +181,7 @@ static void fr_window_refresh_callback(GLFWwindow* gwindow) {
 
   FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_REFRESH);
 
-  fr_events_push_head(e);
+  fr_events_dispatch(e);
 }
 
 static void fr_window_event_teardown(FRWindow *self) {

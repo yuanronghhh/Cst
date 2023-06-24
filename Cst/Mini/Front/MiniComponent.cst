@@ -11,6 +11,7 @@ Component<id: "mini-component">: {
   Layout: {
     LBox<id: "menu">: {
       MenuBar<value: "文件(F)", "@press": "mini_component_press2">: null,
+      MenuBar<value: "编辑(F)", "@press": "mini_component_press2">: null,
       MenuBar<value: "退出(Q)", "@press": "mini_quit_key">: null
     },
     LGrid<id:"image-body">: {

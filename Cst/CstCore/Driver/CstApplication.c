@@ -118,7 +118,6 @@ void cst_application_env_teardown(void) {
   }
 
   cst_css_teardown();
-
   fr_canvas_teardown();
   fr_window_teardown();
   fr_events_teardown();

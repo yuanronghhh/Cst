@@ -124,6 +124,32 @@ void test_cairo_animation(void) {
   g_object_unref(app);
 }
 
+void test_gdk_window(void) {
+  // BUG: init failed
+  GdkDisplay *display;
+  GdkSurface  *toplevel;
+  GdkToplevelLayout *layout;
+  GdkDisplayManager *display_manager;
+
+  gdk_init_check();
+  gdk_pre_parse ();
+  gdk_event_init_types ();
+
+  display_manager = gdk_display_manager_get ();
+  display = gdk_display_open_default ();
+
+  if (gdk_display_manager_get_default_display (display_manager) != NULL) {
+    display = gdk_display_get_default ();
+  }
+
+  toplevel = gdk_surface_new_toplevel (display);
+  layout = gdk_toplevel_layout_new ();
+  gdk_toplevel_layout_set_resizable (layout, true);
+
+  gdk_toplevel_present (GDK_TOPLEVEL (toplevel), layout);
+  getchar();
+}
+
 void test_gtk_init(int argc, char *argv[]) {
   UNITY_BEGIN();
   {

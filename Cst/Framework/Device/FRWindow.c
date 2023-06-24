@@ -146,7 +146,7 @@ static void fr_window_scroll_callback(GLFWwindow* gwindow, SysDouble xoffset, Sy
 }
 
 static void fr_window_cursor_enter_callback(GLFWwindow* gwindow, SysInt entered) {
-  sys_debug_N("%s", "cursor_enter");
+  // sys_debug_N("%s", "cursor_enter");
 }
 
 static void fr_window_maximize_callback(GLFWwindow* window, int maximized) {
@@ -173,7 +173,7 @@ static void fr_window_size_callback(GLFWwindow* gwindow, SysInt width, SysInt he
 }
 
 static void fr_window_pos_callback(GLFWwindow* gwindow, SysInt xpos, SysInt ypos) {
-  sys_debug_N("%s", "window_pos");
+  // sys_debug_N("%s", "window_pos");
 }
 
 static void fr_window_refresh_callback(GLFWwindow* gwindow) {

@@ -76,6 +76,13 @@ target_link_libraries(CstDemo
   ${DBG_LIBRAREIS}
   ${PANGO_LIBRARIES}
   ${GLAD_LIBRARIES}
+  ${FRIBID_LIBRARIES}
+  ${EPOXY_LIBRARIES}
+  ${GDK_LIBRARIES}
+  ${GDKWAYLAND_LIBRARIES}
+  "/lib/x86_64-linux-gnu/libxkbcommon.so"
+  "/lib/x86_64-linux-gnu/libwayland-client.so.0"
+  "/lib/x86_64-linux-gnu/libwayland-egl.so.1"
 )
 
 target_copy_files(CstDemo

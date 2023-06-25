@@ -1180,7 +1180,7 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   sys_assert(priv->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
   sys_assert(priv->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
 
-  // sys_debug_N("repaint node: %s\t%d\t<%d,%d,%d,%d>", priv->id, sys_atomic_int_get(&(SYS_OBJECT(v_node)->ref_count)), priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
+  sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 }
 
 static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {

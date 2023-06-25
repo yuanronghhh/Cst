@@ -82,6 +82,14 @@ void fr_window_set_title(FRWindow *self, SysChar *title) {
   glfwSetWindowTitle(priv->gwindow, title);
 }
 
+void fr_window_set_opacity(FRWindow *self, double opacity) {
+  sys_return_if_fail(self != NULL);
+
+  FRWindowPrivate* priv = self->priv;
+
+  glfwSetWindowOpacity(priv->gwindow, opacity);
+}
+
 void fr_window_get_size(FRWindow *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
 
@@ -301,6 +309,7 @@ void fr_window_setup(void) {
   glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
   glfwWindowHint(GLFW_FLOATING, GLFW_FALSE);
   glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+  glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 #endif
 }
 
@@ -314,7 +323,7 @@ void fr_window_create_vk_surface(FRWindow *self, VkInstance instance, VkSurfaceK
 
 /* object api */
 void fr_window_construct(SysObject *o, FRDisplay *display, FRWindow *share) {
-  
+
   FRWindow* self = FR_WINDOW(o);
   FRWindowPrivate* priv = self->priv;
 

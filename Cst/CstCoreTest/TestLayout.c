@@ -38,6 +38,13 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
 }
 
 static void test_layout_wrap(SysList *nodes, CstNode *tree) {
+  CstNode *node = tree;
+  const FRRect *bound;
+
+  node = cst_node_children(node);
+  bound = cst_node_get_bound(node);
+  TEST_ASSERT_EQUAL_INT(720, bound->width);
+  TEST_ASSERT_EQUAL_INT(228, bound->height);
 }
 
 DEFINE_FLOW_FUNC(test_layout_wrap, CST_PROJECT_DIR"/Cst/CstCoreTest/Front/LayoutWrap.cst");

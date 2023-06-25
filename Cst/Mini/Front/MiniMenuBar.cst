@@ -3,12 +3,11 @@
 Component<id: "mini-menubar", base: "mini-menubase">: {
   Style: {
     "ma0": {
-      padding: [10, 10, 10, 10]
+      padding: [5, 5, 5, 20]
     },
     "ma1": {
       width: "100%",
-      wrap: true,
-      font-size: 10
+      font-size: 12
     }
   },
 

@@ -10,6 +10,7 @@ SYS_BEGIN_DECLS
 
 #ifdef SYS_OS_UNIX
   #include <X11/Xlib.h>
+  #include <X11/Xutil.h>
   #define CAIRO_HAS_GLX_FUNCTIONS 1
 
   #include <cairo/cairo-xlib.h>

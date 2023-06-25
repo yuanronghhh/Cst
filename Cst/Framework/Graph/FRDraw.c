@@ -83,7 +83,10 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   Window xwindow = fr_window_get_x11_window(priv->window);
   Display *ndisplay = fr_display_get_x11_display(priv->display);
 
-  surface = cairo_xlib_surface_create(ndisplay, xwindow, DefaultVisual(ndisplay, DefaultScreen(ndisplay)), width, height);
+  surface = cairo_xlib_surface_create(ndisplay,
+      xwindow, 
+      DefaultVisual(ndisplay, DefaultScreen(ndisplay)),
+      width, height);
 #endif
 
   return surface;

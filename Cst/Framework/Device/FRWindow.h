@@ -28,6 +28,7 @@ SYS_API FRWindow* fr_window_new_I (FRDisplay* display, FRWindow* share);
 SYS_API FR_WINDOW_BACKEND_ENUM fr_window_backend(FRWindow *window);
 SYS_API FRDisplay* fr_window_get_display (FRWindow* window);
 SYS_API void fr_window_set_title (FRWindow* window, SysChar* title);
+SYS_API void fr_window_set_opacity(FRWindow *self, double opacity);
 SYS_API void fr_window_set_size (FRWindow* window, SysInt width, SysInt height);
 SYS_API void fr_window_get_size (FRWindow* window, SysInt* width, SysInt* height);
 SYS_API FRWindow* fr_window_top_new (FRDisplay* display);

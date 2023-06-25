@@ -16,8 +16,6 @@ SYS_DEFINE_TYPE_WITH_PRIVATE(MiniMenuBar, mini_menubar, CST_TYPE_COMPONENT);
 FR_FUNC_DEFINE_EVENT(menubar_btn_press) {
   FREventMouseKey *ekey = FR_EVENT_MOUSEKEY(e);
 
-  mini_component_press2(e, user_data);
-
   sys_debug_N("key press: %d,%d", fr_event_mousekey_key(ekey), fr_event_mousekey_action(ekey));
 
   return 0;

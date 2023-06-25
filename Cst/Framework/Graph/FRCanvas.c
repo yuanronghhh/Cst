@@ -4,16 +4,6 @@
 #include <Framework/Graph/FRText.h>
 
 
-struct _FRDraw {
-  SysPointer v;
-
-  /* not support double buffer now */
-  FRSurface *surface;
-  FRDisplay *display;
-  FRWindow *window;
-};
-
-
 SysInt fr_canvas_rounded_rectangle(FRContext* context, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius) {
   cairo_t *cr = (cairo_t *)context;
 

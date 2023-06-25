@@ -80,9 +80,9 @@ target_link_libraries(CstDemo
   ${EPOXY_LIBRARIES}
   ${GDK_LIBRARIES}
   ${GDKWAYLAND_LIBRARIES}
-  "/lib/x86_64-linux-gnu/libxkbcommon.so"
-  "/lib/x86_64-linux-gnu/libwayland-client.so.0"
-  "/lib/x86_64-linux-gnu/libwayland-egl.so.1"
+  # "/lib/x86_64-linux-gnu/libxkbcommon.so"
+  # "/lib/x86_64-linux-gnu/libwayland-client.so.0"
+  # "/lib/x86_64-linux-gnu/libwayland-egl.so.1"
 )
 
 target_copy_files(CstDemo

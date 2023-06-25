@@ -36,12 +36,12 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar *name);
 void cst_node_unlink_node_r(CstNode *node);
 void cst_node_relayout_reset(CstNode *node);
 void cst_node_render_css(CstNode *node, FRContext *cr, CST_RENDER_STATE_ENUM state);
+SysBool cst_node_is_dirty(CstNode* node);
 CstNode* cst_node_insert_after(CstNode *parent, CstNode *sibling, CstNode *node);
 void cst_node_append(CstNode *parent, CstNode *node);
 
-SysBool cst_node_get_is_dirty(CstNode *node);
-void cst_node_set_is_dirty(CstNode *node, SysBool is_dirty);
 SysBool cst_node_is_visible(CstNode *node);
+void cst_node_set_abs_node(CstNode* v_node, SysBool bvalue);
 void cst_node_set_layer(CstNode *v_node, SysInt layer);
 
 void cst_node_print_node(CstNode *node);
@@ -96,7 +96,7 @@ void cst_node_relayout_v(CstModule *v_module, CstNode *v_parent, CstNode *v_node
 void cst_node_get_bound_bp(CstNode *node, FRRect *rect_bp);
 const FRRect *cst_node_get_bound(CstNode *node);
 void cst_node_set_bound(CstNode *node, const FRRect *rect);
-SysBool cst_node_layer_has_flag(CstNode *node, SysInt flag);
+SysBool cst_node_is_abs_node(CstNode* node);
 void cst_node_add_awatch(CstNode * node, FRAWatch * awatch);
 void cst_node_stroke_rectangle(CstNode *node, FRContext *cr);
 SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g);

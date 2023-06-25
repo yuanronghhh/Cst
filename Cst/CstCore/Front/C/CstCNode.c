@@ -24,18 +24,22 @@ struct _CstNodePrivate {
   /* Type: CstNodeMap */
   SysList *node_maps;
 
-  SysList        *pass_node;
-  FRPrioList     *abs_node;
-  SysList        *shadow_node;
+  SysList *pass_node;
 
-  SysBool  realized      ;
-  SysBool  breakoff      ;
-  SysInt layer_bit;
-  SysInt z_index;
+  SysBool is_abs_node;
+  FRPrioList *abs_node;
+  SysList *shadow_node;
+
+  SysBool  realized;
+  SysBool  breakoff;
 
   /* render node */
-  SysInt dirty_bit;
-  SysBool  is_visible;
+  SysBool need_relayout;
+  SysBool need_repaint;
+  SysBool is_visible;
+  SysBool wrap;
+
+  SysInt z_index;
 
   FRRect bound;
 
@@ -49,7 +53,6 @@ struct _CstNodePrivate {
   SysInt mbp2;
   SysInt mbp3;
 
-  SysBool wrap;
   SysInt offset_w;
   SysInt offset_h;
 
@@ -773,22 +776,6 @@ void cst_node_render_css(CstNode* node, FRContext *cr, CST_RENDER_STATE_ENUM sta
   cst_css_render_groups(node, priv->css_groups, cr, state);
 }
 
-SysBool cst_node_get_is_dirty(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, false);
-
-  CstNodePrivate *priv = node->priv;
-
-  return priv->dirty_bit & CST_DIRTY_DIRTY;
-}
-
-void cst_node_set_is_dirty(CstNode *node, SysBool is_dirty) {
-  sys_return_if_fail(node != NULL);
-
-  CstNodePrivate *priv = node->priv;
-
-  priv->dirty_bit = CST_DIRTY_DIRTY;
-}
-
 SysBool cst_node_is_visible(CstNode *node) {
   sys_return_val_if_fail(node != NULL, false);
 
@@ -797,12 +784,12 @@ SysBool cst_node_is_visible(CstNode *node) {
   return priv->is_visible;
 }
 
-void cst_node_set_layer(CstNode *v_node, SysInt layer) {
+void cst_node_set_abs_node(CstNode *v_node, SysBool bvalue) {
   sys_return_if_fail(v_node != NULL);
 
   CstNodePrivate* priv = v_node->priv;
 
-  priv->layer_bit = layer;
+  priv->is_abs_node = bvalue;
 }
 
 void cst_node_print_node(CstNode *node) {
@@ -956,40 +943,44 @@ FRPrioList* cst_node_get_abs_node(CstNode *node) {
   return priv->abs_node;
 }
 
-SysBool cst_node_get_need_relayout(CstNode *node) {
+SysBool cst_node_is_dirty(CstNode *node) {
   sys_return_val_if_fail(node != NULL, false);
 
   CstNodePrivate *priv = node->priv;
 
-  return priv->dirty_bit & CST_DIRTY_RELAYOUT;
+  return priv->need_relayout | priv->need_repaint;
 }
 
-SysBool cst_node_get_need_repaint(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, false);
-
-  CstNodePrivate *priv = node->priv;
-
-  return priv->dirty_bit & CST_DIRTY_REREPAINT;
-}
-
-void cst_node_set_need_relayout(CstNode *node, SysBool need_relayout) {
+void cst_node_set_need_repaint(CstNode *node, SysBool bvalue) {
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
 
-  priv->dirty_bit = need_relayout ? 
-    (priv->dirty_bit | CST_DIRTY_RELAYOUT) 
-    : (priv->dirty_bit ^ CST_DIRTY_RELAYOUT);
+  priv->need_repaint = bvalue;
 }
 
-void cst_node_set_need_repaint(CstNode *node, SysBool need_relayout) {
+SysBool cst_node_get_need_repaint(CstNode* node) {
+    sys_return_val_if_fail(node != NULL, false);
+
+    CstNodePrivate* priv = node->priv;
+
+  return priv->need_repaint;
+}
+
+void cst_node_set_need_relayout(CstNode* node, SysBool bvalue) {
   sys_return_if_fail(node != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate* priv = node->priv;
 
-  priv->dirty_bit = need_relayout ?
-    (priv->dirty_bit | CST_DIRTY_REREPAINT)
-    : (priv->dirty_bit ^ CST_DIRTY_REREPAINT);
+  priv->need_relayout = bvalue;
+}
+
+SysBool cst_node_get_need_relayout(CstNode* node) {
+    sys_return_val_if_fail(node != NULL, false);
+
+    CstNodePrivate* priv = node->priv;
+
+    return priv->need_relayout;
 }
 
 void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
@@ -1125,11 +1116,12 @@ fail:
   }
 }
 
-SysBool cst_node_layer_has_flag(CstNode *node, SysInt flag) {
+SysBool cst_node_is_abs_node(CstNode *node) {
   sys_return_val_if_fail(node != NULL, false);
+
   CstNodePrivate* priv = node->priv;
 
-  return priv->layer_bit & flag;
+  return priv->is_abs_node;
 }
 
 void cst_node_add_awatch(CstNode *node, FRAWatch *awatch) {
@@ -1162,8 +1154,9 @@ static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, Cs
     cst_node_bind(v_node, com_node);
   }
 
-  priv->dirty_bit = CST_DIRTY_DIRTY;
-  priv->layer_bit = CST_LAYER_BOX;
+  priv->is_abs_node = false;
+  priv->need_relayout = true;
+  priv->need_repaint = true;
   priv->is_visible = true;
   priv->realized = true;
 
@@ -1180,7 +1173,7 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   sys_assert(priv->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
   sys_assert(priv->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
 
-  sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
+  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 }
 
 static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
@@ -1227,7 +1220,7 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
 
   if (v_props->v_absolute) {
 
-    cst_node_set_layer(v_node, CST_LAYER_ABS);
+    cst_node_set_abs_node(v_node, true);
   }
 
   sys_assert(priv->id != NULL && "node id must be set, construct not correct ?");

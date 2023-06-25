@@ -87,7 +87,7 @@ void fr_window_set_opacity(FRWindow *self, double opacity) {
 
   FRWindowPrivate* priv = self->priv;
 
-  glfwSetWindowOpacity(priv->gwindow, opacity);
+  glfwSetWindowOpacity(priv->gwindow, (float)opacity);
 }
 
 void fr_window_get_size(FRWindow *self, SysInt *width, SysInt *height) {

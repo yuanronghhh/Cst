@@ -62,7 +62,7 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
     return -4;
   }
 
-  if (cst_node_get_is_dirty(v_node)) {
+  if (cst_node_is_dirty(v_node)) {
     return -1;
   }
 
@@ -70,7 +70,7 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
     return -1;
   }
 
-  if (cst_node_layer_has_flag(v_node, CST_LAYER_ABS)) {
+  if (cst_node_is_abs_node(v_node)) {
     return -2;
   }
 
@@ -79,7 +79,7 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
     return -3;
   }
 
-  cst_node_set_is_dirty(v_node, true);
+  cst_node_set_need_repaint(v_node, true);
 
   return 1;
 }

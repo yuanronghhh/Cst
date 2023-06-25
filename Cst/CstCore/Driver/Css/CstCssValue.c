@@ -231,7 +231,7 @@ static SysInt cst_css_set_x(CstNode *node, FRContext *cr, CstCssValue *v) {
   
   const FRRect *bound = cst_node_get_bound(parent);
 
-  if (cst_node_layer_has_flag(node, CST_LAYER_ABS)) {
+  if (cst_node_is_abs_node(node)) {
 
     cst_node_set_x(node, v->v.v_int);
   } else {
@@ -250,7 +250,7 @@ static SysInt cst_css_set_y(CstNode *node, FRContext *cr, CstCssValue *v) {
 
   const FRRect *bound = cst_node_get_bound(parent);
 
-  if (cst_node_layer_has_flag(node, CST_LAYER_ABS)) {
+  if (cst_node_is_abs_node(node)) {
 
     cst_node_set_y(node, v->v.v_int);
   } else {

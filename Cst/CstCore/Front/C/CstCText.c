@@ -3,6 +3,13 @@
 #include <CstCore/Driver/CstRender.h>
 
 
+typedef enum _CST_TEXT_DIRTY_ENUM {
+    CST_TEXT_DIRTY = CST_DIRTY_DIRTY,
+    CST_TEXT_DIRTY_FONT_SIZE = 1 << 3,
+    CST_TEXT_DIRTY_OVERLAY = 1 << 4,
+} CST_TEXT_DIRTY_ENUM;
+
+
 struct _CstTextPrivate {
   SysChar *text;
 
@@ -110,8 +117,15 @@ static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   PangoLayout *layout = priv->layout;
 
   cst_node_get_mbp(v_node, &m0, &m1, &m2, &m3);
-  fr_context_move_to(cr, bound->x + m1, bound->y + m0);
-  pango_cairo_show_layout (cr, layout);
+
+  if(cst_node_is_dirty(v_node)) {
+
+    fr_context_move_to(cr, bound->x + m1, bound->y + m0);
+    pango_cairo_show_layout (cr, layout);
+
+    cst_node_set_need_repaint(v_node, false);
+  }
+
   sys_clear_pointer(&priv->layout, g_object_unref);
 
   CST_NODE_CLASS(cst_text_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
@@ -131,9 +145,13 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
   pango_font_description_set_size (font_desc, priv->font_size * PANGO_SCALE);
   pango_layout_set_font_description (layout, font_desc);
 
-  pango_cairo_update_layout (cr, layout);
-  pango_layout_get_pixel_size (layout, &width, &height);
-  cst_node_set_size(v_node, width, height);
+  if (cst_node_is_dirty(v_node)) {
+    pango_cairo_update_layout (cr, layout);
+    pango_layout_get_pixel_size (layout, &width, &height);
+
+    cst_node_set_size(v_node, width, height);
+    cst_node_set_need_repaint(v_node, false);
+  }
 
   cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
 

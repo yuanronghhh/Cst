@@ -4,12 +4,12 @@ GStyle: {
     height: "100%"
   },
   Text: {
-    font-family: "ubuntu",
+    font-family: "serif",
     font-size: 12,
-    color: "#ffffff"
+    color: "#000000"
   },
   LBody: {
-    color: "#00000000"
+    color: "#ffffff"
   },
   LGrid: null,
   LBox: null,

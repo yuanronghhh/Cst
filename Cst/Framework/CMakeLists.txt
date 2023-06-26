@@ -105,8 +105,8 @@ set(SRC
   ./Graph/FRGraph.h
   ./Graph/FRDraw.c
   ./Graph/FRDraw.h
-  ./Graph/FRText.c
-  ./Graph/FRText.h
+  # ./Graph/FRText.c
+  # ./Graph/FRText.h
   ./Graph/FRCanvasPrivate.h
   ./Graph/FRCanvas.h
   ./Graph/FRCanvas.c

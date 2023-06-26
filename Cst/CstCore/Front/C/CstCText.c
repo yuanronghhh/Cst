@@ -126,7 +126,6 @@ static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
     cst_node_set_need_repaint(v_node, false);
   }
 
-  sys_clear_pointer(&priv->layout, g_object_unref);
 
   CST_NODE_CLASS(cst_text_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 }
@@ -150,7 +149,7 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
     pango_layout_get_pixel_size (layout, &width, &height);
 
     cst_node_set_size(v_node, width, height);
-    cst_node_set_need_repaint(v_node, false);
+    cst_node_set_need_relayout(v_node, false);
   }
 
   cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
@@ -174,6 +173,10 @@ static void cst_text_dispose(SysObject* o) {
     pango_font_description_free(priv->font_desc);
   }
   sys_free_N(priv->text);
+
+  if (priv->layout) {
+    sys_clear_pointer(&priv->layout, g_object_unref);
+  }
 
   SYS_OBJECT_CLASS(cst_text_parent_class)->dispose(o);
 }

@@ -5,7 +5,6 @@
 
 SYS_BEGIN_DECLS
 
-#include <Framework/Graph/FRText.h>
 #include <Framework/Graph/FRGraph.h>
 #include <Framework/Graph/FRCanvasPrivate.h>
 #include <Framework/Graph/FRCanvas.h>

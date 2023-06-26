@@ -1,7 +1,6 @@
 #include <Framework/Graph/FRCanvasPrivate.h>
 #include <Framework/Device/FRDisplay.h>
 #include <Framework/Device/FRWindow.h>
-#include <Framework/Graph/FRText.h>
 
 
 SysInt fr_canvas_rounded_rectangle(FRContext* context, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius) {
@@ -27,6 +26,7 @@ SysInt fr_canvas_rounded_rectangle(FRContext* context, SysDouble x, SysDouble y,
 
 void fr_canvas_setup(void) {
   fr_font_setup();
+  pango_cairo_font_map_get_default();
 }
 
 void fr_canvas_teardown(void) {

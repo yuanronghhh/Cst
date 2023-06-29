@@ -8,7 +8,7 @@ static void _##func_name(void) { \
   test_layout_box_workflow(entry, func_name); \
 }
 
-typedef void (*TestLayoutFunc) (SysList *nodes, CstNode *tree);
+typedef void (*TestLayoutFunc) (CstNode *tree);
 
 static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   CstModule* v_module;
@@ -31,18 +31,19 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   box_layer = cst_render_get_box_layer(v_render);
   root = cst_box_layer_get_root(box_layer);
 
-  func(NULL, root);
+  func(root);
 
   sys_object_unref(v_render);
   sys_object_unref(manager);
 }
 
-static void test_layout_wrap(SysList *nodes, CstNode *tree) {
+static void test_layout_wrap(CstNode *tree) {
   CstNode *node = tree;
   const FRRect *bound;
 
   node = cst_node_children(node);
   bound = cst_node_get_bound(node);
+
   TEST_ASSERT_EQUAL_INT(720, bound->width);
   TEST_ASSERT_EQUAL_INT(228, bound->height);
 }

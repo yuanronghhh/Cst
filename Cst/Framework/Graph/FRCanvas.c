@@ -26,7 +26,7 @@ SysInt fr_canvas_rounded_rectangle(FRContext* context, SysDouble x, SysDouble y,
 
 void fr_canvas_setup(void) {
   fr_font_setup();
-  pango_cairo_font_map_get_default();
+  // pango_cairo_font_map_get_default();
 }
 
 void fr_canvas_teardown(void) {

@@ -6,15 +6,12 @@
 struct _FRDrawPrivate {
   SysPointer v;
 
-  SysInt64 last_clock;
-  SysDouble rate_time;
-  SysBool is_painting;
-
   /* not support double buffer now */
   FRSurface *window_surface;
   FRSurface *paint_surface;
   FRDisplay *display;
   FRWindow *window;
+  SysBool is_painting;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRDraw, fr_draw, SYS_TYPE_OBJECT);
@@ -23,22 +20,8 @@ SysBool fr_draw_frame_need_draw(FRDraw *self) {
   sys_return_val_if_fail(self != NULL, false);
 
   FRDrawPrivate *priv = self->priv;
-  SysInt64 current;
 
-  if(priv->is_painting) {
-    return false;
-  }
-
-  current = sys_get_monotonic_time();
-  if (priv->last_clock == 0) {
-    priv->last_clock = current;
-    return true;
-  }
-
-  SysBool r = (current - priv->last_clock) > priv->rate_time;
-  priv->last_clock = r ? current : priv->last_clock;
-
-  return r;
+  return !priv->is_painting;
 }
 
 /* FRDraw */
@@ -137,6 +120,7 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
   sys_clear_pointer(&priv->paint_surface, cairo_surface_destroy);
+
   priv->is_painting = false;
 }
 
@@ -155,7 +139,6 @@ static void fr_draw_construct(SysObject *o, FRWindow *window) {
   priv->window = window;
   priv->paint_surface = NULL;
   priv->window_surface = NULL;
-  priv->rate_time = (1 / 60.0) * 1e3;
 }
 
 FRDraw* fr_draw_new(void) {

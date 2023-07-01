@@ -1,4 +1,4 @@
-#include <CstDemo/TestGlfw.h>
+#include <CstDemo/TestGLFW.h>
 #include <cairo/cairo.h>
 #include <cairo/cairo-ft.h>
 #include <X11/Xlib.h>
@@ -113,6 +113,7 @@ void test_glfw_basic(void) {
     int width, height;
 
     glfwGetFramebufferSize(window, &width, &height);
+    glfwPollEvents();
 
     glViewport(0, 0, width, height);
     glClear(GL_COLOR_BUFFER_BIT);

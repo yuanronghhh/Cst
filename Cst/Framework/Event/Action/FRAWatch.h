@@ -13,9 +13,24 @@ SYS_BEGIN_DECLS
 typedef void (*FRGetBoundFunc) (SysPointer user_data, FRRect *rect);
 
 struct _FRAWatchProps {
+  /**
+   * for event any type.
+   */
   SysType etype;
+
+  /**
+   * for event key type .
+   */
   SysInt key;
+
+  /**
+   * for mouse event and node bound see: cst_node_get_bound_bp function 
+   */
   FRGetBoundFunc get_bound_func;
+
+  /**
+   * application data for refresh event.
+   **/
   SysPointer app_data;
 };
 

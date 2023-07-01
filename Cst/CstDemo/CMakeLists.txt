@@ -5,9 +5,9 @@ include_dep_dirs(
   ${FREETYPE_INCLUDE_DIRS}
   ${BDWGC_INCLUDE_DIRS}
   ${NANOMSG_INCLUDE_DIRS}
-  ${GCORUTINE_INCLUDE_DIRS} 
-  ${GLIB_INCLUDE_DIRS} 
-  ${CGLM_INCLUDE_DIRS} 
+  ${GCORUTINE_INCLUDE_DIRS}
+  ${GLIB_INCLUDE_DIRS}
+  ${CGLM_INCLUDE_DIRS}
   ${GLAD_INCLUDE_DIRS}
   ${GLFW3_INCLUDE_DIRS}
   ${PIXMAN_INCLUDE_DIR}
@@ -30,8 +30,10 @@ set(TEST_SRC
   ./Demo.h
   ./Demo.c
 
-  ./TestGlib.c
-  ./TestGlib.h
+  ./TestGTK.c
+  ./TestGTK.h
+  ./TestGLFW.c
+  ./TestGLFW.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")
@@ -74,9 +76,10 @@ target_link_libraries(CstDemo
   ${EPOXY_LIBRARIES}
   ${GDK_LIBRARIES}
   ${GDKWAYLAND_LIBRARIES}
-  # "/lib/x86_64-linux-gnu/libxkbcommon.so"
-  # "/lib/x86_64-linux-gnu/libwayland-client.so.0"
-  # "/lib/x86_64-linux-gnu/libwayland-egl.so.1"
+  ${SDL_LIBRARIES}
+  ${XKBCOMMON_LIBRARIES}
+  "/lib/x86_64-linux-gnu/libwayland-client.so.0"
+  "/lib/x86_64-linux-gnu/libwayland-egl.so.1"
 )
 
 target_copy_files(CstDemo

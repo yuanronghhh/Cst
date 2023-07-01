@@ -3,7 +3,7 @@
 Component<id: "mini-menubar", base: "mini-menubase">: {
   Style: {
     "ma0": {
-      padding: [5, 5, 5, 20]
+      padding: [5, 5, 5, 10]
     },
     "ma1": {
       width: "100%",

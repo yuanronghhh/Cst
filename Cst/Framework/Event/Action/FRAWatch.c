@@ -7,6 +7,7 @@
 #include <Framework/Event/Action/FRAWatchKey.h>
 #include <Framework/Event/Action/FRAWatchKeyPress.h>
 #include <Framework/Event/Action/FRAWatchAny.h>
+#include <Framework/Event/Action/FRAWatchRefresh.h>
 
 
 struct _FRAWatchPrivate {
@@ -249,7 +250,7 @@ void fr_awatch_setup(void) {
   fr_action_watch_register_type("key", FR_TYPE_AWATCH_KEY);
   fr_action_watch_register_type("key_press", FR_TYPE_AWATCH_KEY_PRESS);
   fr_action_watch_register_type("window_resize", FR_TYPE_AWATCH_ANY);
-  fr_action_watch_register_type("window_refresh", FR_TYPE_AWATCH_ANY);
+  fr_action_watch_register_type("window_refresh", FR_TYPE_AWATCH_REFRESH);
 }
 
 void fr_awatch_teardown(void) {

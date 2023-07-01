@@ -71,10 +71,8 @@ static void cst_application_active(CstApplication* self) {
 
   CstModule* v_module = priv->main_module;
   CstManager *v_manager = priv->manager;
-  CstRender *v_render = cst_render_new_I(false);
+  CstRender *v_render = priv->render;
   FRAWatchProps props = { 0 };
-
-  priv->render = v_render;
 
   props.etype = FR_TYPE_EVENT;
   cst_module_add_awatch(v_module, (SysPointer)self, "window_refresh", "app_window_resize_test", app_window_resize_test, &props);
@@ -131,7 +129,9 @@ SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
   sys_return_val_if_fail(self != NULL, 1);
 
   CstApplicationPrivate *priv = self->priv;
+  CstRender *v_render = cst_render_new_I(false);
 
+  priv->render = v_render;
   priv->main_module = cst_manager_load_module(priv->manager, NULL, main_path);
 
   cst_application_active(self);

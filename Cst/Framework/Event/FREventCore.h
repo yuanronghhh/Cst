@@ -6,6 +6,7 @@
 SYS_BEGIN_DECLS
 
 #include <Framework/Event/Action/FRAWatchAny.h>
+#include <Framework/Event/Action/FRAWatchRefresh.h>
 #include <Framework/Event/Action/FRAWatchCursorMove.h>
 #include <Framework/Event/Action/FRAWatchMousePress.h>
 #include <Framework/Event/Action/FRAWatchKey.h>
@@ -20,6 +21,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Event/Base/FREventCursorMove.h>
 #include <Framework/Event/Base/FREventMouseKey.h>
 #include <Framework/Event/Base/FREventKey.h>
+#include <Framework/Event/Base/FREventRefresh.h>
 #include <Framework/Event/Base/FREvent.h>
 
 #include <Framework/Event/FREvents.h>

@@ -8,6 +8,7 @@ struct _FRDrawPrivate {
 
   SysInt64 last_clock;
   SysDouble rate_time;
+  SysBool is_painting;
 
   /* not support double buffer now */
   FRSurface *window_surface;
@@ -22,8 +23,13 @@ SysBool fr_draw_frame_need_draw(FRDraw *self) {
   sys_return_val_if_fail(self != NULL, false);
 
   FRDrawPrivate *priv = self->priv;
-  SysInt64 current = sys_get_monotonic_time();
+  SysInt64 current;
 
+  if(priv->is_painting) {
+    return false;
+  }
+
+  current = sys_get_monotonic_time();
   if (priv->last_clock == 0) {
     priv->last_clock = current;
     return true;
@@ -102,6 +108,8 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
 
   priv->window_surface = fr_draw_create_surface(self, fbw,fbh);
   priv->paint_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, fbw, fbh);
+
+  priv->is_painting = true;
 }
 
 void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
@@ -129,6 +137,7 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
   sys_clear_pointer(&priv->paint_surface, cairo_surface_destroy);
+  priv->is_painting = false;
 }
 
 /* object api */

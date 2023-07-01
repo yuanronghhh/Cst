@@ -4,6 +4,7 @@ set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/linux)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  # set(CMAKE_C_FLAGS "-Wall -g -rdynamic -fsanitize=address")
   set(CMAKE_C_FLAGS "-Wall -g -rdynamic")
 else()
   set(CMAKE_C_FLAGS "-Os -fvisibility=hidden")

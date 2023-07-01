@@ -187,7 +187,7 @@ static void fr_window_pos_callback(GLFWwindow* gwindow, SysInt xpos, SysInt ypos
 static void fr_window_refresh_callback(GLFWwindow* gwindow) {
   FRWindow *self = fr_glfw_get_window(gwindow);
 
-  FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_REFRESH);
+  FREvent *e = fr_event_refresh_new_I(self);
 
   fr_events_dispatch(e);
 }

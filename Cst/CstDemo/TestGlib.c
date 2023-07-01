@@ -817,6 +817,10 @@ static void test_thread_lock(void) {
   getchar();
 }
 
+
+static void test_socket_basic(void) {
+}
+
 void test_glib_init(int argc, char *argv[]) {
   env_init();
 

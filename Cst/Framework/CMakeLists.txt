@@ -51,6 +51,8 @@ set(SRC
   ./Event/Base/FREventKey.c
   ./Event/Base/FREventMouseKey.h
   ./Event/Base/FREventMouseKey.c
+  ./Event/Base/FREventRefresh.h
+  ./Event/Base/FREventRefresh.c
   ./Event/Base/FREventMapping.h
   ./Event/Base/FREventCursorMove.c
   ./Event/Base/FREventCursorMove.h

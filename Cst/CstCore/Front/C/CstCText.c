@@ -11,6 +11,7 @@ typedef enum _CST_TEXT_DIRTY_ENUM {
 
 
 struct _CstTextPrivate {
+  const SysChar *text;
   PangoLayout *layout;
   PangoFontDescription *font_desc;
 };
@@ -26,8 +27,6 @@ void cst_text_set_text(CstText* self, const SysChar *text) {
   sys_return_if_fail(text != NULL);
 
   CstTextPrivate *priv = self->priv;
-
-  sys_assert(priv->layout != NULL);
 
   pango_layout_set_text(priv->layout, text, -1);
 }
@@ -145,7 +144,7 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
   SysInt width = 0;
   SysInt height = 0;
 
-  PangoLayout *layout = priv->layout = pango_cairo_create_layout (cr);
+  PangoLayout *layout = priv->layout;
   PangoFontDescription *font_desc = priv->font_desc;
 
   pango_layout_set_font_description (layout, font_desc);
@@ -166,7 +165,14 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 /* object api */
 static void cst_text_init(CstText *self) {
   self->priv = cst_text_get_private(self);
+
   CstNode *node = CST_NODE(self);
+
+  CstTextPrivate *priv = self->priv;
+  PangoFontMap *font_map = pango_cairo_font_map_get_default();
+  PangoContext *pctx = pango_font_map_create_context(font_map);
+
+  priv->layout = pango_layout_new (pctx);
 
   cst_node_set_name(node, "Text");
 }

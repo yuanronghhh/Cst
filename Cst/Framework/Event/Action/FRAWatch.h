@@ -16,6 +16,7 @@ struct _FRAWatchProps {
   SysType etype;
   SysInt key;
   FRGetBoundFunc get_bound_func;
+  SysPointer app_data;
 };
 
 struct _FRAWatch {

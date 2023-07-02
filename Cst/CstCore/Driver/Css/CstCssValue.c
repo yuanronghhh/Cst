@@ -449,6 +449,7 @@ void cst_css_value_bind_class(const SysChar *name, CST_CSS_PROP_ENUM prop_type, 
 }
 
 void cst_css_value_setup(void) {
+  // TODO: need refectoring later.
   sys_assert(gcss_node_ht == NULL && "css value should setup only once.");
 
   gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);

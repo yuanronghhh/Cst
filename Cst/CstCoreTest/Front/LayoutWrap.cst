@@ -8,8 +8,8 @@ Component<id: "layout-component">: {
     },
 
     text-wrap: {
-      font-family: "微软雅黑",
-      font-size: 200
+      font-family: "serif",
+      font-size: 130
     },
     box1: {
       width: "100%",
@@ -32,9 +32,6 @@ Component<id: "layout-component">: {
    *
    */
   Layout: {
-    /**
-     * <20, 20, 720, 228>
-     */
     LBox<id: "box1">: {
       Text<id: "text1", base: ["text-wrap"], value: "a">: null,
       Text<id: "text2", base: ["text-wrap"], value: "a">: null,
@@ -44,12 +41,6 @@ Component<id: "layout-component">: {
       Text<id: "text6", base: ["text-wrap"], value: "a">: null,
       Text<id: "text7", base: ["text-wrap"], value: "a">: null,
       Text<id: "text8", base: ["text-wrap"], value: "a">: null,
-      /**
-       * 720 + 20 + 20 + 90 > 800
-       * 114 + 20 = 134
-       *
-       * <20,134,90,114>
-       */
       Text<id: "text9", base: ["text-wrap"], value: "a">: null,
       Text<id: "text10", base: ["text-wrap"], value: "a">: null
     }

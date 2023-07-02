@@ -959,6 +959,11 @@ CstCssGroup* ast_css_group_new_with_jpair(CstCssEnv *env, JPair *pair, SysBool k
 
   for (SysUInt i = 0; i < pv->len; i++) {
     jv = pv->pdata[i];
+
+    if(jv->type != AstJPair) {
+      continue;
+    }
+
     np = jv->v.v_pair;
 
     if (np->value->type == AstJNull || pv == NULL) {

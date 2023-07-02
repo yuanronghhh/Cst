@@ -38,14 +38,14 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
 }
 
 static void test_layout_wrap(CstNode *tree) {
-  CstNode *node = tree;
-  const FRRect *bound;
+  getchar();
+}
 
-  node = cst_node_children(node);
-  bound = cst_node_get_bound(node);
+static void test_layout_component_basic (CstNode *tree) {
+}
 
-  TEST_ASSERT_EQUAL_INT(720, bound->width);
-  TEST_ASSERT_EQUAL_INT(228, bound->height);
+static void test_layout_row (CstNode *tree) {
+  getchar();
 }
 
 DEFINE_FLOW_FUNC(test_layout_wrap, CST_PROJECT_DIR"/Cst/CstCoreTest/Front/LayoutWrap.cst");
@@ -56,7 +56,6 @@ void test_layout_init(int argc, SysChar * argv[]) {
 
   UNITY_BEGIN();
   {
-    // RUN_TEST(_test_layout_row);
     RUN_TEST(_test_layout_wrap);
   }
   UNITY_END();

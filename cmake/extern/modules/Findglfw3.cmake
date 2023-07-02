@@ -2,6 +2,7 @@ set(search_dirs
   ${LIBDIR}
   /usr/local
   /usr
+  /usr/lib/x86_64-linux-gnu/
 )
 
 FIND_PATH(GLFW3_INCLUDE_DIR
@@ -12,7 +13,7 @@ FIND_PATH(GLFW3_INCLUDE_DIR
 LIST(APPEND GLFW3_INCLUDE_DIR "${GLAD_INCLUDE_DIRS}")
 
 FIND_LIBRARY(GLFW3_LIBRARY
-  NAMES glfw3
+  NAMES glfw glfw3
   HINTS ${search_dirs}
   PATH_SUFFIXES lib64 glfw3/lib lib
 )

@@ -11,6 +11,13 @@
 
 #define ID_FORMAT "id.%d.%d"
 
+
+struct _CstLine {
+  SysInt line_num;
+  SysList *nodes;
+};
+
+
 struct _CstNodePrivate {
   SysChar     *name;
   CstNode     *last_child;
@@ -42,6 +49,7 @@ struct _CstNodePrivate {
   SysInt z_index;
 
   FRRect bound;
+  SysSList *lines;
 
   SysInt16 border[4];
   SysInt16 margin[4];
@@ -62,7 +70,7 @@ struct _CstNodePrivate {
   SysInt prefer_height;
   SysInt prefer_width;
 
-  SysInt16 line_space;
+  SysInt16 ine_space;
 
   // self constraint
   CstCssClosure  *width_calc;
@@ -1173,7 +1181,7 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   sys_assert(priv->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
   sys_assert(priv->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
 
-  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
+  sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 }
 
 static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {

@@ -30,8 +30,6 @@ set(TEST_SRC
   ./Demo.h
   ./Demo.c
 
-  ./TestGTK.c
-  ./TestGTK.h
   ./TestGLFW.c
   ./TestGLFW.h
 )

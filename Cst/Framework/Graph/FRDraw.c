@@ -117,6 +117,7 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
   cairo_destroy(cr);
 
   cairo_surface_flush(priv->window_surface);
+  fr_poll_events();
 
   sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
   sys_clear_pointer(&priv->paint_surface, cairo_surface_destroy);

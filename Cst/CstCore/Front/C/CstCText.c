@@ -11,7 +11,6 @@ typedef enum _CST_TEXT_DIRTY_ENUM {
 
 
 struct _CstTextPrivate {
-  const SysChar *text;
   PangoLayout *layout;
   PangoFontDescription *font_desc;
 };
@@ -151,6 +150,7 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 
   if (cst_node_is_dirty(v_node)) {
     pango_cairo_update_layout (cr, layout);
+
     pango_layout_get_pixel_size (layout, &width, &height);
 
     cst_node_set_size(v_node, width, height);

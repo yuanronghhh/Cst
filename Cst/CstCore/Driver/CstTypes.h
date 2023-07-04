@@ -147,15 +147,6 @@ typedef struct _CstCssEnv CstCssEnv;
 typedef struct _CstCssEnvClass CstCssEnvClass;
 typedef struct _CstCssEnvPrivate CstCssEnvPrivate;
 
-typedef struct _CstACursor CstACursor;
-typedef struct _CstAMultiKey CstAMultiKey;
-typedef struct _CstAMultiDrag CstAMultiDrag;
-typedef struct _CstADrag CstADrag;
-typedef struct _CstADragStart CstADragStart;
-typedef struct _CstADragEnd CstADragEnd;
-typedef struct _CstAScroll CstAScroll;
-typedef struct _CstADClick CstADClick;
-
 #if CST_USE_MONO
 #include <CstCore/Front/Mono/CstMType.h>
 #else

@@ -84,8 +84,6 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstNode *v_node) 
     return;
   }
 
-  sys_debug_N("%s", bind_var);
-
   priv->node_type = node_type;
   priv->value = pvalue;
   sys_value_ref(pvalue);

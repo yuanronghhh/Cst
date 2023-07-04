@@ -30,8 +30,8 @@ set(TEST_SRC
   ./Demo.h
   ./Demo.c
 
-  ./TestGLFW.c
-  ./TestGLFW.h
+  ./TestSTD.c
+  ./TestSTD.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")

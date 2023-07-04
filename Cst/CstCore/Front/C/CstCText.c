@@ -172,6 +172,7 @@ static void cst_text_init(CstText *self) {
   PangoFontMap *font_map = pango_cairo_font_map_get_default();
   PangoContext *pctx = pango_font_map_create_context(font_map);
 
+
   priv->layout = pango_layout_new (pctx);
 
   cst_node_set_name(node, "Text");

@@ -1,5 +1,4 @@
-#include <DemoConfig.h>
-#include <TestSTD.h>
+#include <CstDemo/TestSTD.h>
 
 void test_heart(void) {
   float a,x,y;

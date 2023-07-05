@@ -56,6 +56,7 @@ void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
 void cst_node_set_x(CstNode *node, SysInt x);
+void cst_node_set_xy(CstNode* node, SysInt x, SysInt y);
 SysInt cst_node_get_x(CstNode *node);
 void cst_node_set_wrap(CstNode *node, SysBool wrap);
 void cst_node_set_y(CstNode *node, SysInt width);

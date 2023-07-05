@@ -9,7 +9,7 @@ Component<id: "layout-component">: {
 
     text-wrap: {
       font-family: "serif",
-      font-size: 130
+      font-size: 10
     },
     box1: {
       width: "100%",

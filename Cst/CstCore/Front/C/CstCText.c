@@ -117,16 +117,16 @@ CstNode *cst_text_realize_i (CstModule *v_module, CstComNode *ncomp_node, CstNod
 static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   CstText *self = CST_TEXT(v_node);
   CstTextPrivate *priv = self->priv;
-  SysInt m0, m1, m2, m3;
+  FRSInt4 m4;
 
   const FRRect *bound = cst_node_get_bound(v_node);
   PangoLayout *layout = priv->layout;
 
-  cst_node_get_mbp(v_node, &m0, &m1, &m2, &m3);
+  cst_node_get_mbp(v_node, &m4);
 
   if(cst_node_is_dirty(v_node)) {
 
-    fr_context_move_to(cr, bound->x + m1, bound->y + m0);
+    fr_context_move_to(cr, bound->x + m4.m1, bound->y + m4.m0);
     pango_cairo_show_layout (cr, layout);
 
     cst_node_set_need_repaint(v_node, false);

@@ -3,20 +3,20 @@ import MenuBar from "./MiniMenuBar.cst";
 
 Component<id: "mini-component">: {
   Style: {
-    // menu: {
-    //   width: 200,
-    //   wrap: true
-    // }
+    menu: {
+      width: 200,
+      wrap: true
+    }
   },
 
   Layout: {
     LBox<id: "menu">: {
       MenuBar<value: "文件(F)", "@press": "mini_menu_press">: null,
-      MenuBar<value: "编辑(F)", "@press": "mini_menu_press">: null
-      // MenuBar<value: "查看(V)", "@press": "mini_menu_press">: null,
-      // MenuBar<value: "图像(V)", "@press": "mini_menu_press">: null,
-      // MenuBar<value: "转到(G)", "@press": "mini_menu_press">: null,
-      // MenuBar<value: "帮助(H)", "@press": "mini_menu_press">: null
+      MenuBar<value: "编辑(F)", "@press": "mini_menu_press">: null,
+      MenuBar<value: "查看(V)", "@press": "mini_menu_press">: null,
+      MenuBar<value: "图像(V)", "@press": "mini_menu_press">: null,
+      MenuBar<value: "转到(G)", "@press": "mini_menu_press">: null,
+      MenuBar<value: "帮助(H)", "@press": "mini_menu_press">: null
     },
     LGrid<id:"image-body">: {
     }

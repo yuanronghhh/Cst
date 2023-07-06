@@ -8,6 +8,8 @@ SYS_BEGIN_DECLS
 
 typedef  struct  _FRRGBA           FRColor;
 typedef  struct  _FRPoint          FRPoint;
+typedef  struct  _FRInt4           FRInt4;
+typedef  struct  _FRSInt4          FRSInt4;
 
 struct _FRPoint {
   SysInt x;
@@ -19,6 +21,20 @@ struct _FRRGBA {
   SysDouble g;
   SysDouble b;
   SysDouble a;
+};
+
+struct _FRInt4 {
+  SysInt m0;
+  SysInt m1;
+  SysInt m2;
+  SysInt m3;
+};
+
+struct _FRSInt4 {
+  SysInt16 m0;
+  SysInt16 m1;
+  SysInt16 m2;
+  SysInt16 m3;
 };
 
 #define FRImage pixman_image_t

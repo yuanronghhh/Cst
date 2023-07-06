@@ -23,7 +23,7 @@ struct _CstCssValue {
     SysChar* v_string;
 
     SysPointer v_pointer;
-    SysInt* v_m4;
+    FRSInt4 *v_m4;
     FRColor *v_color;
     CstCssClosure *v_closure;
   } v;
@@ -81,7 +81,7 @@ void cst_css_value_set_pointer(CstCssValue *value, SysPointer v) {
   value->v.v_pointer = v;
 }
 
-void cst_css_value_set_m4(CstCssValue *value, SysInt *m4) {
+void cst_css_value_set_m4(CstCssValue *value, FRSInt4 *m4) {
   sys_return_if_fail(value != NULL);
 
   value->d_type = CST_CSS_VALUE_M4;
@@ -265,11 +265,8 @@ static SysInt cst_css_set_y(CstNode *node, FRContext *cr, CstCssValue *v) {
 
 static SysInt cst_css_set_padding(CstNode *node, FRContext *cr, CstCssValue *v) {
   sys_return_val_if_fail(v->d_type == CST_CSS_VALUE_M4, SYS_FAILED);
-  sys_return_val_if_fail(v->v.v_m4 != NULL, SYS_FAILED);
 
-  SysInt *parray = v->v.v_m4;
-
-  cst_node_set_padding(node, parray[0], parray[1], parray[2], parray[3]);
+  cst_node_set_padding(node, v->v.v_m4);
 
   return SYS_SUCCESS;
 }
@@ -278,9 +275,7 @@ static SysInt cst_css_set_margin(CstNode *node, FRContext *cr, CstCssValue *v) {
   sys_return_val_if_fail(v->d_type == CST_CSS_VALUE_M4, SYS_FAILED);
   sys_return_val_if_fail(v->v.v_m4 != NULL, SYS_FAILED);
 
-  SysInt *parray = v->v.v_m4;
-
-  cst_node_set_margin(node, parray[0], parray[1], parray[2], parray[3]);
+  cst_node_set_margin(node, v->v.v_m4);
 
   return SYS_SUCCESS;
 }
@@ -291,14 +286,14 @@ void cst_css_value_width_percent(CstNode *v_parent, CstNode *v_node, FRContext *
   sys_return_if_fail(value != NULL);
 
   SysInt pwidth = 0;
-  SysInt m0, m1, m2, m3;
+  FRSInt4 m4;
   SysInt64 d = POINTER_TO_INT(value);
 
   pwidth = cst_node_get_width(v_parent);
 
-  cst_node_get_mbp(v_node, &m0, &m1, &m2, &m3);
+  cst_node_get_mbp(v_node, &m4);
 
-  pwidth = pwidth - m1 - m3;
+  pwidth = pwidth - m4.m1 - m4.m3;
 
   cst_node_set_width(v_node, (SysInt)(pwidth * d * 0.01));
 }
@@ -308,16 +303,16 @@ void cst_css_value_height_percent(CstNode *v_parent, CstNode *v_node, FRContext 
   sys_return_if_fail(v_parent != NULL);
   sys_return_if_fail(value != NULL);
 
-  SysInt m0, m1, m2, m3;
+  FRSInt4 m4;
   SysInt64 d = POINTER_TO_INT(value);
 
   SysInt pheight = 0;
 
   pheight = cst_node_get_height(v_parent);
 
-  cst_node_get_mbp(v_node, &m0, &m1, &m2, &m3);
+  cst_node_get_mbp(v_node, &m4);
 
-  pheight = pheight - m0 - m2;
+  pheight = pheight - m4.m0 - m4.m2;
 
   cst_node_set_height(v_node, (SysInt)(pheight * d * 0.01));
 }

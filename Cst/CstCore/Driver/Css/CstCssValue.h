@@ -15,7 +15,7 @@ void cst_css_value_set_bool(CstCssValue * value, SysBool v);
 void cst_css_value_set_string(CstCssValue * value, const SysChar * v);
 void cst_css_value_set_null(CstCssValue * value, SysPointer v);
 void cst_css_value_set_pointer(CstCssValue * value, SysPointer v);
-void cst_css_value_set_m4(CstCssValue * value, SysInt * m4);
+void cst_css_value_set_m4(CstCssValue* value, FRSInt4* m4);
 void cst_css_value_set_int(CstCssValue * value, SysInt v);
 void cst_css_value_set_double(CstCssValue * value, SysDouble v);
 void cst_css_value_set_color(CstCssValue * value, FRColor * v);

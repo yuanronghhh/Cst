@@ -30,20 +30,19 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
 }
 
 void cst_node_stroke_rectangle(CstNode *node, FRContext *cr) {
-  const FRRect *rect;
+  const FRRect *bound;
 
   SysInt x, y, width, height;
-  SysInt16 m0, m1, m2, m3;
-  SysInt16 p0, p1, p2, p3;
+  FRSInt4 m4, p4;
 
-  rect = cst_node_get_bound(node);
-  cst_node_get_margin(node, &m0, &m1, &m2, &m3);
-  cst_node_get_padding(node, &p0, &p1, &p2, &p3);
+  bound = cst_node_get_bound(node);
+  cst_node_get_margin(node, &m4);
+  cst_node_get_padding(node, &p4);
 
-  x = rect->x + m3;
-  y = rect->y + m0;
-  width = rect->width + p1 + p3;
-  height = rect->height + p0 + p2;
+  x = bound->x + m4.m0;
+  y = bound->y + m4.m0;
+  width = bound->width + p4.m1 + p4.m3;
+  height = bound->height + p4.m0 + p4.m2;
 
   fr_context_rectangle(cr, x, y, width, height);
   fr_context_stroke(cr);

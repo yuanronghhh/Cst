@@ -45,19 +45,15 @@ struct _CstNodePrivate {
 
   FRRect bound;
   SysSList *lines;
+  SysInt line_w;
+  SysInt line_h;
 
-  SysInt16 border[4];
-  SysInt16 margin[4];
-  SysInt16 padding[4];
+  FRSInt4 border;
+  FRSInt4 margin;
+  FRSInt4 padding;
 
   SysInt child_count;
-  SysInt mbp0;
-  SysInt mbp1;
-  SysInt mbp2;
-  SysInt mbp3;
-
-  SysInt max_height;
-  SysInt max_width;
+  FRSInt4 mbp;
 
   SysInt prefer_height;
   SysInt prefer_width;
@@ -106,10 +102,10 @@ void cst_node_init_mbp(CstNode *node) {
 
   CstNodePrivate *priv = node->priv;
 
-  priv->mbp0 = priv->margin[0] + priv->border[0] + priv->padding[0];
-  priv->mbp1 = priv->margin[1] + priv->border[1] + priv->padding[1];
-  priv->mbp2 = priv->margin[2] + priv->border[2] + priv->padding[2];
-  priv->mbp3 = priv->margin[3] + priv->border[3] + priv->padding[3];
+  priv->mbp.m0 = priv->margin.m0 + priv->border.m0 + priv->padding.m0;
+  priv->mbp.m1 = priv->margin.m1 + priv->border.m1 + priv->padding.m1;
+  priv->mbp.m2 = priv->margin.m2 + priv->border.m2 + priv->padding.m2;
+  priv->mbp.m3 = priv->margin.m3 + priv->border.m3 + priv->padding.m3;
 }
 
 static SYS_INLINE SysChar *node_gen_id(CstNode* node, CstModule *mod) {
@@ -188,126 +184,22 @@ void cst_node_stoke_rectangle(CstNode *node, FRContext *cr) {
 
   CstNodePrivate *priv = node->priv;
 
-  x = priv->bound.x + priv->margin[3];
-  y = priv->bound.y + priv->margin[0];
-  w = priv->bound.width + priv->padding[1] + priv->padding[3];
-  h = priv->bound.height + priv->padding[0] + priv->padding[2];
+  x = priv->bound.x + priv->margin.m3;
+  y = priv->bound.y + priv->margin.m0;
+  w = priv->bound.width + priv->padding.m1 + priv->padding.m3;
+  h = priv->bound.height + priv->padding.m0 + priv->padding.m2;
 
   fr_context_rectangle(cr, x, y, w, h);
   fr_context_stroke(cr);
-}
-
-SysBool cst_node_can_wrap(CstNode *v_node) {
-  sys_return_val_if_fail(v_node != NULL, false);
-
-  CstNodePrivate *priv = v_node->priv;
-
-  return priv->wrap;
-}
-
-SysSList * cst_node_get_lines(CstNode *v_node) {
-  sys_return_val_if_fail(v_node, NULL);
-
-  CstNodePrivate* priv = v_node->priv;
-
-  return priv->lines;
-}
-
-void cst_node_relayout_h(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  SysInt mwidth, mheight;
-  SysInt offset_w = 0, offset_h = 0;
-
-  CstNodePrivate *priv = v_node->priv;
-  CstNodePrivate *ppriv = v_parent->priv;
-  CstLine *pline = ppriv->lines->data;
-  SysInt wrap_width;
-
-  mwidth = priv->bound.width + priv->mbp1 + priv->mbp3;
-  mheight = priv->bound.height + priv->mbp2 + priv->mbp0;
-
-  if (ppriv->child_width_calc) {
-    ppriv->max_width = max(mwidth, ppriv->max_width);
-    cst_css_closure_calc(ppriv->child_width_calc, v_parent, v_node, cr);
-  }
-
-  if (ppriv->child_height_calc) {
-    ppriv->max_height = max(ppriv->max_height, mheight);
-    cst_css_closure_calc(ppriv->child_height_calc, v_parent, v_node, cr);
-  }
-
-  mwidth = priv->bound.width + priv->mbp1 + priv->mbp3;
-  mheight = priv->bound.height + priv->mbp2 + priv->mbp0;
-
-  if (cst_node_can_wrap(v_parent)) {
-    wrap_width = cst_node_get_width(v_parent);
-
-    if(wrap_width != -1) {
-      if (cst_line_need_wrap(pline, mwidth, wrap_width)) {
-        pline = cst_line_new(0, 0);
-
-        ppriv->lines = sys_slist_prepend(ppriv->lines, pline);
-      }
-
-    } else {
-
-      sys_warning_N("\"%s\" parent width should be set before wrap.", priv->id);
-    }
-  }
-
-  cst_line_prepend_data(pline, v_parent, v_node);
-
-  cst_line_get_offsize(pline, &offset_w, &offset_h);
-
-  ppriv->prefer_width = max(offset_w, ppriv->prefer_width);
-  ppriv->prefer_height = max(offset_h + mheight, ppriv->prefer_height);
-
-  cst_lines_prepend(ppriv->lines, pline);
-}
-
-void cst_node_relayout_v(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  SysInt mwidth, mheight;
-
-  CstNodePrivate *priv = v_node->priv;
-  CstNodePrivate *ppriv = v_parent->priv;
-  // CstLine* line = priv->lines->data;
-
-  //if (priv->bound.width == -1) {
-  //  priv->bound.width = line->offset_w;
-  //}
-
-  if (priv->bound.height == -1) {
-    priv->bound.height = priv->max_height;
-  }
-
-  mwidth = priv->bound.width + priv->mbp1 + priv->mbp3;
-  mheight = priv->bound.height + priv->mbp2 + priv->mbp0;
-
-  if (ppriv->child_width_calc) {
-    ppriv->max_width = max(mwidth, ppriv->max_width);
-    cst_css_closure_calc(ppriv->child_width_calc, v_parent, v_node, cr);
-  }
-
-  if (ppriv->child_height_calc) {
-    ppriv->max_height = max(ppriv->max_height, mheight);
-    cst_css_closure_calc(ppriv->child_height_calc, v_parent, v_node, cr);
-  }
-
-  mheight = priv->bound.height + priv->mbp2 + priv->mbp0;
-  //line->offset_h += mheight;
 }
 
 static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNodePrivate *ppriv;
-  // CstNodePrivate *priv = v_node->priv;
 
-  // priv v_parent
   if (v_parent) {
     ppriv = v_parent->priv;
-
-    ppriv->max_width = max(ppriv->prefer_width, ppriv->max_width);
-    ppriv->max_height = max(ppriv->prefer_height, ppriv->max_height);
 
     ppriv->child_count += 1;
   }
@@ -326,8 +218,8 @@ static void cst_node_relayout_down_i(CstModule *v_module, CstComponent *v_compon
 
   // SysBool need_wrap = cst_node_can_wrap(v_node->parent);
 
-  mwidth = priv->bound.width + priv->mbp1 + priv->mbp3;
-  mheight = priv->bound.height + priv->mbp2 + priv->mbp0;
+  mwidth = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
+  mheight = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
 
   ////// priv current
   //if (need_wrap) {
@@ -335,15 +227,15 @@ static void cst_node_relayout_down_i(CstModule *v_module, CstComponent *v_compon
   //    pline->offset_w = 0;
   //    pline->offset_h += ppriv->max_height + ppriv->line_space;
 
-  //    priv->bound.x = ppriv->bound.x + ppriv->mbp3 + pline->offset_w;
-  //    priv->bound.y = ppriv->bound.y + ppriv->mbp0 + pline->offset_h;
+  //    priv->bound.x = ppriv->bound.x + ppriv->mbp.m3 + pline->offset_w;
+  //    priv->bound.y = ppriv->bound.y + ppriv->mbp.m0 + pline->offset_h;
 
   //    ppriv->max_height = priv->bound.height;
   //  }
 
   //} else {
-  //  priv->bound.x = ppriv->bound.x + ppriv->mbp3 + pline->offset_w;
-  //  priv->bound.y = ppriv->bound.y + ppriv->mbp0 + pline->offset_h;
+  //  priv->bound.x = ppriv->bound.x + ppriv->mbp.m3 + pline->offset_w;
+  //  priv->bound.y = ppriv->bound.y + ppriv->mbp.m0 + pline->offset_h;
   //}
 
   nnode = v_node;
@@ -479,48 +371,48 @@ void cst_constrain_same_width(CstNode *v_parent, CstNode *v_node, FRContext *cr,
   CstNodePrivate *npriv = v_node->priv;
   CstNodePrivate *nppriv = v_parent->priv;
 
-  npriv->bound.width = nppriv->max_width - npriv->mbp0 - npriv->mbp2;
+  npriv->bound.width = nppriv->prefer_width - npriv->mbp.m0 - npriv->mbp.m2;
 }
 
 void cst_constrain_same_height(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data) {
   CstNodePrivate *npriv = v_node->priv;
   CstNodePrivate *nppriv = v_parent->priv;
 
-  npriv->bound.height = nppriv->max_height - npriv->mbp0 - npriv->mbp2;
+  npriv->bound.height = nppriv->prefer_height - npriv->mbp.m0 - npriv->mbp.m2;
 }
 
 /* api */
-void cst_node_set_padding(CstNode *node, SysInt16 m0, SysInt16 m1, SysInt16 m2, SysInt16 m3) {
+void cst_node_set_padding(CstNode *node, FRSInt4 *m4) {
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
 
-  M4_SET(priv->padding, m0, m1, m2, m3);
+  priv->padding = *m4;
 }
 
-void cst_node_get_padding(CstNode *node, SysInt16 *m0, SysInt16 *m1, SysInt16 *m2, SysInt16 *m3) {
+void cst_node_get_padding(CstNode *node, FRSInt4 *m4) {
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
 
-  M4_GET(priv->padding, m0, m1, m2, m3);
+  *m4 = priv->padding;
 }
 
-void cst_node_set_margin(CstNode *node, SysInt16 m0, SysInt16 m1, SysInt16 m2, SysInt16 m3) {
+void cst_node_set_margin(CstNode *node, FRSInt4 *m4) {
 
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
 
-  M4_SET(priv->margin, m0, m1, m2, m3);
+  priv->margin = *m4;
 }
 
-void cst_node_get_margin(CstNode *node, SysInt16 *m0, SysInt16 *m1, SysInt16 *m2, SysInt16 *m3) {
+void cst_node_get_margin(CstNode *node, FRSInt4 *m4) {
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
 
-  M4_GET(priv->margin, m0, m1, m2, m3);
+  *m4 = priv->margin;
 }
 
 void cst_node_set_child_width_closure(CstNode *node, CstCssClosure *c) {
@@ -585,15 +477,12 @@ void cst_node_get_size(CstNode *node, SysInt *width, SysInt *height) {
   *height = priv->bound.height;
 }
 
-void cst_node_get_mbp(CstNode *node, SysInt *m0, SysInt *m1, SysInt *m2, SysInt *m3) {
+void cst_node_get_mbp(CstNode *node, FRSInt4 *m4) {
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
 
-  *m0 = priv->mbp0;
-  *m1 = priv->mbp1;
-  *m2 = priv->mbp2;
-  *m3 = priv->mbp3;
+  *m4 = priv->mbp;
 }
 
 void cst_node_set_prefer_size(CstNode *node, SysInt width, SysInt height) {
@@ -763,9 +652,6 @@ void cst_node_relayout_reset(CstNode *node) {
   sys_return_if_fail(node != NULL);
 
   CstNodePrivate *priv = node->priv;
-
-  priv->max_height = 0;
-  priv->max_width = 0;
 
   priv->prefer_height = 0;
   priv->prefer_width = 0;
@@ -998,21 +884,20 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
 
   CstNodePrivate *priv = v_node->priv;
   CstNodePrivate *ppriv = v_parent->priv;
-  CstLine *pline = priv->lines->data;
-  SysInt m0, m1, m2, m3;
+  CstLine* pline = ppriv->lines->data;
+  SysInt w = 0, h = 0;
 
   if (!cst_node_get_need_relayout(v_node)) {
     return;
   }
 
   cst_node_render_enter(v_node, cr, state);
-
-  // init
   cst_node_init_mbp(v_node);
-  cst_node_get_mbp(v_node, &m0, &m1, &m2, &m3);
-  cst_line_set_xy(pline,
-      ppriv->bound.x + m3,
-      ppriv->bound.y + m0);
+
+  cst_line_get_offsize(pline, &w, &h);
+  cst_node_set_xy(v_node,
+    ppriv->bound.x + ppriv->mbp.m3 + w,
+    ppriv->bound.y + ppriv->mbp.m0 + ppriv->line_h + h);
 
   cst_css_closure_calc(priv->width_calc, v_parent, v_node, cr);
   cst_css_closure_calc(priv->height_calc, v_parent, v_node, cr);
@@ -1020,6 +905,11 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
   if (v_node->children) {
     cst_node_layout(v_module, v_node, v_node->children, cr, draw, state);
   }
+
+  cst_line_get_offsize(pline, &w, &h);
+  cst_node_set_xy(v_node,
+    ppriv->bound.x + ppriv->mbp.m3 + w,
+    ppriv->bound.y + ppriv->mbp.m0 + h);
 
   if (priv->bound.width == -1) {
     cst_node_set_width(v_node, priv->prefer_width);
@@ -1039,6 +929,74 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
   cst_node_set_need_relayout(v_node, false);
 }
 
+SysBool cst_node_can_wrap(CstNode* v_node) {
+  sys_return_val_if_fail(v_node != NULL, false);
+
+  CstNodePrivate* priv = v_node->priv;
+
+  return priv->wrap;
+}
+
+SysSList* cst_node_get_lines(CstNode* v_node) {
+  sys_return_val_if_fail(v_node, NULL);
+
+  CstNodePrivate* priv = v_node->priv;
+
+  return priv->lines;
+}
+
+void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
+  SysInt w = 0, h = 0;
+
+  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* ppriv = v_parent->priv;
+  CstLine* pline = ppriv->lines->data;
+  SysInt wrap_width;
+
+  w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
+  h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
+
+  if (ppriv->child_width_calc) {
+    ppriv->prefer_width = max(w, ppriv->prefer_width);
+    cst_css_closure_calc(ppriv->child_width_calc, v_parent, v_node, cr);
+  }
+
+  if (ppriv->child_height_calc) {
+    ppriv->prefer_height = max(w, ppriv->prefer_height);
+    cst_css_closure_calc(ppriv->child_height_calc, v_parent, v_node, cr);
+  }
+
+  w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
+  h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
+
+  if (cst_node_can_wrap(v_parent)) {
+    wrap_width = cst_node_get_width(v_parent);
+
+    if (wrap_width != -1) {
+      if (cst_line_need_wrap(pline, w, wrap_width)) {
+        pline = cst_line_new(0, 0);
+
+        ppriv->line_h += ppriv->prefer_height;
+        ppriv->line_w = 0;
+        ppriv->lines = cst_lines_prepend(ppriv->lines, pline);
+      }
+
+    } else {
+
+      sys_warning_N("\"%s\" parent width should be set before wrap.", priv->id);
+    }
+  }
+
+  cst_line_prepend_data(pline, v_node);
+  cst_line_get_maxsize(pline, &w, &h);
+
+  ppriv->prefer_height = h;
+  cst_line_get_offsize(pline, &ppriv->prefer_width, &h);
+}
+
+void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
+}
+
 CstNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
   sys_return_val_if_fail(v_node != NULL, NULL);
 
@@ -1053,8 +1011,8 @@ void cst_node_get_size_mbp(CstNode *node, SysInt *width, SysInt *height) {
 
   CstNodePrivate* priv = node->priv;
 
-  *width = priv->bound.width + priv->mbp1 + priv->mbp3;
-  *height = priv->bound.height + priv->mbp0 + priv->mbp2;
+  *width = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
+  *height = priv->bound.height + priv->mbp.m0 + priv->mbp.m2;
 }
 
 void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp) {
@@ -1064,8 +1022,8 @@ void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp) {
 
   rect_bp->x = priv->bound.x;
   rect_bp->y = priv->bound.y;
-  rect_bp->width = priv->bound.width + priv->mbp1 + priv->mbp3;
-  rect_bp->height = priv->bound.height + priv->mbp0 + priv->mbp2;
+  rect_bp->width = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
+  rect_bp->height = priv->bound.height + priv->mbp.m0 + priv->mbp.m2;
 }
 
 const FRRect *cst_node_get_bound(CstNode *node) {

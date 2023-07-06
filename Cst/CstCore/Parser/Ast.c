@@ -1072,7 +1072,7 @@ SysInt ast_css_value_parse(JNode *jnode, CstCssValue *value) {
   sys_return_val_if_fail(value != NULL, SYS_FAILED);
   sys_return_val_if_fail(jnode != NULL, SYS_FAILED);
 
-  SysInt *v_m4;
+  FRSInt4 *v_m4;
 
   CstCssValueNode *node = cst_css_value_get_node(value);
 
@@ -1092,7 +1092,8 @@ SysInt ast_css_value_parse(JNode *jnode, CstCssValue *value) {
         break;
       }
 
-      v_m4 = sys_new0_N(SysInt, 4);
+      v_m4 = sys_new0_N(FRSInt4, 1);
+      SysInt tm4[4];
       for (SysUInt i = 0; i < jnode->v.v_array->len; i++) {
         JNode *node = jnode->v.v_array->pdata[i];
 
@@ -1102,8 +1103,13 @@ SysInt ast_css_value_parse(JNode *jnode, CstCssValue *value) {
           continue;
         }
 
-        v_m4[i] = node->v.v_int;
+        tm4[i] = node->v.v_int;
       }
+
+      v_m4->m0 = tm4[0];
+      v_m4->m1 = tm4[1];
+      v_m4->m2 = tm4[2];
+      v_m4->m3 = tm4[3];
 
       cst_css_value_set_m4(value, v_m4);
       break;

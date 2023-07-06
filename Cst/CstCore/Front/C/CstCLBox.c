@@ -24,9 +24,8 @@ static CstNode* cst_lbox_realize_i(CstModule *v_module, CstComNode *ncomp_node, 
 }
 
 static void cst_lbox_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
- 
   cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
-
+  
   CST_NODE_CLASS(cst_lbox_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 

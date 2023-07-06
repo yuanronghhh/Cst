@@ -62,14 +62,10 @@ void cst_node_set_wrap(CstNode *node, SysBool wrap);
 void cst_node_set_y(CstNode *node, SysInt width);
 SysInt cst_node_get_y(CstNode *node);
 
-void cst_node_get_padding(CstNode *node, SysInt16 *m0, SysInt16 *m1, SysInt16 *m2, SysInt16 *m3);
-void cst_node_set_padding(CstNode *node, SysInt16 m0, SysInt16 m1, SysInt16 m2, SysInt16 m3);
-void cst_node_get_margin(CstNode *node, SysInt16 *m0, SysInt16 *m1, SysInt16 *m2, SysInt16 *m3);
-void cst_node_set_margin(CstNode *node, SysInt16 m0, SysInt16 m1, SysInt16 m2, SysInt16 m3);
-
 void cst_node_init_mbp(CstNode *node);
 void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 CstNode *cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render);
+void cst_node_get_size_mbp(CstNode* node, SysInt* width, SysInt* height);
 CstNode *cst_node_children(CstNode *node);
 CstNode *cst_node_prev(CstNode *node);
 CstNode *cst_node_next(CstNode *node);
@@ -87,7 +83,7 @@ void cst_node_set_child_width_closure(CstNode *node, CstCssClosure *c);
 void cst_node_set_child_height_closure(CstNode *node, CstCssClosure *c);
 void cst_node_set_size(CstNode *node, SysInt width, SysInt height);
 void cst_node_get_size(CstNode *node, SysInt *width, SysInt *height);
-void cst_node_get_mbp(CstNode *node, SysInt *m0, SysInt *m1, SysInt *m2, SysInt *m3);
+void cst_node_get_mbp(CstNode* node, FRSInt4* m4);
 void cst_node_set_prefer_size(CstNode *node, SysInt width, SysInt height);
 void cst_node_get_prefer_size(CstNode *node, SysInt *width, SysInt *height);
 SysBool cst_node_can_wrap(CstNode *v_node);
@@ -104,6 +100,11 @@ SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g);
 void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode *root, CstNode *new_root, CstRender *v_render);
 void cst_constrain_same_width(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);
 void cst_constrain_same_height(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);
+
+void cst_node_set_padding(CstNode* node, FRSInt4* m4);
+void cst_node_get_padding(CstNode* node, FRSInt4* m4);
+void cst_node_set_margin(CstNode* node, FRSInt4* m4);
+void cst_node_get_margin(CstNode* node, FRSInt4* m4);
 
 CstNode *cst_node_deep_clone(CstNode *v_node);
 void cst_node_bind(CstNode *self, CstComNode *com_node);

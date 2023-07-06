@@ -11,8 +11,8 @@ struct _CstLine {
 
   SysInt x;
   SysInt y;
-  SysInt offset_w;
-  SysInt offset_h;
+  SysInt max_w;
+  SysInt max_h;
 };
 
 SYS_END_DECLS

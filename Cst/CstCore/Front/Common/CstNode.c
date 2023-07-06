@@ -109,10 +109,6 @@ void cst_node_render_enter(CstNode *node, FRContext *cr, SysInt state) {
 
   fr_context_save(cr);
   cst_node_render_css(node, cr, state);
-
-  if (state == CST_RENDER_STATE_RELAYOUT) {
-    cst_node_relayout_reset(node);
-  }
 }
 
 void cst_node_render_leave(CstNode *node, FRContext *cr, SysInt state) {

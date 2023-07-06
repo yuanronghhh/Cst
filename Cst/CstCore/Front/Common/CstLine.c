@@ -2,12 +2,12 @@
 #include <CstCore/Front/Common/CstNode.h>
 
 
-CstLine *cst_line_new(SysInt offset_w, SysInt offset_h) {
+CstLine *cst_line_new(SysInt x, SysInt y) {
   CstLine *o = sys_new_N(CstLine, 1);
 
   o->nodes = NULL;
-  o->offset_w = offset_w;
-  o->offset_h = offset_h;
+  o->x = 0;
+  o->y = 0;
 
   return o;
 }
@@ -32,13 +32,15 @@ void cst_line_prepend_data(CstLine *self, CstNode *v_parent, CstNode* v_node) {
   pbound = cst_node_get_bound(v_parent);
   cst_node_get_mbp(v_parent, &m0, &m1, &m2, &m3);
 
-  cst_node_set_xy(v_node, 
+  cst_node_set_xy(v_node,
     pbound->x + m3 + self->offset_w,
     pbound->y + m0 + self->offset_h);
 
   cst_node_get_bound_mbp(v_node, &bound);
 
   self->offset_w += bound.width;
+
+  sys_object_ref(v_node);
 }
 
 SysBool cst_line_need_wrap (CstLine *self, SysInt append_width, SysInt width) {
@@ -49,7 +51,7 @@ SysBool cst_line_need_wrap (CstLine *self, SysInt append_width, SysInt width) {
   return false;
 }
 
-void cst_line_set_start(CstLine* self, SysInt x, SysInt y) {
+void cst_line_set_xy(CstLine* self, SysInt x, SysInt y) {
   sys_return_if_fail(self != NULL);
 
   self->x = x;
@@ -63,3 +65,11 @@ void cst_line_get_offsize(CstLine* self, SysInt *width, SysInt *height) {
   *height = self->offset_h;
 }
 
+SysList *cst_lines_prepend(SysList *lines, CstLine *line) {
+  CstLine *pline = lines->data;
+
+  line->y = pline->y + pline->offset_h;
+  lines = sys_list_prepend(lines, line);
+
+  return lines;
+}

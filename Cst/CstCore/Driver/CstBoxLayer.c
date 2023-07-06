@@ -84,6 +84,7 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
   return 1;
 }
 
+#if 0
 /* bfs level */
 static BFSLevel *bfs_level_new(SysUInt level) {
   BFSLevel *nlevel = sys_new0_N(BFSLevel, 1);
@@ -122,6 +123,7 @@ static void bfs_level_free(BFSLevel *self) {
 static void bfs_level_set_level(BFSLevel *self, SysUInt level) {
   self->level = level;
 }
+#endif
 
 void bfs_box_layer_mark(CstLayer *layer, CstNode *v_node, FRRegion *region) {
   sys_return_if_fail(v_node != NULL);

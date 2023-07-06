@@ -67,7 +67,7 @@ void cst_node_set_padding(CstNode *node, SysInt16 m0, SysInt16 m1, SysInt16 m2, 
 void cst_node_get_margin(CstNode *node, SysInt16 *m0, SysInt16 *m1, SysInt16 *m2, SysInt16 *m3);
 void cst_node_set_margin(CstNode *node, SysInt16 m0, SysInt16 m1, SysInt16 m2, SysInt16 m3);
 
-void cst_node_set_mbp(CstNode *node);
+void cst_node_init_mbp(CstNode *node);
 void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 CstNode *cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render);
 CstNode *cst_node_children(CstNode *node);

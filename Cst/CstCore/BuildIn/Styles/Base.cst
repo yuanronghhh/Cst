@@ -6,10 +6,10 @@ GStyle: {
   Text: {
     font-family: "serif",
     font-size: 12,
-    color: "#000000"
+    color: "#ff0000"
   },
   LBody: {
-    color: "#ffffff"
+    color: "#eeeeee"
   },
   LGrid: null,
   LBox: null,

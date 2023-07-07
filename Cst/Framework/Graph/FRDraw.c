@@ -39,9 +39,9 @@ FRContext* fr_draw_create_cr(FRDraw* self) {
 
   FRDrawPrivate *priv = self->priv;
 
-  sys_assert(priv->paint_surface != NULL && "priv->paint_surface should set before create context.");
+  sys_assert(priv->window_surface != NULL && "priv->paint_surface should set before create context.");
 
-  cr = cairo_create(priv->paint_surface);
+  cr = cairo_create(priv->window_surface);
   return cr;
 }
 
@@ -60,7 +60,7 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   FRDrawPrivate *priv = self->priv;
 
   if (priv->window == NULL) {
-    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, 800, 600);
+    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
     return surface;
   }
 
@@ -89,8 +89,15 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
 
   fr_window_get_framebuffer_size(priv->window, &fbw, &fbh);
 
-  priv->window_surface = fr_draw_create_surface(self, fbw,fbh);
+  sys_debug_N("%d,%d", fbw, fbh);
+
+  priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, fbw, fbh);
+
+  cairo_t *cr = cairo_create(priv->window_surface);
+  cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+  cairo_paint(cr);
+  cairo_destroy(cr);
 
   priv->is_painting = true;
 }
@@ -103,21 +110,20 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   FRDrawPrivate *priv = self->priv;
   cairo_t *cr = cairo_create(priv->window_surface);
-
+  
   cairo_set_source_surface (cr, priv->paint_surface, 0, 0);
-
+  
   n_boxes = cairo_region_num_rectangles(region);
   for (i = 0; i < n_boxes; i++) {
     cairo_region_get_rectangle(region, i, &box);
     cairo_rectangle(cr, box.x, box.y, box.width, box.height);
   }
-
+  
   cairo_clip(cr);
   cairo_paint(cr);
   cairo_destroy(cr);
 
   cairo_surface_flush(priv->window_surface);
-  fr_poll_events();
 
   sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
   sys_clear_pointer(&priv->paint_surface, cairo_surface_destroy);

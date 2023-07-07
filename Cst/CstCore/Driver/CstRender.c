@@ -60,6 +60,7 @@ void cst_render_render(CstRender *self) {
   fr_draw_frame_begin(draw, region);
 
   cr = fr_draw_create_cr(draw);
+
   cst_layer_render(priv->box_layer, draw, cr);
   cst_layer_render(priv->abs_layer, draw, cr);
   fr_context_destroy(cr);

@@ -1,70 +1,54 @@
-#include <TestCairo.h>
+#include <CstDemo/TestCairo.h>
 
-void test_kd_tree(void) {
-  SysDouble points[10][2] = { 0 };
+FRSurface* create_surface(GLFWwindow *gwindow, SysInt width, SysInt height) {
+  FRSurface* surface;
 
-  srand((SysInt)time(NULL));
+#if SYS_OS_WIN32
+  HWND hwd = glfwGetWin32Window(gwindow);
+  HDC hdc = GetDC(hwd);
+  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_RGB24);
+#elif SYS_OS_UNIX
+  Window xwindow = fr_window_get_x11_window(priv->window);
+  Display* ndisplay = fr_display_get_x11_display(priv->display);
 
-  for (SysUInt i = 0; i < ARRAY_SIZE(points); i++) {
-    points[i][0] = sys_rand_double_range(1.0, 100.0);
-    points[i][1] = sys_rand_double_range(1.0, 100.0);
-  }
+  surface = cairo_xlib_surface_create(ndisplay,
+    xwindow,
+    DefaultVisual(ndisplay, DefaultScreen(ndisplay)),
+    width, height);
+#endif
 
-  SysDouble sp[][2] = {
-    { 3, 2 }
-  };
-
-  SysPtrArray *npoints;
-  SysKDTree *tree = sys_kdtree_new();
-
-  sys_array_foreach(SysDouble *, item, points, ARRAY_SIZE(points)) {
-    sys_kdtree_insert(tree, item);
-  }
-
-  sys_kdtree_balance(tree);
-  sys_kdtree_print(tree);
-
-  npoints = sys_kdtree_nearest(tree, sp[0], 1, 0);
-
-  sys_array_foreach(SysKDNode *, node, npoints->pdata, npoints->len) {
-    SysKDData *data = sys_kdtree_get_cords(node);
-
-    sys_printf("%lf,%lf\n", data[0], data[1]);
-  }
-
-  sys_ptr_array_free(npoints, true);
-
-  sys_kdtree_free(tree);
+  return surface;
 }
 
-void cairo_basic(void) {
-  fr_window_init();
-  fr_canvas_init();
+static void cairo_basic(void) {
+  sys_setup();
 
-  FRDisplay *display = fr_display_new();
-  FRWindow *window = fr_window_new(display, NULL);
-  CstRender *render = cst_render_new(window);
+  SysInt width = 800;
+  SysInt height = 600;
+  SysChar *title = "hello";
 
-  for (int i = 0; i < 100; i++) {
-    // CstLayer *layer = cst_render_create_layer(render);
-    // cst_layer_render(layer);
+  if (!glfwInit())
+    exit(EXIT_FAILURE);
+
+  GLFWwindow *gwindow = glfwCreateWindow(width, height, title, NULL, NULL);
+  cairo_surface_t* sur = create_surface(gwindow, 800, 600);
+
+  cairo_t* cr = cairo_create(sur);
+
+  while (!glfwWindowShouldClose(gwindow)) {
+    glfwWaitEvents();
+
+    cairo_rectangle(cr, 0, 0, 200, 100);
+    cairo_stroke(cr);
   }
 
-  cst_render_flush(render);
-  cst_render_unref(render);
-
-  fr_window_unref(window);
-  fr_display_unref(display);
-
-  fr_window_deinit();
-  fr_canvas_deinit();
+  sys_teardown();
 }
 
 void test_cairo_init(int argc, char *argv[]) {
   UNITY_BEGIN();
   {
-    RUN_TEST(test_kd_tree);
-    // RUN_TEST(cairo_basic);
+    RUN_TEST(cairo_basic);
   }
   UNITY_END();
 }

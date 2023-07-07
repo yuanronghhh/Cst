@@ -177,6 +177,9 @@ static void ask_get_admin(int argc, char *argv[]) {
   }
 }
 
+static void test_map_key(void) {
+}
+
 void test_std_init(SysInt argc, SysChar *argv[]) {
   UNUSED(argc);
   UNUSED(argv);
@@ -184,7 +187,8 @@ void test_std_init(SysInt argc, SysChar *argv[]) {
   UNITY_BEGIN();
   {
 
-    RUN_TEST(test_queue_leak);
+    RUN_TEST(test_map_key);
+    // RUN_TEST(test_queue_leak);
     // RUN_TEST(test_strjoin);
     // RUN_TEST(test_lex_comple);
     //RUN_TEST(test_line_macro);

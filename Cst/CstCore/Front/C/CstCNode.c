@@ -906,11 +906,6 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
     cst_node_layout(v_module, v_node, v_node->children, cr, draw, state);
   }
 
-  cst_line_get_offsize(pline, &w, &h);
-  cst_node_set_xy(v_node,
-    ppriv->bound.x + ppriv->mbp.m3 + w,
-    ppriv->bound.y + ppriv->mbp.m0 + h);
-
   if (priv->bound.width == -1) {
     cst_node_set_width(v_node, priv->prefer_width);
   }
@@ -1145,7 +1140,7 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   sys_assert(priv->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
   sys_assert(priv->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
 
-  sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
+  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 }
 
 static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {

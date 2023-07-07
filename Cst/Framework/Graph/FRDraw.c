@@ -8,7 +8,6 @@ struct _FRDrawPrivate {
 
   /* not support double buffer now */
   FRSurface *window_surface;
-  FRSurface *paint_surface;
   FRDisplay *display;
   FRWindow *window;
   SysBool is_painting;
@@ -50,7 +49,7 @@ FRSurface *fr_draw_get_surface(FRDraw *self) {
 
   FRDrawPrivate *priv = self->priv;
 
-  return priv->paint_surface;
+  return priv->window_surface;
 }
 
 FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
@@ -67,7 +66,7 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
 #if SYS_OS_WIN32
   HWND hwd = fr_window_get_win32_window(priv->window);
   HDC hdc = GetDC(hwd);
-  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_RGB24);
 #elif SYS_OS_UNIX
   Window xwindow = fr_window_get_x11_window(priv->window);
   Display *ndisplay = fr_display_get_x11_display(priv->display);
@@ -92,7 +91,6 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   sys_debug_N("%d,%d", fbw, fbh);
 
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
-  priv->paint_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, fbw, fbh);
 
   cairo_t *cr = cairo_create(priv->window_surface);
   cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
@@ -111,7 +109,7 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
   FRDrawPrivate *priv = self->priv;
   cairo_t *cr = cairo_create(priv->window_surface);
   
-  cairo_set_source_surface (cr, priv->paint_surface, 0, 0);
+  cairo_set_source_surface (cr, priv->window_surface, 0, 0);
   
   n_boxes = cairo_region_num_rectangles(region);
   for (i = 0; i < n_boxes; i++) {
@@ -126,7 +124,6 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
   cairo_surface_flush(priv->window_surface);
 
   sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
-  sys_clear_pointer(&priv->paint_surface, cairo_surface_destroy);
 
   priv->is_painting = false;
 }
@@ -144,7 +141,6 @@ static void fr_draw_construct(SysObject *o, FRWindow *window) {
   }
 
   priv->window = window;
-  priv->paint_surface = NULL;
   priv->window_surface = NULL;
 }
 

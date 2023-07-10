@@ -3,21 +3,19 @@
 
 
 struct _CstLine {
-  SysList* nodes;
+  FRRect bound;
 
-  SysInt offset_w;
-  SysInt offset_h;
+  SysList* nodes;
   SysInt max_w;
   SysInt max_h;
 };
 
-
-CstLine *cst_line_new(SysInt offset_w, SysInt offset_h) {
+CstLine *cst_line_new(SysInt x, SysInt y) {
   CstLine *o = sys_new_N(CstLine, 1);
 
   o->nodes = NULL;
-  o->offset_w = offset_w;
-  o->offset_h = offset_h;
+  o->bound.x = x;
+  o->bound.y = y;
   o->max_w = 0;
   o->max_h = 0;
   
@@ -41,7 +39,7 @@ void cst_line_prepend_data(CstLine *self, CstNode *v_node) {
   self->nodes = sys_list_prepend(self->nodes, v_node);
   cst_node_get_size_mbp(v_node, &w, &h);
 
-  self->offset_w += w;
+  self->bound.x += w;
 
   self->max_w = max(w, self->max_w);
   self->max_h = max(h, self->max_h);
@@ -50,7 +48,7 @@ void cst_line_prepend_data(CstLine *self, CstNode *v_node) {
 }
 
 SysBool cst_line_need_wrap (CstLine *self, SysInt append_width, SysInt width) {
-  if(self->offset_w + append_width > width) {
+  if(self->bound.x + append_width > width) {
     return true;
   }
 
@@ -64,18 +62,22 @@ void cst_line_get_maxsize(CstLine* self, SysInt* max_w, SysInt* max_h) {
   *max_h = self->max_h;
 }
 
-void cst_line_set_offsize(CstLine* self, SysInt offset_w, SysInt offset_h) {
+void cst_line_set_size(CstLine* self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  self->offset_w = offset_w;
-  self->offset_h = offset_h;
+  self->bound.width = width;
+  self->bound.height = height;
 }
 
-void cst_line_get_offsize(CstLine* self, SysInt *offset_w, SysInt *offset_h) {
+void cst_line_get_size(CstLine* self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
 
-  *offset_w = self->offset_w;
-  *offset_h = self->offset_h;
+  *width = self->bound.width;
+  *height = self->bound.height;
+}
+
+const FRRect* cst_line_get_bound(CstLine *self) {
+  return &self->bound;
 }
 
 SysSList *cst_lines_prepend(SysSList *lines, CstLine *line) {

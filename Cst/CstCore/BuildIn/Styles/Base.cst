@@ -9,7 +9,7 @@ GStyle: {
     color: "#ff0000"
   },
   LBody: {
-    color: "#eeeeee99"
+    color: "#eeeeeea1"
   },
   LGrid: null,
   LBox: null,

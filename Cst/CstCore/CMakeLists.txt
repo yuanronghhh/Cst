@@ -96,8 +96,9 @@ set(SRC
   ./Front/Common/CstNodePrivate.h
   ./Front/Common/CstNode.h
   ./Front/Common/CstNode.c
+  ./Front/Common/CstItem.h
+  ./Front/Common/CstItem.c
   ./Front/Common/CstLine.h
-  ./Front/Common/CstLinePrivate.h
   ./Front/Common/CstLine.c
   ./Front/Common/CstComNode.h
   ./Front/Common/CstComNode.c

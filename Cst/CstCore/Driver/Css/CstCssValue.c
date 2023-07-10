@@ -164,7 +164,7 @@ void cst_css_value_free(CstCssValue *value) {
     sys_free_N(value->v.v_color);
     break;
   case CST_CSS_VALUE_M4:
-    sys_free_N(value->v.v_m4);
+    sys_clear_pointer(&value->v.v_m4, fr_sint4_free);
     break;
   case CST_CSS_VALUE_POINTER:
     break;
@@ -198,7 +198,7 @@ CstCssValue *cst_css_value_clone(CstCssValue *value) {
       nvalue->v.v_color = sys_memdup(value->v.v_color, sizeof(FRColor));
       break;
     case CST_CSS_VALUE_M4:
-      nvalue->v.v_m4 = sys_memdup(value->v.v_m4, sizeof(SysInt) * 4);
+      nvalue->v.v_m4 = fr_sint4_clone(value->v.v_m4);
       break;
     case CST_CSS_VALUE_POINTER:
       nvalue->v.v_pointer = value->v.v_pointer;

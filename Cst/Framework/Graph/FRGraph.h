@@ -42,6 +42,9 @@ struct _FRSInt4 {
 SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FRColor *color);
 SYS_API FRColor* fr_color_rgba_new(const SysChar *rgba);
 SYS_API SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y) ;
+FRSInt4* fr_sint4_clone(FRSInt4* m);
+FRSInt4* fr_sint4_new(void);
+void fr_sint4_free(FRSInt4* o);
 #define fr_region_contains_rectangle cairo_region_contains_rectangle
 #define fr_region_intersect_rectangle cairo_region_intersect_rectangle
 

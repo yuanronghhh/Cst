@@ -45,8 +45,7 @@ struct _CstNodePrivate {
 
   FRRect bound;
   SysSList *lines;
-  SysInt line_w;
-  SysInt line_h;
+  SysInt16 line_space;
 
   FRSInt4 border;
   FRSInt4 margin;
@@ -57,8 +56,6 @@ struct _CstNodePrivate {
 
   SysInt prefer_height;
   SysInt prefer_width;
-
-  SysInt16 line_space;
 
   // self constraint
   CstCssClosure  *width_calc;
@@ -79,14 +76,6 @@ CstNode* cst_node_parent(CstNode *node) {
   sys_return_val_if_fail(node != NULL, NULL);
 
   return node->parent;
-}
-
-void cst_node_ref(CstNode *node) {
-  sys_object_ref(node);
-}
-
-void cst_node_unref(CstNode *node) {
-  sys_object_unref(node);
 }
 
 static void node_default_constraint_width(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data) {
@@ -894,11 +883,6 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
   cst_node_render_enter(v_node, cr, state);
   cst_node_init_mbp(v_node);
 
-  cst_line_get_offsize(pline, &w, &h);
-  cst_node_set_xy(v_node,
-    ppriv->bound.x + ppriv->mbp.m3 + w,
-    ppriv->bound.y + ppriv->mbp.m0 + ppriv->line_h + h);
-
   cst_css_closure_calc(priv->width_calc, v_parent, v_node, cr);
   cst_css_closure_calc(priv->height_calc, v_parent, v_node, cr);
 
@@ -946,6 +930,7 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
   CstNodePrivate* priv = v_node->priv;
   CstNodePrivate* ppriv = v_parent->priv;
   CstLine* pline = ppriv->lines->data;
+  FRRect* lbound;
   SysInt wrap_width;
 
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
@@ -969,10 +954,9 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
 
     if (wrap_width != -1) {
       if (cst_line_need_wrap(pline, w, wrap_width)) {
-        pline = cst_line_new(0, 0);
+        lbound = cst_line_get_bound(pline);
+        pline = cst_line_new(lbound->x + ppriv->prefer_height, lbound->y);
 
-        ppriv->line_h += ppriv->prefer_height;
-        ppriv->line_w = 0;
         ppriv->lines = cst_lines_prepend(ppriv->lines, pline);
       }
 
@@ -1135,12 +1119,12 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
 
   CstNodePrivate* priv = v_node->priv;
 
-  sys_assert(priv->bound.x >= 0 && "node x >= 0 failed, relayout not correct ?");
-  sys_assert(priv->bound.y >= 0 && "node y >= 0 failed, relayout not correct ?");
-  sys_assert(priv->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
-  sys_assert(priv->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
+  sys_assert(bound->x >= 0 && "node x >= 0 failed, relayout not correct ?");
+  sys_assert(bound->y >= 0 && "node y >= 0 failed, relayout not correct ?");
+  sys_assert(bound->width >= 0 && "node width >= 0 faild, relayout not correct ?");
+  sys_assert(bound->height >= 0 && "node height >= 0 failed, relayout not correct ?");
 
-  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
+  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, bound->x, bound->y, bound->width, bound->height);
 }
 
 static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {

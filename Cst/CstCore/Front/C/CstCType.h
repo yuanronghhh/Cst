@@ -55,6 +55,10 @@ typedef struct _CstNode CstNode;
 typedef struct _CstNodeClass CstNodeClass;
 typedef struct _CstNodePrivate CstNodePrivate;
 
+typedef struct _CstItem CstItem;
+typedef struct _CstItemClass CstItemClass;
+typedef struct _CstItemPrivate CstItemPrivate;
+
 typedef struct _CstWidget CstWidget;
 typedef struct _CstWidgetClass CstWidgetClass;
 typedef struct _CstWidgetPrivate CstWidgetPrivate;

@@ -195,54 +195,28 @@ static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 }
 
 static void cst_node_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  SysInt mwidth, mheight;
-  CstNode *nnode;
-
-  UNUSED(mheight);
-  UNUSED(mwidth);
-
   CstNodePrivate *priv = v_node->priv;
-  CstNodePrivate *ppriv = v_parent->priv;
-  // CstLine* pline = ppriv->lines->data;
 
-  // SysBool need_wrap = cst_node_can_wrap(v_node->parent);
+  if (cst_node_can_wrap(v_node->parent)) {
+    cst_line_layout_node(priv->lines);
+  }
 
-  mwidth = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
-  mheight = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
+  //nnode = v_node;
+  //while (nnode && nnode->children) {
 
-  ////// priv current
-  //if (need_wrap) {
-  //  if (pline->offset_w + mwidth > ppriv->bound.width) {
-  //    pline->offset_w = 0;
-  //    pline->offset_h += ppriv->max_height + ppriv->line_space;
-
-  //    priv->bound.x = ppriv->bound.x + ppriv->mbp.m3 + pline->offset_w;
-  //    priv->bound.y = ppriv->bound.y + ppriv->mbp.m0 + pline->offset_h;
-
-  //    ppriv->max_height = priv->bound.height;
+  //  // calc child constraint
+  //  if (ppriv->child_width_calc) {
+  //    cst_css_closure_calc(ppriv->child_width_calc, nnode, nnode->children, cr);
   //  }
 
-  //} else {
-  //  priv->bound.x = ppriv->bound.x + ppriv->mbp.m3 + pline->offset_w;
-  //  priv->bound.y = ppriv->bound.y + ppriv->mbp.m0 + pline->offset_h;
+  //  if (ppriv->child_height_calc) {
+  //    cst_css_closure_calc(ppriv->child_height_calc, nnode, nnode->children, cr);
+  //  }
+
+  //  cst_node_relayout_down(v_module, v_component, nnode, nnode->children, cr);
+
+  //  nnode = nnode->next;
   //}
-
-  nnode = v_node;
-  while (nnode && nnode->children) {
-
-    // calc child constraint
-    if (ppriv->child_width_calc) {
-      cst_css_closure_calc(ppriv->child_width_calc, nnode, nnode->children, cr);
-    }
-
-    if (ppriv->child_height_calc) {
-      cst_css_closure_calc(ppriv->child_height_calc, nnode, nnode->children, cr);
-    }
-
-    cst_node_relayout_down(v_module, v_component, nnode, nnode->children, cr);
-
-    nnode = nnode->next;
-  }
 }
 
 CstNode *cst_node_children(CstNode *node) {
@@ -930,7 +904,7 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
   CstNodePrivate* priv = v_node->priv;
   CstNodePrivate* ppriv = v_parent->priv;
   CstLine* pline = ppriv->lines->data;
-  FRRect* lbound;
+  const FRRect* lbound;
   SysInt wrap_width;
 
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
@@ -949,28 +923,25 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
   h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
 
-  if (cst_node_can_wrap(v_parent)) {
-    wrap_width = cst_node_get_width(v_parent);
+  //if (cst_node_can_wrap(v_parent)) {
+  //  wrap_width = cst_node_get_width(v_parent);
 
-    if (wrap_width != -1) {
-      if (cst_line_need_wrap(pline, w, wrap_width)) {
-        lbound = cst_line_get_bound(pline);
-        pline = cst_line_new(lbound->x + ppriv->prefer_height, lbound->y);
+  //  if (wrap_width != -1) {
+  //    if (cst_line_need_wrap(pline, w, wrap_width)) {
+  //      lbound = cst_line_get_bound(pline);
+  //      pline = cst_line_new(lbound->x + ppriv->prefer_height, lbound->y);
 
-        ppriv->lines = cst_lines_prepend(ppriv->lines, pline);
-      }
+  //      ppriv->lines = cst_lines_prepend(ppriv->lines, pline);
+  //    }
 
-    } else {
+  //  } else {
 
-      sys_warning_N("\"%s\" parent width should be set before wrap.", priv->id);
-    }
-  }
+  //    sys_warning_N("\"%s\" parent width should be set before wrap.", priv->id);
+  //  }
+  //}
 
-  cst_line_prepend_data(pline, v_node);
-  cst_line_get_maxsize(pline, &w, &h);
-
-  ppriv->prefer_height = h;
-  cst_line_get_offsize(pline, &ppriv->prefer_width, &h);
+  cst_line_prepend_data_h(pline, v_node);
+  cst_line_get_size(pline, &ppriv->prefer_width, &ppriv->prefer_height);
 }
 
 void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
@@ -1011,14 +982,6 @@ const FRRect *cst_node_get_bound(CstNode *node) {
   CstNodePrivate *priv = node->priv;
 
   return &priv->bound;
-}
-
-void cst_node_set_bound(CstNode *node, const FRRect *rect) {
-  sys_return_if_fail(node != NULL);
-
-  CstNodePrivate *priv = node->priv;
-
-  priv->bound = *rect;
 }
 
 static void node_set_css_props(CstNode *node, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len) {
@@ -1119,12 +1082,12 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
 
   CstNodePrivate* priv = v_node->priv;
 
-  sys_assert(bound->x >= 0 && "node x >= 0 failed, relayout not correct ?");
-  sys_assert(bound->y >= 0 && "node y >= 0 failed, relayout not correct ?");
-  sys_assert(bound->width >= 0 && "node width >= 0 faild, relayout not correct ?");
-  sys_assert(bound->height >= 0 && "node height >= 0 failed, relayout not correct ?");
+  sys_assert(priv->bound.x >= 0 && "node x >= 0 failed, relayout not correct ?");
+  sys_assert(priv->bound.y >= 0 && "node y >= 0 failed, relayout not correct ?");
+  sys_assert(priv->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
+  sys_assert(priv->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
 
-  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, bound->x, bound->y, bound->width, bound->height);
+  sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 }
 
 static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
@@ -1232,6 +1195,9 @@ static void cst_node_init(CstNode *self) {
   priv->bound.y = -1;
   priv->bound.width = -1;
   priv->bound.height = -1;
+
+  priv->prefer_width = 0;
+  priv->prefer_height = 0;
 
   c = cst_css_closure_new(NULL, node_default_constraint_width, NULL);
   priv->width_calc = c;

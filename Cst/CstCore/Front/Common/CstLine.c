@@ -10,49 +10,77 @@ struct _CstLine {
   SysInt max_h;
 };
 
+
+/* line */
+void cst_line_set_xy(CstLine *self, SysInt x, SysInt y) {
+  sys_return_if_fail(self != NULL);
+
+  self->bound.x = x;
+  self->bound.y = y;
+}
+
 CstLine *cst_line_new(SysInt x, SysInt y) {
   CstLine *o = sys_new_N(CstLine, 1);
 
   o->nodes = NULL;
   o->bound.x = x;
   o->bound.y = y;
+  o->bound.width = 0;
+  o->bound.height = 0;
   o->max_w = 0;
   o->max_h = 0;
-  
+
   return o;
 }
 
 void cst_line_free(CstLine *self) {
   sys_return_if_fail(self != NULL);
 
-  sys_list_free_full(self->nodes, (SysDestroyFunc)_sys_object_unref);
+  cst_line_clear(self);
 
   sys_free_N(self);
 }
 
-void cst_line_prepend_data(CstLine *self, CstNode *v_node) {
+void cst_line_clear(CstLine *self) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_node != NULL);
+
+  sys_list_free_full(self->nodes, (SysDestroyFunc)_sys_object_unref);
+}
+
+void cst_line_prepend_data_h(CstLine *self, CstNode *node, SysInt wrap) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(node != NULL);
 
   SysInt w = 0, h = 0;
 
-  self->nodes = sys_list_prepend(self->nodes, v_node);
-  cst_node_get_size_mbp(v_node, &w, &h);
+  self->nodes = sys_list_prepend(self->nodes, node);
 
-  self->bound.x += w;
+  cst_node_get_size_mbp(node, &w, &h);
 
   self->max_w = max(w, self->max_w);
   self->max_h = max(h, self->max_h);
 
-  sys_object_ref(v_node);
+  if (!wrap) {
+    self->bound.width += w;
+  }
+  self->bound.height = self->max_h;
+
+  sys_object_ref(node);
 }
 
-SysBool cst_line_need_wrap (CstLine *self, SysInt append_width, SysInt width) {
-  if(self->bound.x + append_width > width) {
-    return true;
-  }
+void cst_line_layout_node(CstLine* self, CstNode *v_parent, CstNode *v_node) {
+  sys_return_if_fail(self != NULL);
+  SysInt w = 0, h = 0;
 
-  return false;
+  for (SysSList* item = self->nodes; item; item = item->next) {
+    CstNode* node = item->data;
+
+    cst_node_get_size_mbp(node, &w, &h);
+
+    if (self->bound.x + w > pwidth) {
+      cst_node_set_xy(node, x, y);
+    }
+  }
 }
 
 void cst_line_get_maxsize(CstLine* self, SysInt* max_w, SysInt* max_h) {
@@ -80,6 +108,7 @@ const FRRect* cst_line_get_bound(CstLine *self) {
   return &self->bound;
 }
 
+/* Lines */
 SysSList *cst_lines_prepend(SysSList *lines, CstLine *line) {
   lines = sys_slist_prepend(lines, line);
 

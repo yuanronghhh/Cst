@@ -92,7 +92,6 @@ void cst_node_relayout_h(CstModule *v_module, CstNode *v_parent, CstNode *v_node
 void cst_node_relayout_v(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp);
 const FRRect *cst_node_get_bound(CstNode *node);
-void cst_node_set_bound(CstNode *node, const FRRect *rect);
 SysBool cst_node_is_abs_node(CstNode* node);
 void cst_node_add_awatch(CstNode * node, FRAWatch * awatch);
 void cst_node_stroke_rectangle(CstNode *node, FRContext *cr);

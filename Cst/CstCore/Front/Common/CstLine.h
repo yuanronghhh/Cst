@@ -9,8 +9,8 @@ typedef struct _CstLine CstLine;
 
 CstLine* cst_line_new(SysInt x, SysInt y);
 void cst_line_free(CstLine * self);
-void cst_line_prepend_data(CstLine* self, CstNode* node);
-SysBool cst_line_need_wrap (CstLine *self, SysInt append_width, SysInt width) ;
+void cst_line_clear(CstLine* self);
+void cst_line_prepend_data_h(CstLine* self, CstNode* node);
 void cst_line_get_maxsize(CstLine* self, SysInt* max_w, SysInt* max_h);
 void cst_line_set_size(CstLine* self, SysInt width, SysInt height);
 void cst_line_get_size(CstLine* self, SysInt* width, SysInt* height);

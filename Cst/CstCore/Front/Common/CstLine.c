@@ -47,7 +47,7 @@ void cst_line_clear(CstLine *self) {
   sys_list_free_full(self->nodes, (SysDestroyFunc)_sys_object_unref);
 }
 
-void cst_line_prepend_data_h(CstLine *self, CstNode *node, SysInt wrap) {
+void cst_line_prepend_data_h(CstLine *self, CstNode *node) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(node != NULL);
 
@@ -60,26 +60,55 @@ void cst_line_prepend_data_h(CstLine *self, CstNode *node, SysInt wrap) {
   self->max_w = max(w, self->max_w);
   self->max_h = max(h, self->max_h);
 
-  if (!wrap) {
-    self->bound.width += w;
-  }
+  self->bound.width += w;
   self->bound.height = self->max_h;
 
   sys_object_ref(node);
 }
 
-void cst_line_layout_node(CstLine* self, CstNode *v_parent, CstNode *v_node) {
+void cst_line_layout_node_h(CstLine *self, CstNode *v_parent, CstNode *v_node) {
   sys_return_if_fail(self != NULL);
-  SysInt w = 0, h = 0;
 
-  for (SysSList* item = self->nodes; item; item = item->next) {
+  const FRRect* bound;
+
+  SysInt w = 0, h = 0;
+  SysInt offset_w = 0;
+  FRSInt4 m4;
+  SysBool need_wrap;
+  CstLine* line;
+
+  bound = cst_node_get_bound(v_parent);
+  need_wrap = cst_node_can_wrap(v_parent);
+  line = self;
+
+  cst_node_get_mbp(v_parent, &m4);
+  cst_line_set_xy(line,
+    bound->x + m4.m3,
+    bound->y + m4.m0);
+
+  for (SysList* item = self->nodes; item; item = item->next) {
     CstNode* node = item->data;
+
+    if (need_wrap) {
+      if (bound->width == -1) {
+        sys_warning_N("parent width must be set before wrap: %s,%s", 
+          cst_node_get_name(v_node), 
+          cst_node_get_id(v_node));
+      }
+    }
 
     cst_node_get_size_mbp(node, &w, &h);
 
-    if (self->bound.x + w > pwidth) {
-      cst_node_set_xy(node, x, y);
+    if (self->bound.width + w > bound->width) {
+      line = cst_line_new(line->bound.x, line->bound.y + h);
+      offset_w = 0;
     }
+
+    cst_node_set_xy(node, 
+      line->bound.x + offset_w,
+      line->bound.y + m4.m0);
+
+    offset_w += w;
   }
 }
 

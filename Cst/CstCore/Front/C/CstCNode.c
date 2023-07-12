@@ -196,27 +196,9 @@ static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 
 static void cst_node_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
   CstNodePrivate *priv = v_node->priv;
+  CstLine* line = priv->lines->data;
 
-  if (cst_node_can_wrap(v_node->parent)) {
-    cst_line_layout_node(priv->lines);
-  }
-
-  //nnode = v_node;
-  //while (nnode && nnode->children) {
-
-  //  // calc child constraint
-  //  if (ppriv->child_width_calc) {
-  //    cst_css_closure_calc(ppriv->child_width_calc, nnode, nnode->children, cr);
-  //  }
-
-  //  if (ppriv->child_height_calc) {
-  //    cst_css_closure_calc(ppriv->child_height_calc, nnode, nnode->children, cr);
-  //  }
-
-  //  cst_node_relayout_down(v_module, v_component, nnode, nnode->children, cr);
-
-  //  nnode = nnode->next;
-  //}
+  cst_line_layout_node_h(line, v_parent, v_node);
 }
 
 CstNode *cst_node_children(CstNode *node) {
@@ -904,8 +886,6 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
   CstNodePrivate* priv = v_node->priv;
   CstNodePrivate* ppriv = v_parent->priv;
   CstLine* pline = ppriv->lines->data;
-  const FRRect* lbound;
-  SysInt wrap_width;
 
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
   h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
@@ -922,23 +902,6 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
 
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
   h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
-
-  //if (cst_node_can_wrap(v_parent)) {
-  //  wrap_width = cst_node_get_width(v_parent);
-
-  //  if (wrap_width != -1) {
-  //    if (cst_line_need_wrap(pline, w, wrap_width)) {
-  //      lbound = cst_line_get_bound(pline);
-  //      pline = cst_line_new(lbound->x + ppriv->prefer_height, lbound->y);
-
-  //      ppriv->lines = cst_lines_prepend(ppriv->lines, pline);
-  //    }
-
-  //  } else {
-
-  //    sys_warning_N("\"%s\" parent width should be set before wrap.", priv->id);
-  //  }
-  //}
 
   cst_line_prepend_data_h(pline, v_node);
   cst_line_get_size(pline, &ppriv->prefer_width, &ppriv->prefer_height);

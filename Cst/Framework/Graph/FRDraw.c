@@ -29,7 +29,7 @@ void fr_draw_get_size(FRDraw *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
   FRDrawPrivate *priv = self->priv;
 
-  fr_window_get_size(priv->window, width, height);
+  fr_window_get_framebuffer_size(priv->window, width, height);
 }
 
 FRContext* fr_draw_create_cr(FRDraw* self) {

@@ -54,7 +54,7 @@ void cst_render_render(CstRender *self) {
   FRContext *cr;
 
   sys_assert(draw != NULL && "draw must init before render use");
-  fr_window_get_size(priv->window, &bound.width, &bound.height);
+  fr_window_get_framebuffer_size(priv->window, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
 
   fr_draw_frame_begin(draw, region);

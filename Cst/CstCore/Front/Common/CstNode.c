@@ -61,6 +61,8 @@ void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_n
     cst_node_layout(v_module, v_node, v_children, cr, draw, state);
   }
 
+  cst_node_relayout_down(v_module, NULL, v_parent, v_node, cr);
+
   cst_node_render_leave(v_node, cr, state);
   cst_node_set_need_relayout(v_node, false);
 }

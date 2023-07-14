@@ -37,12 +37,6 @@ static void cst_lbody_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode
   cst_node_set_size(v_node, width, height);
 }
 
-static void cst_lbody_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  if (v_node->children) {
-    CST_NODE_CLASS(cst_lbody_parent_class)->relayout_down(v_module, v_component, v_node, v_node->children, cr);
-  }
-}
-
 static void cst_lbody_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   const FRRect *rect;
 
@@ -71,7 +65,6 @@ static void cst_lbody_class_init(CstLBodyClass* cls) {
   ncls->construct = cst_lbody_construct;
   ncls->repaint = cst_lbody_repaint_i;
   ncls->relayout = cst_lbody_relayout_i;
-  ncls->relayout_down = cst_lbody_relayout_down_i;
   ncls->realize = cst_lbody_realize_i;
 }
 

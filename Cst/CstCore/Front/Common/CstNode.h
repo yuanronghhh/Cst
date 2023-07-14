@@ -28,8 +28,6 @@ struct _CstNodeProps {
 CstNode* cst_node_new(void);
 SysType cst_node_get_type(void);
 
-void cst_node_ref(CstNode *node);
-void cst_node_unref(CstNode *node);
 CstNode* cst_node_parent(CstNode *node);
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar *name);
 
@@ -57,6 +55,7 @@ const SysChar *cst_node_get_id(CstNode *node);
 
 void cst_node_set_x(CstNode *node, SysInt x);
 void cst_node_set_xy(CstNode* node, SysInt x, SysInt y);
+void cst_node_layout_line_h(CstNode* v_parent);
 SysInt cst_node_get_x(CstNode *node);
 void cst_node_set_wrap(CstNode *node, SysBool wrap);
 void cst_node_set_y(CstNode *node, SysInt width);
@@ -111,8 +110,8 @@ void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode 
 void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 void cst_node_paint(CstModule * v_module, CstNode * v_parent, CstNode * v_node, FRContext * cr, FRDraw * draw, SysInt state);
 void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
-void cst_node_relayout_down(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr);
 void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state);
 void cst_node_render_enter(CstNode *node, FRContext *cr, SysInt state);
 void cst_node_render_leave(CstNode *node, FRContext *cr, SysInt state);
 void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *node, FRContext *cr, FRDraw *draw, SysInt state);

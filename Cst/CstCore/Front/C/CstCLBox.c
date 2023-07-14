@@ -29,10 +29,6 @@ static void cst_lbox_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
   CST_NODE_CLASS(cst_lbox_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 
-static void cst_lbox_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  CST_NODE_CLASS(cst_lbox_parent_class)->relayout_down(v_module, v_component, v_parent, v_node, cr);
-}
-
 static void cst_lbox_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   CST_NODE_CLASS(cst_lbox_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 
@@ -51,6 +47,5 @@ static void cst_lbox_class_init(CstLBoxClass* cls) {
 
   ncls->realize = cst_lbox_realize_i;
   ncls->relayout = cst_lbox_relayout_i;
-  ncls->relayout_down = cst_lbox_relayout_down_i;
   ncls->repaint = cst_lbox_repaint_i;
 }

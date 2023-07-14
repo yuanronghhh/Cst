@@ -19,6 +19,12 @@ void cst_line_set_xy(CstLine *self, SysInt x, SysInt y) {
   self->bound.y = y;
 }
 
+SysBool cst_line_need_wrap(CstLine* self, SysInt append_width, SysInt max_width) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->bound.width + append_width > max_width;
+}
+
 CstLine *cst_line_new(SysInt x, SysInt y) {
   CstLine *o = sys_new_N(CstLine, 1);
 
@@ -66,50 +72,45 @@ void cst_line_prepend_data_h(CstLine *self, CstNode *node) {
   sys_object_ref(node);
 }
 
-void cst_line_layout_node_h(CstLine *self, CstNode *v_parent, CstNode *v_node) {
-  sys_return_if_fail(self != NULL);
-
-  const FRRect* bound;
-
+void cst_line_layout_nodes(CstLine* line, CstNode *v_parent) {
+  sys_return_if_fail(line != NULL);
+  const FRRect* pbound;
   SysInt w = 0, h = 0;
   SysInt offset_w = 0;
-  FRSInt4 m4;
-  SysBool need_wrap;
-  CstLine* line;
+  SysList* start = sys_list_last(line->nodes);
 
-  bound = cst_node_get_bound(v_parent);
-  need_wrap = cst_node_can_wrap(v_parent);
-  line = self;
+  pbound = cst_node_get_bound(v_parent);
 
-  cst_node_get_mbp(v_parent, &m4);
-  cst_line_set_xy(line,
-    bound->x + m4.m3,
-    bound->y + m4.m0);
+  for (SysList* item = start; item; item = item->prev) {
+    CstNode* v_node = item->data;
 
-  for (SysList* item = self->nodes; item; item = item->next) {
-    CstNode* node = item->data;
+    cst_node_get_size_mbp(v_node, &w, &h);
 
-    if (need_wrap) {
-      if (bound->width == -1) {
-        sys_warning_N("parent width must be set before wrap: %s,%s", 
-          cst_node_get_name(v_node), 
-          cst_node_get_id(v_node));
-      }
-    }
+    //if (cst_node_can_wrap(v_parent)) {
+    //  if (pbound->width == -1) {
+    //    sys_warning_N("parent width must be set before wrap: %s,%s",
+    //      cst_node_get_name(v_node),
+    //      cst_node_get_id(v_node));
+    //  }
 
-    cst_node_get_size_mbp(node, &w, &h);
+    //  if (cst_line_need_wrap(line, w, pbound->width)) {
+    //    line = cst_line_new(pbound->x, pbound->x + h);
+    //    offset_w = 0;
+    //  }
+    //}
 
-    if (self->bound.width + w > bound->width) {
-      line = cst_line_new(line->bound.x, line->bound.y + h);
-      offset_w = 0;
-    }
-
-    cst_node_set_xy(node, 
+    cst_node_set_xy(v_node,
       line->bound.x + offset_w,
-      line->bound.y + m4.m0);
+      line->bound.y);
 
     offset_w += w;
   }
+}
+
+SysList* cst_line_get_nodes(CstLine * self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->nodes;
 }
 
 void cst_line_get_maxsize(CstLine* self, SysInt* max_w, SysInt* max_h) {

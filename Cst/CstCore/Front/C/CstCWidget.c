@@ -25,10 +25,6 @@ static void cst_widget_relayout_i(CstModule *v_module, CstNode *v_parent, CstNod
   CST_NODE_CLASS(cst_widget_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 
-static void cst_widget_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  CST_NODE_CLASS(cst_widget_parent_class)->relayout_down(v_module, v_component, v_parent, v_node, cr);
-}
-
 static void cst_widget_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   CST_NODE_CLASS(cst_widget_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
 }
@@ -64,6 +60,5 @@ static void cst_widget_class_init(CstWidgetClass* wcls) {
   ncls->realize = cst_widget_realize_i;
   ncls->relayout = cst_widget_relayout_i;
   ncls->repaint = cst_widget_repaint_i;
-  ncls->relayout_down = cst_widget_relayout_down_i;
 }
 

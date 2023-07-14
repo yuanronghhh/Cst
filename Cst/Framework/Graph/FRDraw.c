@@ -66,8 +66,8 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
 #if SYS_OS_WIN32
   HWND hwd = fr_window_get_win32_window(priv->window);
   HDC hdc = GetDC(hwd);
-  // surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
-  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_RGB24);
+  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+  // surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_RGB24);
 #elif SYS_OS_UNIX
   Window xwindow = fr_window_get_x11_window(priv->window);
   Display *ndisplay = fr_display_get_x11_display(priv->display);

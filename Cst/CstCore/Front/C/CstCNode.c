@@ -195,10 +195,7 @@ static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 }
 
 static void cst_node_relayout_down_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  CstNodePrivate *priv = v_node->priv;
-  CstLine* line = priv->lines->data;
 
-  cst_line_layout_node_h(line, v_parent, v_node);
 }
 
 CstNode *cst_node_children(CstNode *node) {
@@ -564,6 +561,39 @@ void cst_node_set_xy(CstNode* node, SysInt x, SysInt y) {
   priv->bound.y = y;
 }
 
+void cst_node_layout_line_h(CstNode* v_parent) {
+  sys_return_if_fail(v_parent != NULL);
+
+  FRSInt4 m4;
+  const FRRect* pbound;
+
+  CstNodePrivate* ppriv = v_parent->priv;
+  CstLine* line = ppriv->lines->data;
+  CstNode* children = cst_node_children(v_parent);
+  CstNode* next = cst_node_next(v_parent);
+
+  pbound = cst_node_get_bound(v_parent);
+  cst_node_get_mbp(v_parent, &m4);
+
+  cst_line_set_xy(line,
+    pbound->x + m4.m3,
+    pbound->y + m4.m0);
+
+  cst_line_layout_nodes(line, v_parent);
+
+  if (children) {
+    cst_node_layout_line_h(children);
+  }
+
+  if (next) {
+    cst_node_layout_line_h(next);
+  }
+}
+
+void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
+  cst_node_layout_line_h(v_parent);
+}
+
 SysBool cst_node_set_css_by_id(CstNode *node, SysChar *id, CstComponent *comp) {
   sys_return_val_if_fail(id != NULL, false);
   sys_return_val_if_fail(node != NULL, false);
@@ -705,16 +735,6 @@ void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, 
 
   if (ncls->relayout) {
     ncls->relayout(v_module, v_parent, v_node, cr, draw, state);
-  }
-}
-
-void cst_node_relayout_down(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  sys_return_if_fail(v_node != NULL);
-
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
-
-  if (ncls->relayout_down) {
-    ncls->relayout_down(v_module, v_component, v_parent, v_node, cr);
   }
 }
 
@@ -1113,7 +1133,6 @@ static void cst_node_class_init(CstNodeClass *ncls) {
   ncls->dclone = cst_node_dclone_i;
   ncls->realize = cst_node_realize_i;
   ncls->relayout = cst_node_relayout_i;
-  ncls->relayout_down = cst_node_relayout_down_i;
   ncls->repaint = cst_node_repaint_i;
 }
 

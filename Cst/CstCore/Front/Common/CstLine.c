@@ -72,39 +72,46 @@ void cst_line_prepend_data_h(CstLine *self, CstNode *node) {
   sys_object_ref(node);
 }
 
-void cst_line_layout_nodes(CstLine* line, CstNode *v_parent) {
-  sys_return_if_fail(line != NULL);
-  const FRRect* pbound;
+SysSList *cst_line_layout_nodes(CstLine* line,
+  SysSList *lines,
+  const FRRect* pbound,
+  SysBool parent_wrap) {
+
+  sys_return_val_if_fail(line != NULL, NULL);
+
   SysInt w = 0, h = 0;
   SysInt offset_w = 0;
-  SysList* start = sys_list_last(line->nodes);
-
-  pbound = cst_node_get_bound(v_parent);
+  SysList *start = sys_list_last(line->nodes);
+  CstLine *pline = line;
 
   for (SysList* item = start; item; item = item->prev) {
     CstNode* v_node = item->data;
 
     cst_node_get_size_mbp(v_node, &w, &h);
 
-    //if (cst_node_can_wrap(v_parent)) {
-    //  if (pbound->width == -1) {
-    //    sys_warning_N("parent width must be set before wrap: %s,%s",
-    //      cst_node_get_name(v_node),
-    //      cst_node_get_id(v_node));
-    //  }
+    if (parent_wrap) {
+      if (pbound->width == -1) {
+        sys_warning_N("parent width must be set before wrap: %s,%s",
+          cst_node_get_name(v_node),
+          cst_node_get_id(v_node));
+      }
 
-    //  if (cst_line_need_wrap(line, w, pbound->width)) {
-    //    line = cst_line_new(pbound->x, pbound->x + h);
-    //    offset_w = 0;
-    //  }
-    //}
+      if (cst_line_need_wrap(line, w, pbound->width)) {
+        pline = cst_line_new(pbound->x, pbound->y + h);
+        lines = cst_lines_prepend(lines, pline);
+
+        // offset_w = 0;
+      }
+    }
 
     cst_node_set_xy(v_node,
-      line->bound.x + offset_w,
-      line->bound.y);
+      pline->bound.x + offset_w,
+      pline->bound.y);
 
     offset_w += w;
   }
+
+  return lines;
 }
 
 SysList* cst_line_get_nodes(CstLine * self) {

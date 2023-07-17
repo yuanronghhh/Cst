@@ -564,8 +564,9 @@ void cst_node_set_xy(CstNode* node, SysInt x, SysInt y) {
 void cst_node_layout_line_h(CstNode* v_parent) {
   sys_return_if_fail(v_parent != NULL);
 
-  FRSInt4 m4;
+  FRSInt4 pmbp4;
   const FRRect* pbound;
+  SysBool parent_wrap;
 
   CstNodePrivate* ppriv = v_parent->priv;
   CstLine* line = ppriv->lines->data;
@@ -573,13 +574,15 @@ void cst_node_layout_line_h(CstNode* v_parent) {
   CstNode* next = cst_node_next(v_parent);
 
   pbound = cst_node_get_bound(v_parent);
-  cst_node_get_mbp(v_parent, &m4);
+  parent_wrap = cst_node_can_wrap(v_parent);
+
+  cst_node_get_mbp(v_parent, &pmbp4);
 
   cst_line_set_xy(line,
-    pbound->x + m4.m3,
-    pbound->y + m4.m0);
+    pbound->x + pmbp4.m3,
+    pbound->y + pmbp4.m0);
 
-  cst_line_layout_nodes(line, v_parent);
+  ppriv->lines = cst_line_layout_nodes(line, ppriv->lines, pbound, parent_wrap);
 
   if (children) {
     cst_node_layout_line_h(children);

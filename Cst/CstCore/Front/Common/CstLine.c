@@ -1,5 +1,6 @@
 #include <CstCore/Front/Common/CstLine.h>
 #include <CstCore/Front/Common/CstNode.h>
+#include <CstCore/Front/Common/CstText.h>
 
 
 struct _CstLine {
@@ -72,20 +73,20 @@ void cst_line_prepend_data_h(CstLine *self, CstNode *node) {
   sys_object_ref(node);
 }
 
-SysSList *cst_line_layout_nodes(CstLine* line,
-  SysSList *lines,
-  const FRRect* pbound,
-  SysBool parent_wrap) {
+SysSList *cst_line_layout_nodes(CstLine* line, SysSList *lines, const FRRect* pbound, SysBool parent_wrap) {
 
   sys_return_val_if_fail(line != NULL, NULL);
 
+  const SysChar* text;
   SysInt w = 0, h = 0;
   SysInt offset_w = 0;
   SysList *start = sys_list_last(line->nodes);
   CstLine *pline = line;
 
+  sys_debug_N("%s", "start");
   for (SysList* item = start; item; item = item->prev) {
     CstNode* v_node = item->data;
+    sys_debug_N("id: %s,%s", cst_node_get_name(v_node), cst_node_get_id(v_node));
 
     cst_node_get_size_mbp(v_node, &w, &h);
 
@@ -96,11 +97,21 @@ SysSList *cst_line_layout_nodes(CstLine* line,
           cst_node_get_id(v_node));
       }
 
-      if (cst_line_need_wrap(line, w, pbound->width)) {
+      if (line->bound.width > pbound->width) {
+        line->bound.width = -1;
+
         pline = cst_line_new(pbound->x, pbound->y + h);
+
+        sys_debug_N("wrap: %s,%s", cst_node_get_name(v_node), cst_node_get_id(v_node));
+        cst_line_prepend_data_h(pline, v_node);
+        
         lines = cst_lines_prepend(lines, pline);
 
-        // offset_w = 0;
+        item->data = NULL;
+        offset_w = 0;
+
+        text = cst_text_get_text(CST_TEXT(cst_node_children(v_node)));
+        sys_debug_N("%s", text);
       }
     }
 
@@ -109,6 +120,12 @@ SysSList *cst_line_layout_nodes(CstLine* line,
       pline->bound.y);
 
     offset_w += w;
+  }
+
+  for (SysList* item = start; item; item = item->prev) {
+    if (item->data == NULL) {
+      pline->nodes = sys_list_delete_link(pline->nodes, item);
+    }
   }
 
   return lines;

@@ -675,8 +675,6 @@ static void test_cpu_thread(void) {
 
     g_thread_join(th);
   }
-
-  getchar();
 }
 
 static void test_gobject_boxed(void) {
@@ -701,7 +699,7 @@ static void shared_func(int i, gpointer thread_id) {
 static gpointer cond_push_func(gpointer data) {
   gpointer th1_id = g_thread_self();
   while(1) {
-    g_usleep(1e6);
+    g_usleep((gulong)1e6);
 
     g_mutex_lock(&mlock);
 
@@ -775,7 +773,7 @@ static gpointer lock_func1(gpointer data) {
   gpointer th1_id = g_thread_self();
 
   while(1) {
-    g_usleep(1e5);
+    g_usleep((gulong)1e5);
 
     g_mutex_lock(&mlock);
     shared_func(1, th1_id);
@@ -792,7 +790,7 @@ static gpointer lock_func2(gpointer data) {
 
   gpointer th1_id = g_thread_self();
   while(1) {
-    g_usleep(1e5);
+    g_usleep((gulong)1e5);
 
     g_mutex_lock(&mlock);
     shared_func(2, th1_id);
@@ -819,6 +817,30 @@ static void test_thread_lock(void) {
 
 
 static void test_socket_basic(void) {
+  GInetAddress* inet;
+  GSocketAddress* address;
+  GSocket* sock;
+  GError* error = NULL;
+  int port = 4050;
+  const gchar* ip = "localhost";
+
+  sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, &error);
+  if (sock == NULL) {
+    printf("%s\n", error->message);
+    return;
+  }
+
+  inet = g_inet_address_new_from_string(ip);
+  if (inet == NULL) {
+    return;
+  }
+
+  address = g_inet_socket_address_new(inet, port);
+  if (address == NULL) {
+    return;
+  }
+
+  g_socket_bind(sock, address, true, &error);
 }
 
 void test_glib_init(int argc, char *argv[]) {
@@ -838,7 +860,8 @@ void test_glib_init(int argc, char *argv[]) {
     // RUN_TEST(test_dump_memory);
     // RUN_TEST(test_cpu_thread);
     // RUN_TEST(test_thread_lock);
-    RUN_TEST(test_thread_cond);
+    // RUN_TEST(test_thread_cond);
+    RUN_TEST(test_socket_basic);
   }
   UNITY_END();
 }

@@ -13,7 +13,7 @@ CstLine* cst_line_new(SysInt x, SysInt y);
 void cst_line_free(CstLine * self);
 void cst_line_clear(CstLine* self);
 void cst_line_prepend_data_h(CstLine* self, CstNode* node);
-SysSList* cst_line_layout_nodes(CstLine* line, SysSList* lines, const FRRect* pbound, SysBool parent_wrap);
+void cst_line_layout_nodes(CstLine* line, const FRRect* pbound, SysBool parent_wrap);
 SysList* cst_line_get_nodes(CstLine* self);
 void cst_line_get_maxsize(CstLine* self, SysInt* max_w, SysInt* max_h);
 void cst_line_set_size(CstLine* self, SysInt width, SysInt height);

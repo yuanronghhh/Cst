@@ -92,10 +92,12 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_surface_create_similar_image(priv->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
 
+#if SYS_OS_WIN32
   cairo_t *cr = cairo_create(priv->window_surface);
   cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
   cairo_paint(cr);
   cairo_destroy(cr);
+#endif
 
   priv->is_painting = true;
 }

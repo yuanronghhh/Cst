@@ -7,7 +7,7 @@
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Front/Common/CstComponent.h>
 #include <CstCore/Front/Common/CstNode.h>
-#include <CstCore/Front/Common/CstLine.h>
+#include <CstCore/Front/Common/CstLayout.h>
 
 
 #define ID_FORMAT "id.%d.%d"
@@ -553,52 +553,70 @@ void cst_node_set_xy(CstNode* node, SysInt x, SysInt y) {
   priv->bound.y = y;
 }
 
-CstLine *node_new_line(CstNode *v_parent) {
-  CstLine* line;
+CstLayout *node_new_layout(CstNode *v_parent) {
+  CstLayout* layout;
 
   CstNodePrivate *priv = v_parent->priv;
 
-  line = cst_line_new(
+  layout = cst_layout_new(
       priv->bound.x + priv->mbp.m3,
       priv->bound.y + priv->mbp.m0);
 
-  return line;
+  return layout;
 }
 
-void cst_node_layout_line_h(CstNode* v_parent) {
+void cst_node_layout_layout_h(CstNode* v_parent) {
   sys_return_if_fail(v_parent != NULL);
 
   SysBool parent_wrap;
-  CstLine* line;
+  CstLayout* layout;
+  SysInt w, h;
+  const FRRect* lbound;
+  CstNode* node;
+  CstNodePrivate* ppriv;
   SysSList *lines = NULL;
 
-  CstNode* children = cst_node_children(v_parent);
-  CstNode* next = cst_node_next(v_parent);
-
+  ppriv = v_parent->priv;
   parent_wrap = cst_node_can_wrap(v_parent);
-  line = node_new_line(v_parent);
+  layout = node_new_layout(v_parent);
+  lines = cst_layouts_prepend(lines, layout);
 
-  for(CstNode *node = children; node; node = children->next) {
+  lbound = cst_layout_get_bound(layout);
+
+  for (node = v_parent->children; node; node = node->next) {
+
+    cst_node_get_size_mbp(node, &w, &h);
+
     if (parent_wrap) {
-      if (pbound->width == -1) {
+      if (ppriv->bound.width == -1) {
         sys_warning_N("parent width must be set before wrap: %s,%s",
-            cst_node_get_name(v_node),
-            cst_node_get_id(v_node));
+            cst_node_get_name(node),
+            cst_node_get_id(node));
+        break;
       }
     }
+
+    if(cst_layout_need_wrap(layout, w, ppriv->bound.width)) {
+      layout = cst_layout_new(lbound->x, lbound->y + h);
+      lines = cst_layouts_prepend(lines, layout);
+    }
+
+    sys_debug_N("%s,%s", cst_node_get_name(node), cst_node_get_id(node));
+    cst_layout_prepend_item(layout, node);
+    cst_layout_layout_update(layout);
   }
 
-  if (children) {
-    cst_node_layout_line_h(children);
+  if (v_parent->children) {
+    cst_node_layout_layout_h(v_parent->children);
   }
 
-  if (next) {
-    cst_node_layout_line_h(next);
+  if (v_parent->next) {
+    cst_node_layout_layout_h(v_parent->next);
   }
 }
 
 void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
-  cst_node_layout_line_h(v_parent);
+  cst_node_layout_layout_h(v_parent);
 }
 
 SysBool cst_node_set_css_by_id(CstNode *node, SysChar *id, CstComponent *comp) {
@@ -902,7 +920,7 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
   CstNodePrivate* priv = v_node->priv;
   CstNodePrivate* ppriv = v_parent->priv;
 
-  CstLine* pline = node_new_line(v_parent);
+  CstLayout* layout = node_new_layout(v_parent);
 
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
   h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
@@ -917,8 +935,10 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
     cst_css_closure_calc(ppriv->child_height_calc, v_parent, v_node, cr);
   }
 
-  cst_line_prepend_data_h(pline, v_node);
-  cst_line_get_size(pline, &ppriv->prefer_width, &ppriv->prefer_height);
+  cst_layout_prepend_item(layout, v_node);
+  cst_layout_get_size(layout, &ppriv->prefer_width, &ppriv->prefer_height);
+
+  sys_clear_pointer(&layout, cst_layout_free);
 }
 
 void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
@@ -1159,7 +1179,6 @@ static void cst_node_dispose(SysObject* o) {
 static void cst_node_init(CstNode *self) {
   CstNodePrivate *priv = self->priv = cst_node_get_private(self);
   CstCssClosure *c;
-  CstLine* nline;
 
   priv->id = NULL;
   priv->last_child = NULL;

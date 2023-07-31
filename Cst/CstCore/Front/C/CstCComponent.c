@@ -74,7 +74,7 @@ void cst_component_print(CstComponent* self) {
 
   CstComponentPrivate* priv = self->priv;
 
-  cst_node_print_node(priv->layout_node);
+  cst_node_print_node_r(priv->layout_node);
 }
 
 const SysChar* cst_component_get_id(CstComponent* self) {

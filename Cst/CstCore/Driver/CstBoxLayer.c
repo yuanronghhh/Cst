@@ -188,7 +188,7 @@ void cst_box_layer_print_tree(CstBoxLayer *self) {
 
   CstBoxLayerPrivate *priv = self->priv;
 
-  cst_node_print_node(priv->tree);
+  cst_node_print_node_r(priv->tree);
 }
 
 /* object api */

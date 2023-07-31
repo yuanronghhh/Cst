@@ -41,6 +41,7 @@ void cst_node_append(CstNode *parent, CstNode *node);
 SysBool cst_node_is_visible(CstNode *node);
 void cst_node_set_abs_node(CstNode* v_node, SysBool bvalue);
 
+void cst_node_print_node_r(CstNode* node);
 void cst_node_print_node(CstNode *node);
 
 void cst_node_set_width(CstNode *node, SysInt width);
@@ -55,7 +56,6 @@ const SysChar *cst_node_get_id(CstNode *node);
 
 void cst_node_set_x(CstNode *node, SysInt x);
 void cst_node_set_xy(CstNode* node, SysInt x, SysInt y);
-void cst_node_layout_line_h(CstNode* v_parent);
 SysInt cst_node_get_x(CstNode *node);
 void cst_node_set_wrap(CstNode *node, SysBool wrap);
 void cst_node_set_y(CstNode *node, SysInt width);
@@ -86,7 +86,6 @@ void cst_node_get_mbp(CstNode* node, FRSInt4* m4);
 void cst_node_set_prefer_size(CstNode *node, SysInt width, SysInt height);
 void cst_node_get_prefer_size(CstNode *node, SysInt *width, SysInt *height);
 SysBool cst_node_can_wrap(CstNode *v_node);
-SysSList* cst_node_get_lines(CstNode* v_node);
 void cst_node_relayout_h(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 void cst_node_relayout_v(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
 void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp);

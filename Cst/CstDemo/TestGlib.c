@@ -819,18 +819,20 @@ static void test_thread_lock(void) {
 static void test_socket_basic(void) {
   GInetAddress* inet;
   GSocketAddress* address;
-  GSocket* sock;
+  GSocket* s;
+  GSocket* ns;
   GError* error = NULL;
+  GCancellable *cancel;
   int port = 4050;
   const gchar* ip = "localhost";
 
-  sock = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, &error);
-  if (sock == NULL) {
+  s = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, &error);
+  if (s == NULL) {
     printf("%s\n", error->message);
     return;
   }
 
-  inet = g_inet_address_new_from_string(ip);
+  inet = g_inet_address_new_loopback(G_SOCKET_FAMILY_IPV4);
   if (inet == NULL) {
     return;
   }
@@ -840,7 +842,39 @@ static void test_socket_basic(void) {
     return;
   }
 
-  g_socket_bind(sock, address, true, &error);
+  g_socket_bind(s, address, true, &error);
+  g_socket_listen(s, &error);
+
+  while (true) {
+    cancel = g_cancellable_get_current();
+
+    ns = g_socket_accept(s, cancel, &error);
+  }
+}
+
+void test_subprocess_basic(void) {
+  GError* error = NULL;
+  GCancellable* cancel = g_cancellable_new();
+  GBytes* stdin_buf = NULL;
+  GBytes* stdout_buf = NULL;
+  GBytes* stderr_buf = NULL;
+
+  GSubprocess *sub = g_subprocess_new(
+    G_SUBPROCESS_FLAGS_STDOUT_PIPE 
+    | G_SUBPROCESS_FLAGS_STDERR_PIPE, &error, 
+    "\"D:/Program Files/Git/usr/bin/ls\"", NULL);
+
+  if (sub == NULL) {
+    sys_error_N("%s", error->message);
+    return;
+  }
+
+  if (!g_subprocess_communicate(sub, stdin_buf, cancel, &stdout_buf, &stderr_buf, &error)) {
+    sys_debug_N("%s", error->message);
+    return;
+  }
+
+  g_subprocess_communicate_finish(sub, NULL, &stdout_buf, &stderr_buf, &error);
 }
 
 void test_glib_init(int argc, char *argv[]) {
@@ -861,7 +895,8 @@ void test_glib_init(int argc, char *argv[]) {
     // RUN_TEST(test_cpu_thread);
     // RUN_TEST(test_thread_lock);
     // RUN_TEST(test_thread_cond);
-    RUN_TEST(test_socket_basic);
+    // RUN_TEST(test_socket_basic);
+    RUN_TEST(test_subprocess_basic);
   }
   UNITY_END();
 }

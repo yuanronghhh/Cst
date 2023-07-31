@@ -59,16 +59,19 @@ void cst_layout_layout_update(CstLayout* self) {
   CstNode* node;
   SysList* item = sys_list_last(self->nodes);
 
-  for (item = self->nodes; item; item->prev) {
+  sys_debug_N("%s", ">>> layout ");
+  for (item = self->nodes; item; item = item->prev) {
     node = item->data;
 
+    cst_node_print_node(node);
+
     cst_node_get_size_mbp(node, &w, &h);
+    cst_node_set_xy(node, self->bound.x + self->bound.width, self->bound.y);
 
     self->bound.width += w;
     self->bound.height = max(h, self->bound.height);
-
-    cst_node_set_xy(node, self->bound.x + self->bound.width, self->bound.y);
   }
+  sys_debug_N("%s", "<<< layout");
 }
 
 void cst_layout_prepend_item(CstLayout *self, CstNode *node) {

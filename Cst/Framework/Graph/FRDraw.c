@@ -37,9 +37,11 @@ FRContext* fr_draw_create_cr(FRDraw* self) {
   FRContext *cr;
   FRDrawPrivate *priv = self->priv;
 
-  sys_assert(priv->paint_surface != NULL && "priv->paint_surface should set before create context.");
+  sys_assert(priv->paint_surface != NULL && "paint_surface should set before create context.");
+  sys_assert(priv->window_surface != NULL && "window_surface should set before create context.");
 
-  cr = cairo_create(priv->paint_surface);
+  cr = cairo_create(priv->window_surface);
+
   return cr;
 }
 
@@ -92,8 +94,9 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_surface_create_similar_image(priv->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
 
+  cairo_t* cr = cairo_create(priv->window_surface);
+
 #if SYS_OS_WIN32
-  cairo_t *cr = cairo_create(priv->window_surface);
   cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
   cairo_paint(cr);
   cairo_destroy(cr);

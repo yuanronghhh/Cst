@@ -164,20 +164,6 @@ SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g) {
   return node_set_css_r_i(node, g);
 }
 
-void cst_node_stoke_rectangle(CstNode *node, FRContext *cr) {
-  SysInt x, y, w, h;
-
-  CstNodePrivate *priv = node->priv;
-
-  x = priv->bound.x + priv->margin.m3;
-  y = priv->bound.y + priv->margin.m0;
-  w = priv->bound.width + priv->padding.m1 + priv->padding.m3;
-  h = priv->bound.height + priv->padding.m0 + priv->padding.m2;
-
-  fr_context_rectangle(cr, x, y, w, h);
-  fr_context_stroke(cr);
-}
-
 static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
@@ -565,7 +551,7 @@ CstLayout *node_new_layout(CstNode *v_parent) {
   return layout;
 }
 
-void cst_node_layout_layout_h(CstNode* v_parent) {
+void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
   sys_return_if_fail(v_parent != NULL);
 
   SysBool parent_wrap;
@@ -601,22 +587,22 @@ void cst_node_layout_layout_h(CstNode* v_parent) {
       lines = cst_layouts_prepend(lines, layout);
     }
 
-    sys_debug_N("%s,%s", cst_node_get_name(node), cst_node_get_id(node));
     cst_layout_prepend_item(layout, node);
     cst_layout_layout_update(layout);
+    cst_node_stroke_rectangle(node, cr);
   }
 
   if (v_parent->children) {
-    cst_node_layout_layout_h(v_parent->children);
+    cst_node_layout_layout_h(v_parent->children, cr);
   }
 
   if (v_parent->next) {
-    cst_node_layout_layout_h(v_parent->next);
+    cst_node_layout_layout_h(v_parent->next, cr);
   }
 }
 
 void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
-  cst_node_layout_layout_h(v_parent);
+  cst_node_layout_layout_h(v_parent, cr);
 }
 
 SysBool cst_node_set_css_by_id(CstNode *node, SysChar *id, CstComponent *comp) {

@@ -29,6 +29,9 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   return CST_NODE_PROP_LAST;
 }
 
+void cst_node_debug_stroke(CstNode* node) {
+}
+
 void cst_node_stroke_rectangle(CstNode *node, FRContext *cr) {
   const FRRect *bound;
 
@@ -46,6 +49,14 @@ void cst_node_stroke_rectangle(CstNode *node, FRContext *cr) {
 
   fr_context_rectangle(cr, x, y, width, height);
   fr_context_stroke(cr);
+
+  cairo_surface_t* s = cairo_get_target(cr);
+  sys_debug_N("repaint node: %s,%s<%d,%d,%d,%d>", 
+    cst_node_get_id(node),
+    cst_node_get_name(node),
+    bound->x, bound->y, bound->width, bound->height);
+
+  cairo_surface_flush(s);
 }
 
 /* object api */

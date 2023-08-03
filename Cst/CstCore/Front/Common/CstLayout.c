@@ -63,7 +63,7 @@ void cst_layout_layout_update(CstLayout* self) {
   for (item = self->nodes; item; item = item->prev) {
     node = item->data;
 
-    cst_node_print_node(node);
+    // cst_node_print_node(node);
 
     cst_node_get_size_mbp(node, &w, &h);
     cst_node_set_xy(node, self->bound.x + self->bound.width, self->bound.y);

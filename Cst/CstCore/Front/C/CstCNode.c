@@ -585,11 +585,13 @@ void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
     if(cst_layout_need_wrap(layout, w, ppriv->bound.width)) {
       layout = cst_layout_new(lbound->x, lbound->y + h);
       lines = cst_layouts_prepend(lines, layout);
+
+      lbound = cst_layout_get_bound(layout);
     }
 
     cst_layout_prepend_item(layout, node);
     cst_layout_layout_update(layout);
-    cst_node_stroke_rectangle(node, cr);
+    // cst_node_debug_stroke(node, cr);
   }
 
   if (v_parent->children) {
@@ -858,6 +860,20 @@ SysBool cst_node_get_need_relayout(CstNode* node) {
     return priv->need_relayout;
 }
 
+void cst_node_expand(CstNode *v_node) {
+  sys_return_if_fail(v_node != NULL);
+
+  CstNodePrivate* priv = v_node->priv;
+
+  if (priv->bound.width == -1) {
+    cst_node_set_width(v_node, priv->prefer_width);
+  }
+
+  if (priv->bound.height == -1) {
+    cst_node_set_height(v_node, priv->prefer_height);
+  }
+}
+
 void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
   sys_return_if_fail(v_parent != NULL);
@@ -878,13 +894,7 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
     cst_node_layout(v_module, v_node, v_node->children, cr, draw, state);
   }
 
-  if (priv->bound.width == -1) {
-    cst_node_set_width(v_node, priv->prefer_width);
-  }
-
-  if (priv->bound.height == -1) {
-    cst_node_set_height(v_node, priv->prefer_height);
-  }
+  cst_node_expand(v_node);
 
   cst_node_relayout(v_module, v_parent, v_node, cr, draw, state);
 
@@ -904,7 +914,7 @@ SysBool cst_node_can_wrap(CstNode* v_node) {
   return priv->wrap;
 }
 
-void cst_node_constraint(CstNode* v_parent, CstNode* v_node, FRContext* cr) {
+void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
   SysInt w = 0, h = 0;
 
   CstNodePrivate* priv = v_node->priv;
@@ -922,10 +932,9 @@ void cst_node_constraint(CstNode* v_parent, CstNode* v_node, FRContext* cr) {
     ppriv->prefer_height = max(h, ppriv->prefer_height);
     cst_css_closure_calc(ppriv->child_height_calc, v_parent, v_node, cr);
   }
-}
 
-void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
-  cst_node_constraint(v_parent, v_node, cr);
+  ppriv->prefer_width += w;
+  ppriv->prefer_height = max(h, ppriv->prefer_height);
 }
 
 void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {

@@ -92,6 +92,7 @@ void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp);
 const FRRect *cst_node_get_bound(CstNode *node);
 SysBool cst_node_is_abs_node(CstNode* node);
 void cst_node_add_awatch(CstNode * node, FRAWatch * awatch);
+void cst_node_debug_stroke(CstNode* node, FRContext* cr);
 void cst_node_stroke_rectangle(CstNode *node, FRContext *cr);
 SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g);
 void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode *root, CstNode *new_root, CstRender *v_render);

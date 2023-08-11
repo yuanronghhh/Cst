@@ -5,10 +5,14 @@ set(search_dirs
   /usr/lib/x86_64-linux-gnu
 )
 
+if(WIN32)
+  LIST(APPEND search_dirs "C:/Program Files/Mono")
+endif()
+
 FIND_PATH(MONO_INCLUDE_DIR
   NAMES mono/jit/jit.h
   HINTS ${search_dirs}
-  PATH_SUFFIXES mono/include include mono/include/mono-2.0
+  PATH_SUFFIXES include/mono-2.0 include mono/include/mono-2.0
 )
 
 set(MONO_FILES "")

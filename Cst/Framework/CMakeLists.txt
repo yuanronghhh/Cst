@@ -28,8 +28,8 @@ set(COCOA_SRC
 )
 
 set(MONO_SRC
-  ./FRMono.h
-  ./FRMono.c
+  # ./FRMono.h
+  # ./FRMono.c
 )
 
 set(SRC

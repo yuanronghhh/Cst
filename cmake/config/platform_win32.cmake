@@ -5,7 +5,7 @@ if(NOT EXISTS "${LIBDIR}/")
   message(FATAL_ERROR "Windows requires pre-compiled libs at: '${LIBDIR}'")
 endif()
 
-# find_package(mono REQUIRED)
+find_package(mono REQUIRED)
 find_package(fontconfig REQUIRED)
 find_package(freetype REQUIRED)
 find_package(pixman REQUIRED)

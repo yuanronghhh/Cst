@@ -726,9 +726,8 @@ void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, F
 
   CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
 
-  if (ncls->repaint) {
-    ncls->repaint(v_module, v_parent, v_node, cr, draw, state);
-  }
+  sys_return_if_fail(ncls->repaint != NULL);
+  ncls->repaint(v_module, v_parent, v_node, cr, draw, state);
 }
 
 void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
@@ -736,9 +735,8 @@ void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, 
 
   CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
 
-  if (ncls->relayout) {
-    ncls->relayout(v_module, v_parent, v_node, cr, draw, state);
-  }
+  sys_return_if_fail(ncls->relayout != NULL);
+  ncls->relayout(v_module, v_parent, v_node, cr, draw, state);
 }
 
 void cst_node_append(CstNode *parent, CstNode *node) {
@@ -839,11 +837,11 @@ void cst_node_set_need_relayout(CstNode* node, SysBool bvalue) {
 }
 
 SysBool cst_node_get_need_relayout(CstNode* node) {
-    sys_return_val_if_fail(node != NULL, false);
+  sys_return_val_if_fail(node != NULL, false);
 
-    CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = node->priv;
 
-    return priv->need_relayout;
+  return priv->need_relayout;
 }
 
 void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {

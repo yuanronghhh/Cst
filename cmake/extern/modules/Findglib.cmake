@@ -64,8 +64,8 @@ set(GLIB_FILE
   "intl-8.dll"
   "libexpat.dll"
   "libffi.dll"
-  "harfbuzz.dll"
-  "pcre2-8.dll"
+  # "harfbuzz.dll"
+  # "pcre2-8.dll"
   "pcre.dll"
   "pcre16.dll"
   "pcre32.dll"
@@ -79,7 +79,7 @@ FOREACH(COMPONENT ${GLIB_FILE})
     FIND_FILE(GLIB_${COMPONENT}_FILE
       NAMES ${COMPONENT}
       HINTS ${search_dirs}
-      PATH_SUFFIXES glib/bin pango/tools/pango fontconfig/tools/fontconfig/ bzip2/bin libiconv/bin glib/tools/glib expat/bin/ pcre/bin
+      PATH_SUFFIXES glib/bin pango/tools/pango fontconfig/tools/fontconfig/ bzip2/bin libiconv/bin glib/tools/glib expat/bin/ pcre/bin 
     )
 
     LIST(APPEND GLIB_FILES "${GLIB_${COMPONENT}_FILE}")

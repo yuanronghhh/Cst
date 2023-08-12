@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Front/Common/CstNode.h>
+#include <CstCore/Front/Common/CstLayout.h>
 
 
 struct _CstLayerPrivate {
@@ -47,13 +48,12 @@ void cst_layer_queue_draw_node(CstLayer *self, CstNode *v_node) {
 
 void cst_layer_rerender_i(CstLayer *self, FRDraw *draw, FRContext *cr) {
   sys_return_if_fail(self != NULL);
-  
+
   CstNode *v_node;
   CstNode *v_parent;
   CstLayerPrivate *priv = self->priv;
   SysQueue *draw_queue = priv->draw_queue;
-
-  // sys_debug_N("%s", "rerender");
+  CstLayoutContext *ctx = cst_layout_context_new();
 
   for (SysList *item = draw_queue->head; item; item = item->next) {
     v_node = item->data;

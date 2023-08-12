@@ -1,3 +1,4 @@
+#include "CstNode.h"
 #include <CstCore/Front/Common/CstNodePrivate.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstModule.h>
@@ -29,23 +30,43 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   return CST_NODE_PROP_LAST;
 }
 
-void cst_node_stroke_rectangle(CstNode *node, FRContext *cr) {
-  const FRRect *bound;
-
+static void stroke_rectangle(const FRRect* bound, FRSInt4* m4, FRSInt4* p4, FRContext* cr) {
   SysInt x, y, width, height;
-  FRSInt4 m4, p4;
 
-  bound = cst_node_get_bound(node);
-  cst_node_get_margin(node, &m4);
-  cst_node_get_padding(node, &p4);
-
-  x = bound->x + m4.m0;
-  y = bound->y + m4.m0;
-  width = bound->width + p4.m1 + p4.m3;
-  height = bound->height + p4.m0 + p4.m2;
+  x = bound->x + m4->m0;
+  y = bound->y + m4->m0;
+  width = bound->width + p4->m1 + p4->m3;
+  height = bound->height + p4->m0 + p4->m2;
 
   fr_context_rectangle(cr, x, y, width, height);
   fr_context_stroke(cr);
+}
+
+void cst_node_debug_stroke(CstNode* node, FRContext* cr) {
+  const FRRect* bound;
+  FRSInt4 m4, p4;
+
+  bound = cst_node_get_bound(node);
+  stroke_rectangle(bound, &m4, &p4, cr);
+
+  cairo_surface_t* s = cairo_get_target(cr);
+  sys_debug_N("repaint node: %s,%s<%d,%d,%d,%d>",
+    cst_node_get_id(node),
+    cst_node_get_name(node),
+    bound->x, bound->y, bound->width, bound->height);
+
+  cairo_surface_flush(s);
+}
+
+void cst_node_stroke_rectangle(CstNode *node, FRContext *cr) {
+  FRSInt4 m4, p4;
+  const FRRect* bound;
+
+  cst_node_get_margin(node, &m4);
+  cst_node_get_padding(node, &p4);
+
+  bound = cst_node_get_bound(node);
+  stroke_rectangle(bound, &m4, &p4, cr);
 }
 
 /* object api */

@@ -53,7 +53,7 @@ void cst_layer_rerender_i(CstLayer *self, FRDraw *draw, FRContext *cr) {
   CstNode *v_parent;
   CstLayerPrivate *priv = self->priv;
   SysQueue *draw_queue = priv->draw_queue;
-  CstLayoutContext *ctx = cst_layout_context_new();
+  CstLayoutContext *ctx = cst_layout_context_new_I(0, 0);
 
   for (SysList *item = draw_queue->head; item; item = item->next) {
     v_node = item->data;

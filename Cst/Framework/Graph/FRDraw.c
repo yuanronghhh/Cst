@@ -6,6 +6,7 @@
 struct _FRDrawPrivate {
   SysPointer v;
 
+  FRContext *cr;
   FRSurface *window_surface;
   FRSurface * paint_surface;
   FRDisplay *display;
@@ -32,8 +33,17 @@ void fr_draw_get_size(FRDraw *self, SysInt *width, SysInt *height) {
   fr_window_get_framebuffer_size(priv->window, width, height);
 }
 
+FRContext* fr_draw_get_cr(FRDraw* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  FRDrawPrivate* priv = self->priv;
+
+  return priv->cr;
+}
+
 FRContext* fr_draw_create_cr(FRDraw* self) {
   sys_return_val_if_fail(self != NULL, NULL);
+
   FRContext *cr;
   FRDrawPrivate *priv = self->priv;
 
@@ -94,7 +104,7 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_surface_create_similar_image(priv->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
 
-  cairo_t* cr = cairo_create(priv->window_surface);
+  FRContext* cr = priv->cr = fr_draw_create_cr(self);
 
 #if SYS_OS_WIN32
   cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);

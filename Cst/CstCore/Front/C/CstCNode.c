@@ -539,21 +539,10 @@ void cst_node_set_xy(CstNode* node, SysInt x, SysInt y) {
   priv->bound.y = y;
 }
 
-CstLayout *node_new_layout(CstNode *v_parent) {
-  CstLayout* layout;
-
-  CstNodePrivate *priv = v_parent->priv;
-
-  layout = cst_layout_new(
-      priv->bound.x + priv->mbp.m3,
-      priv->bound.y + priv->mbp.m0);
-
-  return layout;
-}
-
 void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
   sys_return_if_fail(v_parent != NULL);
 
+#if 0
   SysBool parent_wrap;
   CstLayout* layout;
   SysInt w, h;
@@ -564,7 +553,8 @@ void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
 
   ppriv = v_parent->priv;
   parent_wrap = cst_node_can_wrap(v_parent);
-  layout = node_new_layout(v_parent);
+
+  layout = cst_layout_new_I(ppriv->bound.x + ppriv->mbp.m3, ppriv->bound.y + ppriv->mbp.m0);
   lines = cst_layouts_prepend(lines, layout);
 
   lbound = cst_layout_get_bound(layout);
@@ -601,6 +591,7 @@ void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
   if (v_parent->next) {
     cst_node_layout_layout_h(v_parent->next, cr);
   }
+#endif
 }
 
 void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {

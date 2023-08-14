@@ -115,7 +115,6 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
 
   CstRenderPrivate *priv = self->priv;
   FRDraw *draw = priv->draw;
-  FRContext *cr;
 
   if (!fr_draw_frame_need_draw(draw)) {
     return;
@@ -123,15 +122,11 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
 
   fr_draw_frame_begin(draw, region);
 
-  cr = fr_draw_create_cr(draw);
-
   cst_layer_check(priv->box_layer, draw, region);
   cst_layer_check(priv->abs_layer, draw, region);
 
-  cst_layer_rerender(priv->box_layer, draw, cr);
-  cst_layer_rerender(priv->abs_layer, draw, cr);
-
-  fr_context_destroy(cr);
+  cst_layer_rerender(priv->box_layer, draw, NULL);
+  cst_layer_rerender(priv->abs_layer, draw, NULL);
 
   fr_draw_frame_end(draw, region);
 }

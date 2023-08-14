@@ -100,6 +100,8 @@ set(SRC
   ./Front/Common/CstItem.c
   ./Front/Common/CstLayout.h
   ./Front/Common/CstLayout.c
+  ./Front/Common/CstLayoutContext.h
+  ./Front/Common/CstLayoutContext.c
   ./Front/Common/CstComNode.h
   ./Front/Common/CstComNode.c
   ./Front/Common/CstNodeMap.h

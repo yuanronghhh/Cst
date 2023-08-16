@@ -39,7 +39,7 @@ FRAWatch* fr_awatchkey_new(void) {
 FRAWatch * fr_awatchkey_new_I(SysPointer user_data, FREventFunc func) {
   FRAWatch *o = fr_awatchkey_new();
 
-  fr_awatchkey_construct(SYS_OBJECT(o), user_data, func);
+  fr_awatchkey_construct(o, user_data, func);
 
   return o;
 }
@@ -56,7 +56,7 @@ static void fr_awatchkey_class_init(FRAWatchKeyClass* cls) {
   ncls->check = fr_awatchkey_check_i;
   ncls->dispatch = fr_awatchkey_dispatch_i;
 
-  ocls->construct = (SysObjectFunc)fr_awatchkey_construct;
+  cls->construct = fr_awatchkey_construct;
   ocls->dispose = fr_awatchkey_dispose;
 }
 

@@ -31,7 +31,7 @@ CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key);
 CstCssGroup *cst_component_get_css(CstComponent* self, const SysChar *key);
 void cst_component_set_css(CstComponent* self, CstCssGroup *g);
 SysBool cst_component_remove_css(CstComponent * self, CstCssGroup * g);
-CstCssEnv *cst_component_get_css_env(CstComponent* self);
+FREnv *cst_component_get_css_env(CstComponent* self);
 CST_COMPONENT_BODY_ENUM cst_component_body_get_by_name(const SysChar* name);
 CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name);
 void cst_component_set_layout_node(CstComponent *self, CstNode *node);

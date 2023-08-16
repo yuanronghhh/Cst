@@ -15,14 +15,16 @@ static void cst_lflow_init(CstLFlow *self) {
   self->priv = cst_lflow_get_private(self);
 }
 
-static void cst_lflow_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  CST_NODE_CLASS(cst_lflow_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
+static void cst_lflow_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
+  CST_NODE_CLASS(cst_lflow_parent_class)->relayout(v_module, v_parent, v_node, draw, state);
 }
 
-static void cst_lflow_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  CST_NODE_CLASS(cst_lflow_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
+static void cst_lflow_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
+  FRContext *cr = fr_draw_get_cr(draw);
 
-  cst_node_stroke_rectangle(v_node, cr);
+  CST_NODE_CLASS(cst_lflow_parent_class)->repaint(v_module, v_parent, v_node, draw, state);
+
+  cst_node_stroke_rectangle(v_node, draw);
 }
 
 static void cst_lflow_dispose(SysObject* o) {

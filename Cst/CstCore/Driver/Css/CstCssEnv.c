@@ -23,7 +23,7 @@ void cst_css_env_setup(void) {
 
   SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
 
-  gcss_env = cst_css_env_new_I(NULL);
+  gcss_env = (CstCssEnv *)cst_css_env_new_I(NULL);
 
   ps = cst_parser_new(buildin_css_path);
   if (ps == NULL) {
@@ -50,20 +50,20 @@ void cst_css_env_teardown(void) {
   sys_object_unref(gcss_env);
 }
 
-CstCssEnv *cst_css_env_new(void) {
+FREnv *cst_css_env_new(void) {
   return sys_object_new(CST_TYPE_CSS_ENV, NULL);
 }
 
-void cst_css_env_construct(SysObject *o, CstCssEnv *parent) {
+void cst_css_env_construct(FREnv *o, CstCssEnv *parent) {
   SysHashTable *ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
 
-  SYS_OBJECT_CLASS(cst_css_env_parent_class)->construct(o, ht, FR_ENV(parent));
+  FR_ENV_CLASS(cst_css_env_parent_class)->construct(o, ht, FR_ENV(parent));
 }
 
-CstCssEnv *cst_css_env_new_I(CstCssEnv *parent) {
-  CstCssEnv  *o = cst_css_env_new();
+FREnv *cst_css_env_new_I(CstCssEnv *parent) {
+  FREnv *o = cst_css_env_new();
 
-  cst_css_env_construct(SYS_OBJECT(o), parent);
+  cst_css_env_construct(o, parent);
 
   return o;
 }
@@ -91,8 +91,8 @@ static void cst_css_env_dispose(SysObject *o) {
 
 static void cst_css_env_class_init(CstCssEnvClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
+  FREnvClass *ecls = FR_ENV_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_css_env_construct;
   ocls->dispose = cst_css_env_dispose;
 }
 

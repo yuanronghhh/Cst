@@ -24,7 +24,7 @@ FREventScroll* fr_event_scroll_new(void) {
 FREventScroll *fr_event_scroll_new_I(FRWindow *window) {
   FREventScroll *o = fr_event_scroll_new();
 
-  fr_event_scroll_construct(SYS_OBJECT(o), window);
+  fr_event_scroll_construct(o, window);
 
   return o;
 }
@@ -40,7 +40,7 @@ static void fr_event_scroll_dispose(SysObject* o) {
 static void fr_event_scroll_class_init(FREventScrollClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_event_scroll_construct;
+  cls->construct = fr_event_scroll_construct;
   ocls->dispose = fr_event_scroll_dispose;
 }
 

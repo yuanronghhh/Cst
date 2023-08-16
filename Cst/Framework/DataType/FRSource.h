@@ -15,6 +15,7 @@ SYS_BEGIN_DECLS
 struct _FRSourceClass {
   SysObjectClass parent;
 
+  void (*construct) (FRSource *source, SysPointer user_data);
   SysBool (*check) (FRSource *source);
   SysBool (*prepare) (FRSource *source);
   SysBool (*dispatch) (FRSource *source);

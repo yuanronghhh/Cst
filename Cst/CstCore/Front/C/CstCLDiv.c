@@ -18,16 +18,16 @@ static void cst_ldiv_init(CstLDiv *self) {
   cst_node_set_name(CST_NODE(self), "LDiv");
 }
 
-static void cst_ldiv_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  cst_node_relayout_v(v_module, v_parent, v_node, cr, draw, state);
+static void cst_ldiv_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
+  cst_node_relayout_v(v_module, v_parent, v_node, draw, state);
 
-  CST_NODE_CLASS(cst_ldiv_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
+  CST_NODE_CLASS(cst_ldiv_parent_class)->relayout(v_module, v_parent, v_node, draw, state);
 }
 
-static void cst_ldiv_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  CST_NODE_CLASS(cst_ldiv_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
+static void cst_ldiv_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
+  CST_NODE_CLASS(cst_ldiv_parent_class)->repaint(v_module, v_parent, v_node, draw, state);
 
-  cst_node_stroke_rectangle(v_node, cr);
+  cst_node_stroke_rectangle(v_node, draw);
 }
 
 static void cst_ldiv_dispose(SysObject* o) {

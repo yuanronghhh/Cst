@@ -21,10 +21,7 @@ CstNodeMap* cst_node_map_new(void) {
   return sys_object_new(CST_TYPE_NODE_MAP, NULL);
 }
 
-void cst_node_map_construct(SysObject *o, CstPropMap *prop_map, SysInt prop_type, const SysChar *prop_name) {
-  SYS_OBJECT_CLASS(cst_node_map_parent_class)->construct(o);
-
-  CstNodeMap *self = CST_NODE_MAP(o);
+void cst_node_map_construct(CstNodeMap *self, CstPropMap *prop_map, SysInt prop_type, const SysChar *prop_name) {
   CstNodeMapPrivate* priv = self->priv;
 
   sys_assert(prop_type > 0 && "prop_type > 0 failed, see CST_NODE_PROP_ENUM");
@@ -40,7 +37,7 @@ void cst_node_map_construct(SysObject *o, CstPropMap *prop_map, SysInt prop_type
 CstNodeMap* cst_node_map_new_I(CstPropMap *prop_map, SysInt prop_type, const SysChar *prop_name) {
   CstNodeMap * o = cst_node_map_new();
 
-  cst_node_map_construct(SYS_OBJECT(o), prop_map, prop_type, prop_name);
+  cst_node_map_construct(o, prop_map, prop_type, prop_name);
 
   return o;
 }
@@ -145,5 +142,4 @@ static void cst_node_map_class_init(CstNodeMapClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_node_map_dispose;
-  ocls->construct = (SysObjectFunc)cst_node_map_construct;
 }

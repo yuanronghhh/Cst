@@ -273,14 +273,16 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
 }
 
 /* object api */
-void cst_module_construct(SysObject *o, CstManager *manager, CstModule *pmodule, const SysChar *path) {
+static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
+  FR_ENV_CLASS(cst_module_parent_class)->construct(o, ht, parent);
+}
+
+static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, const SysChar *path) {
   SysHashTable *ht;
 
-  // component
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
-  SYS_OBJECT_CLASS(cst_module_parent_class)->construct(o, ht, FR_ENV(pmodule));
+  cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
-  CstModule *self = CST_MODULE(o);
   CstModulePrivate *priv = self->priv;
 
   priv->manager = manager;
@@ -299,7 +301,7 @@ void cst_module_construct(SysObject *o, CstManager *manager, CstModule *pmodule,
 CstModule* cst_module_new_I(CstManager* manager, CstModule* pmodule, const SysChar* path) {
   CstModule* o = cst_module_new();
 
-  cst_module_construct(SYS_OBJECT(o), manager, pmodule, path);
+  cst_module_construct(o, manager, pmodule, path);
 
   return o;
 }
@@ -333,7 +335,8 @@ static void cst_module_dispose(SysObject* o) {
 
 static void cst_module_class_init(CstModuleClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
+  FREnvClass* ecls = FR_ENV_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_module_construct;
+  ecls->construct = cst_module_construct_i;
   ocls->dispose = cst_module_dispose;
 }

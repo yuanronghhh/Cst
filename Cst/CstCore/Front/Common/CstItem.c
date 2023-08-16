@@ -80,10 +80,7 @@ void cst_item_set_xy(CstItem* self, SysInt x, SysInt y) {
   self->y = y;
 }
 
-void cst_item_construct(SysObject* o, SysInt x, SysInt y, SysInt width, SysInt height) {
-  SYS_OBJECT_CLASS(cst_item_parent_class)->construct(o);
-
-  CstItem *self = CST_ITEM(o);
+void cst_item_construct(CstItem *self, SysInt x, SysInt y, SysInt width, SysInt height) {
 
   self->x = x;
   self->y = y;
@@ -94,7 +91,7 @@ void cst_item_construct(SysObject* o, SysInt x, SysInt y, SysInt width, SysInt h
 CstItem *cst_item_new_I(SysInt x, SysInt y, SysInt width, SysInt height) {
   CstItem * o = cst_item_new();
 
-  cst_item_construct(SYS_OBJECT(o), x, y, width, height);
+  cst_item_construct(o, x, y, width, height);
 
   return o;
 }
@@ -128,5 +125,4 @@ static void cst_item_class_init(CstItemClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_item_dispose;
-  ocls->construct = (SysObjectFunc)cst_item_construct;
 }

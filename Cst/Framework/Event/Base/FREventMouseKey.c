@@ -27,8 +27,8 @@ SysInt fr_event_mousekey_action(FREventMouseKey *self) {
 }
 
 /* object api */
-static void fr_event_mousekey_construct(SysObject *o, FRWindow *window, SysInt button, SysInt action, SysInt mods) {
-  SYS_OBJECT_CLASS(fr_event_mousekey_parent_class)->construct(o, window, FR_EVENT_TMOUSE_KEY);
+static void fr_event_mousekey_construct(FREvent *o, FRWindow *window, SysInt button, SysInt action, SysInt mods) {
+  FR_EVENT_CLASS(fr_event_mousekey_parent_class)->construct(o, window);
 
   FREventMouseKey* self = FR_EVENT_MOUSEKEY(o);
   FREventMouseKeyPrivate* priv = self->priv;
@@ -45,7 +45,7 @@ FREvent* fr_event_mousekey_new(void) {
 FREvent *fr_event_mousekey_new_I(FRWindow *window, SysInt button, SysInt action, SysInt mods) {
   FREvent *o = fr_event_mousekey_new();
 
-  fr_event_mousekey_construct(SYS_OBJECT(o), window, button, action, mods);
+  fr_event_mousekey_construct(o, window, button, action, mods);
 
   return o;
 }
@@ -57,8 +57,8 @@ static void fr_event_mousekey_dispose(SysObject* o) {
 
 static void fr_event_mousekey_class_init(FREventMouseKeyClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_event_mousekey_construct;
   ocls->dispose = fr_event_mousekey_dispose;
 }
 

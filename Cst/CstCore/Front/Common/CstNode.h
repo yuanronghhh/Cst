@@ -62,7 +62,7 @@ void cst_node_set_y(CstNode *node, SysInt width);
 SysInt cst_node_get_y(CstNode *node);
 
 void cst_node_init_mbp(CstNode *node);
-void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state);
 CstNode *cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render);
 void cst_node_get_size_mbp(CstNode* node, SysInt* width, SysInt* height);
 CstNode *cst_node_children(CstNode *node);
@@ -86,14 +86,14 @@ void cst_node_get_mbp(CstNode* node, FRSInt4* m4);
 void cst_node_set_prefer_size(CstNode *node, SysInt width, SysInt height);
 void cst_node_get_prefer_size(CstNode *node, SysInt *width, SysInt *height);
 SysBool cst_node_can_wrap(CstNode *v_node);
-void cst_node_relayout_h(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
-void cst_node_relayout_v(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_relayout_h(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state);
+void cst_node_relayout_v(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state);
 void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp);
 const FRRect *cst_node_get_bound(CstNode *node);
 SysBool cst_node_is_abs_node(CstNode* node);
 void cst_node_add_awatch(CstNode * node, FRAWatch * awatch);
-void cst_node_debug_stroke(CstNode* node, FRContext* cr);
-void cst_node_stroke_rectangle(CstNode *node, FRContext *cr);
+void cst_node_stroke_rectangle(CstNode *node, FRDraw *draw);
+void cst_node_fill_rectangle(CstNode *node, FRDraw *draw);
 SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g);
 void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode *root, CstNode *new_root, CstRender *v_render);
 void cst_constrain_same_width(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);
@@ -107,14 +107,14 @@ void cst_node_get_margin(CstNode* node, FRSInt4* m4);
 CstNode *cst_node_deep_clone(CstNode *v_node);
 void cst_node_bind(CstNode *self, CstComNode *com_node);
 void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props);
-void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
-void cst_node_paint(CstModule * v_module, CstNode * v_parent, CstNode * v_node, FRContext * cr, FRDraw * draw, SysInt state);
-void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
-void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state);
-void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state);
+void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state);
+void cst_node_paint(CstModule * v_module, CstNode * v_parent, CstNode * v_node, FRDraw * draw, SysInt state);
+void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state);
+void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state);
+void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw* draw, SysInt state);
 void cst_node_render_enter(CstNode *node, FRContext *cr, SysInt state);
 void cst_node_render_leave(CstNode *node, FRContext *cr, SysInt state);
-void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *node, FRContext *cr, FRDraw *draw, SysInt state);
+void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *node, FRDraw *draw, SysInt state);
 
 SYS_END_DECLS
 

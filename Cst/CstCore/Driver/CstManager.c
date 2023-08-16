@@ -132,11 +132,8 @@ SysType cst_manager_get_meta(CstManager *self, const SysChar *name) {
 }
 
 /* object api */
-void cst_manager_construct(SysObject *o) {
-  SYS_OBJECT_CLASS(cst_manager_parent_class)->construct(o);
-
+void cst_manager_construct(CstManager *self) {
   SysHashTable *ht;
-  CstManager *self = CST_MANAGER(o);
   CstManagerPrivate *priv = self->priv;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
@@ -154,7 +151,7 @@ void cst_manager_construct(SysObject *o) {
 CstManager* cst_manager_new_I(void) {
   CstManager* o = cst_manager_new();
 
-  cst_manager_construct(SYS_OBJECT(o));
+  cst_manager_construct(o);
 
   return o;
 }
@@ -180,6 +177,5 @@ static void cst_manager_dispose(SysObject* o) {
 static void cst_manager_class_init(CstManagerClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_manager_construct;
   ocls->dispose = cst_manager_dispose;
 }

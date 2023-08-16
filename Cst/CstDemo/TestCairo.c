@@ -20,6 +20,9 @@ FRSurface* create_surface(GLFWwindow *gwindow, SysInt width, SysInt height) {
   return surface;
 }
 
+void cairo_test_flex_layout(void) {
+}
+
 static void cairo_basic(void) {
   sys_setup();
 

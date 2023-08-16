@@ -357,7 +357,7 @@ static SysBool component_style_node_func(JNode *jnode, CstComponent *self) {
   sys_return_val_if_fail(jnode != NULL, false);
   sys_return_val_if_fail(jnode->type == AstJPair, false);
   JPair *pair = jnode->v.v_pair;
-  CstCssEnv *env = cst_component_get_css_env(self);
+  CstCssEnv *env = (CstCssEnv *)cst_component_get_css_env(self);
 
   const SysChar *id = cst_component_get_id(self);
 
@@ -1015,9 +1015,7 @@ static SysBool ast_module_parse_component(CstModule *v_module, Component *comp_a
 
   cst_component_set_id(comp, comp_id);
   cst_component_construct(comp, v_module, NULL);
-
   ast_component_body_parse(comp_ast, comp, v_module);
-
   cst_module_set_root_comp(v_module, comp);
 
   return true;

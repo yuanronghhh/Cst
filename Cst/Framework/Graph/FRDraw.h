@@ -1,7 +1,7 @@
 #ifndef __FR_DRAW_H__
 #define __FR_DRAW_H__
 
-#include <Framework/FRCommon.h>
+#include <Framework/Graph/FRGraph.h>
 
 
 SYS_BEGIN_DECLS
@@ -31,6 +31,9 @@ SYS_API SysBool fr_draw_frame_need_draw(FRDraw *self);
 void fr_draw_get_size(FRDraw * self, SysInt * width, SysInt * height);
 SYS_API FRContext* fr_draw_create_cr(FRDraw* self);
 SYS_API FRSurface *fr_draw_get_surface(FRDraw *self);
+FRContext* fr_draw_get_cr(FRDraw* self);
+void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, FRSInt4* m4, FRSInt4* p4);
+void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound);
 
 SYS_END_DECLS
 

@@ -36,10 +36,10 @@ SysInt fr_event_key_action(FREventKey *self) {
 }
 
 /* object api */
-static void fr_event_key_construct(SysObject *o, FRWindow *window, SysInt key, SysInt scancode, SysInt action, SysInt mods) {
-  SYS_OBJECT_CLASS(fr_event_key_parent_class)->construct(o, window, FR_EVENT_TKEY);
+static void fr_event_key_construct(FREvent *o, FRWindow *window, SysInt key, SysInt scancode, SysInt action, SysInt mods) {
+  FR_EVENT_CLASS(fr_event_key_parent_class)->construct(o, window);
 
-  FREventKey* self = FR_EVENT_KEY(o);
+  FREventKey *self = FR_EVENT_KEY(o);
   FREventKeyPrivate* priv = self->priv;
 
   priv->key = key;
@@ -55,7 +55,7 @@ FREvent* fr_event_key_new(void) {
 FREvent *fr_event_key_new_I(FRWindow *window, SysInt key, SysInt scancode, SysInt action, SysInt mods) {
   FREvent *o = fr_event_key_new();
 
-  fr_event_key_construct(SYS_OBJECT(o), window, key, scancode, action, mods);
+  fr_event_key_construct(o, window, key, scancode, action, mods);
 
   return o;
 }
@@ -67,8 +67,8 @@ static void fr_event_key_dispose(SysObject* o) {
 
 static void fr_event_key_class_init(FREventKeyClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_event_key_construct;
   ocls->dispose = fr_event_key_dispose;
 }
 

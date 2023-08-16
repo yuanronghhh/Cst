@@ -25,9 +25,49 @@ SysBool fr_draw_frame_need_draw(FRDraw *self) {
 }
 
 /* FRDraw */
+void fr_draw_surface_flush(FRDraw *self) {
+  sys_return_if_fail(self != NULL);
+
+  FRDrawPrivate *priv = self->priv;
+
+  FRContext *cr = cairo_create(priv->window_surface);
+  cairo_set_source_surface(cr, priv->paint_surface, 0, 0);
+  cairo_surface_flush(priv->window_surface);
+}
+
+void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, FRSInt4* m4, FRSInt4* p4) {
+
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(m4 != NULL);
+  sys_return_if_fail(p4 != NULL);
+  sys_return_if_fail(bound != NULL);
+
+  FRDrawPrivate *priv = self->priv;
+  FRContext *cr = priv->cr;
+
+  SysInt x = bound->x + m4->m0;
+  SysInt y = bound->y + m4->m0;
+  SysInt width = bound->width + p4->m1 + p4->m3;
+  SysInt height = bound->height + p4->m0 + p4->m2;
+
+  fr_context_rectangle(cr, x, y, width, height);
+  fr_context_stroke(cr);
+}
+
+void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(bound != NULL);
+
+  FRDrawPrivate *priv = self->priv;
+  FRContext *cr = priv->cr;
+
+  fr_context_rectangle(cr, bound->x, bound->y, bound->width, bound->height);
+  fr_context_fill(cr);
+}
 
 void fr_draw_get_size(FRDraw *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
+
   FRDrawPrivate *priv = self->priv;
 
   fr_window_get_framebuffer_size(priv->window, width, height);
@@ -104,7 +144,7 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_surface_create_similar_image(priv->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
 
-  FRContext* cr = priv->cr = fr_draw_create_cr(self);
+  FRContext* cr = cairo_create(priv->window_surface);
 
 #if SYS_OS_WIN32
   cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
@@ -112,6 +152,8 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   cairo_destroy(cr);
 #endif
 
+  sys_assert(priv->cr == NULL && "draw cr should be NULL when fr_draw_frame_begin, missing fr_draw_frame_end ?");
+  priv->cr = cairo_create(priv->paint_surface);
   priv->is_painting = true;
 }
 
@@ -120,10 +162,13 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   int n_boxes, i;
   cairo_rectangle_int_t box;
+  FRContext* cr;
 
   FRDrawPrivate *priv = self->priv;
 
-  cairo_t *cr = cairo_create(priv->window_surface);
+  sys_clear_pointer(&priv->cr, cairo_destroy);
+
+  cr = cairo_create(priv->window_surface);
   cairo_set_source_surface(cr, priv->paint_surface, 0, 0);
 
   n_boxes = cairo_region_num_rectangles(region);
@@ -134,7 +179,6 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   cairo_clip(cr);
   cairo_paint(cr);
-  cairo_destroy(cr);
 
   cairo_surface_flush(priv->window_surface);
 
@@ -146,8 +190,6 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
 /* object api */
 static void fr_draw_construct(SysObject *o, FRWindow *window) {
-  SYS_OBJECT_CLASS(fr_draw_parent_class)->construct(o);
-
   FRDraw *self = FR_DRAW(o);
   FRDrawPrivate *priv = self->priv;
 
@@ -180,7 +222,6 @@ static void fr_draw_dispose(SysObject* o) {
 static void fr_draw_class_init(FRDrawClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_draw_construct;
   ocls->dispose = fr_draw_dispose;
 }
 

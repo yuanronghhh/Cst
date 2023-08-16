@@ -72,8 +72,7 @@ void fr_source_set_main(FRSource *source, FRMain *main) {
 }
 
 /* object api */
-static void fr_source_construct(SysObject *o, SysPointer user_data) {
-  FRSource* self = FR_SOURCE(o);
+static void fr_source_construct(FRSource *self, SysPointer user_data) {
   FRSourcePrivate* priv = self->priv;
 
   priv->main = NULL;
@@ -87,7 +86,7 @@ FRSource* fr_source_new(void) {
 FRSource *fr_source_new_I(SysPointer user_data) {
   FRSource *o = fr_source_new();
 
-  fr_source_construct(SYS_OBJECT(o), user_data);
+  fr_source_construct(o, user_data);
 
   return o;
 }
@@ -104,7 +103,7 @@ static void fr_source_dispose(SysObject* o) {
 static void fr_source_class_init(FRSourceClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_source_construct;
+  cls->construct = fr_source_construct;
   ocls->dispose = fr_source_dispose;
 }
 

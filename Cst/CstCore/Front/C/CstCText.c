@@ -114,13 +114,14 @@ CstNode *cst_text_realize_i (CstModule *v_module, CstComNode *ncomp_node, CstNod
   return nnode;
 }
 
-static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   CstText *self = CST_TEXT(v_node);
   CstTextPrivate *priv = self->priv;
   FRSInt4 m4;
 
   const FRRect *bound = cst_node_get_bound(v_node);
   PangoLayout *layout = priv->layout;
+  FRContext *cr = fr_draw_get_cr(draw);
 
   cst_node_get_mbp(v_node, &m4);
 
@@ -132,11 +133,10 @@ static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
     cst_node_set_need_repaint(v_node, false);
   }
 
-
-  CST_NODE_CLASS(cst_text_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
+  CST_NODE_CLASS(cst_text_parent_class)->repaint(v_module, v_parent, v_node, draw, state);
 }
 
-static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   CstText *self = CST_TEXT(v_node);
   CstTextPrivate* priv = self->priv;
 
@@ -145,6 +145,7 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 
   PangoLayout *layout = priv->layout;
   PangoFontDescription *font_desc = priv->font_desc;
+  FRContext *cr = fr_draw_get_cr(draw);
 
   pango_layout_set_font_description (layout, font_desc);
 
@@ -157,9 +158,9 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
     cst_node_set_need_relayout(v_node, false);
   }
 
-  cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
+  cst_node_relayout_h(v_module, v_parent, v_node, draw, state);
 
-  CST_NODE_CLASS(cst_text_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
+  CST_NODE_CLASS(cst_text_parent_class)->relayout(v_module, v_parent, v_node, draw, state);
 }
 
 /* object api */

@@ -12,6 +12,8 @@ SYS_BEGIN_DECLS
 
 struct _FREnvClass {
   SysObjectClass parent;
+
+  void (*construct)(FREnv *o, SysHashTable *ht, FREnv *parent);
 };
 
 struct _FREnv {

@@ -9,17 +9,12 @@ struct _FRDisplayPrivate {
 SYS_DEFINE_TYPE_WITH_PRIVATE(FRDisplay, fr_display, SYS_TYPE_OBJECT);
 
 /* object api */
-void fr_display_construct(SysObject *o) {
-}
-
 FRDisplay* fr_display_new(void) {
   return sys_object_new(FR_TYPE_DISPLAY, NULL);
 }
 
 FRDisplay *fr_display_new_I(void) {
   FRDisplay *o = fr_display_new();
-
-  fr_display_construct(SYS_OBJECT(o));
 
   return o;
 }
@@ -32,7 +27,6 @@ static void fr_display_dispose(SysObject* o) {
 static void fr_display_class_init(FRDisplayClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_display_construct;
   ocls->dispose = fr_display_dispose;
 }
 

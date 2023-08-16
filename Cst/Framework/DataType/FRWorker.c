@@ -36,26 +36,25 @@ SysBool fr_worker_dispatch_i(FRSource *o) {
 }
 
 /* object api */
-void fr_worker_construct(SysObject *o, SysPointer app_data) {
+void fr_worker_construct(FRSource *o, SysPointer app_data) {
+  FR_SOURCE_CLASS(fr_worker_parent_class)->construct(o, (SysPointer)o);
+
   FRWorker* self = FR_WORKER(o);
-
-  SYS_OBJECT_CLASS(fr_worker_parent_class)->construct(o, (SysPointer)self);
-
   FRWorkerPrivate* priv = self->priv;
 
   priv->app_data = app_data;
 }
 
-FRWorker* fr_worker_new(void) {
+FRSource* fr_worker_new(void) {
   return sys_object_new(FR_TYPE_WORKER, NULL);
 }
 
-FRWorker *fr_worker_new_I(SysPointer app_data) {
+FRSource *fr_worker_new_I(SysPointer app_data) {
   sys_return_val_if_fail(app_data != NULL, NULL);
 
-  FRWorker *o = fr_worker_new();
+  FRSource *o = fr_worker_new();
 
-  fr_worker_construct(SYS_OBJECT(o), app_data);
+  fr_worker_construct(o, app_data);
 
   return o;
 }
@@ -73,8 +72,8 @@ static void fr_worker_class_init(FRWorkerClass* cls) {
   scls->check = fr_worker_check_i;
   scls->dispatch = fr_worker_dispatch_i;
   scls->finish = fr_worker_finish_i;
+  scls->construct = fr_worker_construct;
 
-  ocls->construct = (SysObjectFunc)fr_worker_construct;
   ocls->dispose = fr_worker_dispose;
 }
 

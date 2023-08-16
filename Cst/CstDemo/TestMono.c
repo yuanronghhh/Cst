@@ -1,6 +1,6 @@
-#include <TestMono.h>
+#include <CstDemo/TestMono.h>
 
-#define MONO_HOME PROJECT_DIR"/../../../lib/win64_vc14/mono"
+#define MONO_HOME "C:/Program Files/Mono"
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
 
 MonoDomain *domain;
@@ -12,7 +12,7 @@ static void test_mcs_basic() {
 }
 
 static void test_mono_func_bind(void) {
-  char *managed_path = BINARY_DIR"/Cst/MonoDemo/Debug/MonoDemo.exe";
+  char *managed_path = BINARY_DIR"/Cst/CstMono/Debug/CstMono.exe";
 
   MonoDomain *domain;
   MonoAssembly* assembly;
@@ -26,6 +26,11 @@ static void test_mono_func_bind(void) {
 
   domain = mono_jit_init(domain_name);
 
+  if (!sys_path_exists(managed_path)) {
+    sys_warning_N("%s not exists", managed_path);
+    return;
+  }
+
   assembly = mono_domain_assembly_open(domain, managed_path);
   if (assembly == NULL) {
     return;
@@ -36,10 +41,12 @@ static void test_mono_func_bind(void) {
     return;
   }
 
-  MonoClass *main_cls = mono_class_from_name(image, "CstCore.Front", "CstComponent");
+  MonoClass *main_cls = mono_class_from_name(image, "CstGUI.CstCore", "CstComponent");
   // method = mono_class_get_method_from_name(main_cls, "Test2", 0);
   MonoMethod *method = mono_class_get_method_from_name(main_cls, "Test1", 0);
-  // MonoObject *my_class_instance = mono_object_new(domain, component_class);
+  MonoObject *inst = mono_object_new(domain, main_cls);
+
+  mono_runtime_object_init(inst);
 
   mono_jit_cleanup(domain);
 }

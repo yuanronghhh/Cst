@@ -164,7 +164,7 @@ SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g) {
   return node_set_css_r_i(node, g);
 }
 
-static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNodePrivate *ppriv;
@@ -539,7 +539,7 @@ void cst_node_set_xy(CstNode* node, SysInt x, SysInt y) {
   priv->bound.y = y;
 }
 
-void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
+static void cst_node_layout_layout_h(CstNode* v_parent, FRDraw *draw) {
   sys_return_if_fail(v_parent != NULL);
 
 #if 0
@@ -594,8 +594,8 @@ void cst_node_layout_layout_h(CstNode* v_parent, FRContext* cr) {
 #endif
 }
 
-void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
-  cst_node_layout_layout_h(v_parent, cr);
+void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw* draw, SysInt state) {
+  cst_node_layout_layout_h(v_parent, draw);
 }
 
 SysBool cst_node_set_css_by_id(CstNode *node, SysChar *id, CstComponent *comp) {
@@ -726,23 +726,23 @@ void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode 
   }
 }
 
-void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
 
   if (ncls->repaint) {
-    ncls->repaint(v_module, v_parent, v_node, cr, draw, state);
+    ncls->repaint(v_module, v_parent, v_node, draw, state);
   }
 }
 
-void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
 
   if (ncls->relayout) {
-    ncls->relayout(v_module, v_parent, v_node, cr, draw, state);
+    ncls->relayout(v_module, v_parent, v_node, draw, state);
   }
 }
 
@@ -865,11 +865,12 @@ void cst_node_expand(CstNode *v_node) {
   }
 }
 
-void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
   sys_return_if_fail(v_parent != NULL);
 
   CstNodePrivate *priv = v_node->priv;
+  FRContext *cr = fr_draw_get_cr(draw);
 
   if (!cst_node_get_need_relayout(v_node)) {
     return;
@@ -882,15 +883,15 @@ void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FR
   cst_css_closure_calc(priv->height_calc, v_parent, v_node, cr);
 
   if (v_node->children) {
-    cst_node_layout(v_module, v_node, v_node->children, cr, draw, state);
+    cst_node_layout(v_module, v_node, v_node->children, draw, state);
   }
 
   cst_node_expand(v_node);
 
-  cst_node_relayout(v_module, v_parent, v_node, cr, draw, state);
+  cst_node_relayout(v_module, v_parent, v_node, draw, state);
 
   if (v_node->next) {
-    cst_node_layout(v_module, v_parent, v_node->next, cr, draw, state);
+    cst_node_layout(v_module, v_parent, v_node->next, draw, state);
   }
 
   cst_node_render_leave(v_node, cr, state);
@@ -905,11 +906,12 @@ SysBool cst_node_can_wrap(CstNode* v_node) {
   return priv->wrap;
 }
 
-void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
+void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw* draw, SysInt state) {
   SysInt w = 0, h = 0;
 
   CstNodePrivate* priv = v_node->priv;
   CstNodePrivate* ppriv = v_parent->priv;
+  FRContext *cr = fr_draw_get_cr(draw);
 
   w = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
   h = priv->bound.height + priv->mbp.m2 + priv->mbp.m0;
@@ -928,7 +930,7 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
   ppriv->prefer_height = max(h, ppriv->prefer_height);
 }
 
-void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRContext* cr, FRDraw* draw, SysInt state) {
+void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw* draw, SysInt state) {
 }
 
 CstNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
@@ -1061,7 +1063,7 @@ static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, Cs
   return v_node;
 }
 
-static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   sys_return_if_fail(v_node != NULL);
 
   CstNodePrivate* priv = v_node->priv;
@@ -1124,17 +1126,16 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
   sys_assert(priv->id != NULL && "node id must be set, construct not correct ?");
 }
 
-static void cst_node_class_init(CstNodeClass *ncls) {
-  SysObjectClass* ocls = SYS_OBJECT_CLASS(ncls);
+static void cst_node_class_init(CstNodeClass *cls) {
+  SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_node_construct_i;
   ocls->dispose = cst_node_dispose;
 
-  ncls->construct = cst_node_construct_i;
-  ncls->dclone = cst_node_dclone_i;
-  ncls->realize = cst_node_realize_i;
-  ncls->relayout = cst_node_relayout_i;
-  ncls->repaint = cst_node_repaint_i;
+  cls->construct = cst_node_construct_i;
+  cls->dclone = cst_node_dclone_i;
+  cls->realize = cst_node_realize_i;
+  cls->relayout = cst_node_relayout_i;
+  cls->repaint = cst_node_repaint_i;
 }
 
 static void cst_node_dispose(SysObject* o) {

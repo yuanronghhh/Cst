@@ -9,7 +9,7 @@ struct _CstApplicationPrivate  {
   CstManager *manager;
   FRMain* main_loop;
   FRMain* work_loop;
-  FRApplication *app_source;
+  FRSource *app_source;
   FRWorker *worker_source;
   CstRender *render;
   CstModule *main_module;
@@ -160,16 +160,13 @@ static void cst_application_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_application_parent_class)->dispose(o);
 }
 
-void cst_application_construct(SysObject* o, const SysChar *appname) {
-  SYS_OBJECT_CLASS(cst_application_parent_class)->construct(o);
-
-  CstApplication* self = CST_APPLICATION(o);
+void cst_application_construct(CstApplication* self, const SysChar *appname) {
   CstApplicationPrivate *priv = self->priv;
 
   priv->main_loop = fr_main_get_main_loop();
   priv->app_source = fr_application_new_I(self);
 
-  fr_main_attach(priv->main_loop, FR_SOURCE(priv->app_source));
+  fr_main_attach(priv->main_loop, priv->app_source);
 
   priv->manager = cst_manager_new_I();
 }
@@ -190,7 +187,7 @@ CstApplication* cst_application_new_I(const SysChar *appname) {
 
   CstApplication* o = cst_application_new();
 
-  cst_application_construct(SYS_OBJECT(o), appname);
+  cst_application_construct(o, appname);
 
   g_application = o;
 
@@ -200,7 +197,6 @@ CstApplication* cst_application_new_I(const SysChar *appname) {
 static void cst_application_class_init(CstApplicationClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_application_construct;
   ocls->dispose = cst_application_dispose;
 }
 

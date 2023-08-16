@@ -79,10 +79,9 @@ FREnv *fr_env_get_parent(FREnv *self) {
 }
 
 /* object api */
-void fr_env_construct(SysObject *o, SysHashTable *ht, FREnv *parent) {
+static void fr_env_construct(FREnv *self, SysHashTable *ht, FREnv *parent) {
   sys_return_if_fail(ht != NULL);
 
-  FREnv* self = FR_ENV(o);
   FREnvPrivate* priv = self->priv;
 
   priv->ht = ht;
@@ -97,7 +96,7 @@ FREnv* fr_env_new(void) {
 FREnv *fr_env_new_I(SysHashTable *ht, FREnv *parent) {
   FREnv *o = fr_env_new();
 
-  fr_env_construct(SYS_OBJECT(o), ht, parent);
+  fr_env_construct(o, ht, parent);
 
   return o;
 }
@@ -115,7 +114,7 @@ static void fr_env_dispose(SysObject* o) {
 static void fr_env_class_init(FREnvClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_env_construct;
+  cls->construct = fr_env_construct;
   ocls->dispose = fr_env_dispose;
 }
 

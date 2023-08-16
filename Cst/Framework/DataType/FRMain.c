@@ -143,8 +143,7 @@ void fr_main_teardown(void) {
 }
 
 /* object api */
-static void fr_main_construct(SysObject *o) {
-  FRMain* self = FR_MAIN(o);
+static void fr_main_construct(FRMain *self) {
   FRMainPrivate* priv = self->priv;
 
   priv->is_running = true;
@@ -160,7 +159,7 @@ FRMain* fr_main_new(void) {
 FRMain *fr_main_new_I(void) {
   FRMain *o = fr_main_new();
 
-  fr_main_construct(SYS_OBJECT(o));
+  fr_main_construct(o);
 
   return o;
 }
@@ -177,7 +176,6 @@ static void fr_main_dispose(SysObject* o) {
 static void fr_main_class_init(FRMainClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_main_construct;
   ocls->dispose = fr_main_dispose;
 }
 

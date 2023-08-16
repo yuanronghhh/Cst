@@ -301,9 +301,7 @@ SysPtrArray *cst_css_group_get_base(CstCssGroup *self) {
 }
 
 /* CstCssGroup object api */
-void cst_css_group_construct(SysObject *o, const SysChar *id) {
-
-  CstCssGroup* self = CST_CSS_GROUP(o);
+static void cst_css_group_construct(CstCssGroup* self, const SysChar *id) {
   CstCssGroupPrivate* priv = self->priv;
 
   priv->pairs = sys_ptr_array_new_with_free_func((SysDestroyFunc)cst_css_pair_free);
@@ -320,7 +318,7 @@ CstCssGroup *cst_css_group_new_I(const SysChar *id) {
 
   CstCssGroup *o = cst_css_group_new();
 
-  cst_css_group_construct(SYS_OBJECT(o), id);
+  cst_css_group_construct(o, id);
 
   return o;
 }
@@ -343,7 +341,6 @@ static void cst_css_group_dispose(SysObject* o) {
 static void cst_css_group_class_init(CstCssGroupClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_css_group_construct;
   ocls->dispose = cst_css_group_dispose;
 }
 

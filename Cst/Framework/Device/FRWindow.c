@@ -252,9 +252,9 @@ void fr_window_set_data(FRWindow *self, SysPointer data) {
 }
 
 void fr_wait_events(void) {
-  SYS_LEAK_IGNORE_BEGIN;
+  SYS_LEAK_DISABLE;
     glfwWaitEvents();
-  SYS_LEAK_IGNORE_END;
+  SYS_LEAK_ENABLE;
 }
 
 void fr_post_empty_events(void) {
@@ -322,9 +322,7 @@ void fr_window_create_vk_surface(FRWindow *self, VkInstance instance, VkSurfaceK
 #endif
 
 /* object api */
-void fr_window_construct(SysObject *o, FRDisplay *display, FRWindow *share) {
-
-  FRWindow* self = FR_WINDOW(o);
+static void fr_window_construct(FRWindow *self, FRDisplay *display, FRWindow *share) {
   FRWindowPrivate* priv = self->priv;
 
   GLFWwindow *gwindow = NULL;
@@ -360,7 +358,7 @@ FRWindow *fr_window_new_I(FRDisplay *display, FRWindow *share) {
 
   FRWindow *o = fr_window_new();
 
-  fr_window_construct(SYS_OBJECT(o), display, share);
+  fr_window_construct(o, display, share);
 
   return o;
 }
@@ -384,7 +382,6 @@ static void fr_window_dispose(SysObject* o) {
 static void fr_window_class_init(FRWindowClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_window_construct;
   ocls->dispose = fr_window_dispose;
 }
 

@@ -18,8 +18,8 @@ void fr_event_cursor_move_position(FREventCursorMove *self, SysDouble *x, SysDou
 }
 
 /* object api */
-static void fr_event_cursor_move_construct(SysObject *o, FRWindow *window, SysDouble xpos, SysDouble ypos) {
-  SYS_OBJECT_CLASS(fr_event_cursor_move_parent_class)->construct(o, window, FR_EVENT_TCURSOR_MOVE);
+static void fr_event_cursor_move_construct(FREvent *o, FRWindow *window, SysDouble xpos, SysDouble ypos) {
+  FR_EVENT_CLASS(fr_event_cursor_move_parent_class)->construct(o, window);
 
   FREventCursorMove* self = FR_EVENT_CURSOR_MOVE(o);
   FREventCursorMovePrivate* priv = self->priv;
@@ -35,7 +35,7 @@ FREvent* fr_event_cursor_move_new(void) {
 FREvent *fr_event_cursor_move_new_I(FRWindow *window, SysDouble xpos, SysDouble ypos) {
   FREvent *o = fr_event_cursor_move_new();
 
-  fr_event_cursor_move_construct(SYS_OBJECT(o), window, xpos, ypos);
+  fr_event_cursor_move_construct(o, window, xpos, ypos);
 
   return o;
 }
@@ -47,8 +47,8 @@ static void fr_event_cursor_move_dispose(SysObject* o) {
 
 static void fr_event_cursor_move_class_init(FREventCursorMoveClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_event_cursor_move_construct;
   ocls->dispose = fr_event_cursor_move_dispose;
 }
 

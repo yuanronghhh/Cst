@@ -33,10 +33,7 @@ static void cst_prop_map_init(CstPropMap *self) {
   self->priv = cst_prop_map_get_private(self);
 }
 
-static void cst_prop_map_construct(SysObject *o, const SysChar *key, CST_PROP_VALUE_ENUM data_type) {
-  SYS_OBJECT_CLASS(cst_prop_map_parent_class)->construct(o);
-
-  CstPropMap *self = CST_PROP_MAP(o);
+static void cst_prop_map_construct(CstPropMap* self, const SysChar *key, CST_PROP_VALUE_ENUM data_type) {
   CstPropMapPrivate* priv = self->priv;
 
   priv->key = sys_strdup(key);
@@ -63,7 +60,7 @@ SysInt cst_prop_map_parse_type(const SysChar *key, const SysChar* type_str) {
 CstPropMap* cst_prop_map_new_I(const SysChar *key, CST_PROP_VALUE_ENUM data_type) {
   CstPropMap* map = cst_prop_map_new();
 
-  cst_prop_map_construct(SYS_OBJECT(map), key, data_type);
+  cst_prop_map_construct(map, key, data_type);
 
   return map;
 }
@@ -80,6 +77,5 @@ static void cst_prop_map_dispose(SysObject* o) {
 static void cst_prop_map_class_init(CstPropMapClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_prop_map_construct;
   ocls->dispose = cst_prop_map_dispose;
 }

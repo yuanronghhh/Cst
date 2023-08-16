@@ -53,8 +53,10 @@ add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 add_definitions("/MT")
 add_definitions("/MP")
 add_definitions("/WX")
-# add_definitions("/fsanitize=address")
 
+if(USE_SANITIZER)
+  add_definitions("/fsanitize=address")
+endif()
 
 set(DBG_LIBRAREIS "Dbghelp.lib")
 

@@ -22,7 +22,7 @@ struct _FRApplication {
 };
 
 SYS_API SysType fr_application_get_type(void);
-SYS_API FRApplication * fr_application_new_I(SysPointer app_data);
+SYS_API FRSource *fr_application_new_I(SysPointer app_data);
 
 SYS_END_DECLS
 

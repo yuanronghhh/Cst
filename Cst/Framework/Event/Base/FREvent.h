@@ -12,6 +12,8 @@ SYS_BEGIN_DECLS
 
 struct _FREventClass {
   SysObjectClass parent;
+
+  void (*construct)(FREvent *self, FRWindow *window);
 };
 
 struct _FREvent {
@@ -20,12 +22,11 @@ struct _FREvent {
   FREventPrivate *priv;
 };
 
-#define fr_event_any_new_I(window, etype) fr_event_new_I(window, etype)
+#define fr_event_any_new_I(window, etype) fr_event_new_I(window)
 
 SYS_API SysType fr_event_get_type(void);
-SYS_API FREvent *fr_event_new_I(FRWindow *window, FR_EVENT_ENUM etype);
+SYS_API FREvent *fr_event_new_I(FRWindow *window);
 SYS_API FRWindow* fr_event_get_window(FREvent *self);
-SYS_API SysInt fr_event_get_etype(FREvent *self);
 SYS_API SysBool fr_event_is(FREvent *self, SysType type);
 
 

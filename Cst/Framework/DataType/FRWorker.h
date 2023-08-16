@@ -22,7 +22,7 @@ struct _FRWorker {
 };
 
 SYS_API SysType fr_worker_get_type(void);
-SYS_API FRWorker * fr_worker_new_I(SysPointer app_data);
+SYS_API FRSource *fr_worker_new_I(SysPointer app_data);
 
 SYS_END_DECLS
 

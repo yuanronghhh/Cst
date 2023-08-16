@@ -169,7 +169,7 @@ void cst_box_layer_check_i(CstLayer *layer, FRDraw *draw, FRRegion *region) {
   bfs_box_layer_mark(layer, v_node, region);
 }
 
-static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, FRContext *cr) {
+static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw) {
   sys_return_if_fail(layer != NULL);
 
   CstNode *v_node;
@@ -180,8 +180,8 @@ static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, FRContext *cr)
 
   v_node = priv->tree;
 
-  cst_node_relayout_root(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_LAYOUT);
-  cst_node_repaint_root(NULL, NULL, v_node, cr, draw, CST_RENDER_STATE_PAINT);
+  cst_node_relayout_root(NULL, NULL, v_node, draw, CST_RENDER_STATE_LAYOUT);
+  cst_node_repaint_root(NULL, NULL, v_node, draw, CST_RENDER_STATE_PAINT);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {
@@ -212,11 +212,10 @@ static void cst_box_layer_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_layer_parent_class)->dispose(o);
 }
 
-void cst_box_layer_construct(SysObject* o) {
+static void cst_box_layer_construct(CstLayer* o) {
+  CST_LAYER_CLASS(cst_box_layer_parent_class)->construct(o);
+
   CstBoxLayer *self = CST_BOX_LAYER(o);
-
-  SYS_OBJECT_CLASS(cst_box_layer_parent_class)->construct(o);
-
   CstBoxLayerPrivate *priv = self->priv;
 
   priv->tree = NULL;
@@ -226,7 +225,7 @@ void cst_box_layer_construct(SysObject* o) {
 CstLayer *cst_box_layer_new_I(void) {
   CstLayer *o = cst_box_layer_new();
 
-  cst_box_layer_construct(SYS_OBJECT(o));
+  cst_box_layer_construct(o);
 
   return o;
 }
@@ -235,11 +234,11 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   CstLayerClass *lcls = CST_LAYER_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_box_layer_construct;
-  ocls->dispose = cst_box_layer_dispose;
-
+  lcls->construct = cst_box_layer_construct;
   lcls->check = cst_box_layer_check_i;
   lcls->render = cst_box_layer_render_i;
+
+  ocls->dispose = cst_box_layer_dispose;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

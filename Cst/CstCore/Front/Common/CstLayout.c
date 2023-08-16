@@ -12,8 +12,6 @@ CstLayout* cst_layout_new(void) {
 }
 
 static void cst_layout_construct(CstLayout* o, CstLayoutContext *context) {
-  SYS_OBJECT_CLASS(cst_layout_parent_class)->construct(SYS_OBJECT(o));
-
   CstLayoutPrivate *priv = o->priv;
 
   priv->context = context;

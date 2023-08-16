@@ -38,7 +38,7 @@ static void fr_adouble_click_dispose(SysObject* o) {
 static void fr_adouble_click_class_init(FRADoubleClickClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_adouble_click_construct;
+  cls->construct = fr_adouble_click_construct;
   ocls->dispose = fr_adouble_click_dispose;
 }
 

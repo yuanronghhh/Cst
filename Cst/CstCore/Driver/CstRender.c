@@ -61,8 +61,8 @@ void cst_render_render(CstRender *self) {
 
   cr = fr_draw_create_cr(draw);
 
-  cst_layer_render(priv->box_layer, draw, cr);
-  cst_layer_render(priv->abs_layer, draw, cr);
+  cst_layer_render(priv->box_layer, draw);
+  cst_layer_render(priv->abs_layer, draw);
   fr_context_destroy(cr);
 
   fr_draw_frame_end(draw, region);
@@ -125,17 +125,14 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
   cst_layer_check(priv->box_layer, draw, region);
   cst_layer_check(priv->abs_layer, draw, region);
 
-  cst_layer_rerender(priv->box_layer, draw, NULL);
-  cst_layer_rerender(priv->abs_layer, draw, NULL);
+  cst_layer_rerender(priv->box_layer, draw);
+  cst_layer_rerender(priv->abs_layer, draw);
 
   fr_draw_frame_end(draw, region);
 }
 
 /* object api */
-void cst_render_construct(SysObject *o, SysBool is_offscreen) {
-  SYS_OBJECT_CLASS(cst_render_parent_class)->construct(o);
-
-  CstRender *self = CST_RENDER(o);
+static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
   CstRenderPrivate *priv = self->priv;
 
   if (is_offscreen) {
@@ -156,7 +153,7 @@ void cst_render_construct(SysObject *o, SysBool is_offscreen) {
 CstRender* cst_render_new_I(SysBool is_offscreen) {
   CstRender* o = cst_render_new();
 
-  cst_render_construct(SYS_OBJECT(o), is_offscreen);
+  cst_render_construct(o, is_offscreen);
 
   return o;
 }
@@ -187,6 +184,5 @@ static void cst_render_dispose(SysObject* o) {
 static void cst_render_class_init(CstRenderClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)cst_render_construct;
   ocls->dispose = cst_render_dispose;
 }

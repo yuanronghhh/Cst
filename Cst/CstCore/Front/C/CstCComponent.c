@@ -13,7 +13,7 @@ struct _CstComponentPrivate {
   SysChar *id;
 
   /* ComStyle : CstCssGroup */
-  CstCssEnv *style_env;
+  FREnv *style_env;
 
   /* ComProps: CstPropMap */
   FREnv *prop_maps_env;
@@ -101,7 +101,7 @@ SysBool cst_component_remove_css(CstComponent* self, CstCssGroup *g) {
   return cst_css_env_remove(priv->style_env, cst_css_group_get_id(g));
 }
 
-CstCssEnv *cst_component_get_css_env(CstComponent* self) {
+FREnv *cst_component_get_css_env(CstComponent* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstComponentPrivate* priv = self->priv;
@@ -114,7 +114,7 @@ CstCssGroup *cst_component_get_css(CstComponent* self, const SysChar *key) {
 
   CstComponentPrivate* priv = self->priv;
 
-  return cst_css_env_get(priv->style_env, key);
+  return cst_css_env_get(CST_CSS_ENV(priv->style_env), key);
 }
 
 CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key) {
@@ -123,7 +123,7 @@ CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key) {
 
   CstComponentPrivate* priv = self->priv;
 
-  return cst_css_env_get_r(priv->style_env, key);
+  return cst_css_env_get_r(CST_CSS_ENV(priv->style_env), key);
 }
 
 SysPointer cst_component_get_function(CstComponent *self, const SysChar *func_name) {
@@ -180,9 +180,8 @@ void cst_component_construct(CstComponent *self, CstModule *v_module, CstCompone
 
   CstComponentClass *cls = CST_COMPONENT_GET_CLASS(self);
 
-  if(cls->construct) {
-    cls->construct(self, v_module, v_parent);
-  }
+  sys_return_if_fail(cls->construct != NULL);
+  cls->construct(self, v_module, v_parent);
 }
 
 void cst_component_bind_parent(CstComponent *self, CstComponent *v_parent) {
@@ -190,7 +189,7 @@ void cst_component_bind_parent(CstComponent *self, CstComponent *v_parent) {
   CstComponentPrivate *ppriv = v_parent->priv;
 
   fr_env_set_parent(priv->prop_maps_env, ppriv->prop_maps_env);
-  fr_env_set_parent(FR_ENV(priv->style_env), FR_ENV(ppriv->style_env));
+  fr_env_set_parent(priv->style_env, ppriv->style_env);
 }
 
 static void cst_component_construct_i(CstComponent *self, CstModule *v_module, CstComponent *v_parent) {
@@ -198,7 +197,7 @@ static void cst_component_construct_i(CstComponent *self, CstModule *v_module, C
   SysHashTable *ht;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
-  SYS_OBJECT_CLASS(cst_component_parent_class)->construct(SYS_OBJECT(self), ht, FR_ENV(v_parent));
+  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_parent));
 
   CstComponentPrivate *priv = self->priv;
 
@@ -218,8 +217,6 @@ static void cst_component_class_init(CstComponentClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   cls->construct = cst_component_construct_i;
-
-  ocls->construct = (SysObjectFunc)cst_component_construct_i;
   ocls->dispose = cst_component_dispose;
 }
 

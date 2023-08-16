@@ -10,8 +10,8 @@ SYS_DEFINE_TYPE_WITH_PRIVATE(FREventRefresh, fr_event_refresh, FR_TYPE_EVENT);
 
 
 /* object api */
-static void fr_event_refresh_construct(SysObject *o, FRWindow *window) {
-  SYS_OBJECT_CLASS(fr_event_refresh_parent_class)->construct(o, window, FR_EVENT_TWINDOW_REFRESH);
+static void fr_event_refresh_construct(FREvent *o, FRWindow *window) {
+  FR_EVENT_CLASS(fr_event_refresh_parent_class)->construct(o, window);
 }
 
 FREvent* fr_event_refresh_new(void) {
@@ -21,7 +21,7 @@ FREvent* fr_event_refresh_new(void) {
 FREvent * fr_event_refresh_new_I(FRWindow *window) {
   FREvent *o = fr_event_refresh_new();
 
-  fr_event_refresh_construct(SYS_OBJECT(o), window);
+  fr_event_refresh_construct(o, window);
 
   return o;
 }
@@ -32,8 +32,9 @@ static void fr_event_refresh_dispose(SysObject* o) {
 
 static void fr_event_refresh_class_init(FREventRefreshClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_event_refresh_construct;
+  ecls->construct = fr_event_refresh_construct;
   ocls->dispose = fr_event_refresh_dispose;
 }
 

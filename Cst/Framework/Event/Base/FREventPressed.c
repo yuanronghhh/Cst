@@ -24,7 +24,7 @@ FREventPressed* fr_event_pressed_new(void) {
 FREventPressed *fr_event_pressed_new_I(FRWindow *window) {
   FREventPressed *o = fr_event_pressed_new();
 
-  fr_event_pressed_construct(SYS_OBJECT(o), window);
+  fr_event_pressed_construct(o, window);
 
   return o;
 }
@@ -40,7 +40,7 @@ static void fr_event_pressed_dispose(SysObject* o) {
 static void fr_event_pressed_class_init(FREventPressedClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->construct = (SysObjectFunc)fr_event_pressed_construct;
+  cls->construct = fr_event_pressed_construct;
   ocls->dispose = fr_event_pressed_dispose;
 }
 

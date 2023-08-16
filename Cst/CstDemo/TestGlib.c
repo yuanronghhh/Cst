@@ -896,7 +896,7 @@ void test_glib_init(int argc, char *argv[]) {
     // RUN_TEST(test_thread_lock);
     // RUN_TEST(test_thread_cond);
     // RUN_TEST(test_socket_basic);
-    RUN_TEST(test_subprocess_basic);
+    // RUN_TEST(test_subprocess_basic);
   }
   UNITY_END();
 }

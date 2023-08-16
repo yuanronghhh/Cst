@@ -28,20 +28,20 @@ static void cst_lgrid_init(CstLGrid *self) {
   cst_node_set_name(node, "LGrid");
 }
 
-static void cst_lgrid_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
+static void cst_lgrid_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
   SysInt w, h;
 
   cst_node_get_prefer_size(v_node, &w, &h);
   cst_node_set_size(v_node, w, h);
-  cst_node_relayout_h(v_module, v_parent, v_node, cr, draw, state);
+  cst_node_relayout_h(v_module, v_parent, v_node, draw, state);
 
-  CST_NODE_CLASS(cst_lgrid_parent_class)->relayout(v_module, v_parent, v_node, cr, draw, state);
+  CST_NODE_CLASS(cst_lgrid_parent_class)->relayout(v_module, v_parent, v_node, draw, state);
 }
 
-static void cst_lgrid_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRContext *cr, FRDraw *draw, SysInt state) {
-  CST_NODE_CLASS(cst_lgrid_parent_class)->repaint(v_module, v_parent, v_node, cr, draw, state);
+static void cst_lgrid_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
+  CST_NODE_CLASS(cst_lgrid_parent_class)->repaint(v_module, v_parent, v_node, draw, state);
 
-  cst_node_stroke_rectangle(v_node, cr);
+  cst_node_fill_rectangle(v_node, draw);
 }
 
 static void cst_lgrid_dispose(SysObject* o) {

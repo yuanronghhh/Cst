@@ -37,26 +37,25 @@ SysBool fr_application_dispatch_i(FRSource *o) {
 }
 
 /* object api */
-void fr_application_construct(SysObject *o, SysPointer app_data) {
-  FRApplication* self = FR_APPLICATION(o);
+static void fr_application_construct(FRSource *o, SysPointer app_data) {
+  FR_SOURCE_CLASS(fr_application_parent_class)->construct(o, (SysPointer)o);
 
-  SYS_OBJECT_CLASS(fr_application_parent_class)->construct(o, (SysPointer)self);
-
+  FRApplication *self = FR_APPLICATION(o);
   FRApplicationPrivate* priv = self->priv;
 
   priv->app_data = app_data;
 }
 
-FRApplication* fr_application_new(void) {
+FRSource* fr_application_new(void) {
   return sys_object_new(FR_TYPE_APPLICATION, NULL);
 }
 
-FRApplication *fr_application_new_I(SysPointer app_data) {
+FRSource *fr_application_new_I(SysPointer app_data) {
   sys_return_val_if_fail(app_data != NULL, NULL);
 
-  FRApplication *o = fr_application_new();
+  FRSource *o = fr_application_new();
 
-  fr_application_construct(SYS_OBJECT(o), app_data);
+  fr_application_construct(o, app_data);
 
   return o;
 }
@@ -74,8 +73,8 @@ static void fr_application_class_init(FRApplicationClass* cls) {
   scls->check = fr_application_check_i;
   scls->dispatch = fr_application_dispatch_i;
   scls->finish = fr_application_finish_i;
+  scls->construct = fr_application_construct;
 
-  ocls->construct = (SysObjectFunc)fr_application_construct;
   ocls->dispose = fr_application_dispose;
 }
 

@@ -91,7 +91,6 @@ static void cst_css_env_dispose(SysObject *o) {
 
 static void cst_css_env_class_init(CstCssEnvClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  FREnvClass *ecls = FR_ENV_CLASS(cls);
 
   ocls->dispose = cst_css_env_dispose;
 }

@@ -144,15 +144,16 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_surface_create_similar_image(priv->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
 
+#if SYS_OS_WIN32
   FRContext* cr = cairo_create(priv->window_surface);
 
-#if SYS_OS_WIN32
   cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
   cairo_paint(cr);
   cairo_destroy(cr);
 #endif
 
   sys_assert(priv->cr == NULL && "draw cr should be NULL when fr_draw_frame_begin, missing fr_draw_frame_end ?");
+
   priv->cr = cairo_create(priv->paint_surface);
   priv->is_painting = true;
 }

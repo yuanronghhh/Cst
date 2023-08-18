@@ -47,7 +47,6 @@ static void fr_event_cursor_move_dispose(SysObject* o) {
 
 static void fr_event_cursor_move_class_init(FREventCursorMoveClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
   ocls->dispose = fr_event_cursor_move_dispose;
 }

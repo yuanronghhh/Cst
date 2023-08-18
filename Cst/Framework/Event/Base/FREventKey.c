@@ -67,7 +67,6 @@ static void fr_event_key_dispose(SysObject* o) {
 
 static void fr_event_key_class_init(FREventKeyClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
   ocls->dispose = fr_event_key_dispose;
 }

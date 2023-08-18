@@ -57,7 +57,6 @@ static void fr_event_mousekey_dispose(SysObject* o) {
 
 static void fr_event_mousekey_class_init(FREventMouseKeyClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  FREventClass *ecls = FR_EVENT_CLASS(cls);
 
   ocls->dispose = fr_event_mousekey_dispose;
 }

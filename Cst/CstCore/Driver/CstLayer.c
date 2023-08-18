@@ -51,7 +51,7 @@ void cst_layer_rerender_i(CstLayer *self, FRDraw *draw, CstLayout *layout) {
 
   CstNode *v_node;
   CstNode *v_parent;
-  FRContext *cr = fr_draw_get_cr(draw);
+
   CstLayerPrivate *priv = self->priv;
   SysQueue *draw_queue = priv->draw_queue;
 

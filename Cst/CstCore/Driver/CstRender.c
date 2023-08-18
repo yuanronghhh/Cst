@@ -1,4 +1,5 @@
 #include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Front/Common/CstComponent.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstWidget.h>
@@ -9,6 +10,7 @@ struct _CstRenderPrivate {
   FRWindow *window;
 
   FRDraw *draw;
+  CstLayout *layout;
 
   CstLayer *box_layer;
   CstLayer *abs_layer;
@@ -48,12 +50,15 @@ void cst_render_render(CstRender *self) {
 
   CstRenderPrivate *priv = self->priv;
 
-  FRRect bound = { 0 };
   FRRegion *region;
-  FRDraw *draw = priv->draw;
   FRContext *cr;
 
+  FRRect bound = { 0 };
+  FRDraw *draw = priv->draw;
+  CstLayout *layout = priv->layout;
+
   sys_assert(draw != NULL && "draw must init before render use");
+
   fr_window_get_framebuffer_size(priv->window, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
 
@@ -61,8 +66,9 @@ void cst_render_render(CstRender *self) {
 
   cr = fr_draw_create_cr(draw);
 
-  cst_layer_render(priv->box_layer, draw);
-  cst_layer_render(priv->abs_layer, draw);
+  cst_layer_render(priv->box_layer, draw, layout);
+  cst_layer_render(priv->abs_layer, draw, layout);
+
   fr_context_destroy(cr);
 
   fr_draw_frame_end(draw, region);
@@ -115,6 +121,7 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
 
   CstRenderPrivate *priv = self->priv;
   FRDraw *draw = priv->draw;
+  CstLayout *layout = priv->layout;
 
   if (!fr_draw_frame_need_draw(draw)) {
     return;
@@ -125,8 +132,8 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
   cst_layer_check(priv->box_layer, draw, region);
   cst_layer_check(priv->abs_layer, draw, region);
 
-  cst_layer_rerender(priv->box_layer, draw);
-  cst_layer_rerender(priv->abs_layer, draw);
+  cst_layer_rerender(priv->box_layer, draw, layout);
+  cst_layer_rerender(priv->abs_layer, draw, layout);
 
   fr_draw_frame_end(draw, region);
 }
@@ -145,6 +152,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
   }
 
   priv->draw = fr_draw_new_I(priv->window);
+  priv->layout = cst_layout_new_I();
 
   priv->box_layer = cst_box_layer_new_I();
   priv->abs_layer = cst_abs_layer_new_I();

@@ -189,8 +189,7 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 }
 
 /* object api */
-static void fr_draw_construct(SysObject *o, FRWindow *window) {
-  FRDraw *self = FR_DRAW(o);
+static void fr_draw_construct(FRDraw *self, FRWindow *window) {
   FRDrawPrivate *priv = self->priv;
 
   if (window) {
@@ -209,7 +208,7 @@ FRDraw* fr_draw_new(void) {
 FRDraw *fr_draw_new_I(FRWindow *window) {
   FRDraw *o = fr_draw_new();
 
-  fr_draw_construct(SYS_OBJECT(o), window);
+  fr_draw_construct(o, window);
 
   return o;
 }

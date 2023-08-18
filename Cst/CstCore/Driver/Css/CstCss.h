@@ -31,7 +31,7 @@ SYS_API SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *g);
 SYS_API SysBool cst_css_group_set_by_id(SysPtrArray *ptr, CstCssEnv *env, const SysChar *id);
 SYS_API const SysChar* cst_css_group_get_id(CstCssGroup *g);
 SYS_API void cst_css_group_add_pair(CstCssGroup *g, SysChar *key, CstCssValue *value);
-SYS_API void cst_css_render_groups(CstNode * node, SysPtrArray * gs, FRContext * cr, CST_RENDER_STATE_ENUM state);
+SYS_API void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLayout *layout);
 
 /* CstCssPair */
 SYS_API CstCssPair *cst_css_pair_new(SysChar *key, CstCssValue *value);

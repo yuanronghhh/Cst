@@ -63,10 +63,6 @@ typedef struct _CstLayout CstLayout;
 typedef struct _CstLayoutClass CstLayoutClass;
 typedef struct _CstLayoutPrivate CstLayoutPrivate;
 
-typedef struct _CstLayoutContext CstLayoutContext;
-typedef struct _CstLayoutContextClass CstLayoutContextClass;
-typedef struct _CstLayoutContextPrivate CstLayoutContextPrivate;
-
 typedef struct _CstWidget CstWidget;
 typedef struct _CstWidgetClass CstWidgetClass;
 typedef struct _CstWidgetPrivate CstWidgetPrivate;

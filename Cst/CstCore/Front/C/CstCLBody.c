@@ -30,15 +30,15 @@ static void cst_lbody_init(CstLBody *self) {
   cst_node_set_name(node, "LBody");
 }
 
-static void cst_lbody_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
+static void cst_lbody_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
   SysInt width = 0, height = 0;
 
   fr_draw_get_size(draw, &width, &height);
   cst_node_set_size(v_node, width, height);
 }
 
-static void cst_lbody_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
-  CST_NODE_CLASS(cst_lbody_parent_class)->repaint(v_module, v_parent, v_node, draw, state);
+static void cst_lbody_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
+  CST_NODE_CLASS(cst_lbody_parent_class)->repaint(v_module, v_parent, v_node, draw, layout);
 
   cst_node_fill_rectangle(v_node, draw);
 }

@@ -38,8 +38,6 @@ set(C_API_SRC
   ./Front/C/CstCWidget.h
   ./Front/C/CstCComNode.c
   ./Front/C/CstCComNode.h
-  ./Front/C/CstCLFlex.c
-  ./Front/C/CstCLFlex.h
   ./Front/C/CstCLFlow.c
   ./Front/C/CstCLFlow.h
   ./Front/C/CstCLBox.c
@@ -92,16 +90,14 @@ set(SRC
   ./Driver/Css/CstCss.c
   ./Driver/Css/CstCss.h
   ./Driver/Css/CstCssPrivate.h
+  ./Driver/CstLayout.h
+  ./Driver/CstLayout.c
 
   ./Front/Common/CstNodePrivate.h
   ./Front/Common/CstNode.h
   ./Front/Common/CstNode.c
   ./Front/Common/CstItem.h
   ./Front/Common/CstItem.c
-  ./Front/Common/CstLayout.h
-  ./Front/Common/CstLayout.c
-  ./Front/Common/CstLayoutContext.h
-  ./Front/Common/CstLayoutContext.c
   ./Front/Common/CstComNode.h
   ./Front/Common/CstComNode.c
   ./Front/Common/CstNodeMap.h
@@ -128,8 +124,6 @@ set(SRC
   ./Front/Common/CstLBox.c
   ./Front/Common/CstLDiv.h
   ./Front/Common/CstLDiv.c
-  ./Front/Common/CstLFlex.h
-  ./Front/Common/CstLFlex.c
   ./Front/Common/CstLGridPrivate.h
   ./Front/Common/CstLGrid.h
   ./Front/Common/CstLGrid.c

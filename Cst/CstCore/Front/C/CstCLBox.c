@@ -23,14 +23,14 @@ static CstNode* cst_lbox_realize_i(CstModule *v_module, CstComNode *ncomp_node, 
   return CST_NODE_CLASS(cst_lbox_parent_class)->realize(v_module, ncomp_node, v_parent, v_node, v_render);
 }
 
-static void cst_lbox_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
-  cst_node_relayout_h(v_module, v_parent, v_node, draw, state);
+static void cst_lbox_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
+  cst_node_relayout_h(v_module, v_parent, v_node, draw, layout);
 
-  CST_NODE_CLASS(cst_lbox_parent_class)->relayout(v_module, v_parent, v_node, draw, state);
+  CST_NODE_CLASS(cst_lbox_parent_class)->relayout(v_module, v_parent, v_node, draw, layout);
 }
 
-static void cst_lbox_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, SysInt state) {
-  CST_NODE_CLASS(cst_lbox_parent_class)->repaint(v_module, v_parent, v_node, draw, state);
+static void cst_lbox_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
+  CST_NODE_CLASS(cst_lbox_parent_class)->repaint(v_module, v_parent, v_node, draw, layout);
 
   cst_node_stroke_rectangle(v_node, draw);
 }

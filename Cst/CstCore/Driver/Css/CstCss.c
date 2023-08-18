@@ -2,6 +2,8 @@
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstModule.h>
+#include <CstCore/Driver/CstLayout.h>
+
 #include <CstCore/Front/CstFrontCore.h>
 
 
@@ -238,7 +240,7 @@ void cst_css_group_add_pair(CstCssGroup *self, SysChar *key, CstCssValue *value)
   sys_ptr_array_add(priv->pairs, pair);
 }
 
-void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CST_RENDER_STATE_ENUM state) {
+void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLayout *layout) {
   sys_return_if_fail(node != NULL);
   sys_return_if_fail(gs != NULL);
   sys_return_if_fail(cr != NULL);
@@ -247,6 +249,7 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CST_RE
   SysInt g_type;
   CstCssPair *pair;
   CstCssGroup *self;
+  int state = cst_layout_get_state(layout);
 
   for (SysInt i = (SysInt)(gs->len - 1); i >= 0; i--) {
     self = gs->pdata[i];

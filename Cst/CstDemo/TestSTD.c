@@ -145,14 +145,14 @@ static void mem_alloc() {
   }
 }
 
-void require_get_admin(void) {
+void require_get_admin(const SysChar *path) {
 
   SHELLEXECUTEINFO einfo = { 0 };
   einfo.cbSize = sizeof(SHELLEXECUTEINFO);
   einfo.fMask = SEE_MASK_NOCLOSEPROCESS;
   einfo.hwnd = NULL;
   einfo.lpVerb = "runas";
-  einfo.lpFile = sys_exe_path();
+  einfo.lpFile = path;
   einfo.lpParameters = NULL;
   einfo.nShow = SW_SHOW;
   einfo.hInstApp = NULL;
@@ -162,32 +162,29 @@ void require_get_admin(void) {
 }
 
 static void ask_get_admin(int argc, char *argv[]) {
-  HWND hd = GetConsoleWindow();
-  CloseHandle(hd);
-
-  if (argc > 1) {
-    require_get_admin();
-
-    printf("%s", "permission ok.\n");
+  if (argc < 1) {
+    sys_error_N("%s", "RunAdmin <Program>");
+    return;
   }
-  else {
-    printf("%s", "task work ok.\n");
-    printf("%s", "task work done.\n");
-    getchar();
+
+  if (!sys_path_exists(argv[1])) {
+    sys_error_N("%s", "File not exists.");
+    return;
   }
+  
+  require_get_admin(argv[1]);
 }
 
 static void test_map_key(void) {
 }
 
 void test_std_init(SysInt argc, SysChar *argv[]) {
-  UNUSED(argc);
-  UNUSED(argv);
+  ask_get_admin(argc, argv);
 
   UNITY_BEGIN();
   {
 
-    RUN_TEST(test_map_key);
+    // RUN_TEST(test_map_key);
     // RUN_TEST(test_queue_leak);
     // RUN_TEST(test_strjoin);
     // RUN_TEST(test_lex_comple);
@@ -197,6 +194,8 @@ void test_std_init(SysInt argc, SysChar *argv[]) {
     // RUN_TEST(test_alignup);
     // RUN_TEST(test_get_dlopen);
     // RUN_TEST(test_basic);
+    // RUN_TEST(ask_get_admin);
+    
   }
   UNITY_END();
 }

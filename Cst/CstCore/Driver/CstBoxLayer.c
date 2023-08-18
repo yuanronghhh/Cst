@@ -169,7 +169,7 @@ void cst_box_layer_check_i(CstLayer *layer, FRDraw *draw, FRRegion *region) {
   bfs_box_layer_mark(layer, v_node, region);
 }
 
-static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw) {
+static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, CstLayout *layout) {
   sys_return_if_fail(layer != NULL);
 
   CstNode *v_node;
@@ -180,8 +180,8 @@ static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw) {
 
   v_node = priv->tree;
 
-  cst_node_relayout_root(NULL, NULL, v_node, draw, CST_RENDER_STATE_LAYOUT);
-  cst_node_repaint_root(NULL, NULL, v_node, draw, CST_RENDER_STATE_PAINT);
+  cst_node_relayout_root(NULL, NULL, v_node, draw, layout);
+  cst_node_repaint_root(NULL, NULL, v_node, draw, layout);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {

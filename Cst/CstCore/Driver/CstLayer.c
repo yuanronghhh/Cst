@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstLayer.h>
+#include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Front/Common/CstNode.h>
-#include <CstCore/Front/Common/CstLayout.h>
 
 
 struct _CstLayerPrivate {
@@ -18,23 +18,23 @@ void cst_layer_check(CstLayer *self, FRDraw *draw, FRRegion *region) {
   cls->check(self, draw, region);
 }
 
-void cst_layer_render(CstLayer *self, FRDraw *draw) {
+void cst_layer_render(CstLayer *self, FRDraw *draw, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstLayerClass *cls = CST_LAYER_GET_CLASS(self);
   sys_return_if_fail(cls->render != NULL);
 
-  cls->render(self, draw);
+  cls->render(self, draw, layout);
 }
 
-void cst_layer_rerender(CstLayer *self, FRDraw *draw) {
+void cst_layer_rerender(CstLayer *self, FRDraw *draw, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstLayerClass *cls = CST_LAYER_GET_CLASS(self);
 
   sys_return_if_fail(cls->render != NULL);
 
-  cls->rerender(self, draw);
+  cls->rerender(self, draw, layout);
 }
 
 void cst_layer_queue_draw_node(CstLayer *self, CstNode *v_node) {
@@ -46,7 +46,7 @@ void cst_layer_queue_draw_node(CstLayer *self, CstNode *v_node) {
   sys_queue_push_tail(priv->draw_queue, v_node);
 }
 
-void cst_layer_rerender_i(CstLayer *self, FRDraw *draw) {
+void cst_layer_rerender_i(CstLayer *self, FRDraw *draw, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstNode *v_node;
@@ -54,17 +54,16 @@ void cst_layer_rerender_i(CstLayer *self, FRDraw *draw) {
   FRContext *cr = fr_draw_get_cr(draw);
   CstLayerPrivate *priv = self->priv;
   SysQueue *draw_queue = priv->draw_queue;
-  CstLayoutContext *ctx = cst_layout_context_new_I(0, 0);
 
   for (SysList *item = draw_queue->head; item; item = item->next) {
     v_node = item->data;
     v_parent = cst_node_parent(v_node);
 
     if (v_parent == NULL) {
-      cst_node_relayout_root(NULL, NULL, v_node, draw, CST_RENDER_STATE_RELAYOUT);
+      cst_node_relayout_root(NULL, NULL, v_node, draw, layout);
 
     } else {
-      cst_node_layout(NULL, v_parent, v_node, draw, CST_RENDER_STATE_RELAYOUT);
+      cst_node_layout(NULL, v_parent, v_node, draw, layout);
     }
   }
 
@@ -72,17 +71,15 @@ void cst_layer_rerender_i(CstLayer *self, FRDraw *draw) {
     v_node = sys_queue_pop_head(draw_queue);
     v_parent = cst_node_parent(v_node);
 
-    cst_node_paint(NULL, v_parent, v_node, draw, CST_RENDER_STATE_REPAINT);
+    cst_node_paint(NULL, v_parent, v_node, draw, layout);
     sys_object_unref(v_node);
   }
-
-  sys_object_unref(ctx);
 }
 
 void cst_layer_check_i(CstLayer *layer, FRDraw *draw, FRRegion *region) {
 }
 
-void cst_layer_render_i(CstLayer *layer, FRDraw *v_draw) {
+void cst_layer_render_i(CstLayer *layer, FRDraw *v_draw, CstLayout *layout) {
 }
 
 /* object api */

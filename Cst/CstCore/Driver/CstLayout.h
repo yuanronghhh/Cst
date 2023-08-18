@@ -1,7 +1,7 @@
 #ifndef __CST_LAYOUT__
 #define __CST_LAYOUT__
 
-#include <CstCore/Front/Common/CstLayoutContext.h>
+#include <CstCore/Driver/CstCommon.h>
 
 
 SYS_BEGIN_DECLS
@@ -20,12 +20,14 @@ struct _CstLayout {
 struct _CstLayoutClass {
   SysObjectClass parent;
 
-  void (*construct) (CstLayout* o, CstLayoutContext *context);
+  void (*construct) (CstLayout* o);
 };
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(CstLayoutContext *context);
+CstLayout *cst_layout_new_I(void);
+SysInt cst_layout_get_state(CstLayout *self);
+SysBool cst_layout_state_layout(CstLayout *self);
 
 SYS_END_DECLS
 

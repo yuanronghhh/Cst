@@ -163,7 +163,7 @@ static void fr_window_maximize_callback(GLFWwindow* window, int maximized) {
 static void fr_window_framebuffer_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
   FRWindow *self = fr_glfw_get_window(gwindow);
 
-  FREventAny *e = fr_event_any_new_I(self, FR_EVENT_TFRAMEBUFFER_RESIZE);
+  FREvent *e = fr_event_any_new_I(self, FR_EVENT_TFRAMEBUFFER_RESIZE);
 
   fr_events_push_head(e);
 }
@@ -175,7 +175,7 @@ static void fr_window_focus_callback(GLFWwindow* gwindow, SysInt focused) {
 static void fr_window_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
   FRWindow *self = fr_glfw_get_window(gwindow);
 
-  FREventAny *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_RESIZE);
+  FREvent *e = fr_event_any_new_I(self, FR_EVENT_TWINDOW_RESIZE);
 
   fr_events_push_head(e);
 }

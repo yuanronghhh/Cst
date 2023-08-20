@@ -23,6 +23,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Event/Base/FREventKey.h>
 #include <Framework/Event/Base/FREventRefresh.h>
 #include <Framework/Event/Base/FREvent.h>
+#include <Framework/Event/Base/FREventAny.h>
 
 #include <Framework/Event/FREvents.h>
 

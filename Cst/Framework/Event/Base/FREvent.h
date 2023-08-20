@@ -22,8 +22,6 @@ struct _FREvent {
   FREventPrivate *priv;
 };
 
-#define fr_event_any_new_I(window, etype) fr_event_new_I(window)
-
 SYS_API SysType fr_event_get_type(void);
 SYS_API FREvent *fr_event_new_I(FRWindow *window);
 SYS_API FRWindow* fr_event_get_window(FREvent *self);

@@ -118,10 +118,15 @@ typedef  struct  _FRAWatchCursorMove         FRAWatchCursorMove;
 typedef  struct  _FRAWatchCursorMoveClass    FRAWatchCursorMoveClass;
 typedef  struct  _FRAWatchCursorMovePrivate  FRAWatchCursorMovePrivate;
 
+
 typedef  struct  _FREvent                   FREvent;
-typedef  struct  _FREvent                   FREventAny;
 typedef  struct  _FREventClass              FREventClass;
 typedef  struct  _FREventPrivate            FREventPrivate;
+
+typedef  struct  _FREventAny                   FREventAny;
+typedef  struct  _FREventAnyClass              FREventAnyClass;
+typedef  struct  _FREventAnyPrivate            FREventAnyPrivate;
+
 typedef  struct  _FREventRefresh                   FREventRefresh;
 typedef  struct  _FREventRefreshClass              FREventRefreshClass;
 typedef  struct  _FREventRefreshPrivate            FREventRefreshPrivate;

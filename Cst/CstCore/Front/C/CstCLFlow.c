@@ -20,8 +20,6 @@ static void cst_lflow_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode
 }
 
 static void cst_lflow_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  FRContext *cr = fr_draw_get_cr(draw);
-
   CST_NODE_CLASS(cst_lflow_parent_class)->repaint(v_module, v_parent, v_node, draw, layout);
 
   cst_node_stroke_rectangle(v_node, draw);

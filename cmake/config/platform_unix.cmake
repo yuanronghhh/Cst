@@ -28,20 +28,22 @@ pkg_check_modules(GDK REQUIRED gdk-3.0)
 pkg_check_modules(GDKWAYLAND REQUIRED gdk-wayland-3.0)
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 pkg_check_modules(SDL REQUIRED sdl2)
+pkg_check_modules(VULKAN REQUIRED vulkan)
 
 find_package(glad REQUIRED)
 find_package(tinyexpr REQUIRED)
 find_package(unity REQUIRED)
+find_package(cglm REQUIRED)
 
 set(MPG123_LIBRARIES "mpg123")
 
 set(GTK_LIBRARIES
-  "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gtk/libgtk-4.so"
-  "/media/greyhound/Storage/Git/glib/_build/glib/libglib-2.0.so"
-  "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gdk/libgdk.a"
-  "/media/greyhound/Storage/Git/glib/_build/gio/libgio-2.0.so"
-  "/media/greyhound/Storage/Git/glib/_build/gobject/libgobject-2.0.so"
-  # gtk-4
+  # "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gtk/libgtk-4.so"
+  # "/media/greyhound/Storage/Git/glib/_build/glib/libglib-2.0.so"
+  # "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gdk/libgdk.a"
+  # "/media/greyhound/Storage/Git/glib/_build/gio/libgio-2.0.so"
+  # "/media/greyhound/Storage/Git/glib/_build/gobject/libgobject-2.0.so"
+  gtk-4
   pangocairo-1.0
   pango-1.0
   harfbuzz

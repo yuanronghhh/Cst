@@ -51,7 +51,6 @@ void cst_render_render(CstRender *self) {
   CstRenderPrivate *priv = self->priv;
 
   FRRegion *region;
-  FRContext *cr;
 
   FRRect bound = { 0 };
   FRDraw *draw = priv->draw;
@@ -64,12 +63,8 @@ void cst_render_render(CstRender *self) {
 
   fr_draw_frame_begin(draw, region);
 
-  cr = fr_draw_create_cr(draw);
-
   cst_layer_render(priv->box_layer, draw, layout);
   cst_layer_render(priv->abs_layer, draw, layout);
-
-  fr_context_destroy(cr);
 
   fr_draw_frame_end(draw, region);
 
@@ -180,6 +175,7 @@ static void cst_render_dispose(SysObject* o) {
   sys_object_unref(priv->abs_layer);
 
   sys_clear_pointer(&priv->draw, _sys_object_unref);
+  sys_clear_pointer(&priv->layout, _sys_object_unref);
 
   if (priv->window) {
     sys_object_unref(priv->window);

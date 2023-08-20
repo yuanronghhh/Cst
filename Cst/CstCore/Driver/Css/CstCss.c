@@ -249,7 +249,7 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLay
   SysInt g_type;
   CstCssPair *pair;
   CstCssGroup *self;
-  int state = cst_layout_get_state(layout);
+  CST_RENDER_STATE_ENUM state = cst_layout_get_state(layout);
 
   for (SysInt i = (SysInt)(gs->len - 1); i >= 0; i--) {
     self = gs->pdata[i];

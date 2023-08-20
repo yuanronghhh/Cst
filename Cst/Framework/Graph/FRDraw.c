@@ -119,12 +119,15 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   HDC hdc = GetDC(hwd);
   surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 #elif SYS_OS_UNIX
+  FRDisplay *display = fr_window_get_display(priv->window);
   Window xwindow = fr_window_get_x11_window(priv->window);
-  Display *ndisplay = fr_display_get_x11_display(priv->display);
+  Display *ndisplay = fr_display_get_x11_display(display);
+  int nscreen = DefaultScreen(ndisplay);
+  Visual *nvisual = DefaultVisual(ndisplay, nscreen);
 
   surface = cairo_xlib_surface_create(ndisplay,
-      xwindow, 
-      DefaultVisual(ndisplay, DefaultScreen(ndisplay)),
+      xwindow,
+      nvisual,
       width, height);
 #endif
 
@@ -139,7 +142,7 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
 
   fr_window_get_framebuffer_size(priv->window, &fbw, &fbh);
 
-  sys_debug_N("%d,%d", fbw, fbh);
+  // sys_debug_N("%d,%d", fbw, fbh);
 
   priv->window_surface = fr_draw_create_surface(self, fbw, fbh);
   priv->paint_surface = cairo_surface_create_similar_image(priv->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
@@ -167,8 +170,6 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   FRDrawPrivate *priv = self->priv;
 
-  sys_clear_pointer(&priv->cr, cairo_destroy);
-
   cr = cairo_create(priv->window_surface);
   cairo_set_source_surface(cr, priv->paint_surface, 0, 0);
 
@@ -180,7 +181,9 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 
   cairo_clip(cr);
   cairo_paint(cr);
+  cairo_destroy(cr);
 
+  sys_clear_pointer(&priv->cr, cairo_destroy);
   cairo_surface_flush(priv->window_surface);
 
   sys_clear_pointer(&priv->window_surface, cairo_surface_destroy);
@@ -192,11 +195,6 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 /* object api */
 static void fr_draw_construct(FRDraw *self, FRWindow *window) {
   FRDrawPrivate *priv = self->priv;
-
-  if (window) {
-
-    priv->display = fr_window_get_display(window);
-  }
 
   priv->window = window;
   priv->window_surface = NULL;

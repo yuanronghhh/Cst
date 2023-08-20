@@ -30,7 +30,7 @@ config:
 	@${CMAKE_CONFIG}
 
 build-linux: config
-	@${MAKE} -C "$(BUILD_DIR)" -s -j4 ${PROJ_NAME}
+	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
 
 build-win32: config
 	@cmake --build "${BUILD_DIR}" --target ${PROJ_NAME}
@@ -50,7 +50,7 @@ run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${RUN_ARGS}
 
 debug-linux:
-	@gvim --remote-send ':Debug ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --remote-send ':Termdebug ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	@gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}

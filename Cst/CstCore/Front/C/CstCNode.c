@@ -10,8 +10,7 @@
 #include <CstCore/Driver/CstLayout.h>
 
 
-#define ID_FORMAT "id.%d.%d"
-
+#define NODE_ID_FORMAT "id.%d.%d"
 
 struct _CstNodePrivate {
   SysChar     *name;
@@ -37,6 +36,8 @@ struct _CstNodePrivate {
   SysInt z_index;
 
   /* layout node */
+  CstLayoutNode *layout_node;
+
   SysBool need_relayout;
   SysBool need_repaint;
   SysBool is_visible;
@@ -68,24 +69,24 @@ CstNode* cst_node_new(void) {
   return sys_object_new(CST_TYPE_NODE, NULL);
 }
 
-CstNode* cst_node_parent(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+CstNode* cst_node_parent(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  return node->parent;
+  return self->parent;
 }
 
-static void node_default_constraint_width(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data) {
-  sys_return_if_fail(v_node != NULL);
+static void node_default_constraint_width(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
+  sys_return_if_fail(self != NULL);
 }
 
-static void node_default_constraint_height(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data) {
-  sys_return_if_fail(v_node != NULL);
+static void node_default_constraint_height(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
+  sys_return_if_fail(self != NULL);
 }
 
-void cst_node_init_mbp(CstNode *node) {
-  sys_return_if_fail(node != NULL);
+void cst_node_init_mbp(CstNode *self) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->mbp.m0 = priv->margin.m0 + priv->border.m0 + priv->padding.m0;
   priv->mbp.m1 = priv->margin.m1 + priv->border.m1 + priv->padding.m1;
@@ -106,13 +107,13 @@ static SYS_INLINE SysChar *node_gen_id(CstNode* node, CstModule *mod) {
     mid = sys_str_hash((SysPointer)"croot");
   }
 
-  nid = sys_strdup_printf(ID_FORMAT, mid, ccount);
+  nid = sys_strdup_printf(NODE_ID_FORMAT, mid, ccount);
 
   return nid;
 }
 
-static SysBool node_css_exists(CstNode *node, CstCssGroup *g) {
-  CstNodePrivate *priv = node->priv;
+static SysBool node_css_exists(CstNode *self, CstCssGroup *g) {
+  CstNodePrivate *priv = self->priv;
   SysPtrArray *ptr = priv->css_groups;
 
   if (ptr->len == 0) {
@@ -129,7 +130,7 @@ static SysBool node_css_exists(CstNode *node, CstCssGroup *g) {
   return false;
 }
 
-static SysBool node_set_css_r_i(CstNode *node, CstCssGroup *g) {
+static SysBool node_set_css_r_i(CstNode *self, CstCssGroup *g) {
   const SysChar *id;
 
   sys_return_val_if_fail(g != NULL, false);
@@ -137,10 +138,10 @@ static SysBool node_set_css_r_i(CstNode *node, CstCssGroup *g) {
   id = cst_css_group_get_id(g);
   sys_return_val_if_fail(id != NULL, false);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
   SysPtrArray *base = cst_css_group_get_base(g);
 
-  if (node_css_exists(node, g)) {
+  if (node_css_exists(self, g)) {
     return false;
   }
 
@@ -154,18 +155,18 @@ static SysBool node_set_css_r_i(CstNode *node, CstCssGroup *g) {
   sys_array_foreach(CstCssGroup *, ng, base->pdata, base->len) {
     sys_assert(cst_css_group_get_id(ng) != NULL && "CstCssGroup id should not be null, maybe destroyed ?");
 
-    node_set_css_r_i(node, ng);
+    node_set_css_r_i(self, ng);
   }
 
   return false;
 }
 
-SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g) {
-  return node_set_css_r_i(node, g);
+SysBool cst_node_set_css_r(CstNode *self, CstCssGroup *g) {
+  return node_set_css_r_i(self, g);
 }
 
-static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(v_node != NULL);
+static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
 
   CstNodePrivate *ppriv;
 
@@ -176,28 +177,28 @@ static void cst_node_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
   }
 }
 
-CstNode *cst_node_children(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+CstNode *cst_node_children(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  return node->children;
+  return self->children;
 }
 
-CstNode *cst_node_prev(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+CstNode *cst_node_prev(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  return node->prev;
+  return self->prev;
 }
 
-CstNode *cst_node_next(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+CstNode *cst_node_next(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  return node->next;
+  return self->next;
 }
 
-FRAWatch *cst_node_get_awatch(CstNode *node, SysType atype, const SysChar *bind_var) {
-  sys_return_val_if_fail(node != NULL, NULL);
+FRAWatch *cst_node_get_awatch(CstNode *self, SysType atype, const SysChar *bind_var) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   FRAWatch *w;
   const SysChar *wname = NULL;
@@ -222,16 +223,18 @@ static SysPtrArray *node_new_css_groups(void) {
   return ptr;
 }
 
-CstNode* cst_node_dclone_i(CstNode *old) {
-  sys_return_val_if_fail(old != NULL, NULL);
-  SysType type = sys_type_from_instance(old);
+CstNode* cst_node_dclone_i(CstNode *o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+  SysType type = sys_type_from_instance(o);
 
   SysPtrArray *ptr;
   FRAWatch *nwatch;
   CstNodeMap *map;
-  CstNode *nnode = sys_object_new(type, NULL);
-  CstNodePrivate *npriv = nnode->priv;
-  CstNodePrivate *opriv = old->priv;
+
+  CstNode *n = sys_object_new(type, NULL);
+
+  CstNodePrivate *npriv = n->priv;
+  CstNodePrivate *opriv = o->priv;
 
   npriv->id = sys_strdup(opriv->id);
   ptr = opriv->css_groups;
@@ -253,13 +256,13 @@ CstNode* cst_node_dclone_i(CstNode *old) {
     npriv->node_maps = sys_list_prepend(npriv->node_maps, map);
   }
 
-  return nnode;
+  return n;
 }
 
-static void cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
+static void cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *self, CstRender *v_render) {
   CstNode *nnode;
 
-  nnode = cst_node_realize(v_module, ncomp_node, v_parent, v_node, v_render);
+  nnode = cst_node_realize(v_module, ncomp_node, v_parent, self, v_render);
   cst_module_count_inc(v_module);
 
   if (nnode) {
@@ -268,12 +271,12 @@ static void cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstN
   }
 
 
-  if(v_node->children) {
-    cst_node_realize_r(v_module, ncomp_node, nnode, v_node->children, v_render);
+  if(self->children) {
+    cst_node_realize_r(v_module, ncomp_node, nnode, self->children, v_render);
   }
 
-  if(v_node->next) {
-    cst_node_realize_r(v_module, ncomp_node, v_parent, v_node->next, v_render);
+  if(self->next) {
+    cst_node_realize_r(v_module, ncomp_node, v_parent, self->next, v_render);
   }
 }
 
@@ -287,57 +290,57 @@ void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode 
 }
 
 /* constrain */
-void cst_constrain_same_width(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data) {
-  CstNodePrivate *npriv = v_node->priv;
+void cst_constrain_same_width(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
+  CstNodePrivate *npriv = self->priv;
   CstNodePrivate *nppriv = v_parent->priv;
 
   npriv->bound.width = nppriv->prefer_width - npriv->mbp.m0 - npriv->mbp.m2;
 }
 
-void cst_constrain_same_height(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data) {
-  CstNodePrivate *npriv = v_node->priv;
+void cst_constrain_same_height(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
+  CstNodePrivate *npriv = self->priv;
   CstNodePrivate *nppriv = v_parent->priv;
 
   npriv->bound.height = nppriv->prefer_height - npriv->mbp.m0 - npriv->mbp.m2;
 }
 
 /* api */
-void cst_node_set_padding(CstNode *node, FRSInt4 *m4) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_padding(CstNode *self, FRSInt4 *m4) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->padding = *m4;
 }
 
-void cst_node_get_padding(CstNode *node, FRSInt4 *m4) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_padding(CstNode *self, FRSInt4 *m4) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   *m4 = priv->padding;
 }
 
-void cst_node_set_margin(CstNode *node, FRSInt4 *m4) {
+void cst_node_set_margin(CstNode *self, FRSInt4 *m4) {
 
-  sys_return_if_fail(node != NULL);
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->margin = *m4;
 }
 
-void cst_node_get_margin(CstNode *node, FRSInt4 *m4) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_margin(CstNode *self, FRSInt4 *m4) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   *m4 = priv->margin;
 }
 
-void cst_node_set_child_width_closure(CstNode *node, CstCssClosure *c) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate *priv = node->priv;
+void cst_node_set_child_width_closure(CstNode *self, CstCssClosure *c) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate *priv = self->priv;
 
   if (priv->child_width_calc) {
     cst_css_closure_unref(priv->child_width_calc);
@@ -346,9 +349,9 @@ void cst_node_set_child_width_closure(CstNode *node, CstCssClosure *c) {
   priv->child_width_calc = c;
 }
 
-void cst_node_set_child_height_closure(CstNode *node, CstCssClosure *c) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate *priv = node->priv;
+void cst_node_set_child_height_closure(CstNode *self, CstCssClosure *c) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate *priv = self->priv;
   
   if (priv->child_height_calc) {
     cst_css_closure_unref(priv->child_height_calc);
@@ -357,9 +360,9 @@ void cst_node_set_child_height_closure(CstNode *node, CstCssClosure *c) {
   priv->child_height_calc = c;
 }
 
-void cst_node_set_width_closure(CstNode *node, CstCssClosure *c) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate *priv = node->priv;
+void cst_node_set_width_closure(CstNode *self, CstCssClosure *c) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate *priv = self->priv;
   
   if (priv->width_calc) {
     cst_css_closure_unref(priv->width_calc);
@@ -368,9 +371,9 @@ void cst_node_set_width_closure(CstNode *node, CstCssClosure *c) {
   priv->width_calc = c;
 }
 
-void cst_node_set_height_closure(CstNode *node, CstCssClosure *c) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate *priv = node->priv;
+void cst_node_set_height_closure(CstNode *self, CstCssClosure *c) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate *priv = self->priv;
   
   if (priv->height_calc) {
     cst_css_closure_unref(priv->height_calc);
@@ -379,109 +382,109 @@ void cst_node_set_height_closure(CstNode *node, CstCssClosure *c) {
   priv->height_calc = c;
 }
 
-void cst_node_set_size(CstNode *node, SysInt width, SysInt height) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_size(CstNode *self, SysInt width, SysInt height) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->bound.width = width;
   priv->bound.height = height;
 }
 
-void cst_node_get_size(CstNode *node, SysInt *width, SysInt *height) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_size(CstNode *self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   *width = priv->bound.width;
   *height = priv->bound.height;
 }
 
-void cst_node_get_mbp(CstNode *node, FRSInt4 *m4) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_mbp(CstNode *self, FRSInt4 *m4) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   *m4 = priv->mbp;
 }
 
-void cst_node_set_prefer_size(CstNode *node, SysInt width, SysInt height) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_prefer_size(CstNode *self, SysInt width, SysInt height) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->prefer_width = width;
   priv->prefer_height = height;
 }
 
-void cst_node_get_prefer_size(CstNode *node, SysInt *width, SysInt *height) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_prefer_size(CstNode *self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   *width = priv->prefer_width;
   *height = priv->prefer_height;
 }
 
-SysInt cst_node_get_width(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, -1);
+SysInt cst_node_get_width(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->bound.width;
 }
 
-void cst_node_set_width(CstNode *node, SysInt width) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate *priv = node->priv;
+void cst_node_set_width(CstNode *self, SysInt width) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate *priv = self->priv;
 
   priv->bound.width = width;
 }
 
-SysInt cst_node_get_height(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, -1);
-  CstNodePrivate *priv = node->priv;
+SysInt cst_node_get_height(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+  CstNodePrivate *priv = self->priv;
 
   return priv->bound.height;
 }
 
-void cst_node_set_height(CstNode *node, SysInt height) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate *priv = node->priv;
+void cst_node_set_height(CstNode *self, SysInt height) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate *priv = self->priv;
 
   priv->bound.height = height;
 }
 
-const SysChar * cst_node_get_name(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+const SysChar * cst_node_get_name(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->name;
 }
 
-void cst_node_set_name(CstNode *node, const SysChar * name) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_name(CstNode *self, const SysChar * name) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   sys_assert(priv->name == NULL);
 
   priv->name = sys_strdup(name);
 }
 
-const SysChar * cst_node_get_id(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+const SysChar * cst_node_get_id(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->id;
 }
 
-void cst_node_set_id(CstNode *node, const SysChar * id) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_id(CstNode *self, const SysChar * id) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   if(priv->id) {
     sys_free_N(priv->id);
@@ -490,61 +493,62 @@ void cst_node_set_id(CstNode *node, const SysChar * id) {
   priv->id = sys_strdup(id);
 }
 
-SysInt cst_node_get_y(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, -1);
+SysInt cst_node_get_y(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->bound.y;
 }
 
-void cst_node_set_y(CstNode *node, SysInt y) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_y(CstNode *self, SysInt y) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->bound.y = y;
 }
 
-void cst_node_set_wrap(CstNode *node, SysBool wrap) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_wrap(CstNode *self, SysBool wrap) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->wrap = wrap;
 }
 
-SysInt cst_node_get_x(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, -1);
+SysInt cst_node_get_x(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->bound.x;
 }
 
-void cst_node_set_x(CstNode *node, SysInt x) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_x(CstNode *self, SysInt x) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->bound.x = x;
 }
 
-void cst_node_set_xy(CstNode* node, SysInt x, SysInt y) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_xy(CstNode* self, SysInt x, SysInt y) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   priv->bound.x = x;
   priv->bound.y = y;
 }
 
-static void cst_node_layout_layout_h(CstNode* v_parent, FRDraw *draw) {
+static void cst_node_layout_layout_h(CstNode* v_parent, FRDraw *draw, CstLayout *layout) {
   sys_return_if_fail(v_parent != NULL);
 
+  CstLayoutNode *lnode = cst_node_get_layout_node(v_parent);
+  UNUSED(lnode);
 #if 0
   SysBool parent_wrap;
-  CstLayout* layout;
   SysInt w, h;
   const FRRect* lbound;
   CstNode* node;
@@ -554,7 +558,6 @@ static void cst_node_layout_layout_h(CstNode* v_parent, FRDraw *draw) {
   ppriv = v_parent->priv;
   parent_wrap = cst_node_can_wrap(v_parent);
 
-  layout = cst_layout_new_I(ppriv->bound.x + ppriv->mbp.m3, ppriv->bound.y + ppriv->mbp.m0);
   lines = cst_layouts_prepend(lines, layout);
 
   lbound = cst_layout_get_bound(layout);
@@ -585,22 +588,22 @@ static void cst_node_layout_layout_h(CstNode* v_parent, FRDraw *draw) {
   }
 
   if (v_parent->children) {
-    cst_node_layout_layout_h(v_parent->children, cr);
+    cst_node_layout_layout_h(v_parent->children, cr, layout);
   }
 
   if (v_parent->next) {
-    cst_node_layout_layout_h(v_parent->next, cr);
+    cst_node_layout_layout_h(v_parent->next, cr, layout);
   }
 #endif
 }
 
-void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw *draw, CstLayout *layout) {
-  cst_node_layout_layout_h(v_parent, draw);
+void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
+  cst_node_layout_layout_h(v_parent, draw, layout);
 }
 
-SysBool cst_node_set_css_by_id(CstNode *node, SysChar *id, CstComponent *comp) {
+SysBool cst_node_set_css_by_id(CstNode *self, SysChar *id, CstComponent *comp) {
   sys_return_val_if_fail(id != NULL, false);
-  sys_return_val_if_fail(node != NULL, false);
+  sys_return_val_if_fail(self != NULL, false);
 
   CstCssGroup *g = cst_component_get_css_r(comp, id);
   if (g == NULL) {
@@ -608,29 +611,29 @@ SysBool cst_node_set_css_by_id(CstNode *node, SysChar *id, CstComponent *comp) {
     return false;
   }
 
-  return cst_node_set_css_r(node, g);
+  return cst_node_set_css_r(self, g);
 }
 
-void cst_node_unlink_node_r(CstNode *node) {
-  sys_return_if_fail(node != NULL);
+void cst_node_unlink_node_r(CstNode *self) {
+  sys_return_if_fail(self != NULL);
 
-  SysObject *o = SYS_OBJECT(node);
+  SysObject *o = SYS_OBJECT(self);
 
-  if(node->children) {
-    cst_node_unlink_node_r(node->children);
+  if(self->children) {
+    cst_node_unlink_node_r(self->children);
   }
 
-  if(node->next) {
-    cst_node_unlink_node_r(node->next);
+  if(self->next) {
+    cst_node_unlink_node_r(self->next);
   }
 
   sys_object_unref(o);
 }
 
-void cst_node_relayout_reset(CstNode *node) {
-  sys_return_if_fail(node != NULL);
+void cst_node_relayout_reset(CstNode *self) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->prefer_height = 0;
   priv->prefer_width = 0;
@@ -638,55 +641,54 @@ void cst_node_relayout_reset(CstNode *node) {
   priv->line_space = 0;
 }
 
-void cst_node_render_css(CstNode* node, FRContext *cr, CstLayout *layout) {
-  sys_return_if_fail(node != NULL);
+void cst_node_render_css(CstNode* self, FRContext *cr, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   if (cst_layout_state_layout(layout)) {
     // cst_node_relayout_reset(node);
   }
 
-  cst_css_render_groups(node, priv->css_groups, cr, layout);
+  cst_css_render_groups(self, priv->css_groups, cr, layout);
 }
 
-SysBool cst_node_is_visible(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, false);
+SysBool cst_node_is_visible(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->is_visible;
 }
 
-void cst_node_set_abs_node(CstNode *v_node, SysBool bvalue) {
-  sys_return_if_fail(v_node != NULL);
+void cst_node_set_abs_node(CstNode *self, SysBool bvalue) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* priv = self->priv;
 
   priv->is_abs_node = bvalue;
 }
 
-void cst_node_print_node_r(CstNode *node) {
-  sys_return_if_fail(node != NULL);
-  sys_return_if_fail(node != NULL);
+void cst_node_print_node_r(CstNode *self) {
+  sys_return_if_fail(self != NULL);
 
   CstNode *pnode;
 
-  if (node->parent) {
-    pnode = node->parent;
+  if (self->parent) {
+    pnode = self->parent;
 
-    sys_debug_N("<%s,%s,%s>", cst_node_get_id(pnode), cst_node_get_name(node), cst_node_get_id(node));
+    sys_debug_N("<%s,%s,%s>", cst_node_get_id(pnode), cst_node_get_name(self), cst_node_get_id(self));
   } else {
 
-    sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
+    sys_debug_N("<%s,%s>", cst_node_get_name(self), cst_node_get_id(self));
   }
 
-  if (node->children) {
-    cst_node_print_node_r(node->children);
+  if (self->children) {
+    cst_node_print_node_r(self->children);
   }
 
-  if (node->next) {
-    cst_node_print_node_r(node->next);
+  if (self->next) {
+    cst_node_print_node_r(self->next);
   }
 }
 
@@ -694,13 +696,13 @@ void cst_node_print_node(CstNode* node) {
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
-CstNode* cst_node_deep_clone(CstNode *v_node) {
-  sys_return_val_if_fail(v_node != NULL, NULL);
+CstNode* cst_node_deep_clone(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
   sys_return_val_if_fail(ncls->dclone != NULL, NULL);
 
-  return ncls->dclone(v_node);
+  return ncls->dclone(self);
 }
 
 void cst_node_bind(CstNode *self, CstComNode *com_node) {
@@ -716,32 +718,31 @@ void cst_node_bind(CstNode *self, CstComNode *com_node) {
   }
 }
 
-void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
-  sys_return_if_fail(v_node != NULL);
+void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *self, CstNodeProps *v_props) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
 
-  if (ncls->construct) {
-    ncls->construct(v_module, v_component, v_parent, v_node, v_props);
-  }
+  sys_return_if_fail(ncls->construct != NULL);
+  ncls->construct(v_module, v_component, v_parent, self, v_props);
 }
 
-void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(v_node != NULL);
+void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
 
   sys_return_if_fail(ncls->repaint != NULL);
-  ncls->repaint(v_module, v_parent, v_node, draw, layout);
+  ncls->repaint(v_module, v_parent, self, draw, layout);
 }
 
-void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(v_node != NULL);
+void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(v_node);
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
 
   sys_return_if_fail(ncls->relayout != NULL);
-  ncls->relayout(v_module, v_parent, v_node, draw, layout);
+  ncls->relayout(v_module, v_parent, self, draw, layout);
 }
 
 void cst_node_append(CstNode *parent, CstNode *node) {
@@ -785,129 +786,129 @@ CstNode* cst_node_insert_after (CstNode *parent, CstNode *sibling, CstNode *node
   return node;
 }
 
-CstNode *cst_node_get_last_child(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+CstNode *cst_node_get_last_child(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->last_child;
 }
 
-void cst_node_set_last_child(CstNode *node, CstNode *last_child) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_last_child(CstNode *self, CstNode *last_child) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->last_child = last_child;
 }
 
-FRPrioList* cst_node_get_abs_node(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+FRPrioList* cst_node_get_abs_node(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return priv->abs_node;
 }
 
-SysBool cst_node_is_dirty(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, false);
+SysBool cst_node_is_dirty(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return (priv->need_relayout || priv->need_repaint);
 }
 
-void cst_node_set_need_repaint(CstNode *node, SysBool bvalue) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_need_repaint(CstNode *self, SysBool bvalue) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   priv->need_repaint = bvalue;
 }
 
-SysBool cst_node_get_need_repaint(CstNode* node) {
-    sys_return_val_if_fail(node != NULL, false);
+SysBool cst_node_get_need_repaint(CstNode* self) {
+  sys_return_val_if_fail(self != NULL, false);
 
-    CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   return priv->need_repaint;
 }
 
-void cst_node_set_need_relayout(CstNode* node, SysBool bvalue) {
-  sys_return_if_fail(node != NULL);
+void cst_node_set_need_relayout(CstNode* self, SysBool bvalue) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   priv->need_relayout = bvalue;
 }
 
-SysBool cst_node_get_need_relayout(CstNode* node) {
-  sys_return_val_if_fail(node != NULL, false);
+SysBool cst_node_get_need_relayout(CstNode* self) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   return priv->need_relayout;
 }
 
-void cst_node_expand(CstNode *v_node) {
-  sys_return_if_fail(v_node != NULL);
+void cst_node_expand(CstNode *self) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* priv = self->priv;
 
   if (priv->bound.width == -1) {
-    cst_node_set_width(v_node, priv->prefer_width);
+    cst_node_set_width(self, priv->prefer_width);
   }
 
   if (priv->bound.height == -1) {
-    cst_node_set_height(v_node, priv->prefer_height);
+    cst_node_set_height(self, priv->prefer_height);
   }
 }
 
-void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(v_node != NULL);
+void cst_node_layout(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_parent != NULL);
 
-  CstNodePrivate *priv = v_node->priv;
+  CstNodePrivate *priv = self->priv;
   FRContext *cr = fr_draw_get_cr(draw);
 
-  if (!cst_node_get_need_relayout(v_node)) {
+  if (!cst_node_get_need_relayout(self)) {
     return;
   }
 
-  cst_node_render_enter(v_node, cr, layout);
-  cst_node_init_mbp(v_node);
+  cst_node_render_enter(self, cr, layout);
+  cst_node_init_mbp(self);
 
-  cst_css_closure_calc(priv->width_calc, v_parent, v_node, cr);
-  cst_css_closure_calc(priv->height_calc, v_parent, v_node, cr);
+  cst_css_closure_calc(priv->width_calc, v_parent, self, cr);
+  cst_css_closure_calc(priv->height_calc, v_parent, self, cr);
 
-  if (v_node->children) {
-    cst_node_layout(v_module, v_node, v_node->children, draw, layout);
+  if (self->children) {
+    cst_node_layout(v_module, self, self->children, draw, layout);
   }
 
-  cst_node_expand(v_node);
+  cst_node_expand(self);
 
-  cst_node_relayout(v_module, v_parent, v_node, draw, layout);
+  cst_node_relayout(v_module, v_parent, self, draw, layout);
 
-  if (v_node->next) {
-    cst_node_layout(v_module, v_parent, v_node->next, draw, layout);
+  if (self->next) {
+    cst_node_layout(v_module, v_parent, self->next, draw, layout);
   }
 
-  cst_node_render_leave(v_node, cr, layout);
-  cst_node_set_need_relayout(v_node, false);
+  cst_node_render_leave(self, cr, layout);
+  cst_node_set_need_relayout(self, false);
 }
 
-SysBool cst_node_can_wrap(CstNode* v_node) {
-  sys_return_val_if_fail(v_node != NULL, false);
+SysBool cst_node_can_wrap(CstNode* self) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* priv = self->priv;
 
   return priv->wrap;
 }
 
-void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw *draw, CstLayout *layout) {
+void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
   SysInt w = 0, h = 0;
 
-  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* priv = self->priv;
   CstNodePrivate* ppriv = v_parent->priv;
   FRContext *cr = fr_draw_get_cr(draw);
 
@@ -916,43 +917,43 @@ void cst_node_relayout_h(CstModule* v_module, CstNode* v_parent, CstNode* v_node
 
   if (ppriv->child_width_calc) {
     ppriv->prefer_width = max(w, ppriv->prefer_width);
-    cst_css_closure_calc(ppriv->child_width_calc, v_parent, v_node, cr);
+    cst_css_closure_calc(ppriv->child_width_calc, v_parent, self, cr);
   }
 
   if (ppriv->child_height_calc) {
     ppriv->prefer_height = max(h, ppriv->prefer_height);
-    cst_css_closure_calc(ppriv->child_height_calc, v_parent, v_node, cr);
+    cst_css_closure_calc(ppriv->child_height_calc, v_parent, self, cr);
   }
 
   ppriv->prefer_width += w;
   ppriv->prefer_height = max(h, ppriv->prefer_height);
 }
 
-void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw *draw, CstLayout *layout) {
+void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
 }
 
-CstNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
-  sys_return_val_if_fail(v_node != NULL, NULL);
+CstNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *self, CstRender *v_render) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodeClass* cls = CST_NODE_GET_CLASS(v_node);
+  CstNodeClass* cls = CST_NODE_GET_CLASS(self);
   sys_return_val_if_fail(cls->realize != NULL, NULL);
 
-  return cls->realize(v_module, ncomp_node, v_parent, v_node, v_render);
+  return cls->realize(v_module, ncomp_node, v_parent, self, v_render);
 }
 
-void cst_node_get_size_mbp(CstNode *node, SysInt *width, SysInt *height) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_size_mbp(CstNode *self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   *width = priv->bound.width + priv->mbp.m1 + priv->mbp.m3;
   *height = priv->bound.height + priv->mbp.m0 + priv->mbp.m2;
 }
 
-void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp) {
-  sys_return_if_fail(node != NULL);
+void cst_node_get_bound_mbp(CstNode *self, FRRect *rect_bp) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   rect_bp->x = priv->bound.x;
   rect_bp->y = priv->bound.y;
@@ -960,22 +961,22 @@ void cst_node_get_bound_mbp(CstNode *node, FRRect *rect_bp) {
   rect_bp->height = priv->bound.height + priv->mbp.m0 + priv->mbp.m2;
 }
 
-const FRRect *cst_node_get_bound(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, NULL);
+const FRRect *cst_node_get_bound(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstNodePrivate *priv = node->priv;
+  CstNodePrivate *priv = self->priv;
 
   return &priv->bound;
 }
 
-static void node_set_css_props(CstNode *node, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len) {
+static void node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len) {
   sys_return_if_fail(comp != NULL);
-  sys_return_if_fail(node != NULL);
+  sys_return_if_fail(self != NULL);
 
   CstCssGroup *g, *ng;
   const SysChar *pname;
 
-  const SysChar *id = cst_node_get_id(node);
+  const SysChar *id = cst_node_get_id(self);
   const SysChar *comp_id = cst_component_get_id(comp);
 
   g = cst_component_get_css_r(comp, id);
@@ -1003,7 +1004,7 @@ static void node_set_css_props(CstNode *node, CstComponent* comp, const SysChar*
   }
 
   if (g != NULL) {
-    node_set_css_r_i(node, g);
+    node_set_css_r_i(self, g);
   }
 
   return;
@@ -1014,27 +1015,162 @@ fail:
   }
 }
 
-SysBool cst_node_is_abs_node(CstNode *node) {
-  sys_return_val_if_fail(node != NULL, false);
+SysBool cst_node_is_abs_node(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  CstNodePrivate* priv = node->priv;
+  CstNodePrivate* priv = self->priv;
 
   return priv->is_abs_node;
 }
 
-void cst_node_add_awatch(CstNode *node, FRAWatch *awatch) {
-  sys_return_if_fail(node != NULL);
-  CstNodePrivate* priv = node->priv;
+void cst_node_add_awatch(CstNode *self, FRAWatch *awatch) {
+  sys_return_if_fail(self != NULL);
+  CstNodePrivate* priv = self->priv;
 
   priv->awatches = sys_list_prepend(priv->awatches, awatch);
 }
 
+void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstNode *v_children = cst_node_children(self);
+  FRContext *cr = fr_draw_get_cr(draw);
+
+  cst_node_render_enter(self, cr, layout);
+  cst_node_relayout(v_module, v_parent, self, draw, layout);
+
+  if(v_children) {
+    cst_node_layout(v_module, self, v_children, draw, layout);
+    cst_node_layout_down(v_module, self, v_children, draw, layout);
+  }
+
+  cst_node_render_leave(self, cr, layout);
+  cst_node_set_need_relayout(self, false);
+}
+
+void cst_node_paint(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  FRContext *cr = fr_draw_get_cr(draw);
+
+  if (!cst_node_get_need_repaint(self)) {
+    return;
+  }
+
+  cst_node_render_enter(self, cr, layout);
+  cst_node_repaint(v_module, v_parent, self, draw, layout);
+  cst_node_render_leave(self, cr, layout);
+
+  cst_node_set_need_repaint(self, false);
+}
+
+static void node_repaint_node_r(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstNode *v_children = cst_node_children(self);
+  CstNode *v_next = cst_node_next(self);
+
+  cst_node_paint(v_module, v_parent, self, draw, layout);
+
+  if (v_children) {
+    node_repaint_node_r(v_module, self, v_children, draw, layout);
+  }
+
+  if (v_next) {
+    node_repaint_node_r(v_module, v_parent, v_next, draw, layout);
+  }
+}
+
+void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+
+  node_repaint_node_r(v_module, v_parent, self, draw, layout);
+}
+
+void cst_node_render_enter(CstNode *self, FRContext *cr, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(cr != NULL);
+
+  fr_context_save(cr);
+  cst_node_render_css(self, cr, layout);
+}
+
+void cst_node_render_leave(CstNode *self, FRContext *cr, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(cr != NULL);
+
+  fr_context_restore(cr);
+}
+
+static const SysChar* CST_NODE_PROP_NAMES[] = {
+  "id","value","base","absolute", "label",
+  "key_up","key_down",
+};
+
+CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
+  sys_return_val_if_fail(name != NULL, -1);
+
+  const SysChar* item = CST_NODE_PROP_NAMES[0];
+  SysInt i;
+  for (i = 0; i < ARRAY_SIZE(CST_NODE_PROP_NAMES); i++) {
+    item = CST_NODE_PROP_NAMES[i];
+
+    if (*name == '@') {
+      return CST_NODE_PROP_ACTION;
+    }
+
+    if (sys_str_equal(name, item)) {
+      return i;
+    }
+  }
+
+  return CST_NODE_PROP_LAST;
+}
+
+void cst_node_stroke_rectangle(CstNode *self, FRDraw *draw) {
+  sys_return_if_fail(self != NULL);
+
+  FRSInt4 m4, p4;
+  const FRRect* bound;
+
+  cst_node_get_margin(self, &m4);
+  cst_node_get_padding(self, &p4);
+
+  bound = cst_node_get_bound(self);
+
+  fr_draw_stroke_mp(draw, bound, &m4, &p4);
+
+  return;
+  sys_debug_N("repaint node: %s,%s<%d,%d,%d,%d>",
+      cst_node_get_id(self),
+      cst_node_get_name(self),
+      bound->x,
+      bound->y,
+      bound->width,
+      bound->height);
+}
+
+void cst_node_fill_rectangle(CstNode *self, FRDraw *draw) {
+  sys_return_if_fail(self != NULL);
+
+  const FRRect* bound = cst_node_get_bound(self);
+
+  fr_draw_fill_rectangle(draw, bound);
+}
+
+CstLayoutNode *cst_node_get_layout_node(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  CstNodePrivate* priv = self->priv;
+
+  return priv->layout_node;
+}
+
 /* sys object api */
-static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
-  sys_return_val_if_fail(v_node != NULL, NULL);
+static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, CstNode *v_parent, CstNode *self, CstRender *v_render) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
   FRAWatch *nwatch;
-  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* priv = self->priv;
 
   priv->bound.x = 0;
   priv->bound.y = 0;
@@ -1044,12 +1180,12 @@ static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, Cs
   sys_list_foreach(priv->awatches, item) {
     nwatch = item->data;
 
-    fr_awatch_bind(nwatch, v_node);
+    fr_awatch_bind(nwatch, self);
   }
 
   if (com_node) {
 
-    cst_node_bind(v_node, com_node);
+    cst_node_bind(self, com_node);
   }
 
   priv->is_abs_node = false;
@@ -1058,13 +1194,13 @@ static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, Cs
   priv->is_visible = true;
   priv->realized = true;
 
-  return v_node;
+  return self;
 }
 
-static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(v_node != NULL);
+static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
 
-  CstNodePrivate* priv = v_node->priv;
+  CstNodePrivate* priv = self->priv;
 
   sys_assert(priv->bound.x >= 0 && "node x >= 0 failed, relayout not correct ?");
   sys_assert(priv->bound.y >= 0 && "node y >= 0 failed, relayout not correct ?");
@@ -1074,11 +1210,11 @@ static void cst_node_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", priv->id, priv->bound.x, priv->bound.y, priv->bound.width, priv->bound.height);
 }
 
-static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
-  sys_return_if_fail(v_node != NULL);
+static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *self, CstNodeProps *v_props) {
+  sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_module != NULL);
 
-  CstNodePrivate *priv = v_node->priv;
+  CstNodePrivate *priv = self->priv;
 
   sys_return_if_fail(priv->name != NULL);
 
@@ -1097,7 +1233,7 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
     id = sys_strdup(v_props->v_id);
 
   } else {
-    id = node_gen_id(v_node, v_module);
+    id = node_gen_id(self, v_module);
   }
 
   priv->id = id;
@@ -1106,7 +1242,7 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
 
   // LBody has no parent component.
   if (v_component) {
-    node_set_css_props(v_node, v_component, (const SysChar **)v_base, v_base_len);
+    node_set_css_props(self, v_component, (const SysChar **)v_base, v_base_len);
 
   }
 
@@ -1118,7 +1254,7 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
 
   if (v_props->v_absolute) {
 
-    cst_node_set_abs_node(v_node, true);
+    cst_node_set_abs_node(self, true);
   }
 
   sys_assert(priv->id != NULL && "node id must be set, construct not correct ?");
@@ -1137,8 +1273,8 @@ static void cst_node_class_init(CstNodeClass *cls) {
 }
 
 static void cst_node_dispose(SysObject* o) {
-  CstNode *node = CST_NODE(o);
-  CstNodePrivate *priv = node->priv;
+  CstNode *self = CST_NODE(o);
+  CstNodePrivate *priv = self->priv;
 
   sys_free_N(priv->name);
   sys_free_N(priv->id);

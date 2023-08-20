@@ -21,6 +21,7 @@ include_dep_dirs(
   ${PTHREAD_INCLUDE_DIRS}
   ${LLVM_INCLUDE_DIRS}
   ${MONO_INCLUDE_DIRS}
+  ${VULKAN_INCLUDE_DIRS}
 )
 
 set(TEST_SRC
@@ -30,8 +31,8 @@ set(TEST_SRC
   ./Demo.h
   ./Demo.c
 
-  ./TestGlib.c
-  ./TestGlib.h
+  ./TestGLFW.c
+  ./TestGLFW.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")
@@ -76,6 +77,7 @@ target_link_libraries(CstDemo
   ${GDKWAYLAND_LIBRARIES}
   ${SDL_LIBRARIES}
   ${XKBCOMMON_LIBRARIES}
+  ${VULKAN_LIBRARIES}
   # "/lib/x86_64-linux-gnu/libwayland-client.so.0"
   # "/lib/x86_64-linux-gnu/libwayland-egl.so.1"
 )

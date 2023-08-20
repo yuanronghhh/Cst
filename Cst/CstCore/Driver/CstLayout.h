@@ -26,7 +26,8 @@ struct _CstLayoutClass {
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
 CstLayout *cst_layout_new_I(void);
-SysInt cst_layout_get_state(CstLayout *self);
+CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
+void cst_layout_set_flag(CstLayout *self, CST_RENDER_STATE_ENUM state);
 SysBool cst_layout_state_layout(CstLayout *self);
 
 SYS_END_DECLS

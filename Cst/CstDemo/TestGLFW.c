@@ -1,12 +1,4 @@
 #include <CstDemo/TestGLFW.h>
-#include <cairo/cairo.h>
-#include <cairo/cairo-ft.h>
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#define CAIRO_HAS_GLX_FUNCTIONS 1
-#include <cairo/cairo-xlib.h>
-#include <cairo/cairo-xcb.h>
-
 
 static const struct
 {
@@ -50,6 +42,30 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 }
 
+cairo_surface_t* glfw_create_surface(GLFWwindow *gwindow, SysInt width, SysInt height) {
+  sys_return_val_if_fail(gwindow != NULL, NULL);
+
+  cairo_surface_t *surface;
+
+#if SYS_OS_WIN32
+  HWND hwd = glfwGetWin32Window(gwindow);
+  HDC hdc = GetDC(hwd);
+  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+#elif SYS_OS_UNIX
+  Window xwindow = glfwGetX11Window(gwindow);
+  Display *ndisplay = glfwGetX11Display();
+  int nscreen = DefaultScreen(ndisplay);
+  Visual *nvisual = DefaultVisual(ndisplay, nscreen);
+
+  surface = cairo_xlib_surface_create(ndisplay,
+      xwindow,
+      nvisual,
+      width, height);
+#endif
+
+  return surface;
+}
+
 void test_glfw_basic(void) {
   GLFWwindow* window;
   GLuint vertex_buffer, vertex_shader, fragment_shader, program;
@@ -58,8 +74,10 @@ void test_glfw_basic(void) {
 
   glfwSetErrorCallback(error_callback);
 
-  if (!glfwInit())
+  if (!glfwInit()) {
+    sys_error_N("%s", "glfw init error");
     exit(EXIT_FAILURE);
+  }
 
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
@@ -128,7 +146,7 @@ void test_glfw_basic(void) {
   exit(EXIT_SUCCESS);
 }
 
-static void test_cairo_transparent(void) {
+static void test_cairo_x11_transparent(void) {
   Display *display;
   Window window;
   XVisualInfo vinfo;
@@ -195,11 +213,116 @@ static void test_cairo_transparent(void) {
   XCloseDisplay(display);
 }
 
+static void test_glfw_vulkan(void) {
+  GLFWwindow* window;
+
+  glfwSetErrorCallback(error_callback);
+
+  if (!glfwInit()) {
+    sys_error_N("%s", "glfw init error");
+    exit(EXIT_FAILURE);
+  }
+
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+  glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+
+  if (!glfwVulkanSupported()) {
+    sys_error_N("%s", "glfwVulkanSupported return false.");
+    exit(EXIT_FAILURE);
+  }
+
+  window = glfwCreateWindow(640, 480, "vulkan example", NULL, NULL);
+  if (!window) {
+    glfwTerminate();
+    exit(EXIT_FAILURE);
+  }
+
+  glfwSetKeyCallback(window, key_callback);
+
+  glfwMakeContextCurrent(window);
+  glfwSwapInterval(1);
+
+  while (!glfwWindowShouldClose(window))
+  {
+    int width, height;
+
+    glfwGetFramebufferSize(window, &width, &height);
+    glfwPollEvents();
+
+    glfwSwapBuffers(window);
+    glfwWaitEvents();
+  }
+
+  glfwDestroyWindow(window);
+
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+}
+
+static void test_cairo_transparent(void) {
+  GLFWwindow* window;
+  int width, height;
+
+  glfwSetErrorCallback(error_callback);
+
+  if (!glfwInit()) {
+    sys_error_N("%s", "glfw init error");
+    exit(EXIT_FAILURE);
+  }
+
+  glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+  glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+
+  width = 640;
+  height = 480;
+
+  window = glfwCreateWindow(width, height, "cairo transparent example", NULL, NULL);
+  if (!window) {
+    glfwTerminate();
+    exit(EXIT_FAILURE);
+  }
+
+  glfwSetKeyCallback(window, key_callback);
+
+  while (!glfwWindowShouldClose(window)) {
+    glfwGetFramebufferSize(window, &width, &height);
+
+    cairo_surface_t *surface = glfw_create_surface(window, width, height);
+
+    cairo_t* cr = cairo_create(surface);
+
+    // printf("%d,%d\n", CAIRO_OPERATOR_OVER, cairo_get_operator(cr));
+
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_set_source_rgba(cr, 1.0, 0.0, 0.0, 0.1);
+
+    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
+
+    cairo_paint(cr);
+    cairo_destroy(cr);
+
+    cairo_surface_flush(surface);
+    cairo_surface_destroy(surface);
+
+    glfwWaitEvents();
+  }
+
+  glfwDestroyWindow(window);
+
+  glfwTerminate();
+  exit(EXIT_SUCCESS);
+}
+
 void test_glfw_init(int argc, char *argv[]) {
   UNITY_BEGIN();
   {
-    RUN_TEST(test_glfw_basic);
-    // RUN_TEST(test_cairo_transparent);
+    // RUN_TEST(test_glfw_vulkan);
+    // RUN_TEST(test_glfw_basic);
+    RUN_TEST(test_cairo_transparent);
   }
   UNITY_END();
 }

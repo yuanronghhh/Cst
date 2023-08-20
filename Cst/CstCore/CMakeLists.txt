@@ -92,12 +92,12 @@ set(SRC
   ./Driver/Css/CstCssPrivate.h
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
+  ./Driver/CstLayoutNode.h
+  ./Driver/CstLayoutNode.c
 
   ./Front/Common/CstNodePrivate.h
   ./Front/Common/CstNode.h
   ./Front/Common/CstNode.c
-  ./Front/Common/CstItem.h
-  ./Front/Common/CstItem.c
   ./Front/Common/CstComNode.h
   ./Front/Common/CstComNode.c
   ./Front/Common/CstNodeMap.h

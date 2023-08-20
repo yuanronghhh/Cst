@@ -94,6 +94,7 @@ SysBool cst_node_is_abs_node(CstNode* node);
 void cst_node_add_awatch(CstNode *node, FRAWatch *awatch);
 void cst_node_stroke_rectangle(CstNode *node, FRDraw *draw);
 void cst_node_fill_rectangle(CstNode *node, FRDraw *draw);
+CstLayoutNode *cst_node_get_layout_node(CstNode *self);
 SysBool cst_node_set_css_r(CstNode *node, CstCssGroup *g);
 void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode *root, CstNode *new_root, CstRender *v_render);
 void cst_constrain_same_width(CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);

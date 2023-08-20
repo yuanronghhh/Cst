@@ -11,7 +11,7 @@ typedef enum _CST_TEXT_DIRTY_ENUM {
 
 
 struct _CstTextPrivate {
-  PangoLayout *layout;
+  PangoLayout *playout;
   PangoFontDescription *font_desc;
 };
 
@@ -27,7 +27,7 @@ void cst_text_set_text(CstText* self, const SysChar *text) {
 
   CstTextPrivate *priv = self->priv;
 
-  pango_layout_set_text(priv->layout, text, -1);
+  pango_layout_set_text(priv->playout, text, -1);
 }
 
 const SysChar* cst_text_get_text(CstText* self) {
@@ -35,7 +35,7 @@ const SysChar* cst_text_get_text(CstText* self) {
 
   CstTextPrivate* priv = self->priv;
 
-  return pango_layout_get_text(priv->layout);
+  return pango_layout_get_text(priv->playout);
 }
 
 void cst_text_set_font_size(CstText *self, SysInt font_size) {
@@ -71,7 +71,7 @@ void cst_text_set_alignment(CstText* self, SysInt align) {
 
   CstTextPrivate* priv = self->priv;
 
-  pango_layout_set_alignment(priv->layout, align);
+  pango_layout_set_alignment(priv->playout, align);
 }
 
 CstNode* cst_text_dclone_i(CstNode *node) {
@@ -87,7 +87,7 @@ CstNode* cst_text_dclone_i(CstNode *node) {
   CstTextPrivate *opriv = otext->priv;
   CstTextPrivate *npriv = ntext->priv;
 
-  npriv->layout = opriv->layout ? pango_layout_copy(opriv->layout) : NULL;
+  npriv->playout = opriv->playout ? pango_layout_copy(opriv->playout) : NULL;
   npriv->font_desc = opriv->font_desc ? pango_font_description_copy(opriv->font_desc) : NULL;
 
   return nnode;
@@ -120,7 +120,7 @@ static void cst_text_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *
   FRSInt4 m4;
 
   const FRRect *bound = cst_node_get_bound(v_node);
-  PangoLayout *playout = priv->layout;
+  PangoLayout *playout = priv->playout;
   FRContext *cr = fr_draw_get_cr(draw);
 
   cst_node_get_mbp(v_node, &m4);
@@ -143,7 +143,7 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
   SysInt width = 0;
   SysInt height = 0;
 
-  PangoLayout *playout = priv->layout;
+  PangoLayout *playout = priv->playout;
   PangoFontDescription *font_desc = priv->font_desc;
   FRContext *cr = fr_draw_get_cr(draw);
 
@@ -151,7 +151,6 @@ static void cst_text_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode 
 
   if (cst_node_is_dirty(v_node)) {
     pango_cairo_update_layout (cr, playout);
-
     pango_layout_get_pixel_size (playout, &width, &height);
 
     cst_node_set_size(v_node, width, height);
@@ -173,8 +172,9 @@ static void cst_text_init(CstText *self) {
   PangoFontMap *font_map = pango_cairo_font_map_get_default();
   PangoContext *pctx = pango_font_map_create_context(font_map);
 
+  priv->playout = pango_layout_new (pctx);
 
-  priv->layout = pango_layout_new (pctx);
+  g_object_unref(pctx);
 
   cst_node_set_name(node, "Text");
 }
@@ -187,8 +187,8 @@ static void cst_text_dispose(SysObject* o) {
     pango_font_description_free(priv->font_desc);
   }
 
-  if (priv->layout) {
-    sys_clear_pointer(&priv->layout, g_object_unref);
+  if (priv->playout) {
+    sys_clear_pointer(&priv->playout, g_object_unref);
   }
 
   SYS_OBJECT_CLASS(cst_text_parent_class)->dispose(o);

@@ -2,7 +2,7 @@
 
 
 struct _CstLayoutPrivate {
-  SysInt state;
+  CST_RENDER_STATE_ENUM state;
 };
 
 SYS_DEFINE_TYPE_WITH_PRIVATE(CstLayout, cst_layout, SYS_TYPE_OBJECT);
@@ -31,12 +31,20 @@ CstLayout *cst_layout_new_I(void) {
   return o;
 }
 
-SysInt cst_layout_get_state(CstLayout *self) {
+CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
   CstLayoutPrivate *priv = self->priv;
 
   return priv->state;
+}
+
+void cst_layout_set_flag(CstLayout *self, CST_RENDER_STATE_ENUM state) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayoutPrivate *priv = self->priv;
+
+  priv->state = state;
 }
 
 /* object api */

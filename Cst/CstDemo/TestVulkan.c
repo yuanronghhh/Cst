@@ -1,11 +1,6 @@
-#include <TestInVulkan.h>
+#include <CstDemo/TestVulkan.h>
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof((x)[0]))
-#define ARRAY_FOREACH(type, node, array, len)        \
-  for (int i = 0; i < (int)len; i++) { \
-    type node = array[i];
-
-#define ARRAY_FOREACH_END }
 
 #define IDX_IS_COMPLETE(indices) (indices.graphicsFamily >= 0 && indices.presentFamily >= 0)
 #define SWAPCHAIN_HAS_VALUE(swap) (swap.formatCount >= 0 && swap.presentModes >= 0)
@@ -120,16 +115,16 @@ struct  _UniformBufferObject {
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
-static gint64 startTime = 0;
+static SysInt64 startTime = 0;
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
-static char* validationLayers[] = {
+static const char* validationLayers[] = {
   "VK_LAYER_KHRONOS_validation",
   // "VK_LAYER_RENDERDOC_Capture"
 };
 
-static char* deviceExtensions[] = {
+static const char* deviceExtensions[] = {
   VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
@@ -149,7 +144,7 @@ static Application app;
 void cst_vk_check_result(VkResult f) {
   VkResult res = (f);
   if (res != VK_SUCCESS) {
-    g_assert(res == VK_SUCCESS);
+    sys_assert(res == VK_SUCCESS);
   }
 }
 
@@ -190,11 +185,13 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 }
 
 int array_find_string(char *array[], int size, char *name) {
-  ARRAY_FOREACH(char *, e, array, size)
+  for (int i = 0; i < size; i++) {
+    char *e = array[i];
+
     if (strcmp(e, name) == 0) {
       return i;
     }
-  ARRAY_FOREACH_END
+  }
 
   return -1;
 }
@@ -203,23 +200,27 @@ bool checkValidationLayerSupport() {
   uint32_t layerCount;
   vkEnumerateInstanceLayerProperties(&layerCount, NULL);
   
-  VkLayerProperties *availableLayers = g_new0(VkLayerProperties, layerCount);
+  VkLayerProperties *availableLayers = sys_new0_N(VkLayerProperties, layerCount);
   vkEnumerateInstanceLayerProperties(&layerCount, availableLayers);
 
-  ARRAY_FOREACH(char *, layerName, validationLayers, ARRAY_SIZE(validationLayers))
+  for (int i = 0; i < (int)ARRAY_SIZE(validationLayers); i++) {
+    const char * layerName = validationLayers[i];
+
     bool layerFound = false;
 
-    ARRAY_FOREACH(VkLayerProperties, layerProperties, availableLayers, layerCount)
+    for (int i = 0; i < (int)layerCount; i++) {
+      VkLayerProperties layerProperties = availableLayers[i];
+
       if (strcmp(layerName, layerProperties.layerName) == 0) {
         layerFound = true;
         break;
       }
-    ARRAY_FOREACH_END
+    }
 
     if (!layerFound) {
       return false;
     }
-  ARRAY_FOREACH_END
+  }
 
   return true;
 }
@@ -243,13 +244,15 @@ void initWindow() {
 
 static void extension_support_init() {
   cst_vk_check_result(vkEnumerateInstanceExtensionProperties(NULL, &app.instExtCount, NULL));
-  app.instExtProps = g_new0(VkExtensionProperties, app.instExtCount);
+  app.instExtProps = sys_new0_N(VkExtensionProperties, app.instExtCount);
   cst_vk_check_result(vkEnumerateInstanceExtensionProperties(NULL, &app.instExtCount, app.instExtProps));
 
 #if 0
-  ARRAY_FOREACH(VkExtensionProperties, prop, instExtProps, instExtCount)
+  for(int i = 0; i < (int)instExtCount; i++) {
+    VkExtensionProperties prop = instExtProps[i];
+
     g_print("%s\n", prop.extensionName);
-  ARRAY_FOREACH_END;
+  };
 #endif
 }
 
@@ -261,13 +264,13 @@ static bool extension_support_check(char *name) {
   return false;
 }
 
-void getRequiredExtensions(char*** extensions, int *count) {
+void getRequiredExtensions(char ***extensions, SysInt *count) {
   uint32_t ec = 0;
   const char** gexts;
   char **nexts = NULL;
   gexts = glfwGetRequiredInstanceExtensions(&ec);
 
-  nexts = g_new0(char *, ec + 1);
+  nexts = sys_new0_N(char *, ec + 1);
   memcpy(nexts, gexts, sizeof(char *) * ec);
 
   if (enableValidationLayers) {
@@ -285,7 +288,7 @@ static VKAPI_ATTR VkBool32 VKAPI_CALL cst_vk_debug_callback(VkDebugUtilsMessageS
     return VK_TRUE;
   }
 
-  g_error("validation layer: %s", pCallbackData->pMessage);
+  sys_error_N("validation layer: %s", pCallbackData->pMessage);
 
   return VK_FALSE;
 }
@@ -299,7 +302,7 @@ void cst_vk_populate_debug_messenger_create_info(VkDebugUtilsMessengerCreateInfo
 
 void createInstance() {
   if (enableValidationLayers && !checkValidationLayerSupport()) {
-    g_error("validation layers requested, but not available!");
+    sys_error_N("%s", "validation layers requested, but not available!");
   }
 
   VkApplicationInfo appInfo = { 0 };
@@ -314,10 +317,10 @@ void createInstance() {
   createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
   createInfo.pApplicationInfo = &appInfo;
 
-  char** extensions = NULL;
-  uint32_t extCount = 0;
+  const char * const* extensions = NULL;
+  SysInt extCount = 0;
 
-  getRequiredExtensions(&extensions, &extCount);
+  getRequiredExtensions((char ***)&extensions, &extCount);
 
   createInfo.enabledExtensionCount = extCount;
   createInfo.ppEnabledExtensionNames = extensions;
@@ -337,7 +340,7 @@ void createInstance() {
   }
 
   if (vkCreateInstance(&createInfo, NULL, &app.instance) != VK_SUCCESS) {
-    g_error("failed to create instance!");
+    sys_error_N("%s", "failed to create instance!");
   }
 }
 
@@ -348,7 +351,7 @@ void setupDebugMessenger() {
   cst_vk_populate_debug_messenger_create_info(&createInfo);
 
   if (CreateDebugUtilsMessengerEXT(app.instance, &createInfo, NULL, &app.debugMessenger) != VK_SUCCESS) {
-    g_error("failed to set up debug messenger!");
+    sys_error_N("%s", "failed to set up debug messenger!");
   }
 }
 
@@ -357,10 +360,12 @@ QueueFamilyIndices cst_vk_find_queue_families(VkPhysicalDevice device) {
 
   uint32_t queueFamilyCount = 0;
   vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, NULL);
-  VkQueueFamilyProperties *queueFamilies = g_new0(VkQueueFamilyProperties, queueFamilyCount);
+  VkQueueFamilyProperties *queueFamilies = sys_new0_N(VkQueueFamilyProperties, queueFamilyCount);
   vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies);
 
-  ARRAY_FOREACH(VkQueueFamilyProperties, queueFamily, queueFamilies, queueFamilyCount)
+  for(int i = 0; i < (int)queueFamilyCount; i++) {
+    VkQueueFamilyProperties queueFamily = queueFamilies[i];
+
     if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
       indices.graphicsFamily = i;
     }
@@ -375,7 +380,7 @@ QueueFamilyIndices cst_vk_find_queue_families(VkPhysicalDevice device) {
     if (IDX_IS_COMPLETE(indices)) {
       break;
     }
-  ARRAY_FOREACH_END
+  }
 
   return indices;
 }
@@ -383,25 +388,29 @@ QueueFamilyIndices cst_vk_find_queue_families(VkPhysicalDevice device) {
 bool cst_vk_check_device_extension_support(VkPhysicalDevice device) {
   uint32_t extensionCount;
   vkEnumerateDeviceExtensionProperties(device, NULL, &extensionCount, NULL);
-  VkExtensionProperties *availableExtensions = g_new0(VkExtensionProperties, extensionCount);
+  VkExtensionProperties *availableExtensions = sys_new0_N(VkExtensionProperties, extensionCount);
   vkEnumerateDeviceExtensionProperties(device, NULL, &extensionCount, availableExtensions);
 
   bool support = true;
 
-  ARRAY_FOREACH(char *, de, deviceExtensions, ARRAY_SIZE(deviceExtensions))
+  for (int i = 0; i < (int)ARRAY_SIZE(deviceExtensions); i++) {
+    const char * de = deviceExtensions[i];
+
     bool exist = false;
-    ARRAY_FOREACH(VkExtensionProperties, extension, availableExtensions, extensionCount)
+    for (int i = 0; i < (int)extensionCount; i++) {
+      VkExtensionProperties extension = availableExtensions[i];
+
       if (strcmp(extension.extensionName, de) == 0) {
         exist = true;
         break;
       }
-    ARRAY_FOREACH_END
+    }
 
     if (exist == false) {
       support = false;
       break;
     }
-  ARRAY_FOREACH_END
+  }
 
   return support;
 }
@@ -413,7 +422,7 @@ void cst_vk_query_swap_chain_support(VkPhysicalDevice device, SwapChainSupportDe
   vkGetPhysicalDeviceSurfaceFormatsKHR(device, app.surface, &formatCount, NULL);
 
   if (formatCount != 0) {
-    details->formats = g_new0(VkSurfaceFormatKHR, formatCount);
+    details->formats = sys_new0_N(VkSurfaceFormatKHR, formatCount);
     vkGetPhysicalDeviceSurfaceFormatsKHR(device, app.surface, &formatCount, details->formats);
   }
 
@@ -421,7 +430,7 @@ void cst_vk_query_swap_chain_support(VkPhysicalDevice device, SwapChainSupportDe
   vkGetPhysicalDeviceSurfacePresentModesKHR(device, app.surface, &presentModeCount, NULL);
 
   if (presentModeCount != 0) {
-    details->presentModes = g_new0(VkPresentModeKHR, presentModeCount);
+    details->presentModes = sys_new0_N(VkPresentModeKHR, presentModeCount);
     vkGetPhysicalDeviceSurfacePresentModesKHR(device, app.surface, &presentModeCount, details->presentModes);
   }
 
@@ -449,21 +458,23 @@ void pickPhysicalDevice() {
   vkEnumeratePhysicalDevices(app.instance, &deviceCount, NULL);
 
   if (deviceCount == 0) {
-    g_error("failed to find GPUs with Vulkan support!");
+    sys_error_N("%s", "failed to find GPUs with Vulkan support!");
   }
 
-  VkPhysicalDevice *devices = g_new0(VkPhysicalDevice, deviceCount);
+  VkPhysicalDevice *devices = sys_new0_N(VkPhysicalDevice, deviceCount);
   vkEnumeratePhysicalDevices(app.instance, &deviceCount, devices);
 
-  ARRAY_FOREACH(VkPhysicalDevice, device, devices, deviceCount)
+  for(int i = 0; i < (int)deviceCount; i++) {
+    VkPhysicalDevice device = devices[i];
+
     if (isDeviceSuitable(device)) {
       app.physicalDevice = device;
       break;
     }
-  ARRAY_FOREACH_END
+  }
 
   if (app.physicalDevice == VK_NULL_HANDLE) {
-    g_error("failed to find a suitable GPU!");
+    sys_error_N("%s", "failed to find a suitable GPU!");
   }
 }
 
@@ -500,7 +511,7 @@ void createLogicalDevice() {
   }
 
   if (vkCreateDevice(app.physicalDevice, &createInfo, NULL, &app.device) != VK_SUCCESS) {
-    g_error("failed to create logical device!");
+    sys_error_N("%s","failed to create logical device!");
   }
 
   vkGetDeviceQueue(app.device, indices.graphicsFamily, 0, &app.graphicsQueue);
@@ -509,26 +520,30 @@ void createLogicalDevice() {
 
 void createSurface() {
   if (glfwCreateWindowSurface(app.instance, app.window, NULL, &app.surface) != VK_SUCCESS) {
-    g_error("failed to create window surface!");
+    sys_error_N("%s","failed to create window surface!");
   }
 }
 
 VkSurfaceFormatKHR cst_vk_choose_swap_surface_format(const VkSurfaceFormatKHR *availableFormats, uint32_t formatCount) {
-  ARRAY_FOREACH(VkSurfaceFormatKHR, availableFormat, availableFormats, formatCount)
+  for(int i = 0; i < (int)formatCount; i++) {
+    VkSurfaceFormatKHR availableFormat = availableFormats[i];
+
     if (availableFormat.format == VK_FORMAT_B8G8R8A8_SRGB && availableFormat.colorSpace == VK_COLOR_SPACE_SRGB_NONLINEAR_KHR) {
       return availableFormat;
     }
-  ARRAY_FOREACH_END
+  }
 
     return availableFormats[0];
 }
 
 VkPresentModeKHR cst_vk_choose_swap_present_mode(const VkPresentModeKHR *availablePresentModes, uint32_t presentModeCount) {
-  ARRAY_FOREACH(VkPresentModeKHR, availablePresentMode, availablePresentModes, presentModeCount)
+  for(int i = 0; i < (int)presentModeCount; i++) {
+    VkPresentModeKHR availablePresentMode = availablePresentModes[i];
+
     if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
       return availablePresentMode;
     }
-  ARRAY_FOREACH_END
+  }
 
     return VK_PRESENT_MODE_FIFO_KHR;
 }
@@ -597,11 +612,11 @@ void createSwapChain() {
   // createInfo.oldSwapchain = VK_NULL_HANDLE;
 
   if (vkCreateSwapchainKHR(app.device, &createInfo, NULL, &app.swapChain) != VK_SUCCESS) {
-    g_error("failed to create swap chain!");
+    sys_error_N("%s","failed to create swap chain!");
   }
 
   vkGetSwapchainImagesKHR(app.device, app.swapChain, &app.imageCount, NULL);
-  app.swapChainImages = g_new0(VkImage, app.imageCount);
+  app.swapChainImages = sys_new0_N(VkImage, app.imageCount);
   vkGetSwapchainImagesKHR(app.device, app.swapChain, &app.imageCount, app.swapChainImages);
 
   app.swapChainImageFormat = surfaceFormat.format;
@@ -609,7 +624,7 @@ void createSwapChain() {
 }
 
 void createImageViews() {
-  app.swapChainImageViews = g_new0(VkImageView, app.imageCount);
+  app.swapChainImageViews = sys_new0_N(VkImageView, app.imageCount);
 
   for (size_t i = 0; i < app.imageCount; i++) {
     VkImageViewCreateInfo createInfo = { 0 };
@@ -628,15 +643,15 @@ void createImageViews() {
     createInfo.subresourceRange.layerCount = 1;
 
     if (vkCreateImageView(app.device, &createInfo, NULL, &app.swapChainImageViews[i]) != VK_SUCCESS) {
-      g_error("failed to create image views!");
+      sys_error_N("%s","failed to create image views!");
     }
   }
 }
 
 void readFile(char *filename, char **content, size_t* length) {
-  GError *error = NULL;
-  if (!g_file_get_contents(filename, content, length, &error)) {
-    g_error("failed to read sharder %s", filename);
+  SysError *error = NULL;
+  if (!sys_file_get_contents(filename, content, length, &error)) {
+    sys_error_N("%s", "failed to read sharder %s", filename);
   }
 }
 
@@ -648,7 +663,7 @@ VkShaderModule createShaderModule(const char* code, size_t size) {
 
   VkShaderModule shaderModule;
   if (vkCreateShaderModule(app.device, &createInfo, NULL, &shaderModule) != VK_SUCCESS) {
-    g_error("failed to create shader module!");
+    sys_error_N("%s", "failed to create shader module!");
   }
 
   return shaderModule;
@@ -758,7 +773,7 @@ void createGraphicsPipeline() {
   pipelineLayoutInfo.pSetLayouts = &app.descriptorSetLayout;
 
   if (vkCreatePipelineLayout(app.device, &pipelineLayoutInfo, NULL, &app.pipelineLayout) != VK_SUCCESS) {
-    g_error("failed to create pipeline layout!");
+    sys_error_N("%s", "failed to create pipeline layout!");
   }
 
   VkGraphicsPipelineCreateInfo pipelineInfo = { 0 };
@@ -777,7 +792,7 @@ void createGraphicsPipeline() {
   pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
 
   if (vkCreateGraphicsPipelines(app.device, VK_NULL_HANDLE, 1, &pipelineInfo, NULL, &app.graphicsPipeline) != VK_SUCCESS) {
-    g_error("failed to create graphics pipeline!");
+    sys_error_N("%s", "failed to create graphics pipeline!");
   }
 
   vkDestroyShaderModule(app.device, fragShaderModule, NULL);
@@ -822,12 +837,12 @@ void createRenderPass() {
   renderPassInfo.pDependencies = &dependency;
 
   if (vkCreateRenderPass(app.device, &renderPassInfo, NULL, &app.renderPass) != VK_SUCCESS) {
-    g_error("failed to create render pass!");
+    sys_error_N("%s", "failed to create render pass!");
   }
 }
 
 void createFramebuffers() {
-  app.swapChainFramebuffers = g_new0(VkFramebuffer, app.imageCount);
+  app.swapChainFramebuffers = sys_new0_N(VkFramebuffer, app.imageCount);
 
   for (size_t i = 0; i < app.imageCount; i++) {
     VkImageView attachments[] = {
@@ -844,7 +859,7 @@ void createFramebuffers() {
     framebufferInfo.layers = 1;
 
     if (vkCreateFramebuffer(app.device, &framebufferInfo, NULL, &app.swapChainFramebuffers[i]) != VK_SUCCESS) {
-      g_error("failed to create framebuffer!");
+      sys_error_N("%s", "failed to create framebuffer!");
     }
   }
 }
@@ -858,12 +873,12 @@ void createCommandPool() {
   poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily;
 
   if (vkCreateCommandPool(app.device, &poolInfo, NULL, &app.commandPool) != VK_SUCCESS) {
-    g_error("failed to create graphics command pool!");
+    sys_error_N("%s", "failed to create graphics command pool!");
   }
 }
 
 void createCommandBuffers() {
-  app.commandBuffers = g_new0(VkCommandBuffer, MAX_FRAMES_IN_FLIGHT);
+  app.commandBuffers = sys_new0_N(VkCommandBuffer, MAX_FRAMES_IN_FLIGHT);
 
   VkCommandBufferAllocateInfo allocInfo = { 0 };
   allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
@@ -872,7 +887,7 @@ void createCommandBuffers() {
   allocInfo.commandBufferCount = (uint32_t)MAX_FRAMES_IN_FLIGHT; //  commandBuffers size
 
   if (vkAllocateCommandBuffers(app.device, &allocInfo, app.commandBuffers) != VK_SUCCESS) {
-    g_error("failed to allocate command buffers!");
+    sys_error_N("%s", "failed to allocate command buffers!");
   }
 }
 
@@ -881,7 +896,7 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
   beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 
   if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
-    g_error("failed to begin recording command buffer!");
+    sys_error_N("%s", "failed to begin recording command buffer!");
   }
 
   VkRenderPassBeginInfo renderPassInfo = { 0 };
@@ -910,14 +925,14 @@ void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex) {
   vkCmdEndRenderPass(commandBuffer);
 
   if (vkEndCommandBuffer(commandBuffer) != VK_SUCCESS) {
-    g_error("failed to record command buffer!");
+    sys_error_N("%s", "failed to record command buffer!");
   }
 }
 
 void createSyncObjects() {
-  app.imageAvailableSemaphores = g_new0(VkSemaphore, MAX_FRAMES_IN_FLIGHT);
-  app.renderFinishedSemaphores = g_new0(VkSemaphore, MAX_FRAMES_IN_FLIGHT);
-  app.inFlightFences = g_new0(VkFence, MAX_FRAMES_IN_FLIGHT);
+  app.imageAvailableSemaphores = sys_new0_N(VkSemaphore, MAX_FRAMES_IN_FLIGHT);
+  app.renderFinishedSemaphores = sys_new0_N(VkSemaphore, MAX_FRAMES_IN_FLIGHT);
+  app.inFlightFences = sys_new0_N(VkFence, MAX_FRAMES_IN_FLIGHT);
 
   VkSemaphoreCreateInfo semaphoreInfo = { 0 };
   semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
@@ -931,23 +946,27 @@ void createSyncObjects() {
         vkCreateSemaphore(app.device, &semaphoreInfo, NULL, &app.renderFinishedSemaphores[i]) != VK_SUCCESS ||
         vkCreateFence(app.device, &fenceInfo, NULL, &app.inFlightFences[i]) != VK_SUCCESS) {
 
-      g_error("failed to create synchronization objects for a frame!");
+      sys_error_N("%s", "failed to create synchronization objects for a frame!");
     }
   }
 }
 
 void cleanupSwapChain() {
-  ARRAY_FOREACH(VkFramebuffer, framebuffer, app.swapChainFramebuffers, app.imageCount)
+  for(int i = 0; i < (int)app.imageCount; i++) {
+    VkFramebuffer framebuffer = app.swapChainFramebuffers[i];
+
     vkDestroyFramebuffer(app.device, framebuffer, NULL);
-  ARRAY_FOREACH_END
+  }
 
   vkDestroyPipeline(app.device, app.graphicsPipeline, NULL);
   vkDestroyPipelineLayout(app.device, app.pipelineLayout, NULL);
   vkDestroyRenderPass(app.device, app.renderPass, NULL);
 
-  ARRAY_FOREACH(VkImageView, imageView, app.swapChainImageViews, app.imageCount)
+  for(int i = 0; i < (int)app.imageCount; i++) {
+    VkImageView imageView = app.swapChainImageViews[i];
+
     vkDestroyImageView(app.device, imageView, NULL);
-  ARRAY_FOREACH_END
+  }
 
   vkDestroySwapchainKHR(app.device, app.swapChain, NULL);
 }
@@ -1012,7 +1031,7 @@ void drawFrame() {
     recreateSwapChain();
     return;
   } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
-    g_error("failed to acquire swap chain image!");
+    sys_error_N("%s", "failed to acquire swap chain image!");
   }
 
   updateUniformBuffer(app.currentFrame);
@@ -1040,7 +1059,7 @@ void drawFrame() {
   submitInfo.pSignalSemaphores = signalSemaphores;
 
   if (vkQueueSubmit(app.graphicsQueue, 1, &submitInfo, app.inFlightFences[app.currentFrame]) != VK_SUCCESS) {
-    g_error("failed to submit draw command buffer!");
+    sys_error_N("%s", "failed to submit draw command buffer!");
   }
 
   VkPresentInfoKHR presentInfo = { 0 };
@@ -1060,7 +1079,7 @@ void drawFrame() {
     app.framebufferResized = false;
     recreateSwapChain();
   } else if (result != VK_SUCCESS) {
-    g_error("failed to present swap chain image!");
+    sys_error_N("%s", "failed to present swap chain image!");
   }
 
   app.currentFrame = (app.currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
@@ -1080,7 +1099,7 @@ uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
     }
   }
 
-  g_error("failed to find suitable memory type!");
+  sys_error_N("%s", "failed to find suitable memory type!");
 }
 
 void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *bufferMemory) {
@@ -1091,7 +1110,7 @@ void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyF
   bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
   if (vkCreateBuffer(app.device, &bufferInfo, NULL, buffer) != VK_SUCCESS) {
-    g_error("failed to create buffer!");
+    sys_error_N("%s", "failed to create buffer!");
   }
 
   VkMemoryRequirements memRequirements;
@@ -1103,7 +1122,7 @@ void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyF
   allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
 
   if (vkAllocateMemory(app.device, &allocInfo, NULL, bufferMemory) != VK_SUCCESS) {
-    g_error("failed to allocate buffer memory!");
+    sys_error_N("%s", "failed to allocate buffer memory!");
   }
 
   vkBindBufferMemory(app.device, *buffer, *bufferMemory, 0);
@@ -1112,8 +1131,8 @@ void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyF
 void createUniformBuffers() {
   VkDeviceSize bufferSize = sizeof(UniformBufferObject);
 
-  app.uniformBuffers = g_new0(VkBuffer, MAX_FRAMES_IN_FLIGHT);
-  app.uniformBuffersMemory = g_new0(VkDeviceMemory, MAX_FRAMES_IN_FLIGHT);
+  app.uniformBuffers = sys_new0_N(VkBuffer, MAX_FRAMES_IN_FLIGHT);
+  app.uniformBuffersMemory = sys_new0_N(VkDeviceMemory, MAX_FRAMES_IN_FLIGHT);
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
     createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, 
@@ -1213,7 +1232,7 @@ void createDescriptorSetLayout() {
   layoutInfo.pBindings = &uboLayoutBinding;
 
   if (vkCreateDescriptorSetLayout(app.device, &layoutInfo, NULL, &app.descriptorSetLayout) != VK_SUCCESS) {
-    g_error("failed to create descriptor set layout!");
+    sys_error_N("%s", "failed to create descriptor set layout!");
   }
 }
 
@@ -1229,12 +1248,12 @@ void createDescriptorPool() {
   poolInfo.maxSets = (uint32_t)(MAX_FRAMES_IN_FLIGHT);
 
   if (vkCreateDescriptorPool(app.device, &poolInfo, NULL, &app.descriptorPool) != VK_SUCCESS) {
-    g_error("failed to create descriptor pool!");
+    sys_error_N("%s", "failed to create descriptor pool!");
   }
 }
 
 void createDescriptorSets() {
-  VkDescriptorSetLayout *layouts = g_new0(VkDescriptorSetLayout, MAX_FRAMES_IN_FLIGHT);
+  VkDescriptorSetLayout *layouts = sys_new0_N(VkDescriptorSetLayout, MAX_FRAMES_IN_FLIGHT);
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
     layouts[i] = app.descriptorSetLayout;
@@ -1246,9 +1265,9 @@ void createDescriptorSets() {
   allocInfo.descriptorSetCount = (uint32_t)(MAX_FRAMES_IN_FLIGHT);
   allocInfo.pSetLayouts = layouts;
 
-  app.descriptorSets = g_new0(VkDescriptorSet, MAX_FRAMES_IN_FLIGHT);
+  app.descriptorSets = sys_new0_N(VkDescriptorSet, MAX_FRAMES_IN_FLIGHT);
   if (vkAllocateDescriptorSets(app.device, &allocInfo, app.descriptorSets) != VK_SUCCESS) {
-    g_error("failed to allocate descriptor sets!");
+    sys_error_N("%s", "failed to allocate descriptor sets!");
   }
 
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {

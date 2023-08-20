@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstBoxLayer.h>
 #include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Front/Common/CstNode.h>
 
 typedef struct _BFSLevel BFSLevel;
@@ -84,47 +85,6 @@ SysInt box_node_mark_dirty(CstNode *v_node, FRRegion *region) {
   return 1;
 }
 
-#if 0
-/* bfs level */
-static BFSLevel *bfs_level_new(SysUInt level) {
-  BFSLevel *nlevel = sys_new0_N(BFSLevel, 1);
-
-  nlevel->lqueue = sys_queue_new();
-  nlevel->level = level;
-
-  return nlevel;
-}
-
-static void bfs_level_push_head(BFSLevel *self, SysPointer ptr) {
-  sys_queue_push_head(self->lqueue, ptr);
-}
-
-static SysUInt bfs_level_get_length(BFSLevel *self) {
-  return sys_queue_get_length(self->lqueue);
-}
-
-static SYS_INLINE SysPointer bfs_level_pop_head(BFSLevel *self) {
-  return sys_queue_pop_head(self->lqueue);
-}
-
-static void bfs_level_push_tail(BFSLevel *self, SysPointer ptr) {
-  sys_queue_push_tail(self->lqueue, ptr);
-}
-
-static SysUInt bfs_level_get_level(BFSLevel *self) {
-  return self->level;
-}
-
-static void bfs_level_free(BFSLevel *self) {
-  sys_queue_free(self->lqueue);
-  sys_free_N(self);
-}
-
-static void bfs_level_set_level(BFSLevel *self, SysUInt level) {
-  self->level = level;
-}
-#endif
-
 void bfs_box_layer_mark(CstLayer *layer, CstNode *v_node, FRRegion *region) {
   sys_return_if_fail(v_node != NULL);
 
@@ -142,6 +102,7 @@ void bfs_box_layer_mark(CstLayer *layer, CstNode *v_node, FRRegion *region) {
     if (status < 0) {
       continue;
     }
+    // sys_debug_N("%s\t%s", cst_node_get_name(nnode), cst_node_get_id(nnode));
 
     cst_layer_queue_draw_node(layer, nnode);
 
@@ -180,7 +141,29 @@ static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, CstLayout *lay
 
   v_node = priv->tree;
 
+  cst_layout_set_flag(layout, CST_RENDER_STATE_LAYOUT);
   cst_node_relayout_root(NULL, NULL, v_node, draw, layout);
+
+  cst_layout_set_flag(layout, CST_RENDER_STATE_PAINT);
+  cst_node_repaint_root(NULL, NULL, v_node, draw, layout);
+}
+
+
+static void cst_box_layer_rerender_i(CstLayer *layer, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(layer != NULL);
+
+  CstNode *v_node;
+  CstBoxLayer *self = CST_BOX_LAYER(layer);
+  CstBoxLayerPrivate *priv = self->priv;
+
+  sys_return_if_fail(priv->tree != NULL);
+
+  v_node = priv->tree;
+
+  cst_layout_set_flag(layout, CST_RENDER_STATE_RELAYOUT);
+  cst_node_relayout_root(NULL, NULL, v_node, draw, layout);
+
+  cst_layout_set_flag(layout, CST_RENDER_STATE_REPAINT);
   cst_node_repaint_root(NULL, NULL, v_node, draw, layout);
 }
 
@@ -237,6 +220,7 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   lcls->construct = cst_box_layer_construct;
   lcls->check = cst_box_layer_check_i;
   lcls->render = cst_box_layer_render_i;
+  lcls->rerender = cst_box_layer_rerender_i;
 
   ocls->dispose = cst_box_layer_dispose;
 }

@@ -264,6 +264,7 @@ static void test_glfw_vulkan(void) {
 static void test_cairo_transparent(void) {
   GLFWwindow* window;
   int width, height;
+  int draw = 1;
 
   glfwSetErrorCallback(error_callback);
 
@@ -289,24 +290,24 @@ static void test_cairo_transparent(void) {
   while (!glfwWindowShouldClose(window)) {
     glfwGetFramebufferSize(window, &width, &height);
 
-    cairo_surface_t *surface = glfw_create_surface(window, width, height);
+    if (draw < 10) {
+      cairo_surface_t *surface = glfw_create_surface(window, width, height);
+      cairo_t* cr = cairo_create(surface);
 
-    cairo_t* cr = cairo_create(surface);
+      // printf("%d,%d\n", CAIRO_OPERATOR_OVER, cairo_get_operator(cr));
+      cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+      cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+      cairo_set_source_rgba(cr, 1.0, 0.0, 0.0, 0.1);
 
-    // printf("%d,%d\n", CAIRO_OPERATOR_OVER, cairo_get_operator(cr));
+      cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 
-    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+      cairo_paint(cr);
+      cairo_destroy(cr);
 
-    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_rgba(cr, 1.0, 0.0, 0.0, 0.1);
-
-    cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
-
-    cairo_paint(cr);
-    cairo_destroy(cr);
-
-    cairo_surface_flush(surface);
-    cairo_surface_destroy(surface);
+      cairo_surface_flush(surface);
+      cairo_surface_destroy(surface);
+      draw++;
+    }
 
     glfwWaitEvents();
   }

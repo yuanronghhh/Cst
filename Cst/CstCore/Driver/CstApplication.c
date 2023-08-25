@@ -152,8 +152,8 @@ static void cst_application_dispose(SysObject* o) {
   CstApplication *self = CST_APPLICATION(o);
   CstApplicationPrivate *priv = self->priv;
 
-  sys_object_unref(priv->render);
-  sys_object_unref(priv->manager);
+  sys_clear_pointer(&priv->manager, _sys_object_unref);
+  sys_clear_pointer(&priv->render, _sys_object_unref);
 
   cst_application_env_teardown();
 

@@ -72,7 +72,7 @@ void fr_awatch_refresh_create_i(FRAWatch* o, const SysChar *func_name, FREventFu
 
   FR_AWATCH_CLASS(fr_awatch_refresh_parent_class)->create(o, func_name, func, props);
 
-  priv->rate_time = (1 / 30.0) * 1e3;
+  priv->rate_time = (1 / 70.0) * 1e3;
 }
 
 static void fr_awatch_refresh_class_init(FRAWatchRefreshClass* cls) {

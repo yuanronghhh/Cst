@@ -135,7 +135,6 @@ typedef struct _CstAbsLayerPrivate CstAbsLayerPrivate;
 
 typedef struct _CstCssGroup CstCssGroup;
 typedef struct _CstCssGroupClass CstCssGroupClass;
-typedef struct _CstCssGroupPrivate CstCssGroupPrivate;
 
 typedef struct _CstCssClosure CstCssClosure;
 typedef struct _CstCssValue CstCssValue;

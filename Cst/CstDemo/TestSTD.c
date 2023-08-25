@@ -161,6 +161,9 @@ void require_get_admin(const SysChar *path) {
   CloseHandle(einfo.hProcess);
 }
 
+static SysChar *get_abs_path(SysChar *name) {
+}
+
 static void ask_get_admin(int argc, char *argv[]) {
   if (argc < 1) {
     sys_error_N("%s", "RunAdmin <Program>");
@@ -168,10 +171,10 @@ static void ask_get_admin(int argc, char *argv[]) {
   }
 
   if (!sys_path_exists(argv[1])) {
-    sys_error_N("%s", "File not exists.");
+    sys_error_N("File not exists: %s", argv[1]);
     return;
   }
-  
+
   require_get_admin(argv[1]);
 }
 
@@ -194,8 +197,6 @@ void test_std_init(SysInt argc, SysChar *argv[]) {
     // RUN_TEST(test_alignup);
     // RUN_TEST(test_get_dlopen);
     // RUN_TEST(test_basic);
-    // RUN_TEST(ask_get_admin);
-    
   }
   UNITY_END();
 }

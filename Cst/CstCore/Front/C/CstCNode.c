@@ -120,7 +120,9 @@ static SysBool node_css_exists(CstNode *self, CstCssGroup *g) {
     return false;
   }
 
-  sys_array_foreach(CstCssGroup *, cg, ptr->pdata, ptr->len) {
+  for(SysInt i = 0; i < (SysInt)ptr->len; i++) {
+    CstCssGroup * cg = ptr->pdata[i];
+
     if (cg == g) {
       sys_warning_N("load duplicate css: %s, %s", priv->id, cst_css_group_get_id(g));
       return true;
@@ -152,7 +154,9 @@ static SysBool node_set_css_r_i(CstNode *self, CstCssGroup *g) {
     return true;
   }
 
-  sys_array_foreach(CstCssGroup *, ng, base->pdata, base->len) {
+  for(SysInt i = 0; i < (SysInt)base->len; i++) {
+    CstCssGroup * ng = base->pdata[i];
+
     sys_assert(cst_css_group_get_id(ng) != NULL && "CstCssGroup id should not be null, maybe destroyed ?");
 
     node_set_css_r_i(self, ng);

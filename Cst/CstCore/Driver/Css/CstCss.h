@@ -17,7 +17,11 @@ struct _CstCssGroupClass {
 
 struct _CstCssGroup {
   SysObject parent;
-  CstCssGroupPrivate *priv;
+
+  /* < private > */
+  SysPtrArray* base;
+  SysPtrArray* pairs;
+  SysChar* id;
 };
 
 /* CstCssGroup */

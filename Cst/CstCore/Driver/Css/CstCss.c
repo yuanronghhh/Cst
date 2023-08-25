@@ -19,13 +19,7 @@ struct _CstCssPair {
   CstCssValue *value;
 };
 
-struct _CstCssGroupPrivate {
-  SysPtrArray *base;
-  SysPtrArray *pairs;
-  SysChar *id;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstCssGroup, cst_css_group, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstCssGroup, cst_css_group, SYS_TYPE_OBJECT);
 
 /* CstCssPair */
 void cst_css_pair_free(CstCssPair *pair) {
@@ -119,33 +113,29 @@ SysPtrArray *css_group_base_new(void) {
   return base;
 }
 
-CstCssGroup *cst_css_group_clone(CstCssGroup *self) {
-  sys_return_val_if_fail(self != NULL, false);
+CstCssGroup *cst_css_group_clone(CstCssGroup *oself) {
+  sys_return_val_if_fail(oself != NULL, false);
 
-  CstCssGroupPrivate* opriv = self->priv;
-  CstCssGroup *ng = cst_css_group_new_I(opriv->id);
-  CstCssGroupPrivate* npriv = ng->priv;
+  CstCssGroup *nself = cst_css_group_new_I(oself->id);
+  SysPtrArray *ptr = oself->pairs;
 
-  SysPtrArray *ptr;
-
-  ptr = opriv->pairs;
   for(SysUInt i = 0; i < ptr->len; i++) {
     CstCssPair *pair = cst_css_pair_clone(ptr->pdata[i]);
-    sys_ptr_array_add(npriv->pairs, pair);
+    sys_ptr_array_add(nself->pairs, pair);
   }
 
-  ptr = opriv->base;
+  ptr = oself->base;
   if (ptr != NULL) {
-    npriv->base = css_group_base_new();
+    nself->base = css_group_base_new();
 
     for (SysUInt i = 0; i < ptr->len; i++) {
       CstCssGroup *base = cst_css_group_clone(ptr->pdata[i]);
 
-      sys_ptr_array_add(npriv->base, base);
+      sys_ptr_array_add(nself->base, base);
     }
   }
 
-  return ng;
+  return nself;
 }
 
 static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
@@ -153,11 +143,11 @@ static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
     return false;
   }
 
-  sys_array_foreach(CstCssGroup *, cg, ptr->pdata, ptr->len) {
-    CstCssGroupPrivate* npriv = cg->priv;
+  for(SysInt i = 0; i < (SysInt)ptr->len; i++) {
+    CstCssGroup * cg = ptr->pdata[i];
 
     if (cg == ng) {
-      sys_warning_N("load duplicate global css: %s", npriv->id);
+      sys_warning_N("load duplicate global css: %s", cg->id);
       return true;
     }
   }
@@ -182,9 +172,7 @@ SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *self) {
   sys_return_val_if_fail(ptr != NULL, false);
   sys_return_val_if_fail(self != NULL, false);
 
-  CstCssGroupPrivate* priv = self->priv;
-
-  sys_return_val_if_fail(priv->id != NULL, false);
+  sys_return_val_if_fail(self->id != NULL, false);
 
   if (cst_css_exists(ptr, self)) {
     return false;
@@ -193,14 +181,14 @@ SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *self) {
   sys_object_ref(self);
   sys_ptr_array_add(ptr, self);
 
-  if (priv->base == NULL || priv->base->len == 0) {
+  if (self->base == NULL || self->base->len == 0) {
     return true;
   }
 
-  sys_array_foreach(CstCssGroup *, cg, priv->base->pdata, priv->base->len) {
-    CstCssGroupPrivate* cpriv = cg->priv;
+  for (int i = 0; i < (int)self->base->len; i++) {
+    CstCssGroup* cg = self->base->pdata[i];
 
-    sys_assert(cpriv->id != NULL && "CstCssGroup id should not be null, maybe destroyed ?");
+    sys_assert(cg->id != NULL && "CstCssGroup id should not be null, maybe destroyed ?");
 
     cst_css_group_set_r(ptr, cg);
   }
@@ -212,32 +200,26 @@ void cst_css_group_pair_add(CstCssGroup *self, CstCssPair *pair) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(pair != NULL);
 
-  CstCssGroupPrivate* priv = self->priv;
-
-  sys_ptr_array_add(priv->pairs, pair);
+  sys_ptr_array_add(self->pairs, pair);
 }
 
 SysBool cst_css_group_set_base_r(CstCssGroup *self, CstCssGroup *ng) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(ng != NULL, false);
 
-  CstCssGroupPrivate* priv = self->priv;
-
-  if (priv->base == NULL) {
-    priv->base = css_group_base_new();
+  if (self->base == NULL) {
+    self->base = css_group_base_new();
   }
 
-  return cst_css_group_set_r(priv->base, ng);
+  return cst_css_group_set_r(self->base, ng);
 }
 
 void cst_css_group_add_pair(CstCssGroup *self, SysChar *key, CstCssValue *value) {
   sys_return_if_fail(self != NULL);
 
-  CstCssGroupPrivate* priv = self->priv;
-
   CstCssPair *pair = cst_css_pair_new(key, value);
 
-  sys_ptr_array_add(priv->pairs, pair);
+  sys_ptr_array_add(self->pairs, pair);
 }
 
 void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLayout *layout) {
@@ -245,7 +227,6 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLay
   sys_return_if_fail(gs != NULL);
   sys_return_if_fail(cr != NULL);
 
-  CstCssGroupPrivate* priv;
   SysInt g_type;
   CstCssPair *pair;
   CstCssGroup *self;
@@ -254,14 +235,12 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLay
   for (SysInt i = (SysInt)(gs->len - 1); i >= 0; i--) {
     self = gs->pdata[i];
 
-    priv = self->priv;
-
-    if (priv->pairs->len == 0) {
+    if (self->pairs->len == 0) {
       continue;
     }
 
-    for (SysInt j = 0; j < (SysInt)priv->pairs->len; j++) {
-      pair = priv->pairs->pdata[j];
+    for (SysInt j = 0; j < (SysInt)self->pairs->len; j++) {
+      pair = self->pairs->pdata[j];
       g_type = cst_css_value_get_g_type(pair->value);
 
       if (!(state & g_type)) {
@@ -290,26 +269,20 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLay
 const SysChar* cst_css_group_get_id(CstCssGroup *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstCssGroupPrivate* priv = self->priv;
-
-  return priv->id;
+  return self->id;
 }
 
 SysPtrArray *cst_css_group_get_base(CstCssGroup *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstCssGroupPrivate* priv = self->priv;
-
-  return priv->base;
+  return self->base;
 }
 
 /* CstCssGroup object api */
 static void cst_css_group_construct(CstCssGroup* self, const SysChar *id) {
-  CstCssGroupPrivate* priv = self->priv;
-
-  priv->pairs = sys_ptr_array_new_with_free_func((SysDestroyFunc)cst_css_pair_free);
-  priv->base = NULL;
-  priv->id = sys_strdup(id);
+  self->pairs = sys_ptr_array_new_with_free_func((SysDestroyFunc)cst_css_pair_free);
+  self->base = NULL;
+  self->id = sys_strdup(id);
 }
 
 CstCssGroup* cst_css_group_new(void) {
@@ -329,14 +302,13 @@ CstCssGroup *cst_css_group_new_I(const SysChar *id) {
 static void cst_css_group_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
   CstCssGroup *self = CST_CSS_GROUP(o);
-  CstCssGroupPrivate* priv = self->priv;
 
-  if (priv->base != NULL) {
-    sys_clear_pointer(&priv->base, sys_ptr_array_unref);
+  if (self->base != NULL) {
+    sys_clear_pointer(&self->base, sys_ptr_array_unref);
   }
 
-  sys_clear_pointer(&priv->pairs, sys_ptr_array_unref);
-  sys_free_N(priv->id);
+  sys_clear_pointer(&self->pairs, sys_ptr_array_unref);
+  sys_free_N(self->id);
 
   SYS_OBJECT_CLASS(cst_css_group_parent_class)->dispose(o);
 }
@@ -348,7 +320,6 @@ static void cst_css_group_class_init(CstCssGroupClass* cls) {
 }
 
 void cst_css_group_init(CstCssGroup *self) {
-  self->priv = cst_css_group_get_private(self);
 }
 
 void cst_css_setup(void) {

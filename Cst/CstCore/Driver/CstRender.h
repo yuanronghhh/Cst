@@ -17,22 +17,31 @@ struct _CstRenderClass {
 
 struct _CstRender {
   SysObject parent;
-  CstRenderPrivate *priv;
+
+  /* < private > */
+  FRDisplay *display;
+  FRWindow *window;
+
+  FRDraw *draw;
+  CstLayout *layout;
+
+  CstLayer *box_layer;
+  CstLayer *abs_layer;
 };
 
-SYS_API SysType cst_render_get_type(void);
-SYS_API CstRender* cst_render_new_I(SysBool is_offscreen);
+SysType cst_render_get_type(void);
+CstRender* cst_render_new_I(SysBool is_offscreen);
 
-SYS_API void cst_render_resize_window(CstRender *self);
-SYS_API void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
-SYS_API void cst_render_rerender(CstRender *self, FRRegion *region);
-SYS_API void cst_render_render(CstRender *render);
+FRWindow *cst_render_get_default_window(CstRender *self);
+void cst_render_resize_window(CstRender *self);
+void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
+void cst_render_rerender(CstRender *self, FRRegion *region);
+void cst_render_render(CstRender *render);
 
-SYS_API void cst_render_set_node(CstRender * self, CstNode * parent, CstNode * node);
-SYS_API FRDraw *cst_render_get_draw(CstRender *self);
-SYS_API CstBoxLayer *cst_render_get_box_layer(CstRender *render);
-SYS_API CstAbsLayer *cst_render_get_abs_layer(CstRender *render);
-
+void cst_render_set_node(CstRender * self, CstNode * parent, CstNode * node);
+FRDraw *cst_render_get_draw(CstRender *self);
+CstBoxLayer *cst_render_get_box_layer(CstRender *render);
+CstAbsLayer *cst_render_get_abs_layer(CstRender *render);
 
 SYS_END_DECLS
 

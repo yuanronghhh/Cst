@@ -546,65 +546,6 @@ void cst_node_set_xy(CstNode* self, SysInt x, SysInt y) {
   priv->bound.y = y;
 }
 
-static void cst_node_layout_layout_h(CstNode* v_parent, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(v_parent != NULL);
-
-  CstLayoutNode *lnode = cst_node_get_layout_node(v_parent);
-  UNUSED(lnode);
-#if 0
-  SysBool parent_wrap;
-  SysInt w, h;
-  const FRRect* lbound;
-  CstNode* node;
-  CstNodePrivate* ppriv;
-  SysSList *lines = NULL;
-
-  ppriv = v_parent->priv;
-  parent_wrap = cst_node_can_wrap(v_parent);
-
-  lines = cst_layouts_prepend(lines, layout);
-
-  lbound = cst_layout_get_bound(layout);
-
-  for (node = v_parent->children; node; node = node->next) {
-
-    cst_node_get_size_mbp(node, &w, &h);
-
-    if (parent_wrap) {
-      if (ppriv->bound.width == -1) {
-        sys_warning_N("parent width must be set before wrap: %s,%s",
-            cst_node_get_name(node),
-            cst_node_get_id(node));
-        break;
-      }
-    }
-
-    if(cst_layout_need_wrap(layout, w, ppriv->bound.width)) {
-      layout = cst_layout_new(lbound->x, lbound->y + h);
-      lines = cst_layouts_prepend(lines, layout);
-
-      lbound = cst_layout_get_bound(layout);
-    }
-
-    cst_layout_prepend_item(layout, node);
-    cst_layout_layout_update(layout);
-    // cst_node_debug_stroke(node, cr);
-  }
-
-  if (v_parent->children) {
-    cst_node_layout_layout_h(v_parent->children, cr, layout);
-  }
-
-  if (v_parent->next) {
-    cst_node_layout_layout_h(v_parent->next, cr, layout);
-  }
-#endif
-}
-
-void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
-  cst_node_layout_layout_h(v_parent, draw, layout);
-}
-
 SysBool cst_node_set_css_by_id(CstNode *self, SysChar *id, CstComponent *comp) {
   sys_return_val_if_fail(id != NULL, false);
   sys_return_val_if_fail(self != NULL, false);
@@ -747,6 +688,15 @@ void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *self, FR
 
   sys_return_if_fail(ncls->relayout != NULL);
   ncls->relayout(v_module, v_parent, self, draw, layout);
+}
+
+void cst_node_relayout_down(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
+
+  sys_return_if_fail(ncls->relayout_down != NULL);
+  ncls->relayout_down(v_module, v_parent, self, draw, layout);
 }
 
 void cst_node_append(CstNode *parent, CstNode *node) {
@@ -1045,7 +995,7 @@ void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *sel
 
   if(v_children) {
     cst_node_layout(v_module, self, v_children, draw, layout);
-    cst_node_layout_down(v_module, self, v_children, draw, layout);
+    cst_node_relayout_down(v_module, self, v_children, draw, layout);
   }
 
   cst_node_render_leave(self, cr, layout);
@@ -1170,6 +1120,15 @@ CstLayoutNode *cst_node_get_layout_node(CstNode *self) {
 }
 
 /* sys object api */
+static void cst_node_relayout_down_i(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstNodePrivate *priv = self->priv;
+  CstLayoutNode *lnode = priv->layout_node;
+
+  cst_layout_layout_children(layout, lnode, draw);
+}
+
 static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, CstNode *v_parent, CstNode *self, CstRender *v_render) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -1273,6 +1232,7 @@ static void cst_node_class_init(CstNodeClass *cls) {
   cls->dclone = cst_node_dclone_i;
   cls->realize = cst_node_realize_i;
   cls->relayout = cst_node_relayout_i;
+  cls->relayout_down = cst_node_relayout_down_i;
   cls->repaint = cst_node_repaint_i;
 }
 

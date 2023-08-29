@@ -4,19 +4,7 @@
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstWidget.h>
 
-
-struct _CstRenderPrivate {
-  FRDisplay *display;
-  FRWindow *window;
-
-  FRDraw *draw;
-  CstLayout *layout;
-
-  CstLayer *box_layer;
-  CstLayer *abs_layer;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstRender, cst_render, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
 CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
@@ -24,47 +12,46 @@ CstRender *cst_render_new(void) {
 
 FRDraw *cst_render_get_draw(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  CstRenderPrivate *priv = self->priv;
 
-  return priv->draw;
+  return self->draw;
+}
+
+FRWindow *cst_render_get_default_window(CstRender *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->window;
 }
 
 CstBoxLayer *cst_render_get_box_layer(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstRenderPrivate *priv = self->priv;
-
-  return CST_BOX_LAYER(priv->box_layer);
+  return CST_BOX_LAYER(self->box_layer);
 }
 
 CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstRenderPrivate *priv = self->priv;
-
-  return CST_ABS_LAYER(priv->abs_layer);
+  return CST_ABS_LAYER(self->abs_layer);
 }
 
 void cst_render_render(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderPrivate *priv = self->priv;
-
   FRRegion *region;
 
   FRRect bound = { 0 };
-  FRDraw *draw = priv->draw;
-  CstLayout *layout = priv->layout;
+  FRDraw *draw = self->draw;
+  CstLayout *layout = self->layout;
 
   sys_assert(draw != NULL && "draw must init before render use");
 
-  fr_window_get_framebuffer_size(priv->window, &bound.width, &bound.height);
+  fr_window_get_framebuffer_size(self->window, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
 
   fr_draw_frame_begin(draw, region);
 
-  cst_layer_render(priv->box_layer, draw, layout);
-  cst_layer_render(priv->abs_layer, draw, layout);
+  cst_layer_render(self->box_layer, draw, layout);
+  cst_layer_render(self->abs_layer, draw, layout);
 
   fr_draw_frame_end(draw, region);
 
@@ -90,9 +77,8 @@ void cst_render_resize_window(CstRender *self) {
 
   SysInt width = 0;
   SysInt height = 0;
-  CstRenderPrivate *priv = self->priv;
 
-  fr_window_get_size(priv->window, &width, &height);
+  fr_window_get_size(self->window, &width, &height);
 
   cst_render_request_resize_window(self, width, height);
 }
@@ -114,9 +100,8 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 void cst_render_rerender(CstRender *self, FRRegion *region) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderPrivate *priv = self->priv;
-  FRDraw *draw = priv->draw;
-  CstLayout *layout = priv->layout;
+  FRDraw *draw = self->draw;
+  CstLayout *layout = self->layout;
 
   if (!fr_draw_frame_need_draw(draw)) {
     return;
@@ -124,33 +109,32 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
 
   fr_draw_frame_begin(draw, region);
 
-  cst_layer_check(priv->box_layer, draw, region);
-  cst_layer_check(priv->abs_layer, draw, region);
+  cst_layer_check(self->box_layer, draw, region);
+  cst_layer_check(self->abs_layer, draw, region);
 
-  cst_layer_rerender(priv->box_layer, draw, layout);
-  cst_layer_rerender(priv->abs_layer, draw, layout);
+  cst_layer_rerender(self->box_layer, draw, layout);
+  cst_layer_rerender(self->abs_layer, draw, layout);
 
   fr_draw_frame_end(draw, region);
 }
 
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
-  CstRenderPrivate *priv = self->priv;
 
   if (is_offscreen) {
 
-    priv->window = NULL;
+    self->window = NULL;
   } else {
 
-    priv->display = fr_display_new_I();
-    priv->window = fr_window_top_new(priv->display);
+    self->display = fr_display_new_I();
+    self->window = fr_window_top_new(self->display);
   }
 
-  priv->draw = fr_draw_new_I(priv->window);
-  priv->layout = cst_layout_new_I();
+  self->draw = fr_draw_new_I(self->window);
+  self->layout = cst_layout_new_I();
 
-  priv->box_layer = cst_box_layer_new_I();
-  priv->abs_layer = cst_abs_layer_new_I();
+  self->box_layer = cst_box_layer_new_I();
+  self->abs_layer = cst_abs_layer_new_I();
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {
@@ -162,24 +146,22 @@ CstRender* cst_render_new_I(SysBool is_offscreen) {
 }
 
 static void cst_render_init(CstRender *self) {
-  self->priv = cst_render_get_private(self);
 }
 
 static void cst_render_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
   CstRender *self = CST_RENDER(o);
-  CstRenderPrivate *priv = self->priv;
 
-  sys_object_unref(priv->box_layer);
-  sys_object_unref(priv->abs_layer);
+  sys_object_unref(self->box_layer);
+  sys_object_unref(self->abs_layer);
 
-  sys_clear_pointer(&priv->draw, _sys_object_unref);
-  sys_clear_pointer(&priv->layout, _sys_object_unref);
+  sys_clear_pointer(&self->draw, _sys_object_unref);
+  sys_clear_pointer(&self->layout, _sys_object_unref);
 
-  if (priv->window) {
-    sys_object_unref(priv->window);
-    sys_object_unref(priv->display);
+  if (self->window) {
+    sys_object_unref(self->window);
+    sys_object_unref(self->display);
   }
 
   SYS_OBJECT_CLASS(cst_render_parent_class)->dispose(o);

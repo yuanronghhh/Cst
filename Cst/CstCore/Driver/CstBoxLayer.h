@@ -26,7 +26,6 @@ SYS_API SysType cst_box_layer_get_type(void);
 SYS_API CstLayer * cst_box_layer_new_I(void);
 
 SYS_API void cst_box_layer_print_tree(CstBoxLayer *self);
-
 SYS_API CstNode *cst_box_layer_get_root (CstBoxLayer * self);
 SYS_API void cst_box_layer_set_root (CstBoxLayer *self, CstNode *root);
 SYS_API void cst_box_layer_insert_after (CstBoxLayer *self, CstNode *parent, CstNode *last_child, CstNode *nnode);

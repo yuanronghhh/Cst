@@ -28,7 +28,7 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   cst_manager_realize(manager, v_module, v_render);
   cst_render_render(v_render);
 
-  box_layer = cst_render_get_box_layer(v_render);
+  box_layer = cst_render_get_root(v_render);
   root = cst_box_layer_get_root(box_layer);
 
   func(root);

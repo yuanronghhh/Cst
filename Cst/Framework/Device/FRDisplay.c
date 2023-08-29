@@ -1,12 +1,8 @@
+#include <Framework/Device/FRDisplay.h>
 #include <Framework/Event/Base/FREvent.h>
-#include <Framework/Device/FRDisplayPrivate.h>
 
 
-struct _FRDisplayPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRDisplay, fr_display, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(FRDisplay, fr_display, SYS_TYPE_OBJECT);
 
 /* object api */
 FRDisplay* fr_display_new(void) {
@@ -31,5 +27,4 @@ static void fr_display_class_init(FRDisplayClass* cls) {
 }
 
 void fr_display_init(FRDisplay* self) {
-  self->priv = fr_display_get_private(self);
 }

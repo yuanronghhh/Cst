@@ -121,7 +121,6 @@ typedef struct _CstModulePrivate CstModulePrivate;
 
 typedef struct _CstRender CstRender;
 typedef struct _CstRenderClass CstRenderClass;
-typedef struct _CstRenderPrivate CstRenderPrivate;
 
 typedef struct _CstLayer CstLayer;
 typedef struct _CstLayerClass CstLayerClass;

@@ -1,38 +1,6 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 
-
-struct _CstLayoutNodePrivate {
-  SysInt x;
-  SysInt y;
-  SysInt width;
-  SysInt height;
-
-  SysBool need_relayout;
-  SysBool need_repaint;
-  SysBool is_visible;
-  SysBool wrap;
-  FRRect bound;
-  SysInt16 line_space;
-  FRSInt4 border;
-  FRSInt4 margin;
-  FRSInt4 padding;
-
-  SysInt child_count;
-  FRSInt4 mbp;
-
-  SysInt prefer_height;
-  SysInt prefer_width;
-
-  // self constraint
-  CstCssClosure  *width_calc;
-  CstCssClosure  *height_calc;
-
-  // constraint for child, may be NULL.
-  CstCssClosure  *child_width_calc;
-  CstCssClosure  *child_height_calc;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstLayoutNode, cst_layout_node, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstLayoutNode, cst_layout_node, SYS_TYPE_OBJECT);
 
 CstLayoutNode* cst_layout_node_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT_NODE, NULL);
@@ -41,101 +9,78 @@ CstLayoutNode* cst_layout_node_new(void) {
 void cst_layout_node_set_size(CstLayoutNode* self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  priv->width = width;
-  priv->height = height;
+  self->width = width;
+  self->height = height;
 }
 
 void cst_layout_node_get_size(CstLayoutNode* self, SysInt* width, SysInt* height) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  *width = priv->width;
-  *height = priv->height;
+  *width = self->width;
+  *height = self->height;
 }
 
 SysInt cst_layout_node_get_width(CstLayoutNode* self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  return priv->width;
+  return self->width;
 }
 
 void cst_layout_node_set_width(CstLayoutNode* self, SysInt width) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  priv->width = width;
+  self->width = width;
 }
 
 SysInt cst_layout_node_get_height(CstLayoutNode* self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  return priv->height;
+  return self->height;
 }
 
 void cst_layout_node_set_height(CstLayoutNode* self, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  priv->height = height;
+  self->height = height;
 }
 
 SysInt cst_layout_node_get_y(CstLayoutNode* self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  return priv->y;
+  return self->y;
 }
 
 void cst_layout_node_set_y(CstLayoutNode* self, SysInt y) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  priv->y = y;
+  self->y = y;
 }
 
 SysInt cst_layout_node_get_x(CstLayoutNode* self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  return priv->x;
+  return self->x;
 }
 
 void cst_layout_node_set_x(CstLayoutNode* self, SysInt x) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  priv->x = x;
+  self->x = x;
 }
 
 void cst_layout_node_set_xy(CstLayoutNode* self, SysInt x, SysInt y) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodePrivate *priv = self->priv;
-
-  priv->x = x;
-  priv->y = y;
+  self->x = x;
+  self->y = y;
 }
 
 void cst_layout_node_construct(CstLayoutNode *self, SysInt x, SysInt y, SysInt width, SysInt height) {
-  CstLayoutNodePrivate *priv = self->priv;
 
-  priv->x = x;
-  priv->y = y;
-  priv->width = width;
-  priv->height = height;
+  self->x = x;
+  self->y = y;
+  self->width = width;
+  self->height = height;
 }
 
 CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt height) {
@@ -146,26 +91,22 @@ CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt he
   return o;
 }
 
-CstLayoutNode* cst_layout_node_clone(CstLayoutNode* o) {
-  sys_return_val_if_fail(o != NULL, NULL);
+CstLayoutNode* cst_layout_node_clone(CstLayoutNode* oself) {
+  sys_return_val_if_fail(oself != NULL, NULL);
 
-  SysType type = sys_type_from_instance(o);
-  CstLayoutNode *n = sys_object_new(type, NULL);
+  SysType type = sys_type_from_instance(oself);
+  CstLayoutNode *nself = sys_object_new(type, NULL);
 
-  CstLayoutNodePrivate *opriv = o->priv;
-  CstLayoutNodePrivate *npriv = n->priv;
+  nself->x = oself->x;
+  nself->y = oself->y;
+  nself->width = oself->width;
+  nself->height = oself->height;
 
-  npriv->x = opriv->x;
-  npriv->y = opriv->y;
-  npriv->width = opriv->width;
-  npriv->height = opriv->height;
-
-  return n;
+  return nself;
 }
 
 /* object api */
 static void cst_layout_node_init(CstLayoutNode *self) {
-  self->priv = cst_layout_node_get_private(self);
 }
 
 static void cst_layout_node_dispose(SysObject* o) {

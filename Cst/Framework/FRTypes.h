@@ -64,7 +64,6 @@ typedef  struct  _FRValue          FRValue;
 
 typedef  struct  _FRDisplay           FRDisplay;
 typedef  struct  _FRDisplayClass      FRDisplayClass;
-typedef  struct  _FRDisplayPrivate    FRDisplayPrivate;
 
 typedef  struct  _FRText              FRText;
 typedef  struct  _FRTextClass         FRTextClass;

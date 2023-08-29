@@ -19,9 +19,7 @@ SYS_BEGIN_DECLS
 #include <Framework/DataType/FRFunc.h>
 
 #include <Framework/Device/FRDisplay.h>
-#include <Framework/Device/FRDisplayPrivate.h>
 #include <Framework/Device/FRWindow.h>
-#include <Framework/Device/FRWindowPrivate.h>
 
 #include <Framework/FRTypes.h>
 #include <Framework/FRCommon.h>

@@ -1,6 +1,7 @@
 #ifndef __TEST_VULKAN__
 #define __TEST_VULKAN__
 
+#define GLFW_INCLUDE_VULKAN
 #include <CstDemo/DemoCommon.h>
 #include <cglm/cglm.h>
 #include <GLFW/glfw3.h>

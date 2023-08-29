@@ -199,7 +199,7 @@ int array_find_string(char *array[], int size, char *name) {
 bool checkValidationLayerSupport() {
   uint32_t layerCount;
   vkEnumerateInstanceLayerProperties(&layerCount, NULL);
-  
+
   VkLayerProperties *availableLayers = sys_new0_N(VkLayerProperties, layerCount);
   vkEnumerateInstanceLayerProperties(&layerCount, availableLayers);
 
@@ -992,10 +992,10 @@ void recreateSwapChain() {
 
 void updateUniformBuffer(uint32_t currentImage) {
   if (startTime == 0) {
-    startTime = g_get_monotonic_time();
+    startTime = sys_get_monotonic_time();
   }
 
-  gint64 currentTime = g_get_monotonic_time();
+  SysInt64 currentTime = sys_get_monotonic_time();
   float time = (currentTime - startTime) / 1000000.0f;
 
   UniformBufferObject ubo = { 0 };
@@ -1369,7 +1369,10 @@ static void run(void) {
   cleanup();
 }
 
-void test_vulkan_run(void) {
+static void GetVersion(void) {
+}
+
+void test_vulkan_init(int argc, char *argv[]) {
   UNITY_BEGIN();
   {
     RUN_TEST(run);

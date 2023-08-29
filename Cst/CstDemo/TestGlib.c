@@ -618,7 +618,8 @@ static void signal_fault_func(SysInt sgn) {
   SysInt size = 0;
   SysChar **stacks = sys_backtrace_string(&size);
 
-  sys_array_foreach(SysChar *, s, stacks, size) {
+  for (SysInt i = 0; i < (SysInt)size; i++) {
+    SysChar* s = stacks[i];
     sys_error_N("%s", s);
 #if SYS_OS_WIN32
     sys_free_N(s);
@@ -647,7 +648,8 @@ static void test_backtrace(void) {
 }
 
 static void test_array_each(void) {
-  sys_array_foreach(const SysChar *, s, level_names, ARRAY_SIZE(level_names)) {
+  for (SysInt i = 0; i < ARRAY_SIZE(level_names); i++) {
+    const SysChar* s = level_names[i];
     sys_printf("%s, %d\n", s, i);
   }
 }
@@ -877,6 +879,9 @@ void test_subprocess_basic(void) {
   g_subprocess_communicate_finish(sub, NULL, &stdout_buf, &stderr_buf, &error);
 }
 
+static void test_basic(void) {
+}
+
 void test_glib_init(int argc, char *argv[]) {
   env_init();
 
@@ -897,6 +902,7 @@ void test_glib_init(int argc, char *argv[]) {
     // RUN_TEST(test_thread_cond);
     // RUN_TEST(test_socket_basic);
     // RUN_TEST(test_subprocess_basic);
+    RUN_TEST(test_basic);
   }
   UNITY_END();
 }

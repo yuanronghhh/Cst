@@ -1,11 +1,6 @@
 #include <Framework/Event/Base/FREvent.h>
 
-struct _FREventPrivate {
-  FRWindow *window;
-  FR_EVENT_ENUM etype;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FREvent, fr_event, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(FREvent, fr_event, SYS_TYPE_OBJECT);
 
 SysBool fr_event_is(FREvent *self, SysType ttype) {
   SysType type = sys_type_from_instance(self);
@@ -16,16 +11,13 @@ SysBool fr_event_is(FREvent *self, SysType ttype) {
 FRWindow* fr_event_get_window(FREvent *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FREventPrivate* priv = self->priv;
-
-  return priv->window;
+  return self->window;
 }
 
 /* object api */
 static void fr_event_construct(FREvent *self, FRWindow *window) {
-  FREventPrivate* priv = self->priv;
 
-  priv->window = window;
+  self->window = window;
 }
 
 FREvent* fr_event_new(void) {
@@ -52,6 +44,5 @@ static void fr_event_class_init(FREventClass* cls) {
 }
 
 void fr_event_init(FREvent *self) {
-  self->priv = fr_event_get_private(self);
 }
 

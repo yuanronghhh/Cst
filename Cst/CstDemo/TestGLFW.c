@@ -146,6 +146,7 @@ void test_glfw_basic(void) {
   exit(EXIT_SUCCESS);
 }
 
+#if SYS_OS_UNIX
 static void test_cairo_x11_transparent(void) {
   Display *display;
   Window window;
@@ -212,6 +213,7 @@ static void test_cairo_x11_transparent(void) {
   // 断开与X服务器的连接
   XCloseDisplay(display);
 }
+#endif
 
 static void test_glfw_vulkan(void) {
   GLFWwindow* window;
@@ -315,7 +317,6 @@ static void test_cairo_transparent(void) {
   glfwDestroyWindow(window);
 
   glfwTerminate();
-  exit(EXIT_SUCCESS);
 }
 
 void test_glfw_init(int argc, char *argv[]) {

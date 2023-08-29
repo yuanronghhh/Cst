@@ -111,8 +111,8 @@ void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode 
 void cst_node_repaint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
 void cst_node_paint(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
 void cst_node_relayout(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
+void cst_node_relayout_down(CstModule *v_module, CstNode *v_parent, CstNode *self, FRDraw *draw, CstLayout *layout);
 void cst_node_relayout_root(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
-void cst_node_layout_down(CstModule* v_module, CstNode* v_parent, CstNode* v_node, FRDraw *draw, CstLayout *layout);
 void cst_node_render_enter(CstNode *node, FRContext *cr, CstLayout *layout);
 void cst_node_render_leave(CstNode *node, FRContext *cr, CstLayout *layout);
 void cst_node_repaint_root(CstModule *v_module, CstNode *v_parent, CstNode *node, FRDraw *draw, CstLayout *layout);

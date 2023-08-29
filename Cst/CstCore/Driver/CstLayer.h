@@ -14,7 +14,8 @@ SYS_BEGIN_DECLS
 struct _CstLayer {
   SysObject parent;
 
-  CstLayerPrivate *priv;
+  /* < private > */
+  SysQueue *draw_queue;
 };
 
 struct _CstLayerClass {

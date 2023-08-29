@@ -18,8 +18,6 @@ struct _FRDisplayClass {
 
 struct _FRDisplay {
   SysObject parent;
-
-  FRDisplayPrivate *priv;
 };
 
 SYS_API SysType fr_display_get_type(void);

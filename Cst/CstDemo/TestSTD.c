@@ -83,9 +83,14 @@ static void test_alignup(void) {
 }
 
 void test_basic(void) {
-  double x = M_PI / 2;
-  double y = sin(x);
-  printf("[x,y] %lf,%lf", x, y);
+  SysChar* filename = "D:/GreyHound/PRIVATE/TMP/How browsers work.mhtml";
+  SysChar* content;
+  SysSize length;
+  SysError* error;
+
+  if (!sys_file_get_contents(filename, &content, &length, &error)) {
+    sys_abort_N("Get content failed: %s", filename);
+  }
 }
 
 static void test_line_macro(void) {

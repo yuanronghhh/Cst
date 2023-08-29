@@ -87,7 +87,6 @@ set(SRC
 
   ./Device/FRDisplay.c
   ./Device/FRDisplay.h
-  ./Device/FRDisplayPrivate.h
   ./Device/FRWindow.c
   ./Device/FRWindow.h
   ./Device/FRWindowPrivate.h

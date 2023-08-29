@@ -81,10 +81,13 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
   CstComponent *v_component = NULL;
   CstBoxLayer *box = cst_render_get_box_layer(v_render);
   CstNode *body = cst_lbody_new();
+  FRWindow *window = cst_render_get_default_window(v_render);
 
   CstNodeProps props = { 0 };
 
   cst_node_construct(v_module, v_component, NULL, body, &props);
+
+  fr_window_set_tree_root(window, SYS_OBJECT(body));
   cst_box_layer_set_root(box, body);
 
   cst_node_realize(v_module, NULL, NULL, body, v_render);

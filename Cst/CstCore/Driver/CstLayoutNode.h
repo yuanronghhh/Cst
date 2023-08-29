@@ -14,7 +14,35 @@ SYS_BEGIN_DECLS
 struct _CstLayoutNode {
   SysObject parent;
 
-  CstLayoutNodePrivate *priv;
+  /* < private > */
+  SysInt x;
+  SysInt y;
+  SysInt width;
+  SysInt height;
+
+  SysBool need_relayout;
+  SysBool need_repaint;
+  SysBool is_visible;
+  SysBool wrap;
+  FRRect bound;
+  SysInt16 line_space;
+  FRSInt4 border;
+  FRSInt4 margin;
+  FRSInt4 padding;
+
+  SysInt child_count;
+  FRSInt4 mbp;
+
+  SysInt prefer_height;
+  SysInt prefer_width;
+
+  // self constraint
+  CstCssClosure  *width_calc;
+  CstCssClosure  *height_calc;
+
+  // constraint for child, may be NULL.
+  CstCssClosure  *child_width_calc;
+  CstCssClosure  *child_height_calc;
 };
 
 struct _CstLayoutNodeClass {

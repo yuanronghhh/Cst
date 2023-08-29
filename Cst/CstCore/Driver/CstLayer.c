@@ -2,12 +2,7 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Front/Common/CstNode.h>
 
-
-struct _CstLayerPrivate {
-  SysQueue *draw_queue;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstLayer, cst_layer, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstLayer, cst_layer, SYS_TYPE_OBJECT);
 
 void cst_layer_check(CstLayer *self, FRDraw *draw, FRRegion *region) {
   sys_return_if_fail(self != NULL);
@@ -40,10 +35,8 @@ void cst_layer_rerender(CstLayer *self, FRDraw *draw, CstLayout *layout) {
 void cst_layer_queue_draw_node(CstLayer *self, CstNode *v_node) {
   sys_return_if_fail(self != NULL);
 
-  CstLayerPrivate *priv = self->priv;
-
   sys_object_ref(v_node);
-  sys_queue_push_tail(priv->draw_queue, v_node);
+  sys_queue_push_tail(self->draw_queue, v_node);
 }
 
 void cst_layer_rerender_i(CstLayer *self, FRDraw *draw, CstLayout *layout) {
@@ -58,17 +51,15 @@ void cst_layer_render_i(CstLayer *self, FRDraw *draw, CstLayout *layout) {
 /* object api */
 static void cst_layer_dispose(SysObject* o) {
   CstLayer *self = CST_LAYER(o);
-  CstLayerPrivate *priv = self->priv;
 
-  sys_queue_free_full(priv->draw_queue, (SysDestroyFunc)_sys_object_unref);
+  sys_queue_free_full(self->draw_queue, (SysDestroyFunc)_sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_layer_parent_class)->dispose(o);
 }
 
 static void cst_layer_construct(CstLayer* self) {
-  CstLayerPrivate *priv = self->priv;
 
-  priv->draw_queue = sys_queue_new();
+  self->draw_queue = sys_queue_new();
 }
 
 CstLayer *cst_layer_new(void) {
@@ -87,5 +78,4 @@ static void cst_layer_class_init(CstLayerClass* cls) {
 }
 
 static void cst_layer_init(CstLayer *self) {
-  self->priv = cst_layer_get_private(self);
 }

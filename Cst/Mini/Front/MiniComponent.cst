@@ -4,8 +4,8 @@ import MenuBar from "./MiniMenuBar.cst";
 Component<id: "mini-component">: {
   Style: {
     menu: {
-      // width: 200,
-      // wrap: true
+      width: 200,
+      wrap: true
     }
   },
 

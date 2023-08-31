@@ -4,7 +4,7 @@
 #define SOCKET SysUIntPtr
 #endif
 
-#define BUFF_SIZE 8000
+#define BUFF_SIZE 8192
 
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
@@ -114,9 +114,9 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
   fd_set io;
   struct timeval tv;
   int r;
-  SysChar buffer[BUFF_SIZE];
+  SysChar buffer[BUFF_SIZE] = { 0 };
 
-  tv.tv_sec = 1;
+  tv.tv_sec = 10;
   tv.tv_usec = 0;
 
   for (;;) {
@@ -137,7 +137,7 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
     if (FD_ISSET(self->client_socket, &io)) {
       r = recv(self->client_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
-        sys_warning_N("use_tunnel: recv(self->client_socket)", r);
+        sys_warning_N("recv(client_socket): %d", r);
 
         close_socket(self->client_socket);
         close_socket(self->remote_socket);
@@ -157,7 +157,7 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
     if (FD_ISSET(self->remote_socket, &io)) {
       r = recv(self->remote_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
-        sys_error_N("recv: %d", r);
+        sys_warning_N("recv(remote_socket): %d", r);
 
         close_socket(self->client_socket);
         close_socket(self->remote_socket);

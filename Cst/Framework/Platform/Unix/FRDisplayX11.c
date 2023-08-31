@@ -1,4 +1,4 @@
-#include <Framework/Device/FRDisplayPrivate.h>
+#include <Framework/Device/FRDisplay.h>
 
 
 Display* fr_display_get_x11_display(FRDisplay *display) {

@@ -30,7 +30,7 @@ CstLayout *cst_layout_new_I(void);
 CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
 void cst_layout_set_flag(CstLayout *self, CST_RENDER_STATE_ENUM state);
 SysBool cst_layout_state_layout(CstLayout *self);
-void cst_layout_layout_children(CstLayout *self, CstLayoutNode *lnode, FRDraw *draw);
+void cst_layout_layout_children(CstLayout *self, CstLayoutNode *v_parent, CstLayoutNode *lnode, FRDraw *draw);
 
 SYS_END_DECLS
 

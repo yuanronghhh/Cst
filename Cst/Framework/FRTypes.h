@@ -123,7 +123,6 @@ typedef  struct  _FREventClass              FREventClass;
 
 typedef  struct  _FREventAny                   FREventAny;
 typedef  struct  _FREventAnyClass              FREventAnyClass;
-typedef  struct  _FREventAnyPrivate            FREventAnyPrivate;
 
 typedef  struct  _FREventRefresh                   FREventRefresh;
 typedef  struct  _FREventRefreshClass              FREventRefreshClass;

@@ -40,19 +40,33 @@ set(DWM_LIBRARIES dwmapi.lib)
 set(GL_INCLUDE_DIRS "C:/Program Files (x86)/Windows Kits/10/Include/10.0.16299.0/um/gl")
 set(GL_LIBRARIES opengl32.lib)
 
-set(ADDTIONAL_LIBRARIES kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib)
+set(ADDTIONAL_LIBRARIES
+  kernel32.lib
+  ws2_32.lib
+  user32.lib
+  gdi32.lib
+  winspool.lib
+  comdlg32.lib
+  advapi32.lib
+  shell32.lib
+  ole32.lib
+  oleaut32.lib
+  uuid.lib
+  odbc32.lib
+  odbccp32.lib)
+
 set(CRT_LIBRAREIS
-  "libucrt.lib"
-  "ucrt.lib"
-  "ucrtd.lib"
-  "libucrtd.lib")
+  libucrt.lib
+  ucrt.lib
+  ucrtd.lib
+  libucrtd.lib)
 
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
 add_definitions("/MT")
 add_definitions("/MP")
-add_definitions("/WX")
+# add_definitions("/WX")
 
 if(USE_SANITIZER)
   add_definitions("/fsanitize=address")

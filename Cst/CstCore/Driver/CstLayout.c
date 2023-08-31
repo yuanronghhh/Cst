@@ -38,7 +38,7 @@ void cst_layout_set_flag(CstLayout *self, CST_RENDER_STATE_ENUM state) {
   self->state = state;
 }
 
-void cst_layout_layout_children(CstLayout *self, CstLayoutNode *lnode, FRDraw *draw) {
+void cst_layout_layout_children(CstLayout *self, CstLayoutNode *v_parent, CstLayoutNode *lnode, FRDraw *draw) {
 }
 
 /* object api */

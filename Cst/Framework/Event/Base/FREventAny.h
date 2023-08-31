@@ -19,7 +19,9 @@ struct _FREventAnyClass {
 struct _FREventAny {
   FREvent parent;
 
-  FREventAnyPrivate *priv;
+  /* < private > */
+  FRWindow *window;
+  FR_EVENT_ENUM etype;
 };
 
 SYS_API SysType fr_event_any_get_type(void);

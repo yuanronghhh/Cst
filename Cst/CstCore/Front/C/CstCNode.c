@@ -1126,7 +1126,7 @@ static void cst_node_relayout_down_i(CstModule *v_module, CstNode *v_parent, Cst
   CstNodePrivate *priv = self->priv;
   CstLayoutNode *lnode = priv->layout_node;
 
-  cst_layout_layout_children(layout, lnode, draw);
+  // cst_layout_layout_children(layout, v_parent, lnode, draw);
 }
 
 static CstNode* cst_node_realize_i(CstModule *v_module, CstComNode *com_node, CstNode *v_parent, CstNode *self, CstRender *v_render) {

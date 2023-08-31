@@ -47,6 +47,9 @@ struct _CstLayoutNode {
 
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
+
+  void (*relayout) (CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *v_node, FRDraw *draw, CstLayout *layout);
+  void (*relayout_down) (CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *v_node, FRDraw *draw, CstLayout *layout);
 };
 
 SysType cst_layout_node_get_type(void);
@@ -67,6 +70,9 @@ void cst_layout_node_set_xy(CstLayoutNode* self, SysInt x, SysInt y);
 SysInt cst_layout_node_get_x(CstLayoutNode* self);
 void cst_layout_node_set_y(CstLayoutNode* self, SysInt width);
 SysInt cst_layout_node_get_y(CstLayoutNode* self);
+
+void cst_layout_node_relayout(CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *v_layout_node, FRDraw *draw, CstLayout *layout);
+void cst_layout_node_relayout_down(CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *self, FRDraw *draw, CstLayout *layout);
 
 SYS_END_DECLS
 

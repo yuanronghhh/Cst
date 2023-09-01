@@ -1,19 +1,22 @@
 PROJECT_DIR:=$(shell pwd -P)
 BUILD_DIR:=${PROJECT_DIR}/build
 OS:=$(shell uname -s)
-PLATFORM=win32
+PLATFORM=
 OS_NCASE:=$(shell uname -s | /usr/bin/tr '[A-Z]' '[a-z]')
 BUILD_TYPE:=Debug
 PROJ_NAME_FILE:=
-SURFIX=.exe
+SURFIX=
+RUN_ARGS=
 OS_BUILD_TYPE=${BUILD_TYPE}
-ENV=-G "Visual Studio 17 2022" -A x64
+VS_ENV=
 
 ifeq ($(OS), Linux)
 	OS_BUILD_TYPE=
-	ENV=
 	PLATFORM=linux
-	SURFIX=
+else
+	VS_ENV=-G "Visual Studio 17 2022" -A x64
+	PLATFORM=win32
+	SURFIX=.exe
 endif
 
 
@@ -21,7 +24,7 @@ BUILD_CMAKE_ARGS:=$(BUILD_CMAKE_ARGS) -C "${PROJECT_DIR}/cmake/config/build_opti
 CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -H"$(PROJECT_DIR)" \
                       -B"$(BUILD_DIR)" \
-                      -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${ENV}
+                      -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${VS_ENV}
 
 build-all: config
 	@cmake --build "$(BUILD_DIR)" --config ${BUILD_TYPE}
@@ -30,10 +33,10 @@ config:
 	@${CMAKE_CONFIG}
 
 build-linux: config
-	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
+	@${MAKE} -C "$(BUILD_DIR)" --config ${BUILD_TYPE} -s -j8 ${PROJ_NAME}
 
 build-win32: config
-	@cmake --build "${BUILD_DIR}" --target ${PROJ_NAME}
+	@cmake --build "${BUILD_DIR}" --target ${PROJ_NAME} --config ${BUILD_TYPE}
 
 re-config:
 	@/usr/bin/rm -rf build/CMakeCache.txt

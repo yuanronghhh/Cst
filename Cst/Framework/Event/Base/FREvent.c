@@ -44,5 +44,6 @@ static void fr_event_class_init(FREventClass* cls) {
 }
 
 void fr_event_init(FREvent *self) {
+  self->window = NULL;
 }
 

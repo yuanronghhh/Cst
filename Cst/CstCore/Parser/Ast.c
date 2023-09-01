@@ -306,7 +306,7 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
     }
 
     func_name = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, (nnode->v.v_string));
-    watch_func = cst_component_get_function(pcomponent, func_name);
+    watch_func = (FREventFunc)cst_component_get_function(pcomponent, func_name);
     sys_free_N(func_name);
 
     if (watch_func == NULL) {
@@ -316,7 +316,7 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
       return false;
     }
 
-    svalue = sys_value_new_pointer(watch_func);
+    svalue = sys_value_new_pointer((SysPointer)watch_func);
 
   } else {
 
@@ -726,7 +726,7 @@ static void node_parse_action(CstNodeProps *props, const SysChar *watch_name, co
   } else {
 
     fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
-    watch_func = cst_component_get_function(component, fname);
+    watch_func = (FREventFunc)cst_component_get_function(component, fname);
     sys_free_N(fname);
 
     if (watch_func == NULL) {

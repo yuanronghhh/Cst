@@ -126,7 +126,7 @@ CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key) {
   return cst_css_env_get_r(CST_CSS_ENV(priv->style_env), key);
 }
 
-SysPointer cst_component_get_function(CstComponent *self, const SysChar *func_name) {
+SysFunc cst_component_get_function(CstComponent *self, const SysChar *func_name) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(func_name != NULL, false);
 
@@ -135,7 +135,7 @@ SysPointer cst_component_get_function(CstComponent *self, const SysChar *func_na
   return cst_module_get_function(priv->v_module, func_name);
 }
 
-void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysPointer func) {
+void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysFunc func) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(func_name != NULL);
   sys_return_if_fail(sys_strneq(func_name, FR_FUNC_PREFIX, 2));

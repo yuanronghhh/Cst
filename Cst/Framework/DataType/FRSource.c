@@ -16,9 +16,9 @@ SysBool fr_source_check(FRSource *source) {
   sys_return_val_if_fail(source, false);
 
   FRSourceClass *cls = FR_SOURCE_GET_CLASS(source);
+  SysBool rs = false;
 
   SOURCE_LOCK(source);
-  SysBool rs;
   if (cls->check) {
     rs = cls->check(source);
   }

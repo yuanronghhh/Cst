@@ -89,6 +89,7 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
 
   fr_window_set_tree_root(window, SYS_OBJECT(body));
   cst_box_layer_set_root(box, body);
+  cst_render_set_root(v_render, body);
 
   cst_node_realize(v_module, NULL, NULL, body, v_render);
 

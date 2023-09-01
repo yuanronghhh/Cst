@@ -39,8 +39,8 @@ SYS_API SysBool cst_module_is_loaded(CstModule *self);
 
 SYS_API CstManager *cst_module_get_manager(CstModule *self);
 
-void cst_module_set_function(CstModule *self, const SysChar *func_name, SysPointer func);
-SysPointer cst_module_get_function(CstModule *self, const SysChar *func_name);
+void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
+SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);
 
 void cst_module_set_comp(CstModule * self, const SysChar * key, CstComponent * comp);
 CstComponent * cst_module_get_comp(CstModule * self, const SysChar * comp_name);

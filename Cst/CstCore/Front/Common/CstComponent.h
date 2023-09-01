@@ -37,8 +37,8 @@ CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name);
 void cst_component_set_layout_node(CstComponent *self, CstNode *node);
 CstNode * cst_component_get_layout_node(CstComponent * self);
 
-SysPointer cst_component_get_function(CstComponent *self, const SysChar *func_name);
-void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysPointer func);
+SysFunc cst_component_get_function(CstComponent *self, const SysChar *func_name);
+void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysFunc func);
 
 SYS_END_DECLS
 

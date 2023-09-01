@@ -24,6 +24,7 @@ struct _CstRender {
 
   FRDraw *draw;
   CstLayout *layout;
+  CstNode* root;
 
   CstLayer *box_layer;
   CstLayer *abs_layer;
@@ -42,6 +43,8 @@ void cst_render_set_node(CstRender * self, CstNode * parent, CstNode * node);
 FRDraw *cst_render_get_draw(CstRender *self);
 CstBoxLayer *cst_render_get_box_layer(CstRender *render);
 CstAbsLayer *cst_render_get_abs_layer(CstRender *render);
+CstNode* cst_render_get_root(CstRender* self);
+void cst_render_set_root(CstRender* self, CstNode* root);
 
 SYS_END_DECLS
 

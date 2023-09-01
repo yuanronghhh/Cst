@@ -9,7 +9,6 @@ endif()
 include(cmake/init.cmake)
 
 SET(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
-#set(CMAKE_BUILD_TYPE "Release")
 log("${CMAKE_BUILD_TYPE}")
 if(USE_MONO)
   set(CMAKE_Csharp_COMPILER "C:/Program Files/Mono/bin/mcs.bat")

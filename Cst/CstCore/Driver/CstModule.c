@@ -209,16 +209,16 @@ AstNode* cst_module_get_ast_node(CstModule* self) {
   return priv->ast_node;
 }
 
-SysPointer cst_module_get_function(CstModule *self, const SysChar *func_name) {
+SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name) {
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(func_name != NULL, NULL);
 
   CstModulePrivate *priv = self->priv;
 
-  return fr_env_get_r(priv->function_env, func_name);
+  return (SysFunc)fr_env_get_r(priv->function_env, func_name);
 }
 
-void cst_module_set_function(CstModule *self, const SysChar *func_name, SysPointer func) {
+void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func) {
 
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(func_name != NULL);

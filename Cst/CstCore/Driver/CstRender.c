@@ -34,6 +34,18 @@ CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
   return CST_ABS_LAYER(self->abs_layer);
 }
 
+CstNode *cst_render_get_root(CstRender* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->root;
+}
+
+void cst_render_set_root(CstRender* self, CstNode *root) {
+  sys_return_if_fail(self != NULL);
+
+  self->root = root;
+}
+
 void cst_render_render(CstRender *self) {
   sys_return_if_fail(self != NULL);
 

@@ -1,1 +1,1 @@
-#include <Framework/Device/FRDisplayPrivate.h>
+#include <Framework/Device/FRDisplay.h>

@@ -29,7 +29,6 @@ SYS_BEGIN_DECLS
 #include <Framework/ThirdParty/FRGlfw.h>
 #include <Framework/ThirdParty/FRCairo.h>
 #include <Framework/ThirdParty/FRFont.h>
-#include <Framework/ThirdParty/FRExpr.h>
 
 
 SYS_END_DECLS

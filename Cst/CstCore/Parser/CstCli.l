@@ -58,7 +58,7 @@ static SysInt get_source(LEX_PARAMS) {
 
   SysChar s[] = { 0, '\0' };
   SysInt es = false; // escape in nested
-  while ((*s = input(yyscanner)) != 0) {
+  while ((*s = (SysChar)input(yyscanner)) != 0) {
     if(*s == '\\') {
       es = true;
       continue;

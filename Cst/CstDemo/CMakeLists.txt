@@ -31,8 +31,10 @@ set(TEST_SRC
   ./Demo.h
   ./Demo.c
 
-  ./TestSTD.c
-  ./TestSTD.h
+  ./TestFrp.c
+  ./TestFrp.h
+  ./FrpServer.c
+  ./FrpServer.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")

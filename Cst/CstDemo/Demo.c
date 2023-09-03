@@ -1,4 +1,4 @@
-#include <CstDemo/TestSTD.h>
+#include <CstDemo/TestFrp.h>
 #include <CstDemo/Demo.h>
 
 void setUp(void) {
@@ -7,10 +7,10 @@ void setUp(void) {
 void tearDown(void) {
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char *argv[]) {
   sys_setup();
 
-  test_std_init(argc, argv);
+  test_frp_init(argc, argv);
 
   sys_teardown();
 

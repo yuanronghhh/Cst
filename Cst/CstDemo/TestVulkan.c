@@ -1100,6 +1100,7 @@ uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
   }
 
   sys_error_N("%s", "failed to find suitable memory type!");
+  return 0;
 }
 
 void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer *buffer, VkDeviceMemory *bufferMemory) {

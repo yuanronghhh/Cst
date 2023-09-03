@@ -9,7 +9,7 @@
 
 SYS_BEGIN_DECLS
 
-void test_vulkan_run(void);
+void test_vulkan_init(int argc, char *argv[]);
 
 SYS_END_DECLS
 

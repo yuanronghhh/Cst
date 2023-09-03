@@ -8,7 +8,7 @@ struct _SOption {
   int remote_port;
 };
 
-static SysBool parse_args(SOption *option, SysInt argc, SysChar* argv[]) {
+static SysBool parse_args(SOption *option, SysInt argc, const SysChar* argv[]) {
   SysSArg ao;
   int i;
 
@@ -34,7 +34,7 @@ static void print_help() {
   sys_printf("    FRPServer --remote-port <remote-port> --remote-host <remote-host> --local-port <local-port>\n");
 }
 
-void test_frp_init(SysInt argc, SysChar *argv[]) {
+void test_frp_init(SysInt argc, const SysChar *argv[]) {
   SOption options = { 0 };
 
   if (!parse_args(&options, argc, argv)) {

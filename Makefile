@@ -33,7 +33,7 @@ config:
 	@${CMAKE_CONFIG}
 
 build-linux: config
-	@${MAKE} -C "$(BUILD_DIR)" --config ${BUILD_TYPE} -s -j8 ${PROJ_NAME}
+	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
 
 build-win32: config
 	@cmake --build "${BUILD_DIR}" --target ${PROJ_NAME} --config ${BUILD_TYPE}
@@ -47,7 +47,7 @@ clean:
 
 run-linux:
 	@export LSAN_OPTIONS=verbosity=1:log_threads=1
-	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}
+	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}
 
 run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${RUN_ARGS}
@@ -74,14 +74,14 @@ build-tags:
 check-linux:
 	@export G_DEBUG=gc-friendly
 	@export G_SLICE=always-malloc
-	@valgrind --leak-check=full \
+	valgrind --leak-check=full \
 		--log-file=./check.log \
 		--leak-resolution=high \
 		--show-leak-kinds=all \
 		--show-reachable=no \
 		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
 		--suppressions=cst.supp  \
-		$(BUILD_DIR)/Cst/${PROJ_NAME}/${PROJ_NAME}
+		$(BUILD_DIR)/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}
 
 # -------------------- core start --------------------
 cst-test-build:

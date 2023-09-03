@@ -16,9 +16,9 @@ typedef struct _FRPServerClass FRPServerClass;
 struct _FRPServer {
   SysObject parent;
 
-  SOCKET server_socket;
-  SOCKET client_socket;
-  SOCKET remote_socket;
+  SysSocket* server_socket;
+  SysSocket* client_socket;
+  SysSocket* remote_socket;
 
   struct sockaddr_in server_addr;
   struct sockaddr_in client_addr;

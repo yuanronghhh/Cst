@@ -6,7 +6,7 @@
 
 SYS_BEGIN_DECLS
 
-void test_frp_init(SysInt argc, SysChar *argv[]);
+void test_frp_init(SysInt argc, const SysChar *argv[]);
 
 SYS_END_DECLS
 

@@ -1,19 +1,12 @@
 #include <CstDemo/FrpServer.h>
 
-#if SYS_OS_UNIX
-#define SOCKET SysUIntPtr
-#endif
-
 #define BUFF_SIZE 8192
 
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
-static void close_socket(SOCKET s) {
-#if SYS_OS_WIN32
-  closesocket(s);
-#else
-  close(s);
-#endif
+static void frp_close_connection(FRPServer *self) {
+  sys_clear_pointer(&self->client_socket, sys_socket_free);
+  sys_clear_pointer(&self->remote_socket, sys_socket_free);
 }
 
 static SysBool frp_create_server(FRPServer *self) {
@@ -27,31 +20,27 @@ static SysBool frp_create_server(FRPServer *self) {
   self->server_addr.sin_addr.s_addr = INADDR_ANY;
 
   self->server_socket = sys_socket(AF_INET, SOCK_STREAM, 0);
-  if (self->server_socket < 0) {
+  if (self->server_socket == NULL) {
 
-    sys_error_N("socket: %d", self->server_socket);
+    sys_error_N("create failed on port: %d", self->local_port);
     return false;
   }
 
-#if SYS_OS_WIN32
-  r = setsockopt(self->server_socket, SOL_SOCKET, SO_REUSEADDR, (char *)&optval, sizeof(optval));
-#else
-  r = setsockopt(self->server_socket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
-#endif
+  r = sys_socket_setopt(self->server_socket, SOL_SOCKET, SO_REUSEADDR, (void *)&optval, sizeof(optval));
   if (r < 0) {
 
     sys_error_N("setsockopt: %d", r);
     return false;
   }
 
-  r = bind(self->server_socket, (struct sockaddr*)&self->server_addr, sizeof(self->server_addr));
+  r = sys_bind(self->server_socket, (struct sockaddr*)&self->server_addr, sizeof(self->server_addr));
   if (r < 0) {
 
     sys_error_N("bind: %d", r);
     return false;
   }
 
-  r = listen(self->server_socket, 1);
+  r = sys_listen(self->server_socket, 1);
   if (r < 0) {
     sys_error_N("listen: %d", r);
     return false;
@@ -61,10 +50,10 @@ static SysBool frp_create_server(FRPServer *self) {
 }
 
 static SysBool frp_accept_clients(FRPServer* self) {
-  int client_addr_size = sizeof(struct sockaddr_in);
+  socklen_t client_addr_size = sizeof(struct sockaddr_in);
 
-  self->client_socket = accept(self->server_socket, (struct sockaddr*)&self->client_addr, &client_addr_size);
-  if (self->client_socket < 0) {
+  self->client_socket = sys_accept(self->server_socket, (struct sockaddr*)&self->client_addr, &client_addr_size);
+  if (self->client_socket == NULL) {
     if (errno != EINTR) {
 
       sys_warning_N("accept: %d", self->client_socket);
@@ -88,17 +77,18 @@ static SysBool frp_build_tunnel(FRPServer *self) {
 
   memcpy(&self->remote_addr.sin_addr.s_addr, self->remote_host->h_addr, self->remote_host->h_length);
 
-  self->remote_socket = socket(AF_INET, SOCK_STREAM, 0);
+  self->remote_socket = sys_socket(AF_INET, SOCK_STREAM, 0);
   if (self->remote_socket < 0) {
 
-    sys_error_N("socket: %d", self->remote_socket);
+    sys_warning_N("socket: %d", self->remote_socket);
     return false;
   }
 
-  r = connect(self->remote_socket, (struct sockaddr*)&self->remote_addr, sizeof(self->remote_addr));
+  r = sys_connect(self->remote_socket, (struct sockaddr*)&self->remote_addr, sizeof(self->remote_addr));
   if (r < 0) {
+    sys_warning_N("connect: %d", r);
 
-    sys_error_N("connect: %d", r);
+    frp_close_connection(self);
     return false;
   }
 
@@ -106,7 +96,7 @@ static SysBool frp_build_tunnel(FRPServer *self) {
 }
 
 static int frp_get_fd(FRPServer* self) {
-  SOCKET fd = max(self->client_socket, self->remote_socket);
+  SysInt fd = max(sys_socket_get_fd(self->client_socket), sys_socket_get_fd(self->remote_socket));
   return (int)(fd + 1);
 }
 
@@ -120,10 +110,10 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
   tv.tv_usec = 0;
 
   for (;;) {
-    FD_ZERO(&io);
+    SYS_FD_ZERO(&io);
 
-    FD_SET(self->remote_socket, &io);
-    FD_SET(self->client_socket, &io);
+    SYS_FD_SET(self->remote_socket, &io);
+    SYS_FD_SET(self->client_socket, &io);
 
     int nfds = frp_get_fd(self);
     r = select(nfds, &io, NULL, NULL, &tv);
@@ -134,44 +124,40 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
       break;
     }
 
-    if (FD_ISSET(self->client_socket, &io)) {
-      r = recv(self->client_socket, buffer, sizeof(buffer), 0);
+    if (SYS_FD_ISSET(self->client_socket, &io)) {
+      r = sys_socket_recv(self->client_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
         sys_warning_N("recv(client_socket): %d", r);
 
-        close_socket(self->client_socket);
-        close_socket(self->remote_socket);
+        frp_close_connection(self);
         return false;
       }
 
       if (r == 0) {
 
-        close_socket(self->client_socket);
-        close_socket(self->remote_socket);
+        frp_close_connection(self);
         return false;
       }
 
-      send(self->remote_socket, buffer, r, 0);
+      sys_socket_send(self->remote_socket, buffer, r, 0);
     }
 
-    if (FD_ISSET(self->remote_socket, &io)) {
-      r = recv(self->remote_socket, buffer, sizeof(buffer), 0);
+    if (SYS_FD_ISSET(self->remote_socket, &io)) {
+      r = sys_socket_recv(self->remote_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
         sys_warning_N("recv(remote_socket): %d", r);
 
-        close_socket(self->client_socket);
-        close_socket(self->remote_socket);
+        frp_close_connection(self);
         return false;
       }
 
       if (r == 0) {
-        close_socket(self->client_socket);
-        close_socket(self->remote_socket);
+        frp_close_connection(self);
 
         return true;
       }
 
-      send(self->client_socket, buffer, r, 0);
+      sys_socket_send(self->client_socket, buffer, r, 0);
     }
   }
 
@@ -192,12 +178,11 @@ void frp_server_run(FRPServer *s) {
     frp_handle_clients(s);
   }
 
-  close_socket(s->server_socket);
+  sys_clear_pointer(&s->server_socket, sys_socket_free);
 }
 
 /* object api */
 static void frp_server_dispose(SysObject* o) {
-  FRPServer *self = FRP_SERVER(o);
 
   SYS_OBJECT_CLASS(frp_server_parent_class)->dispose(o);
 }

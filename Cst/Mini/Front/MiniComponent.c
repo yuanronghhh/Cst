@@ -4,11 +4,7 @@
 
 #include <Mini/Front/MiniComponent.h>
 
-struct _MiniComponentPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(MiniComponent, mini_component, CST_TYPE_COMPONENT);
+SYS_DEFINE_TYPE(MiniComponent, mini_component, CST_TYPE_COMPONENT);
 
 /**
  * user functions
@@ -42,7 +38,6 @@ static void mini_component_construct(CstComponent *comp, CstModule *v_module, Cs
 }
 
 static void mini_component_init(MiniComponent *self) {
-  self->priv = mini_component_get_private(self);
 }
 
 static void mini_component_dispose(SysObject *o) {

@@ -19,7 +19,13 @@ find_package(glad REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(stb REQUIRED)
 find_package(pthread REQUIRED)
-find_package(vld REQUIRED)
+
+if(DEBUG)
+  find_package(vld REQUIRED)
+endif()
+
+set(DBG_LIBRAREIS "Dbghelp.lib")
+
 find_package(harfbuzz REQUIRED)
 find_package(pango REQUIRED)
 find_package(png REQUIRED)
@@ -73,8 +79,6 @@ add_definitions("/wd\"4100\" /wd\"4206\" /wd\"4201\" /wd\"4996\"")
 if(USE_SANITIZER)
   add_definitions("/fsanitize=address")
 endif()
-
-set(DBG_LIBRAREIS "Dbghelp.lib")
 
 # set(GLUT_INCLUDE_DIRS ${LIBDIR}/opengl/include)
 # set(GLUT_LIBRARIES ${OPENGL_DIR}/lib/freeglut_static.lib)

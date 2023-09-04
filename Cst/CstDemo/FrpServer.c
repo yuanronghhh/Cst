@@ -33,14 +33,14 @@ static SysBool frp_create_server(FRPServer *self) {
     return false;
   }
 
-  r = sys_bind(self->server_socket, (struct sockaddr*)&self->server_addr, sizeof(self->server_addr));
+  r = sys_socket_bind(self->server_socket, (struct sockaddr*)&self->server_addr, sizeof(self->server_addr));
   if (r < 0) {
 
     sys_error_N("bind: %d", r);
     return false;
   }
 
-  r = sys_listen(self->server_socket, 1);
+  r = sys_socket_listen(self->server_socket, 1);
   if (r < 0) {
     sys_error_N("listen: %d", r);
     return false;
@@ -52,7 +52,7 @@ static SysBool frp_create_server(FRPServer *self) {
 static SysBool frp_accept_clients(FRPServer* self) {
   socklen_t client_addr_size = sizeof(struct sockaddr_in);
 
-  self->client_socket = sys_accept(self->server_socket, (struct sockaddr*)&self->client_addr, &client_addr_size);
+  self->client_socket = sys_socket_accept(self->server_socket, (struct sockaddr*)&self->client_addr, &client_addr_size);
   if (self->client_socket == NULL) {
     if (errno != EINTR) {
 
@@ -64,7 +64,7 @@ static SysBool frp_accept_clients(FRPServer* self) {
 }
 
 static SysBool frp_build_tunnel(FRPServer *self) {
-  int r;
+  SysSSize r;
   if (self->remote_host == NULL) {
     sys_error_N("%s", "remote_host is NULL");
     return false;
@@ -84,7 +84,7 @@ static SysBool frp_build_tunnel(FRPServer *self) {
     return false;
   }
 
-  r = sys_connect(self->remote_socket, (struct sockaddr*)&self->remote_addr, sizeof(self->remote_addr));
+  r = sys_socket_connect(self->remote_socket, (struct sockaddr*)&self->remote_addr, sizeof(self->remote_addr));
   if (r < 0) {
     sys_warning_N("connect: %d", r);
 
@@ -103,7 +103,7 @@ static int frp_get_fd(FRPServer* self) {
 static SysBool frp_handle_tunnel(FRPServer* self) {
   fd_set io;
   struct timeval tv;
-  int r;
+  SysSSize r;
   SysChar buffer[BUFF_SIZE] = { 0 };
 
   tv.tv_sec = 10;

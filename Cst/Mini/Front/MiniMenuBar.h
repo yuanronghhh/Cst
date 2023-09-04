@@ -10,8 +10,8 @@
 SYS_BEGIN_DECLS
 
 #define MINI_TYPE_MENUBAR (mini_menubar_get_type())
-#define MINI_MENUBAR(o) ((MiniMenuBar* )o)
-#define MINI_MENUBAR_CLASS(o) ((MiniMenuBarClass *)o)
+#define MINI_MENUBAR(o) ((MiniMenuBar* )sys_object_cast_check(o))
+#define MINI_MENUBAR_CLASS(o) ((MiniMenuBarClass *)sys_class_cast_check(o))
 #define MINI_MENUBAR_GET_CLASS(o) sys_instance_get_class(o, MiniMenuBarClass)
 
 typedef struct _MiniMenuBar MiniMenuBar;

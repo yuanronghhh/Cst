@@ -14,15 +14,15 @@ static SysBool parse_args(SOption *option, SysInt argc, const SysChar* argv[]) {
 
   sys_arg_init(&ao, argc, argv);
 
-  i = sys_arg_index(&ao, "remote-port", false);
+  i = sys_arg_index(&ao, "rport", false);
   if (i == -1) { return false; }
   option->remote_port = atoi(ao.argv[i]);
 
-  i = sys_arg_index(&ao, "remote-host", false);
+  i = sys_arg_index(&ao, "rhost", false);
   if (i == -1) { return false; }
   option->remote_host = ao.argv[i];
 
-  i = sys_arg_index(&ao, "local-port", false);
+  i = sys_arg_index(&ao, "lport", false);
   if (i == -1) { return false; }
   option->local_port = atoi(ao.argv[i]);
 

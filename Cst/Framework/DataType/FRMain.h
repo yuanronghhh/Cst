@@ -18,7 +18,11 @@ struct _FRMainClass {
 struct _FRMain {
   SysObject parent;
 
-  FRMainPrivate *priv;
+  /* private */
+  SysBool is_running;
+  SysList* sources;
+  SysList* current;
+  SysRecMutex mutex;
 };
 
 SYS_API SysType fr_main_get_type (void);

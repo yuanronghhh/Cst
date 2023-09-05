@@ -140,9 +140,8 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
       }
 
       sys_socket_send(self->remote_socket, buffer, r, 0);
-    }
 
-    if (SYS_FD_ISSET(self->remote_socket, &io)) {
+    } else if (SYS_FD_ISSET(self->remote_socket, &io)) {
       r = sys_socket_recv(self->remote_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
         sys_warning_N("recv(remote_socket): %d", r);
@@ -158,6 +157,9 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
       }
 
       sys_socket_send(self->client_socket, buffer, r, 0);
+    } else {
+
+      sys_error_N("Not found fd type: %d", nfds);
     }
   }
 

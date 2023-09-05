@@ -65,10 +65,6 @@ typedef  struct  _FRValue          FRValue;
 typedef  struct  _FRDisplay           FRDisplay;
 typedef  struct  _FRDisplayClass      FRDisplayClass;
 
-typedef  struct  _FRText              FRText;
-typedef  struct  _FRTextClass         FRTextClass;
-typedef  struct  _FRTextPrivate       FRTextPrivate;
-
 typedef  struct  _FRDraw              FRDraw;
 typedef  struct  _FRDrawClass         FRDrawClass;
 typedef  struct  _FRDrawPrivate       FRDrawPrivate;
@@ -143,7 +139,6 @@ typedef  struct  _FREnvPrivate    FREnvPrivate;
 
 typedef  struct  _FRMain           FRMain;
 typedef  struct  _FRMainClass      FRMainClass;
-typedef  struct  _FRMainPrivate    FRMainPrivate;
 
 typedef  struct  _FRSource           FRSource;
 typedef  struct  _FRSourceClass      FRSourceClass;

@@ -8,7 +8,7 @@ struct _FRMainPrivate {
   SysRecMutex mutex;
 };
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRMain, fr_main, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(FRMain, fr_main, SYS_TYPE_OBJECT);
 
 static void fr_main_destroy(FRMain * self);
 
@@ -21,26 +21,21 @@ FRMain *fr_main_get_main_loop(void) {
 void fr_main_lock(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
-  FRMainPrivate* priv = self->priv;
-
-  sys_rec_mutex_lock(&priv->mutex);
+  sys_rec_mutex_lock(&self->mutex);
 }
 
 void fr_main_unlock(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
-  FRMainPrivate* priv = self->priv;
-
-  sys_rec_mutex_unlock(&priv->mutex);
+  sys_rec_mutex_unlock(&self->mutex);
 }
 
 void fr_main_stop(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
   fr_main_lock(self);
-  
-  FRMainPrivate* priv = self->priv;
-  priv->is_running = false;
+
+  self->is_running = false;
 
   fr_main_unlock(self);
 }
@@ -50,10 +45,8 @@ void fr_main_attach(FRMain *self, FRSource *source) {
 
   fr_main_lock(self);
 
-  FRMainPrivate* priv = self->priv;
-
   fr_source_set_main(source, self);
-  priv->sources = sys_list_prepend(priv->sources, source);
+  self->sources = sys_list_prepend(self->sources, source);
 
   fr_main_unlock(self);
 }
@@ -61,22 +54,21 @@ void fr_main_attach(FRMain *self, FRSource *source) {
 void fr_main_iter_next(FRMain *self, FRSource **source) {
   sys_return_if_fail(self != NULL);
 
-  FRMainPrivate* priv = self->priv;
   SysList *next = NULL;
 
   fr_main_lock(self);
 
-  if(priv->sources) {
-    if(priv->current) {
+  if(self->sources) {
+    if(self->current) {
 
-      next = priv->current->next;
+      next = self->current->next;
     }
 
     if(!next) {
-      next = priv->sources;
+      next = self->sources;
     }
 
-    priv->current = next;
+    self->current = next;
     *source = next->data;
 
   } else {
@@ -90,19 +82,15 @@ void fr_main_iter_next(FRMain *self, FRSource **source) {
 SysBool fr_main_is_running(FRMain *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  FRMainPrivate* priv = self->priv;
-
-  return (SysBool)sys_atomic_int_get(&priv->is_running);
+  return (SysBool)sys_atomic_int_get(&self->is_running);
 }
 
 static void fr_main_destroy(FRMain *self) {
   sys_return_if_fail(self != NULL);
 
-  FRMainPrivate* priv = self->priv;
+  sys_assert(self->is_running == false);
 
-  sys_assert(priv->is_running == false);
-
-  sys_list_free_full(priv->sources, (SysDestroyFunc)_sys_object_unref);
+  sys_list_free_full(self->sources, (SysDestroyFunc)_sys_object_unref);
 }
 
 void fr_main_run(FRMain *self) {
@@ -144,12 +132,10 @@ void fr_main_teardown(void) {
 
 /* object api */
 static void fr_main_construct(FRMain *self) {
-  FRMainPrivate* priv = self->priv;
+  self->is_running = true;
+  self->sources = NULL;
 
-  priv->is_running = true;
-  priv->sources = NULL;
-
-  sys_rec_mutex_init(&priv->mutex);
+  sys_rec_mutex_init(&self->mutex);
 }
 
 FRMain* fr_main_new(void) {
@@ -166,9 +152,7 @@ FRMain *fr_main_new_I(void) {
 
 static void fr_main_dispose(SysObject* o) {
   FRMain *self = FR_MAIN(o);
-  FRMainPrivate* priv = self->priv;
-
-  sys_rec_mutex_clear(&priv->mutex);
+  sys_rec_mutex_clear(&self->mutex);
 
   SYS_OBJECT_CLASS(fr_main_parent_class)->dispose(o);
 }
@@ -180,5 +164,4 @@ static void fr_main_class_init(FRMainClass* cls) {
 }
 
 void fr_main_init(FRMain *self) {
-  self->priv = fr_main_get_private(self);
 }

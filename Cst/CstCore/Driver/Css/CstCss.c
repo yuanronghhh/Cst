@@ -1,9 +1,8 @@
-#include <CstCore/Driver/Css/CstCssPrivate.h>
+#include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstLayout.h>
-
 #include <CstCore/Front/CstFrontCore.h>
 
 

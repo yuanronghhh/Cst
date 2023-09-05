@@ -88,7 +88,6 @@ set(SRC
   ./Driver/Css/CstCssEnv.h
   ./Driver/Css/CstCss.c
   ./Driver/Css/CstCss.h
-  ./Driver/Css/CstCssPrivate.h
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
   ./Driver/CstLayoutNode.h

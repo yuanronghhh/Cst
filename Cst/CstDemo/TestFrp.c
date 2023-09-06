@@ -31,7 +31,7 @@ static SysBool parse_args(SOption *option, SysInt argc, const SysChar* argv[]) {
 
 static void print_help() {
   sys_printf("usage:\n");
-  sys_printf("    FRPServer --remote-port <remote-port> --remote-host <remote-host> --local-port <local-port>\n");
+  sys_printf("    FRPServer --rport <remote-port> --rhost <remote-host> --lport <local-port>\n");
 }
 
 void test_frp_init(SysInt argc, const SysChar *argv[]) {

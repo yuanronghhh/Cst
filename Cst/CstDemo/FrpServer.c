@@ -86,7 +86,7 @@ static SysBool frp_build_tunnel(FRPServer *self) {
 
   r = sys_socket_connect(self->remote_socket, (struct sockaddr*)&self->remote_addr, sizeof(self->remote_addr));
   if (r < 0) {
-    sys_warning_N("connect: %d", r);
+    sys_warning_N("connect remote failed: %s:%d", self->remote_host->h_name, self->remote_port);
 
     frp_close_connection(self);
     return false;
@@ -114,29 +114,25 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
 
     SYS_FD_SET(self->remote_socket, &io);
     SYS_FD_SET(self->client_socket, &io);
+    SYS_FD_SET(self->server_socket, &io);
 
     int nfds = frp_get_fd(self);
     r = select(nfds, &io, NULL, NULL, &tv);
 
     if (r < 0) {
-
-      sys_error_N("select: %d", r);
-      break;
+      goto fail;
     }
 
     if (SYS_FD_ISSET(self->client_socket, &io)) {
       r = sys_socket_recv(self->client_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
-        sys_warning_N("recv(client_socket): %d", r);
 
-        frp_close_connection(self);
-        return false;
+        sys_warning_N("recv(client_socket): %d", r);
+        goto fail;
       }
 
       if (r == 0) {
-
-        frp_close_connection(self);
-        return false;
+        break;
       }
 
       sys_socket_send(self->remote_socket, buffer, r, 0);
@@ -145,39 +141,42 @@ static SysBool frp_handle_tunnel(FRPServer* self) {
       r = sys_socket_recv(self->remote_socket, buffer, sizeof(buffer), 0);
       if (r < 0) {
         sys_warning_N("recv(remote_socket): %d", r);
-
-        frp_close_connection(self);
-        return false;
+        goto fail;
       }
 
       if (r == 0) {
-        frp_close_connection(self);
-
-        return true;
+        break;
       }
 
       sys_socket_send(self->client_socket, buffer, r, 0);
+
+    } else if (SYS_FD_ISSET(self->server_socket, &io)) {
+
+      sys_socket_send(self->client_socket, buffer, r, 0);
+
     } else {
 
-      sys_error_N("Not found fd type: %d", nfds);
+      // sys_error_N("Not found fd type: %d", nfds);
+      goto fail;
     }
   }
 
+  frp_close_connection(self);
   return true;
-}
 
-static SysBool frp_handle_clients(FRPServer *self) {
-  if (!frp_build_tunnel(self)) {
-    return false;
-  }
-
-  return frp_handle_tunnel(self);
+fail:
+  frp_close_connection(self);
+  return false;
 }
 
 void frp_server_run(FRPServer *s) {
   while(frp_accept_clients(s)) {
 
-    frp_handle_clients(s);
+    if (!frp_build_tunnel(s)) {
+      continue;
+    }
+
+    frp_handle_tunnel(s);
   }
 
   sys_clear_pointer(&s->server_socket, sys_socket_free);

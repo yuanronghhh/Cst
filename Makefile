@@ -46,14 +46,14 @@ clean:
 	@cd ./build/ && make clean
 
 run-linux:
-	@export LSAN_OPTIONS=verbosity=1:log_threads=1
+	@#export LSAN_OPTIONS=verbosity=1:log_threads=1
 	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}
 
 run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${RUN_ARGS}
 
 debug-linux:
-	@gvim --remote-send ':Termdebug ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --remote-send ':Termdebug --args ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}<cr>'
 
 debug-win32:
 	@gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}

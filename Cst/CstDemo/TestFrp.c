@@ -1,4 +1,4 @@
-#include <CstDemo/TestFrp.h>
+#include <CstDemo/TestFRP.h>
 
 typedef struct _SOption SOption;
 
@@ -7,6 +7,24 @@ struct _SOption {
   SysChar *remote_host;
   int remote_port;
 };
+
+static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
+  if (!sys_object_is_a(o, FRP_TYPE_SERVER)) {
+    return;
+  }
+
+  sys_debug_N("%p\t%d", o, ref_count);
+  sys_assert(ref_count > 0);
+}
+
+static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
+  if (!sys_object_is_a(o, FRP_TYPE_SERVER)) {
+    return;
+  }
+
+  sys_debug_N("%p\t%d", o, ref_count);
+  sys_assert(ref_count > 0);
+}
 
 static SysBool parse_args(SOption *option, SysInt argc, const SysChar* argv[]) {
   SysSArg ao;
@@ -36,6 +54,9 @@ static void print_help() {
 
 void test_frp_init(SysInt argc, const SysChar *argv[]) {
   SOption options = { 0 };
+
+  sys_object_set_ref_hook(object_ref_debug);
+  sys_object_set_unref_hook(object_unref_debug);
 
   if (!parse_args(&options, argc, argv)) {
     print_help();

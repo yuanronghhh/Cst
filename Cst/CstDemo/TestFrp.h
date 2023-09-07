@@ -2,7 +2,7 @@
 #define __TEST_FRP__
 
 #include <CstDemo/DemoCommon.h>
-#include <CstDemo/FrpServer.h>
+#include <CstDemo/FRPServer.h>
 
 SYS_BEGIN_DECLS
 

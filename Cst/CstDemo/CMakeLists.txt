@@ -31,10 +31,12 @@ set(TEST_SRC
   ./Demo.h
   ./Demo.c
 
-  ./TestFrp.c
-  ./TestFrp.h
-  ./FrpServer.c
-  ./FrpServer.h
+  ./TestFRP.c
+  ./TestFRP.h
+  ./FRPServer.c
+  ./FRPServer.h
+  ./SocketConnection.c
+  ./SocketConnection.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")

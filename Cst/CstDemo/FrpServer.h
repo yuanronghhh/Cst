@@ -2,6 +2,8 @@
 #define __FRP_SERVER__
 
 #include <System/SysCore.h>
+#include <glib.h>
+#include <CstDemo/SocketConnection.h>
 
 SYS_BEGIN_DECLS
 
@@ -16,17 +18,13 @@ typedef struct _FRPServerClass FRPServerClass;
 struct _FRPServer {
   SysObject parent;
 
-  SysSocket* server_socket;
-  SysSocket* client_socket;
-  SysSocket* remote_socket;
+  SocketConnection* server_conn;
+  SysInt maxfd;
+  fd_set fds;
 
-  struct sockaddr_in server_addr;
-  struct sockaddr_in client_addr;
-  struct sockaddr_in remote_addr;
-  struct hostent* remote_host;
-
-  SysUShort local_port;
-  SysUShort remote_port;
+  SysChar *remote_host;
+  int remote_port;
+  int local_port;
 };
 
 struct _FRPServerClass {

@@ -18,10 +18,12 @@ typedef struct _FRPServerClass FRPServerClass;
 struct _FRPServer {
   SysObject parent;
 
-  SocketConnection* server_conn;
+  SysList *connections;
+
   SysInt maxfd;
   fd_set fds;
 
+  /* options */
   SysChar *remote_host;
   int remote_port;
   int local_port;

@@ -1,4 +1,4 @@
-#include <CstDemo/TestFrp.h>
+#include <CstDemo/TestFRP.h>
 #include <CstDemo/Demo.h>
 
 void setUp(void) {

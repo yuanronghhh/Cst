@@ -19,21 +19,25 @@ struct _SocketConnection {
   /* < private > */
   SysSocket *socket;
   struct sockaddr_in addr;
+  void (*func) (SocketConnection *self, SysSSize status);
 };
 
 struct _SocketConnectionClass {
   SysObjectClass parent;
+
 };
 
 #define SCONN_SOCKET(conn) socket_connection_get_socket(SOCKET_CONNECTION(conn))
+typedef void (*SocketConnectionFunc)(SocketConnection *self, SysFunc func);
 
 SYS_API SysType socket_connection_get_type(void);
 SYS_API SocketConnection *socket_connection_new(void);
 SYS_API SysBool socket_connection_listen(SocketConnection *self);
-SYS_API SocketConnection* socket_connection_connect(const SysChar* host, const int port, SysSocket* socket);
-SYS_API SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket* socket);
+SYS_API SocketConnection *socket_connection_connect(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func);
+SYS_API SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func);
 SYS_API SocketConnection* socket_connection_accept(SocketConnection* self);
 SYS_API SysSocket *socket_connection_get_socket(SocketConnection *self);
+SYS_API void socket_connection_handle(SocketConnection *self, SysSSize status);
 
 SYS_END_DECLS
 

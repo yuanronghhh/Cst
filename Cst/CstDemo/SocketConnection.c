@@ -30,10 +30,10 @@ SysBool socket_connection_listen(SocketConnection *self) {
   return true;
 }
 
-SocketConnection *socket_connection_connect(const SysChar* host, const int port, SysSocket *socket) {
+SocketConnection *socket_connection_connect(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
   sys_return_val_if_fail(socket != NULL, NULL);
 
-  SocketConnection *conn = socket_connection_new_I(host, port, socket);
+  SocketConnection *conn = socket_connection_new_I(host, port, socket, func);
   SysSSize r = sys_socket_connect(conn->socket, (struct sockaddr*)&conn->addr, sizeof(struct sockaddr_in));
   if (r < 0) {
     sys_object_unref(conn);
@@ -57,7 +57,26 @@ static unsigned long get_inet_addr(const SysChar* host) {
   return inet_addr(host);
 }
 
-static void socket_connection_construct(SocketConnection* self, const SysChar* host, const int port, SysSocket *socket) {
+void socket_connection_set_handle(SocketConnection *self, SocketConnectionFunc func) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(func != NULL);
+
+  self->func = func;
+}
+
+void socket_connection_handle(SocketConnection *self, SysInt status) {
+  sys_return_if_fail(self != NULL);
+
+  if(self->func) {
+    self->func(self, status);
+  }
+
+  if (status == 0) {
+    sys_object_unref(self);
+  }
+}
+
+static void socket_connection_construct(SocketConnection* self, const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(socket != NULL);
 
@@ -65,6 +84,7 @@ static void socket_connection_construct(SocketConnection* self, const SysChar* h
   self->addr.sin_family = AF_INET;
   self->addr.sin_addr.s_addr = htonl(get_inet_addr(host));
   self->socket = socket;
+  self->func = func;
 }
 
 SocketConnection* socket_connection_accept(SocketConnection* self) {
@@ -87,10 +107,13 @@ SocketConnection* socket_connection_accept(SocketConnection* self) {
   return conn;
 }
 
-SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket *socket) {
+SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
+  sys_return_val_if_fail(host != NULL, NULL);
+  sys_return_val_if_fail(socket != NULL, NULL);
+
   SocketConnection* o = socket_connection_new();
 
-  socket_connection_construct(o, host, port, socket);
+  socket_connection_construct(o, host, port, socket, func);
 
   return o;
 }

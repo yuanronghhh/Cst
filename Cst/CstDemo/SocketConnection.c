@@ -64,7 +64,7 @@ void socket_connection_set_handle(SocketConnection *self, SocketConnectionFunc f
   self->func = func;
 }
 
-void socket_connection_handle(SocketConnection *self, SysInt status) {
+void socket_connection_handle(SocketConnection *self, SysSSize status) {
   sys_return_if_fail(self != NULL);
 
   if(self->func) {
@@ -87,7 +87,7 @@ static void socket_connection_construct(SocketConnection* self, const SysChar* h
   self->func = func;
 }
 
-SocketConnection* socket_connection_accept(SocketConnection* self) {
+SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnectionFunc func) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   SysSocket* csocket;
@@ -103,7 +103,7 @@ SocketConnection* socket_connection_accept(SocketConnection* self) {
     }
   }
 
-  conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), csocket);
+  conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), csocket, func);
   return conn;
 }
 

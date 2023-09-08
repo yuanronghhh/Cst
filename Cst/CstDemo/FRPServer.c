@@ -66,10 +66,6 @@ static SysInt frp_tunnel_connection(FRPServer * self, SocketConnection *cconn, S
   tv.tv_usec = 0;
   fd_set *io = &self->fds;
 
-  SYS_FD_ZERO(io);
-
-  frp_prepend_connection(self, self->server_conn);
-
   for (;;) {
     SYS_FD_ZERO(io);
 
@@ -125,7 +121,7 @@ void frp_server_run(FRPServer *self) {
 static void frp_server_dispose(SysObject* o) {
   FRPServer* self = FRP_SERVER(o);
 
-  sys_clear_pointer(&self->server_conn, _sys_object_unref);
+  sys_list_free_full(self->connections, _sys_object_unref);
 
   SYS_OBJECT_CLASS(frp_server_parent_class)->dispose(o);
 }

@@ -57,23 +57,15 @@ static unsigned long get_inet_addr(const SysChar* host) {
   return inet_addr(host);
 }
 
-void socket_connection_set_handle(SocketConnection *self, SocketConnectionFunc func) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(func != NULL);
-
-  self->func = func;
-}
-
-void socket_connection_handle(SocketConnection *self, SysSSize status) {
-  sys_return_if_fail(self != NULL);
+SysSize socket_connection_handle(SocketConnection *self, SysPointer user_data) {
+  sys_return_val_if_fail(self != NULL, -1);
+  SysSSize r;
 
   if(self->func) {
-    self->func(self, status);
+    r = self->func(self, user_data);
   }
 
-  if (status == 0) {
-    sys_object_unref(self);
-  }
+  return r;
 }
 
 static void socket_connection_construct(SocketConnection* self, const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {

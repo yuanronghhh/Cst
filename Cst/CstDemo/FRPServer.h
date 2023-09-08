@@ -18,7 +18,7 @@ typedef struct _FRPServerClass FRPServerClass;
 struct _FRPServer {
   SysObject parent;
 
-  SysList *connections;
+  SocketConnection *server_conn;
 
   SysInt maxfd;
   fd_set fds;

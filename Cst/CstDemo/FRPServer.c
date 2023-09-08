@@ -3,7 +3,7 @@
 
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
-static void frp_prepend_connection(FRPServer *self, SocketConnection *conn) {
+static void frp_set_connection(FRPServer *self, SocketConnection *conn) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(conn != NULL);
 
@@ -11,18 +11,13 @@ static void frp_prepend_connection(FRPServer *self, SocketConnection *conn) {
   self->maxfd = max(self->maxfd, fd);
 
   SYS_FD_SET(SCONN_SOCKET(conn), &self->fds);
-  self->connections = sys_list_prepend(self->connections, conn);
 }
 
-static void frp_remove_connection(FRPServer* self, SysList *link) {
+static void frp_clear_connection(FRPServer* self, SocketConnection *conn) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(link != NULL);
-
-  SocketConnection *conn = link->data;
   sys_return_if_fail(conn != NULL);
 
   SYS_FD_CLR(SCONN_SOCKET(conn), &self->fds);
-  sys_list_delete_link(self->connections, link);
 }
 
 static SysBool frp_is_connection(FRPServer* self, SocketConnection* conn) {
@@ -31,7 +26,7 @@ static SysBool frp_is_connection(FRPServer* self, SocketConnection* conn) {
   return rs;
 }
 
-static SysSSize frp_pipe_connection(FRPServer* self, SocketConnection* cconn, SocketConnection *rconn) {
+static SysSSize socket_connection_pipe(SocketConnection* cconn, SocketConnection *rconn) {
   SysChar buffer[8192] = { 0 };
 
   SysSSize r = sys_socket_recv(SCONN_SOCKET(cconn), buffer, sizeof(buffer), 0);
@@ -42,25 +37,12 @@ static SysSSize frp_pipe_connection(FRPServer* self, SocketConnection* cconn, So
   return r;
 }
 
-static SysBool frp_check_return(SysSSize r, SocketConnection *conn) {
-  if(r < 0) {
-    return false;
-  }
-
-  if (r == 0) {
-    sys_object_unref(conn);
-    return false;
-  }
-
-  return true;
-}
-
-static SysInt frp_tunnel_connection(FRPServer * self, SocketConnection *cconn, SocketConnection *rconn) {
+static SysSSize frp_tunnel_connection(FRPServer * self, SocketConnection *cconn, SocketConnection *rconn) {
   sys_return_val_if_fail(self != NULL, false);
 
-  SysInt r;
+  SysSSize r;
+  SysSSize status = 0;
   struct timeval tv;
-  SysList *nconn;
 
   tv.tv_sec = 1;
   tv.tv_usec = 0;
@@ -69,30 +51,54 @@ static SysInt frp_tunnel_connection(FRPServer * self, SocketConnection *cconn, S
   for (;;) {
     SYS_FD_ZERO(io);
 
-    frp_prepend_connection(self, rconn);
-    frp_prepend_connection(self, cconn);
+    frp_set_connection(self, rconn);
+    frp_set_connection(self, cconn);
 
     r = select(self->maxfd + 1, &self->fds, NULL, NULL, &tv);
     if (r < 0) {
       break;
     }
 
-    for(nconn = self->connections; nconn; nconn = nconn->next) {
-      if (frp_is_connection(self, nconn->data)) {
-        socket_connection_handle(nconn->data, r);
-      }
+    if (frp_is_connection(self, self->server_conn)) {
+      status = socket_connection_handle(self->server_conn, self);
+    }
+
+    if (frp_is_connection(self, cconn)) {
+      status = socket_connection_handle(cconn, rconn);
+    }
+
+    if (frp_is_connection(self, rconn)) {
+      status = socket_connection_handle(rconn, cconn);
+    }
+
+    if (status == 0) {
+      break;
     }
   }
 
-  return r;
+  return status;
 }
 
-void frp_handle_client(SocketConnection *self, SysSSize status) {
+SysSSize frp_handle_client(SocketConnection *self, SysPointer user_data) {
   sys_debug_N("%s", "frp_handle_client");
+  SocketConnection *rconn = user_data;
+
+  return socket_connection_pipe(self, rconn);
 }
 
-void frp_handle_remote(SocketConnection *self, SysSSize status) {
+SysSSize frp_handle_remote(SocketConnection *self, SysPointer user_data) {
   sys_debug_N("%s", "frp_handle_remote");
+  SocketConnection *cconn = user_data;
+
+  return socket_connection_pipe(self, cconn);
+}
+
+SysSSize frp_handle_server(SocketConnection *self, SysPointer user_data) {
+  sys_debug_N("%s", "frp_handle_server");
+  FRPServer* server = user_data;
+
+  frp_clear_connection(server, self);
+  return 0;
 }
 
 void frp_server_run(FRPServer *self) {
@@ -100,6 +106,7 @@ void frp_server_run(FRPServer *self) {
 
   SocketConnection* rconn;
   SocketConnection* cconn;
+  SysSSize r;
 
   while (1) {
     SysSocket* socket = sys_socket(AF_INET, SOCK_STREAM, 0);
@@ -113,7 +120,12 @@ void frp_server_run(FRPServer *self) {
       break;
     }
 
-    frp_tunnel_connection(self, cconn, rconn);
+    r = frp_tunnel_connection(self, cconn, rconn);
+
+    if(r == 0) {
+      sys_object_unref(cconn);
+      sys_object_unref(rconn);
+    }
   }
 }
 
@@ -121,7 +133,7 @@ void frp_server_run(FRPServer *self) {
 static void frp_server_dispose(SysObject* o) {
   FRPServer* self = FRP_SERVER(o);
 
-  sys_list_free_full(self->connections, _sys_object_unref);
+  sys_clear_pointer(&self->server_conn, (SysDestroyFunc)_sys_object_unref);
 
   SYS_OBJECT_CLASS(frp_server_parent_class)->dispose(o);
 }
@@ -136,15 +148,15 @@ static void frp_server_construct(FRPServer* self, const int local_port, const Sy
   self->local_port = local_port;
 
   SysSocket* s = sys_socket(AF_INET, SOCK_STREAM, 0);
-  SocketConnection *conn = socket_connection_new_I("localhost", local_port, s);
+  SocketConnection *conn = socket_connection_new_I("localhost", local_port, s, frp_handle_server);
   if(conn == NULL || !socket_connection_listen(conn)) {
     sys_abort_N("listen connect failed: %s:%d", "localhost", local_port);
     return;
   }
 
   self->server_conn = conn;
-
   SYS_FD_ZERO(&self->fds);
+  frp_set_connection(self, conn);
 }
 
 FRPServer *frp_server_new(void) {

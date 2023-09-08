@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 
 typedef struct _SocketConnection SocketConnection;
 typedef struct _SocketConnectionClass SocketConnectionClass;
-typedef void (*SocketConnectionFunc)(SocketConnection *self, SysSSize status);
+typedef SysSSize (*SocketConnectionFunc)(SocketConnection *self, SysPointer user_data);
 
 struct _SocketConnection {
   SysObject parent;
@@ -36,7 +36,7 @@ SYS_API SocketConnection *socket_connection_connect(const SysChar* host, const i
 SYS_API SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func);
 SYS_API SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnectionFunc func);
 SYS_API SysSocket *socket_connection_get_socket(SocketConnection *self);
-SYS_API void socket_connection_handle(SocketConnection *self, SysSSize status);
+SYS_API SysSize socket_connection_handle(SocketConnection *self, SysPointer user_data);
 
 SYS_END_DECLS
 

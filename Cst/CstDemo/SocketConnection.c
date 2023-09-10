@@ -21,7 +21,7 @@ SysBool socket_connection_listen(SocketConnection *self) {
     return false;
   }
 
-  r = sys_socket_listen(self->socket, 1);
+  r = sys_socket_listen(self->socket, 1 << 31);
   if (r < 0) {
     sys_error_N("listen failed: %s:%d", inet_ntoa(self->addr.sin_addr), ntohs(self->addr.sin_port));
     return false;
@@ -36,9 +36,8 @@ SocketConnection *socket_connection_connect(const SysChar* host, const int port,
   SocketConnection *conn = socket_connection_new_I(host, port, socket, func);
   SysSSize r = sys_socket_connect(conn->socket, (struct sockaddr*)&conn->addr, sizeof(struct sockaddr_in));
   if (r < 0) {
+    sys_warning_N("connect remote failed: %s:%d,%s", host, port, sys_socket_strerror(sys_socket_errno()));
     sys_object_unref(conn);
-
-    sys_warning_N("connect remote failed: %s:%d", host, port);
     return NULL;
   }
 
@@ -89,10 +88,7 @@ SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnect
 
   csocket = sys_socket_accept(self->socket, (struct sockaddr*)&client_addr, &len);
   if (csocket == NULL) {
-    if (errno != EINTR) {
-
-      sys_warning_N("accept: %d", csocket);
-    }
+    return NULL;
   }
 
   conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), csocket, func);

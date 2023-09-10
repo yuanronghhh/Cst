@@ -825,8 +825,10 @@ static void test_socket_basic(void) {
   GSocket* ns;
   GError* error = NULL;
   GCancellable *cancel;
-  int port = 4050;
+  int port = 1111;
   const gchar* ip = "localhost";
+  gchar buff[4096] = { 0 };
+  gssize r;
 
   s = g_socket_new(G_SOCKET_FAMILY_IPV4, G_SOCKET_TYPE_STREAM, G_SOCKET_PROTOCOL_TCP, &error);
   if (s == NULL) {
@@ -851,6 +853,22 @@ static void test_socket_basic(void) {
     cancel = g_cancellable_get_current();
 
     ns = g_socket_accept(s, cancel, &error);
+    if (ns == NULL) {
+      g_error("%s", error->message);
+      break;
+    }
+
+    r = g_socket_receive(ns, buff, sizeof(buff), cancel, &error);
+    if (r < 0) {
+      g_error("%s", error->message);
+      break;
+    }
+    
+    r = g_socket_send(ns, buff, sizeof(buff), cancel, &error);
+    if (r < 0) {
+      g_error("%s", error->message);
+      break;
+    }
   }
 }
 
@@ -882,7 +900,7 @@ void test_subprocess_basic(void) {
 static void test_basic(void) {
 }
 
-void test_glib_init(int argc, char *argv[]) {
+void test_glib_init(int argc, const char *argv[]) {
   env_init();
 
   UNITY_BEGIN();
@@ -900,9 +918,9 @@ void test_glib_init(int argc, char *argv[]) {
     // RUN_TEST(test_cpu_thread);
     // RUN_TEST(test_thread_lock);
     // RUN_TEST(test_thread_cond);
-    // RUN_TEST(test_socket_basic);
+    RUN_TEST(test_socket_basic);
     // RUN_TEST(test_subprocess_basic);
-    RUN_TEST(test_basic);
+    // RUN_TEST(test_basic);
   }
   UNITY_END();
 }

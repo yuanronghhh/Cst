@@ -19,10 +19,12 @@ struct _FRPServer {
   SysObject parent;
 
   SocketConnection *server_conn;
+  SocketConnection *rconn;
+  SocketConnection *cconn;
 
   SysInt maxfd;
-  fd_set fds;
-
+  fd_set rfds;
+  
   /* options */
   SysChar *remote_host;
   int remote_port;

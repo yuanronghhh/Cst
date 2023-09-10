@@ -9,7 +9,7 @@ SYS_BEGIN_DECLS
 #define SOCKET_CONNECTION(o) ((SocketConnection* )sys_object_cast_check(o, SOCKET_TYPE_CONNECTION))
 #define SOCKET_CONNECTION_CLASS(o) ((SocketConnectionClass *)sys_class_cast_check(o, SOCKET_TYPE_CONNECTION))
 #define SOCKET_CONNECTION_GET_CLASS(o) sys_instance_get_class(o, SocketConnectionClass)
-#define SCONN_SOCKET(conn) socket_connection_get_socket(SOCKET_CONNECTION(conn))
+#define SCONN_SOCKET_ID(conn) sys_socket_get_fd(socket_connection_get_socket(SOCKET_CONNECTION(conn)))
 
 typedef struct _SocketConnection SocketConnection;
 typedef struct _SocketConnectionClass SocketConnectionClass;

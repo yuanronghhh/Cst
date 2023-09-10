@@ -7,7 +7,7 @@
 
 SYS_BEGIN_DECLS
 
-void test_glib_init(int argc, char *argv[]);
+void test_glib_init(int argc, const char *argv[]);
 
 SYS_END_DECLS
 

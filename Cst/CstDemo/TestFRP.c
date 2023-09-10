@@ -9,7 +9,7 @@ struct _SOption {
 };
 
 static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, FRP_TYPE_SERVER)) {
+  if (!sys_object_is_a(o, SOCKET_TYPE_CONNECTION)) {
     return;
   }
 
@@ -18,7 +18,7 @@ static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count
 }
 
 static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, FRP_TYPE_SERVER)) {
+  if (!sys_object_is_a(o, SOCKET_TYPE_CONNECTION)) {
     return;
   }
 
@@ -62,9 +62,9 @@ void test_frp_init(SysInt argc, const SysChar *argv[]) {
     print_help();
     return;
   }
-
+    
   FRPServer* s = frp_server_new_I(options.local_port, options.remote_host, options.remote_port);
-
+  
   frp_server_run(s);
   sys_object_unref(s);
 }

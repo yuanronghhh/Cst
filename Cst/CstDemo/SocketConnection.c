@@ -21,7 +21,7 @@ SysBool socket_connection_listen(SocketConnection *self) {
     return false;
   }
 
-  r = sys_socket_listen(self->socket, 1 << 31);
+  r = sys_socket_listen(self->socket, 100);
   if (r < 0) {
     sys_error_N("listen failed: %s:%d", inet_ntoa(self->addr.sin_addr), ntohs(self->addr.sin_port));
     return false;
@@ -30,18 +30,17 @@ SysBool socket_connection_listen(SocketConnection *self) {
   return true;
 }
 
-SocketConnection *socket_connection_connect(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
-  sys_return_val_if_fail(socket != NULL, NULL);
+SysSSize socket_connection_connect(SocketConnection *self, const SysChar* host, const int port) {
+  sys_return_val_if_fail(self != NULL, -1);
 
-  SocketConnection *conn = socket_connection_new_I(host, port, socket, func);
-  SysSSize r = sys_socket_connect(conn->socket, (struct sockaddr*)&conn->addr, sizeof(struct sockaddr_in));
+  SysSSize r = sys_socket_connect(self->socket, (struct sockaddr*)&self->addr, sizeof(struct sockaddr_in));
   if (r < 0) {
-    sys_warning_N("connect remote failed: %s:%d,%s", host, port, sys_socket_strerror(sys_socket_errno()));
-    sys_object_unref(conn);
-    return NULL;
+    sys_warning_N("connect remote failed: %s:%d,%s", host, port);
+
+    return r;
   }
 
-  return conn;
+  return r;
 }
 
 static unsigned long get_inet_addr(const SysChar* host) {
@@ -58,13 +57,28 @@ static unsigned long get_inet_addr(const SysChar* host) {
 
 SysSize socket_connection_handle(SocketConnection *self, SysPointer user_data) {
   sys_return_val_if_fail(self != NULL, -1);
-  SysSSize r;
+  SysSSize r = 0;
 
   if(self->func) {
     r = self->func(self, user_data);
   }
 
   return r;
+}
+
+SysSSize socket_connection_pipe(SocketConnection* cconn, SocketConnection *rconn) {
+  SysChar buffer[8192] = { 0 };
+  SysSSize r = 0;
+  SysSSize c = 0;
+
+  r = sys_socket_recv(cconn->socket, buffer, sizeof(buffer) - 1, 0);
+  if (r < 0) {
+    return r;
+  }
+
+  c = sys_socket_send(rconn->socket, buffer, r, 0);
+
+  return c;
 }
 
 static void socket_connection_construct(SocketConnection* self, const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
@@ -81,17 +95,18 @@ static void socket_connection_construct(SocketConnection* self, const SysChar* h
 SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnectionFunc func) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  SysSocket* csocket;
+  SysSocket* s;
   SocketConnection* conn;
   socklen_t len = sizeof(struct sockaddr_in);
   struct sockaddr_in client_addr;
 
-  csocket = sys_socket_accept(self->socket, (struct sockaddr*)&client_addr, &len);
-  if (csocket == NULL) {
+  s = sys_socket_accept(self->socket, (struct sockaddr*)&client_addr, &len);
+  if (s == NULL) {
     return NULL;
   }
+  sys_socket_set_noblock(s, true);
 
-  conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), csocket, func);
+  conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), s, func);
   return conn;
 }
 

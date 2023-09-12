@@ -6,7 +6,7 @@ OS_NCASE:=$(shell uname -s | /usr/bin/tr '[A-Z]' '[a-z]')
 BUILD_TYPE:=Debug
 PROJ_NAME_FILE:=
 SURFIX=
-RUN_ARGS=
+ARGS=
 OS_BUILD_TYPE=${BUILD_TYPE}
 VS_ENV=
 
@@ -47,13 +47,13 @@ clean:
 
 run-linux:
 	@#export LSAN_OPTIONS=verbosity=1:log_threads=1
-	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}
+	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
 
 run-win32:
-	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${RUN_ARGS}
+	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --remote-send ':Termdebug --args ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}<cr>'
+	@gvim --remote-send ':Termdebug --args ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}<cr>'
 
 debug-win32:
 	@gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}
@@ -81,7 +81,7 @@ check-linux:
 		--show-reachable=no \
 		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
 		--suppressions=cst.supp  \
-		$(BUILD_DIR)/Cst/${PROJ_NAME}/${PROJ_NAME} ${RUN_ARGS}
+		$(BUILD_DIR)/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
 
 # -------------------- core start --------------------
 cst-test-build:

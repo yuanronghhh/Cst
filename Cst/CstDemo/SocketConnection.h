@@ -31,12 +31,14 @@ struct _SocketConnectionClass {
 
 SYS_API SysType socket_connection_get_type(void);
 SYS_API SocketConnection *socket_connection_new(void);
-SYS_API SysBool socket_connection_listen(SocketConnection *self);
-SYS_API SocketConnection *socket_connection_connect(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func);
 SYS_API SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func);
+
+SYS_API SysBool socket_connection_listen(SocketConnection *self);
+SYS_API SysSSize socket_connection_connect(SocketConnection *self, const SysChar* host, const int port);
 SYS_API SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnectionFunc func);
 SYS_API SysSocket *socket_connection_get_socket(SocketConnection *self);
 SYS_API SysSize socket_connection_handle(SocketConnection *self, SysPointer user_data);
+SYS_API SysSSize socket_connection_pipe(SocketConnection* cconn, SocketConnection *rconn);
 
 SYS_END_DECLS
 

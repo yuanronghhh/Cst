@@ -1,8 +1,6 @@
 #ifndef __FRP_SERVER__
 #define __FRP_SERVER__
 
-#include <System/SysCore.h>
-#include <glib.h>
 #include <CstDemo/SocketConnection.h>
 
 SYS_BEGIN_DECLS
@@ -18,7 +16,9 @@ typedef struct _FRPServerClass FRPServerClass;
 struct _FRPServer {
   SysObject parent;
 
-  SocketConnection *server_conn;
+  /* < private > */
+  SocketConnection* server_conn;
+  SSL_CTX *ssl_ctx;
 
   /* pair */
   SocketConnection *rconn;
@@ -40,6 +40,7 @@ struct _FRPServerClass {
 SYS_API SysType frp_server_get_type(void);
 SYS_API FRPServer *frp_server_new(void);
 SYS_API FRPServer *frp_server_new_I(const int local_port, const SysChar* remote_host, const int remote_port);
+SYS_API SysBool frp_server_setup_ssl(FRPServer* self, SSL_CTX* ssl_ctx);
 SYS_API void frp_server_run(FRPServer *s);
 
 SYS_END_DECLS

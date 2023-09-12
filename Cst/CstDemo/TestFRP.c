@@ -64,6 +64,8 @@ void test_frp_init(SysInt argc, const SysChar *argv[]) {
   }
     
   FRPServer* s = frp_server_new_I(options.local_port, options.remote_host, options.remote_port);
+
+  frp_server_setup_ssl(s, ssl_ctx);
   
   frp_server_run(s);
   sys_object_unref(s);

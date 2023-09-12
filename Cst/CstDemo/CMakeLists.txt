@@ -22,6 +22,7 @@ include_dep_dirs(
   ${LLVM_INCLUDE_DIRS}
   ${MONO_INCLUDE_DIRS}
   ${VULKAN_INCLUDE_DIRS}
+  ${OPENSSL_INCLUDE_DIRS}
 )
 
 set(TEST_SRC
@@ -51,6 +52,7 @@ add_dependencies(CstDemo
 
 target_link_libraries(CstDemo
   System
+  ${OPENSSL_LIBRARIES}
   ${BDWGC_LIBRARIES}
   ${PTHREAD_LIBRARIES}
   ${NANOMSG_LIBRARIES}
@@ -87,6 +89,7 @@ target_link_libraries(CstDemo
 )
 
 target_copy_files(CstDemo
+  "${OPENSSL_FILES}"
   "${VLD_FILES}"
   "${CAIRO_FILES}"
   "${PANGO_FILES}"

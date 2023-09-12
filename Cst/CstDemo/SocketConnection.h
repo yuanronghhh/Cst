@@ -1,7 +1,7 @@
 #ifndef __SOCKET_CONNECTION__
 #define __SOCKET_CONNECTION__
 
-#include <System/SysCore.h>
+#include <CstDemo/DemoCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -19,6 +19,7 @@ struct _SocketConnection {
   SysObject parent;
 
   /* < private > */
+  SSL *ssl;
   SysSocket *socket;
   struct sockaddr_in addr;
   SocketConnectionFunc func;

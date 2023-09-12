@@ -67,11 +67,11 @@ SysSize socket_connection_handle(SocketConnection *self, SysPointer user_data) {
 }
 
 SysSSize socket_connection_pipe(SocketConnection* cconn, SocketConnection *rconn) {
-  SysChar buffer[8192] = { 0 };
+  SysChar buffer[4096] = { 0 };
   SysSSize r = 0;
   SysSSize c = 0;
 
-  r = sys_socket_recv(cconn->socket, buffer, sizeof(buffer) - 1, 0);
+  r = sys_socket_recv(cconn->socket, buffer, sizeof(buffer), 0);
   if (r < 0) {
     return r;
   }
@@ -81,7 +81,9 @@ SysSSize socket_connection_pipe(SocketConnection* cconn, SocketConnection *rconn
   return c;
 }
 
-static void socket_connection_construct(SocketConnection* self, const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
+static void socket_connection_construct(SocketConnection* self, const SysChar* host, const int port, 
+  SysSocket *socket, SocketConnectionFunc func) {
+
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(socket != NULL);
 
@@ -106,11 +108,13 @@ SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnect
   }
   sys_socket_set_noblock(s, true);
 
-  conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), s, func);
+  conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), 
+    s, func);
   return conn;
 }
 
-SocketConnection* socket_connection_new_I(const SysChar* host, const int port, SysSocket *socket, SocketConnectionFunc func) {
+SocketConnection* socket_connection_new_I(const SysChar* host, const int port, 
+  SysSocket *socket, SocketConnectionFunc func) {
   sys_return_val_if_fail(host != NULL, NULL);
   sys_return_val_if_fail(socket != NULL, NULL);
 

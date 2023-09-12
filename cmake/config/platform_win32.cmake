@@ -19,6 +19,7 @@ find_package(glad REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(stb REQUIRED)
 find_package(pthread REQUIRED)
+find_package(openssl REQUIRED)
 
 if(DEBUG)
   find_package(vld REQUIRED)

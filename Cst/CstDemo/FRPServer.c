@@ -154,7 +154,15 @@ static void frp_server_construct(FRPServer* self, const int local_port, const Sy
   self->remote_port = remote_port;
   self->local_port = local_port;
 
-  SysSocket* s = sys_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);
+  SSL_CTX* ssl_ctx = SSL_CTX_new(SSLv23_server_method());
+  SSL* ssl = SSL_new(ssl_ctx);
+  SysSocket* s;
+  
+#if USE_OPENSSL
+  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, ssl);
+#else
+  s = sys_socket_new(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, );
+#endif
   SocketConnection *conn = socket_connection_new_I("localhost", local_port, s, frp_handle_server);
   if(conn == NULL || !socket_connection_listen(conn)) {
     sys_abort_N("listen connect failed: %s:%d", "localhost", local_port);
@@ -174,6 +182,15 @@ FRPServer *frp_server_new_I(const int local_port, const SysChar* remote_host, co
   frp_server_construct(o, local_port, remote_host, remote_port);
 
   return o;
+}
+
+SysBool frp_server_setup_ssl(FRPServer *self, SSL_CTX *ssl_ctx) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(ssl_ctx != NULL, false);
+
+  self->ssl_ctx = ssl_ctx;
+
+  return true;
 }
 
 static void frp_server_class_init(FRPServerClass* cls) {

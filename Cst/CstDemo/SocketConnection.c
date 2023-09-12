@@ -67,7 +67,7 @@ SysSize socket_connection_handle(SocketConnection *self, SysPointer user_data) {
 }
 
 SysSSize socket_connection_pipe(SocketConnection* cconn, SocketConnection *rconn) {
-  SysChar buffer[4096] = { 0 };
+  static SysChar buffer[8192];
   SysSSize r = 0;
   SysSSize c = 0;
 
@@ -106,7 +106,6 @@ SocketConnection* socket_connection_accept(SocketConnection* self, SocketConnect
   if (s == NULL) {
     return NULL;
   }
-  sys_socket_set_noblock(s, true);
 
   conn = socket_connection_new_I(inet_ntoa(client_addr.sin_addr), ntohs(self->addr.sin_port), 
     s, func);

@@ -1,5 +1,9 @@
 #include <CstDemo/FRPServer.h>
 
+#define PRIVATE_KEY_FILE ""
+#define PUBLIC_KEY_FILE ""
+#define CA_KEY_FILE ""
+
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
 static void frp_set_connection(FRPServer *self, SocketConnection *conn) {
@@ -42,8 +46,8 @@ static SysSSize frp_tunnel_connection(FRPServer * self, SocketConnection *cconn,
     frp_set_connection(self, rconn);
     frp_set_connection(self, cconn);
 
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
+    tv.tv_sec = 0;
+    tv.tv_usec = (long)1e5;
 
     r = select(self->maxfd + 1, &self->rfds, NULL, NULL, &tv);
     if (r == -1 && errno != EINTR) {
@@ -56,11 +60,11 @@ static SysSSize frp_tunnel_connection(FRPServer * self, SocketConnection *cconn,
     }
 
     if (FD_ISSET(SCONN_SOCKET_ID(cconn), &self->rfds)) {
-      sys_debug_N("%s,%d", "client", counter);
+      // sys_debug_N("%s,%d", "client", counter);
       r = socket_connection_handle(cconn, self);
 
     } else if (FD_ISSET(SCONN_SOCKET_ID(rconn), &self->rfds)) {
-      sys_debug_N("%s,%d", "remote", counter);
+      // sys_debug_N("%s,%d", "remote", counter);
       r = socket_connection_handle(rconn, self);
 
     } else {
@@ -102,22 +106,39 @@ SysSSize frp_handle_server(SocketConnection *self, SysPointer user_data) {
   return 1; // socket_connection_pipe(cconn, server->rconn);
 }
 
+static SocketConnection* frp_connect_remote(FRPServer *self) {
+  SysSocket* s;
+  SocketConnection *rconn;
+  SysSSize r;
+
+#if USE_OPENSSL
+  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->ssl_ctx);
+#else
+  s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);
+#endif
+
+  rconn = socket_connection_new_I(self->remote_host, self->remote_port, s, frp_handle_remote);
+  r = socket_connection_connect(rconn, self->remote_host, self->remote_port);
+  if (r < 0) {
+    sys_object_unref(rconn);
+    return NULL;
+  }
+
+  return rconn;
+}
+
 void frp_server_run(FRPServer *self) {
   sys_return_if_fail(self != NULL);
 
-  SysSocket* s;
   SysSSize r;
   SocketConnection *rconn;
   SocketConnection *cconn;
+
   SocketConnection *sconn = self->server_conn;
 
   do {
-    s = sys_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);
-    rconn = socket_connection_new_I(self->remote_host, self->remote_port, s, frp_handle_remote);
-
-    r = socket_connection_connect(rconn, self->remote_host, self->remote_port);
-    if (r < 0) {
-      sys_object_unref(rconn);
+    rconn = frp_connect_remote(self);
+    if (rconn == NULL) {
       break;
     }
     self->rconn = rconn;
@@ -131,7 +152,7 @@ void frp_server_run(FRPServer *self) {
     r = frp_tunnel_connection(self, rconn, cconn);
     if(r == 0) {
       sys_object_unref(cconn);
-      sys_object_unref(rconn);
+      // sys_object_unref(rconn);
     }
   } while (r >= 0);
 }
@@ -150,19 +171,38 @@ static void frp_server_construct(FRPServer* self, const int local_port, const Sy
   signal(SIGCHLD, SIG_IGN);
 #endif
 
+  SysSocket* s;
+
   self->remote_host = (SysChar*)remote_host;
   self->remote_port = remote_port;
   self->local_port = local_port;
 
+#if USE_OPENSSL
   SSL_CTX* ssl_ctx = SSL_CTX_new(SSLv23_server_method());
   SSL* ssl = SSL_new(ssl_ctx);
-  SysSocket* s;
+
+  if (SSL_CTX_use_certificate_file(ssl_ctx, CA_KEY_FILE, SSL_FILETYPE_PEM) <= 0) {
+    ERR_print_errors_fp(stdout);
+    return;
+  }
+
+  if (SSL_CTX_use_PrivateKey_file(ssl_ctx, PRIVATE_KEY_FILE, SSL_FILETYPE_PEM) <= 0) {
+    ERR_print_errors_fp(stdout);
+    return;
+  }
   
-#if USE_OPENSSL
-  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, ssl);
+  if (SSL_CTX_check_private_key(ssl_ctx) <= 0) {
+    ERR_print_errors_fp(stdout);
+    return;
+  }
+
+  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, ssl_ctx);
+  self->ssl_ctx = ssl_ctx;
 #else
-  s = sys_socket_new(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, );
+
+  s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);
 #endif
+
   SocketConnection *conn = socket_connection_new_I("localhost", local_port, s, frp_handle_server);
   if(conn == NULL || !socket_connection_listen(conn)) {
     sys_abort_N("listen connect failed: %s:%d", "localhost", local_port);
@@ -182,15 +222,6 @@ FRPServer *frp_server_new_I(const int local_port, const SysChar* remote_host, co
   frp_server_construct(o, local_port, remote_host, remote_port);
 
   return o;
-}
-
-SysBool frp_server_setup_ssl(FRPServer *self, SSL_CTX *ssl_ctx) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(ssl_ctx != NULL, false);
-
-  self->ssl_ctx = ssl_ctx;
-
-  return true;
 }
 
 static void frp_server_class_init(FRPServerClass* cls) {

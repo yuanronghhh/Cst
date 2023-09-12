@@ -18,7 +18,10 @@ struct _FRPServer {
 
   /* < private > */
   SocketConnection* server_conn;
+
+#if USE_OPENSSL
   SSL_CTX *ssl_ctx;
+#endif
 
   /* pair */
   SocketConnection *rconn;
@@ -40,7 +43,6 @@ struct _FRPServerClass {
 SYS_API SysType frp_server_get_type(void);
 SYS_API FRPServer *frp_server_new(void);
 SYS_API FRPServer *frp_server_new_I(const int local_port, const SysChar* remote_host, const int remote_port);
-SYS_API SysBool frp_server_setup_ssl(FRPServer* self, SSL_CTX* ssl_ctx);
 SYS_API void frp_server_run(FRPServer *s);
 
 SYS_END_DECLS

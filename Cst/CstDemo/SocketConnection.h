@@ -19,7 +19,6 @@ struct _SocketConnection {
   SysObject parent;
 
   /* < private > */
-  SSL *ssl;
   SysSocket *socket;
   struct sockaddr_in addr;
   SocketConnectionFunc func;

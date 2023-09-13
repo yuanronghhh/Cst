@@ -1,8 +1,7 @@
 #include <CstDemo/FRPServer.h>
 
-#define PRIVATE_KEY_FILE ""
-#define PUBLIC_KEY_FILE ""
-#define CA_KEY_FILE ""
+#define PRIVATE_KEY_FILE "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/server/server-privkey.pem"
+#define SIGNED_KEY_FILE      "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/server/server-crt.pem"
 
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
@@ -112,7 +111,11 @@ static SocketConnection* frp_connect_remote(FRPServer *self) {
   SysSSize r;
 
 #if USE_OPENSSL
-  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->ssl_ctx);
+  SSL_CTX* ssl_ctx = sys_ssl_create_client_ctx();
+  self->client_ctx = ssl_ctx;
+
+  SSL* ssl = SSL_new(ssl_ctx);
+  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->server_ctx);
 #else
   s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);
 #endif
@@ -178,26 +181,11 @@ static void frp_server_construct(FRPServer* self, const int local_port, const Sy
   self->local_port = local_port;
 
 #if USE_OPENSSL
-  SSL_CTX* ssl_ctx = SSL_CTX_new(SSLv23_server_method());
+  SSL_CTX* ssl_ctx = sys_ssl_create_server_ctx(SIGNED_KEY_FILE, PRIVATE_KEY_FILE);
   SSL* ssl = SSL_new(ssl_ctx);
 
-  if (SSL_CTX_use_certificate_file(ssl_ctx, CA_KEY_FILE, SSL_FILETYPE_PEM) <= 0) {
-    ERR_print_errors_fp(stdout);
-    return;
-  }
-
-  if (SSL_CTX_use_PrivateKey_file(ssl_ctx, PRIVATE_KEY_FILE, SSL_FILETYPE_PEM) <= 0) {
-    ERR_print_errors_fp(stdout);
-    return;
-  }
-  
-  if (SSL_CTX_check_private_key(ssl_ctx) <= 0) {
-    ERR_print_errors_fp(stdout);
-    return;
-  }
-
   s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, ssl_ctx);
-  self->ssl_ctx = ssl_ctx;
+  self->server_ctx = ssl_ctx;
 #else
 
   s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);

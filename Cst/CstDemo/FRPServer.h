@@ -20,7 +20,8 @@ struct _FRPServer {
   SocketConnection* server_conn;
 
 #if USE_OPENSSL
-  SSL_CTX *ssl_ctx;
+  SSL_CTX* server_ctx;
+  SSL_CTX *client_ctx;
 #endif
 
   /* pair */

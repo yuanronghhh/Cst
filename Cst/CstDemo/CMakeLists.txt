@@ -38,6 +38,17 @@ set(TEST_SRC
   ./FRPServer.h
   ./SocketConnection.c
   ./SocketConnection.h
+
+  # ./hev/hev-client.c
+  # ./hev/hev-client.h
+  # ./hev/hev-main.c
+  # ./hev/hev-main.h
+  # ./hev/hev-protocol.c
+  # ./hev/hev-protocol.h
+  # ./hev/hev-server.c
+  # ./hev/hev-server.h
+  # ./hev/hev-utils.c
+  # ./hev/hev-utils.h
 )
 
 add_executable(CstDemo "${TEST_SRC}" "${TEST_INC}" "")

@@ -2,6 +2,7 @@
 
 #define PRIVATE_KEY_FILE "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/server/server-privkey.pem"
 #define SIGNED_KEY_FILE      "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/server/server-crt.pem"
+#define CA_KEY_FILE      "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/client/ca-crt.pem"
 
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
@@ -111,7 +112,7 @@ static SocketConnection* frp_connect_remote(FRPServer *self) {
   SysSSize r;
 
 #if USE_OPENSSL
-  SSL_CTX* ssl_ctx = sys_ssl_create_client_ctx();
+  SSL_CTX* ssl_ctx = sys_ssl_create_client_ctx(CA_KEY_FILE, PRIVATE_KEY_FILE);
   self->client_ctx = ssl_ctx;
 
   SSL* ssl = SSL_new(ssl_ctx);

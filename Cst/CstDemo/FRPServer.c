@@ -1,8 +1,9 @@
 #include <CstDemo/FRPServer.h>
 
-#define PRIVATE_KEY_FILE "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/server/server-privkey.pem"
-#define SIGNED_KEY_FILE      "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/server/server-crt.pem"
-#define CA_KEY_FILE      "D:/GreyHound/PRIVATE/Git/git_deploy/terminal/tmp/client/ca-crt.pem"
+#define PRIVATE_KEY_FILE "E:/Codes/REPOSITORY/git_deploy/terminal/server/server-privkey.pem"
+#define PUBLIC_KEY_FILE "E:/Codes/REPOSITORY/git_deploy/terminal/server/server-pubkey.pem"
+#define SIGNED_CRT_FILE  "E:/Codes/REPOSITORY/git_deploy/terminal/server/server-crt.pem"
+#define CA_CRT_FILE  "E:/Codes/REPOSITORY/git_deploy/terminal/ca/ca-crt.pem"
 
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
@@ -112,23 +113,26 @@ static SocketConnection* frp_connect_remote(FRPServer *self) {
   SysSSize r;
 
 #if USE_OPENSSL
-  SSL_CTX* ssl_ctx = sys_ssl_create_client_ctx(CA_KEY_FILE, PRIVATE_KEY_FILE);
-  self->client_ctx = ssl_ctx;
-
-  SSL* ssl = SSL_new(ssl_ctx);
-  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->server_ctx);
+  SSL* ssl = SSL_new(self->client_ctx);
+  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->client_ctx);
 #else
   s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);
 #endif
+  if (s == NULL) {
+    goto fail;
+  }
 
   rconn = socket_connection_new_I(self->remote_host, self->remote_port, s, frp_handle_remote);
   r = socket_connection_connect(rconn, self->remote_host, self->remote_port);
   if (r < 0) {
-    sys_object_unref(rconn);
-    return NULL;
+    goto fail;
   }
 
   return rconn;
+fail:
+  sys_object_unref(rconn);
+
+  return NULL;
 }
 
 void frp_server_run(FRPServer *self) {
@@ -155,8 +159,8 @@ void frp_server_run(FRPServer *self) {
 
     r = frp_tunnel_connection(self, rconn, cconn);
     if(r == 0) {
+
       sys_object_unref(cconn);
-      // sys_object_unref(rconn);
     }
   } while (r >= 0);
 }
@@ -182,11 +186,19 @@ static void frp_server_construct(FRPServer* self, const int local_port, const Sy
   self->local_port = local_port;
 
 #if USE_OPENSSL
-  SSL_CTX* ssl_ctx = sys_ssl_create_server_ctx(SIGNED_KEY_FILE, PRIVATE_KEY_FILE);
-  SSL* ssl = SSL_new(ssl_ctx);
+  SSL_CTX* ctx = sys_ssl_create_server_ctx(SIGNED_CRT_FILE, PRIVATE_KEY_FILE);
+  if (ctx) {
 
-  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, ssl_ctx);
-  self->server_ctx = ssl_ctx;
+    self->server_ctx = ctx;
+  }
+
+  ctx = sys_ssl_create_client_ctx(SIGNED_CRT_FILE, PRIVATE_KEY_FILE);
+  if (ctx) {
+
+    self->client_ctx = ctx;
+  }
+
+  s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->server_ctx);
 #else
 
   s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);

@@ -35,7 +35,7 @@ SysSSize socket_connection_connect(SocketConnection *self, const SysChar* host, 
 
   SysSSize r = sys_socket_connect(self->socket, (struct sockaddr*)&self->addr, sizeof(struct sockaddr_in));
   if (r < 0) {
-    sys_warning_N("connect remote failed: %s:%d,%s", host, port);
+    sys_warning_N("connect remote failed: %s:%d", host, port);
 
     return r;
   }

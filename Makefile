@@ -14,7 +14,7 @@ ifeq ($(OS), Linux)
 	OS_BUILD_TYPE=
 	PLATFORM=linux
 else
-	VS_ENV=-G "Visual Studio 17 2022" -A x64
+	VS_ENV=-G "Visual Studio 15 2017" -A x64
 	PLATFORM=win32
 	SURFIX=.exe
 endif

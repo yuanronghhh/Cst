@@ -58,10 +58,15 @@ void test_frp_init(SysInt argc, const SysChar *argv[]) {
   sys_object_set_ref_hook(object_ref_debug);
   sys_object_set_unref_hook(object_unref_debug);
 
+#if !SYS_DEBUG
   if (!parse_args(&options, argc, argv)) {
     print_help();
     return;
   }
+#endif
+  options.local_port = 1111;
+  options.remote_host = "localhost";
+  options.remote_port = 1433;
 
   FRPServer* s = frp_server_new_I(options.local_port, options.remote_host, options.remote_port);
 

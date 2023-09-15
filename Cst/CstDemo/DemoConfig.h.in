@@ -4,5 +4,9 @@
 #define G_LOG_USE_STRUCTURED 1
 #define PROJECT_DIR "${CMAKE_CURRENT_LIST_DIR}"
 #define BINARY_DIR "${CMAKE_BINARY_DIR}"
+#define PRIVATE_KEY_FILE "${CMAKE_CURRENT_LIST_DIR}/server/server-privkey.pem"
+#define PUBLIC_KEY_FILE "${CMAKE_CURRENT_LIST_DIR}/server/server-pubkey.pem"
+#define SIGNED_CRT_FILE  "${CMAKE_CURRENT_LIST_DIR}/server/server-crt.pem"
+#define CA_CRT_FILE  "${CMAKE_CURRENT_LIST_DIR}/ca/ca-crt.pem"
 
 #endif

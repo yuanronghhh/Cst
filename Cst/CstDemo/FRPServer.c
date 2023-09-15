@@ -1,10 +1,5 @@
 #include <CstDemo/FRPServer.h>
 
-#define PRIVATE_KEY_FILE "E:/Codes/REPOSITORY/git_deploy/terminal/server/server-privkey.pem"
-#define PUBLIC_KEY_FILE "E:/Codes/REPOSITORY/git_deploy/terminal/server/server-pubkey.pem"
-#define SIGNED_CRT_FILE  "E:/Codes/REPOSITORY/git_deploy/terminal/server/server-crt.pem"
-#define CA_CRT_FILE  "E:/Codes/REPOSITORY/git_deploy/terminal/ca/ca-crt.pem"
-
 SYS_DEFINE_TYPE(FRPServer, frp_server, SYS_TYPE_OBJECT);
 
 static void frp_set_connection(FRPServer *self, SocketConnection *conn) {
@@ -170,6 +165,11 @@ static void frp_server_dispose(SysObject* o) {
   FRPServer* self = FRP_SERVER(o);
 
   sys_clear_pointer(&self->server_conn, (SysDestroyFunc)_sys_object_unref);
+
+#if USE_OPENSSL
+  sys_clear_pointer(&self->server_ctx, SSL_CTX_free);
+  sys_clear_pointer(&self->client_ctx, SSL_CTX_free);
+#endif
 
   SYS_OBJECT_CLASS(frp_server_parent_class)->dispose(o);
 }

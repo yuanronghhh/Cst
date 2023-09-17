@@ -21,12 +21,6 @@ static void frp_clear_connection(FRPServer* self, SocketConnection *conn) {
   FD_CLR(SCONN_SOCKET_ID(conn), &self->rfds);
 }
 
-static SysBool frp_is_connection(FRPServer* self, SocketConnection* conn) {
-  SysBool rs = FD_ISSET(SCONN_SOCKET_ID(conn), &self->rfds);
-
-  return rs;
-}
-
 static int counter = 0;
 
 static SysSSize frp_tunnel_connection(FRPServer * self, SocketConnection *cconn, SocketConnection *rconn) {
@@ -47,7 +41,7 @@ static SysSSize frp_tunnel_connection(FRPServer * self, SocketConnection *cconn,
 
     r = select(self->maxfd + 1, &self->rfds, NULL, NULL, &tv);
     if (r == -1 && errno != EINTR) {
-      sys_warning_N("%s", sys_socket_strerror(sys_socket_errno()));
+      sys_warning_N("%s", sys_socket_error());
       break;
     }
 
@@ -56,11 +50,11 @@ static SysSSize frp_tunnel_connection(FRPServer * self, SocketConnection *cconn,
     }
 
     if (FD_ISSET(SCONN_SOCKET_ID(cconn), &self->rfds)) {
-      // sys_debug_N("%s,%d", "client", counter);
+      sys_debug_N("%s,%d", "client", counter);
       r = socket_connection_handle(cconn, self);
 
     } else if (FD_ISSET(SCONN_SOCKET_ID(rconn), &self->rfds)) {
-      // sys_debug_N("%s,%d", "remote", counter);
+      sys_debug_N("%s,%d", "remote", counter);
       r = socket_connection_handle(rconn, self);
 
     } else {
@@ -99,7 +93,7 @@ SysSSize frp_handle_server(SocketConnection *self, SysPointer user_data) {
     return -1;
   }
 
-  return 1; // socket_connection_pipe(cconn, server->rconn);
+  return socket_connection_pipe(cconn, server->rconn);
 }
 
 static SocketConnection* frp_connect_remote(FRPServer *self) {
@@ -108,7 +102,6 @@ static SocketConnection* frp_connect_remote(FRPServer *self) {
   SysSSize r;
 
 #if USE_OPENSSL
-  SSL* ssl = SSL_new(self->client_ctx);
   s = sys_socket_new_ssl(AF_INET, SOCK_STREAM, IPPROTO_TCP, false, self->client_ctx);
 #else
   s = sys_socket_new_I(AF_INET, SOCK_STREAM, IPPROTO_TCP, false);

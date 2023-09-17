@@ -47,7 +47,7 @@ static SysBool parse_args(SOption *option, SysInt argc, const SysChar* argv[]) {
   return true;
 }
 
-static void print_help() {
+static void print_help(void) {
   sys_printf("usage:\n");
   sys_printf("    FRPServer --rport <remote-port> --rhost <remote-host> --lport <local-port>\n");
 }
@@ -58,7 +58,7 @@ void test_frp_init(SysInt argc, const SysChar *argv[]) {
   sys_object_set_ref_hook(object_ref_debug);
   sys_object_set_unref_hook(object_unref_debug);
 
-#if !SYS_DEBUG
+#if SYS_DEBUG
   if (!parse_args(&options, argc, argv)) {
     print_help();
     return;
@@ -66,7 +66,7 @@ void test_frp_init(SysInt argc, const SysChar *argv[]) {
 #endif
   options.local_port = 1111;
   options.remote_host = "localhost";
-  options.remote_port = 1433;
+  options.remote_port = 3306;
 
   FRPServer* s = frp_server_new_I(options.local_port, options.remote_host, options.remote_port);
 

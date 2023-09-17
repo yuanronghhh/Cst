@@ -119,6 +119,8 @@ main (int argc, char *argv[])
     GError *error = NULL;
     int retval = 0;
 
+    g_setenv("G_MESSAGES_DEBUG", "all", 1);
+
     g_debug ("%s:%d[%s]", __FILE__, __LINE__, __FUNCTION__);
 
 #ifndef GLIB_VERSION_2_36

@@ -29,6 +29,7 @@ pkg_check_modules(GDKWAYLAND REQUIRED gdk-wayland-3.0)
 pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 pkg_check_modules(SDL REQUIRED sdl2)
 pkg_check_modules(VULKAN REQUIRED vulkan)
+pkg_check_modules(OPENSSL REQUIRED libssl;libcrypto)
 
 find_package(glad REQUIRED)
 find_package(tinyexpr REQUIRED)

@@ -134,7 +134,7 @@ SysSocket* socket_connection_get_socket(SocketConnection* self) {
 static void socket_connection_dispose(SysObject* o) {
   SocketConnection *self = SOCKET_CONNECTION(o);
 
-  sys_clear_pointer(&self->socket, sys_socket_free);
+  sys_clear_pointer(&self->socket, sys_socket_close);
 
   SYS_OBJECT_CLASS(socket_connection_parent_class)->dispose(o);
 }

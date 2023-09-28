@@ -141,10 +141,10 @@ static void cst_box_layer_render_i(CstLayer *layer, FRDraw *draw, CstLayout *lay
 
   v_node = priv->tree;
 
-  cst_layout_set_flag(layout, CST_RENDER_STATE_LAYOUT);
+  cst_layout_set_state(layout, CST_RENDER_STATE_LAYOUT);
   cst_node_relayout_root(NULL, NULL, v_node, draw, layout);
 
-  cst_layout_set_flag(layout, CST_RENDER_STATE_PAINT);
+  cst_layout_set_state(layout, CST_RENDER_STATE_PAINT);
   cst_node_repaint_root(NULL, NULL, v_node, draw, layout);
 }
 
@@ -160,10 +160,10 @@ static void cst_box_layer_rerender_i(CstLayer *layer, FRDraw *draw, CstLayout *l
 
   v_node = priv->tree;
 
-  cst_layout_set_flag(layout, CST_RENDER_STATE_RELAYOUT);
+  cst_layout_set_state(layout, CST_RENDER_STATE_RELAYOUT);
   cst_node_relayout_root(NULL, NULL, v_node, draw, layout);
 
-  cst_layout_set_flag(layout, CST_RENDER_STATE_REPAINT);
+  cst_layout_set_state(layout, CST_RENDER_STATE_REPAINT);
   cst_node_repaint_root(NULL, NULL, v_node, draw, layout);
 }
 

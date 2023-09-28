@@ -1,42 +1,46 @@
 #ifndef __CST_CSS_VALUE_H__
 #define __CST_CSS_VALUE_H__
 
-#include <CstCore/Parser/CstParserCommon.h>
+#include <CstCore/Driver/CstCommon.h>
 
 SYS_BEGIN_DECLS
 
-void cst_css_value_setup(void);
-void cst_css_value_teardown(void);
 
-SYS_API CstCssValueNode *cst_css_value_node_lookup(const SysChar* name);
-const SysChar * cst_css_value_node_name(CstCssValueNode * node);
+#define CST_TYPE_CSS_VALUE (cst_css_value_get_type())
+#define CST_CSS_VALUE(o) ((CstCssValue* )sys_object_cast_check(o, CST_TYPE_CSS_VALUE))
+#define CST_CSS_VALUE_CLASS(o) ((CstCssValueClass *)sys_class_cast_check(o, CST_TYPE_CSS_VALUE))
+#define CST_CSS_VALUE_GET_CLASS(o) sys_instance_get_class(o, CstCssValueClass)
 
-void cst_css_value_set_bool(CstCssValue * value, SysBool v);
-void cst_css_value_set_string(CstCssValue * value, const SysChar * v);
-void cst_css_value_set_null(CstCssValue * value, SysPointer v);
-void cst_css_value_set_pointer(CstCssValue * value, SysPointer v);
-void cst_css_value_set_m4(CstCssValue* value, FRSInt4* m4);
-void cst_css_value_set_int(CstCssValue * value, SysInt v);
-void cst_css_value_set_double(CstCssValue * value, SysDouble v);
-void cst_css_value_set_color(CstCssValue * value, FRColor * v);
-void cst_css_value_set_closure(CstCssValue * value, CstCssClosure * v);
-CstCssValue * cst_css_value_new(CstCssValueNode * node);
-CST_RENDER_STATE_ENUM cst_css_value_get_g_type(CstCssValue * value);
-SysInt cst_css_value_parse(JNode * jnode, CstCssValue * value);
+struct _CstCssValue {
+  SysObject parent;
 
-SYS_API void cst_css_value_node_add(const SysChar* name, CstCssValueNode *node);
-CstCssValueNode * cst_css_value_get_node(CstCssValue * value);
+  /* < private > */
+  SysChar *name;
 
-SYS_API SysInt cst_css_value_layout(CstCssValue *value, FRContext *cr, CstNode *w);
-SYS_API SysInt cst_css_value_paint(CstCssValue *value, FRContext *cr, CstNode *w);
+  /* CST_CSS_PROP_ENUM */
+  SysInt css_type;
 
-SYS_API void cst_css_value_free(CstCssValue *value);
-CstCssValue * cst_css_value_clone(CstCssValue * value);
+  /* CST_RENDER_STATE_ENUM */
+  SysInt state_flag;
+};
 
-void cst_css_value_width_percent(CstNode * v_parent, CstNode * v_node, FRContext * cr, SysPointer value);
-void cst_css_value_height_percent(CstNode * v_parent, CstNode * v_node, FRContext * cr, SysPointer value);
-CstCssClosure * cst_css_value_parse_calc(SysChar * s, CstCssCalcFunc func);
+struct _CstCssValueClass {
+  SysObjectClass parent;
+
+  SysInt (*parse) (JNode *jnode, CstCssValue *value);
+  SysInt (*calc) (CstCssValue *self, CstLayoutContext *ctx, CstLayout *layout);
+  CstCssValue* (*get_value) (CstCssValue *self);
+  SysInt (*set_value) (CstCssValue *self);
+};
+
+SYS_API SysType cst_css_value_get_type(void);
+SYS_API CstCssValue *cst_css_value_new(void);
+
+SYS_API void cst_css_value_setup(void);
+SYS_API void cst_css_value_teardown(void);
 
 SYS_END_DECLS
 
 #endif
+
+

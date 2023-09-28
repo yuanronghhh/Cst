@@ -1,4 +1,5 @@
 #include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstLayoutContext.h>
 #include <CstCore/Driver/CstLayout.h>
 
 SYS_DEFINE_TYPE(CstLayoutNode, cst_layout_node, SYS_TYPE_OBJECT);
@@ -76,20 +77,13 @@ void cst_layout_node_set_xy(CstLayoutNode* self, SysInt x, SysInt y) {
   self->y = y;
 }
 
-void cst_layout_node_construct(CstLayoutNode *self, SysInt x, SysInt y, SysInt width, SysInt height) {
+void cst_layout_node_set_bound(CstLayoutNode* self, SysInt x, SysInt y, SysInt width, SysInt height) {
+  sys_return_if_fail(self != NULL);
 
   self->x = x;
   self->y = y;
   self->width = width;
   self->height = height;
-}
-
-CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt height) {
-  CstLayoutNode * o = cst_layout_node_new();
-
-  cst_layout_node_construct(o, x, y, width, height);
-
-  return o;
 }
 
 CstLayoutNode* cst_layout_node_clone(CstLayoutNode* oself) {
@@ -106,39 +100,82 @@ CstLayoutNode* cst_layout_node_clone(CstLayoutNode* oself) {
   return nself;
 }
 
-void cst_layout_node_relayout(CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *self, FRDraw *draw, CstLayout *layout) {
+void cst_layout_node_set_padding(CstLayoutNode *self, FRSInt4 *m4) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodeClass* ncls = CST_LAYOUT_NODE_GET_CLASS(self);
-
-  sys_return_if_fail(ncls->relayout != NULL);
-  ncls->relayout(v_module, v_parent, self, draw, layout);
+  self->padding = *m4;
 }
 
-void cst_layout_node_relayout_down(CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *self, FRDraw *draw, CstLayout *layout) {
+void cst_layout_node_get_padding(CstLayoutNode *self, FRSInt4 *m4) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNodeClass* ncls = CST_LAYOUT_NODE_GET_CLASS(self);
-
-  sys_return_if_fail(ncls->relayout_down != NULL);
-  ncls->relayout_down(v_module, v_parent, self, draw, layout);
+  *m4 = self->padding;
 }
 
-static void cst_layout_node_relayout_i(CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *self, FRDraw *draw, CstLayout *layout) {
+void cst_layout_node_set_margin(CstLayoutNode *self, FRSInt4 *m4) {
   sys_return_if_fail(self != NULL);
 
-  if (v_parent) {
-    self->child_count += 1;
+  self->margin = *m4;
+}
+
+void cst_layout_node_get_margin(CstLayoutNode *self, FRSInt4 *m4) {
+  sys_return_if_fail(self != NULL);
+
+  *m4 = self->margin;
+}
+
+void cst_layout_node_set_border(CstLayoutNode* self, FRSInt4* m4) {
+  sys_return_if_fail(self != NULL);
+
+  self->border = *m4;
+}
+
+void cst_layout_node_get_border(CstLayoutNode* self, FRSInt4* m4) {
+  sys_return_if_fail(self != NULL);
+
+  *m4 = self->border;
+}
+
+void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4) {
+  sys_return_if_fail(self != NULL);
+
+  m4->m0 = self->margin.m0 + self->border.m0 + self->padding.m0;
+  m4->m1 = self->margin.m1 + self->border.m1 + self->padding.m1;
+  m4->m2 = self->margin.m2 + self->border.m2 + self->padding.m2;
+  m4->m3 = self->margin.m3 + self->border.m3 + self->padding.m3;
+}
+
+void cst_layout_node_maybe_expand(CstLayoutNode* self, CstLayoutContext *ctx) {
+  sys_return_if_fail(self != NULL);
+  SysInt pw, ph;
+
+  cst_layout_context_get_prefer_size(ctx, &pw, &ph);
+
+  if (self->width == -1) {
+    self->width = pw;
+  }
+
+  if (self->height == -1) {
+    self->height = ph;
   }
 }
 
-static void cst_layout_node_relayout_down_i(CstModule *v_module, CstLayoutNode *v_parent, CstLayoutNode *self, FRDraw *draw, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  cst_layout_layout_children(layout, v_parent, self, draw);
+/* object api */
+static void cst_layout_node_construct(CstLayoutNode *self, SysInt x, SysInt y, SysInt width, SysInt height) {
+  self->x = x;
+  self->y = y;
+  self->width = width;
+  self->height = height;
 }
 
-/* object api */
+CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt height) {
+  CstLayoutNode * o = cst_layout_node_new();
+
+  cst_layout_node_construct(o, x, y, width, height);
+
+  return o;
+}
+
 static void cst_layout_node_init(CstLayoutNode *self) {
 }
 
@@ -152,7 +189,4 @@ static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_layout_node_dispose;
-
-  cls->relayout = cst_layout_node_relayout_i;
-  cls->relayout_down = cst_layout_node_relayout_down_i;
 }

@@ -1,8 +1,8 @@
 #include <Framework/DataType/FRPQueue.h>
 
 /* pqueue api */
-static FRPrioList *prio_list_new(SysInt prio, SysPointer data) {
-  FRPrioList *plink = sys_new0_N(FRPrioList, 1);
+static FRPrioLink *prio_list_new(SysInt prio, SysPointer data) {
+  FRPrioLink *plink = sys_new0_N(FRPrioLink, 1);
 
   plink->parent.data = data;
   plink->prio = prio;
@@ -10,7 +10,7 @@ static FRPrioList *prio_list_new(SysInt prio, SysPointer data) {
   return plink;
 }
 
-static void prio_list_free(FRPrioList *plink) {
+static void prio_list_free(FRPrioLink *plink) {
   sys_free_N(plink);
 }
 
@@ -18,11 +18,11 @@ FRPQueue *fr_pqueue_new(void) {
   return sys_queue_new();
 }
 
-static SysBool _pqueue_push_tail(SysList *tail, FRPrioList *plink) {
+static SysBool _pqueue_push_tail(SysList *tail, FRPrioLink *plink) {
   SysList *nlist = SYS_LIST(plink);
 
   for (SysList *list = tail; list; list = list->prev) {
-    FRPrioList *plist = FR_PRIO_LIST(list);
+    FRPrioLink *plist = FR_PRIO_LIST(list);
 
     if (plink->prio > plist->prio) {
       if (list->next) {
@@ -40,11 +40,11 @@ static SysBool _pqueue_push_tail(SysList *tail, FRPrioList *plink) {
   return false;
 }
 
-static SysBool _pqueue_push_head(SysList *head, FRPrioList *plink) {
+static SysBool _pqueue_push_head(SysList *head, FRPrioLink *plink) {
   SysList *nlist = SYS_LIST(plink);
 
   for (SysList *list = head; list; list = list->next) {
-    FRPrioList *plist = FR_PRIO_LIST(list);
+    FRPrioLink *plist = FR_PRIO_LIST(list);
 
     if (plink->prio <= plist->prio) {
       if (list->prev) {
@@ -62,7 +62,7 @@ static SysBool _pqueue_push_head(SysList *head, FRPrioList *plink) {
   return false;
 }
 
-void fr_pqueue_push_head_link(FRPQueue *queue, FRPrioList *plink) {
+void fr_pqueue_push_head_link(FRPQueue *queue, FRPrioLink *plink) {
   sys_return_if_fail(queue != NULL);
   sys_return_if_fail(plink != NULL);
   sys_return_if_fail(plink->prio > 0);
@@ -86,7 +86,7 @@ void fr_pqueue_push_head_link(FRPQueue *queue, FRPrioList *plink) {
   }
 }
 
-void fr_pqueue_push_tail_link(FRPQueue *queue, FRPrioList *plink) {
+void fr_pqueue_push_tail_link(FRPQueue *queue, FRPrioLink *plink) {
   sys_return_if_fail(queue != NULL);
   sys_return_if_fail(plink != NULL);
   sys_return_if_fail(plink->prio > 0);
@@ -110,11 +110,11 @@ void fr_pqueue_push_tail_link(FRPQueue *queue, FRPrioList *plink) {
   }
 }
 
-FRPrioList *fr_pqueue_push_tail(FRPQueue *queue, SysInt prio, SysPointer data) {
+FRPrioLink *fr_pqueue_push_tail(FRPQueue *queue, SysInt prio, SysPointer data) {
   sys_return_val_if_fail(queue != NULL, NULL);
   sys_return_val_if_fail(prio > 0, NULL);
 
-  FRPrioList *plink = prio_list_new(prio, data);
+  FRPrioLink *plink = prio_list_new(prio, data);
 
   fr_pqueue_push_tail_link(queue, plink);
 
@@ -127,11 +127,11 @@ FRPrioList *fr_pqueue_push_tail(FRPQueue *queue, SysInt prio, SysPointer data) {
   return plink;
 }
 
-FRPrioList *fr_pqueue_push_head(FRPQueue *queue, SysInt prio, SysPointer data) {
+FRPrioLink *fr_pqueue_push_head(FRPQueue *queue, SysInt prio, SysPointer data) {
   sys_return_val_if_fail(queue != NULL, NULL);
   sys_return_val_if_fail(prio > 0, NULL);
 
-  FRPrioList *plink = prio_list_new(prio,  data);
+  FRPrioLink *plink = prio_list_new(prio,  data);
 
   fr_pqueue_push_head_link(queue, plink);
 
@@ -142,7 +142,7 @@ FRPrioList *fr_pqueue_push_head(FRPQueue *queue, SysInt prio, SysPointer data) {
   return plink;
 }
 
-void fr_pqueue_unlink(FRPQueue *queue, FRPrioList *plink) {
+void fr_pqueue_unlink(FRPQueue *queue, FRPrioLink *plink) {
   sys_return_if_fail(queue != NULL);
   sys_return_if_fail(plink != NULL);
   sys_return_if_fail(plink->prio > 0);

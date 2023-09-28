@@ -8,6 +8,7 @@ set(INC
   ${GLFW3_INCLUDE_DIRS}
   ${UNITY_INCLUDE_DIRS}
   ${GLAD_INCLUDE_DIRS}
+  ${OPENSSL_INCLUDE_DIRS}
 )
 
 set(INC_SYS
@@ -82,6 +83,10 @@ set(SRC
   ./Driver/CstModule.c
   ./Driver/CstModule.h
 
+  ./Driver/Css/CstCssGroup.c
+  ./Driver/Css/CstCssGroup.h
+  ./Driver/Css/CstCssPair.c
+  ./Driver/Css/CstCssPair.h
   ./Driver/Css/CstCssValue.c
   ./Driver/Css/CstCssValue.h
   ./Driver/Css/CstCssEnv.c
@@ -90,8 +95,14 @@ set(SRC
   ./Driver/Css/CstCss.h
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
+  ./Driver/CstLayoutContext.h
+  ./Driver/CstLayoutContext.c
+  ./Driver/CstPaintContext.h
+  ./Driver/CstPaintContext.c
   ./Driver/CstLayoutNode.h
   ./Driver/CstLayoutNode.c
+  ./Driver/CstPaintNode.h
+  ./Driver/CstPaintNode.c
 
   ./Front/Common/CstNodePrivate.h
   ./Front/Common/CstNode.h
@@ -177,6 +188,7 @@ target_link_libraries(CstCore
   System
   ${PANGO_LIBRARIES}
   ${GLIB_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
 )
 set_property(TARGET CstCore PROPERTY FOLDER CstProject)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/Config/CstConfig.h.in

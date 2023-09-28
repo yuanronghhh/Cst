@@ -10,11 +10,9 @@ SYS_BEGIN_DECLS
 
 typedef struct _CstBox CstBox;
 typedef struct _CstBoxClass CstBoxClass;
-typedef struct _CstBoxPrivate CstBoxPrivate;
 
 struct _CstBox {
   CstWidget parent;
-  CstBoxPrivate* priv;
 };
 
 struct _CstBoxClass {

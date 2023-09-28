@@ -2,19 +2,13 @@
 #include <CstCore/Front/C/CstCLBox.h>
 #include <CstCore/Driver/CstRender.h>
 
-struct _CstLBoxPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstLBox, cst_lbox, CST_TYPE_WIDGET);
+SYS_DEFINE_TYPE(CstLBox, cst_lbox, CST_TYPE_WIDGET);
 
 CstNode* cst_lbox_new(void) {
   return sys_object_new(CST_TYPE_LBOX, NULL);
 }
 
 static void cst_lbox_init(CstLBox *self) {
-  self->priv = cst_lbox_get_private(self);
-
   cst_node_set_name(CST_NODE(self), "LBox");
 }
 

@@ -13,7 +13,23 @@ struct _CstNode {
   CstNode   *parent;
   CstNode   *children;
 
-  CstNodePrivate* priv;
+  /* <private> */
+  SysChar     *name;
+  CstNode     *last_child;
+  SysChar     *id;
+  SysPtrArray *css_groups;
+  /* Type: FRAWatch */
+  SysList *awatches;
+  /* Type: CstNodeMap */
+  SysList *node_maps;
+  SysList *pass_link;
+  FRPrioLink *abs_link;
+  SysList *shadow_link;
+
+  /* layout context */
+  CstPaintNode *paint_node;
+  CstLayoutNode *layout_node;
+  CstLayoutContext *layout_ctx;
 };
 
 struct _CstNodeClass {
@@ -22,9 +38,6 @@ struct _CstNodeClass {
   void (*construct) (CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props);
   CstNode * (*dclone) (CstNode *node);
   CstNode *(*realize) (CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render);
-  void (*relayout) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
-  void (*relayout_down) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
-  void (*repaint) (CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout);
 };
 
 

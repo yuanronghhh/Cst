@@ -18,6 +18,7 @@ include_dep_dirs(
   ${TINYEXPR_INCLUDE_DIRS}
   ${FRIBIDI_INCLUDE_DIRS}
   # ${MONO_INCLUDE_DIRS}
+  ${OPENSSL_INCLUDE_DIRS}
 )
 
 set(SRC
@@ -63,9 +64,11 @@ target_link_libraries(Mini
   ${X11_LIBRARIES}
   ${PANGOCAIRO_LIBRARIES}
   ${FRIBIDI_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
 )
 
 target_copy_files(Mini
+  "${OPENSSL_FILES}"
   "${VLD_FILES}"
   "${PTHREAD_FILES}"
   "${VKVG_FILES}"

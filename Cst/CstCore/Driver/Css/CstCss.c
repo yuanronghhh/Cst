@@ -13,49 +13,13 @@ struct _CstCssClosure {
   SysRef ref_count;
 };
 
-struct _CstCssPair {
-  SysChar *key;
-  CstCssValue *value;
-};
-
 SYS_DEFINE_TYPE(CstCssGroup, cst_css_group, SYS_TYPE_OBJECT);
 
-/* CstCssPair */
-void cst_css_pair_free(CstCssPair *pair) {
-  sys_return_if_fail(pair != NULL);
-
-  sys_free_N(pair->key);
-
-  sys_clear_pointer(&pair->value, cst_css_value_free);
-  sys_free_N(pair);
-}
-
-CstCssPair *cst_css_pair_new(SysChar *key, CstCssValue *value) {
-  sys_return_val_if_fail(key != NULL, NULL);
-  sys_return_val_if_fail(value != NULL, NULL);
-
-  CstCssPair *pair = sys_new0_N(CstCssPair, 1);
-
-  pair->key = sys_strdup(key);
-  pair->value = value;
-
-  return pair;
-}
-
-CstCssPair *cst_css_pair_clone(CstCssPair *pair) {
-  sys_return_val_if_fail(pair != NULL, NULL);
-
-  CstCssValue *nvalue = cst_css_value_clone(pair->value);
-  CstCssPair *npair = cst_css_pair_new(pair->key, nvalue);
-
-  return npair;
-}
-
 /* closure */
-void cst_css_closure_calc(CstCssClosure *closure, CstNode *v_parent, CstNode *v_node, FRContext *cr) {
-  sys_return_if_fail(v_node != NULL);
+void cst_css_closure_calc(CstCssClosure* closure, CstLayoutNode* lnode, CstLayoutContext* layout_ctx, CstPaintNode* pnode, CstPaintContext* paint_ctx) {
+  sys_return_if_fail(closure != NULL);
 
-  closure->func(v_parent, v_node, cr, closure->data);
+  closure->func(lnode, layout_ctx, pnode, paint_ctx, closure->data);
 }
 
 CstCssClosure* cst_css_closure_new(SysPointer data, CstCssCalcFunc calc, SysDestroyFunc free) {
@@ -221,15 +185,15 @@ void cst_css_group_add_pair(CstCssGroup *self, SysChar *key, CstCssValue *value)
   sys_ptr_array_add(self->pairs, pair);
 }
 
-void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLayout *layout) {
-  sys_return_if_fail(node != NULL);
+void cst_css_render_groups(CstPaintNode *paint_node, SysPtrArray *gs, FRContext *cr, CstLayout *layout) {
+  sys_return_if_fail(paint_node != NULL);
   sys_return_if_fail(gs != NULL);
   sys_return_if_fail(cr != NULL);
 
   SysInt g_type;
   CstCssPair *pair;
   CstCssGroup *self;
-  CST_RENDER_STATE_ENUM state = cst_layout_get_state(layout);
+  int state = cst_layout_get_state(layout);
 
   for (SysInt i = (SysInt)(gs->len - 1); i >= 0; i--) {
     self = gs->pdata[i];
@@ -251,11 +215,11 @@ void cst_css_render_groups(CstNode *node, SysPtrArray *gs, FRContext *cr, CstLay
       switch (state) {
         case CST_RENDER_STATE_LAYOUT:
         case CST_RENDER_STATE_RELAYOUT:
-          cst_css_value_layout(pair->value, cr, node);
+          cst_css_value_layout(pair->value, cr, paint_node);
           break;
         case CST_RENDER_STATE_PAINT:
         case CST_RENDER_STATE_REPAINT:
-          cst_css_value_paint(pair->value, cr, node);
+          cst_css_value_paint(pair->value, cr, paint_node);
           break;
         default:
           sys_warning_N("Not support css render state: %d.", g_type);

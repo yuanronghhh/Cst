@@ -1,17 +1,12 @@
 #include <CstCore/Front/CstBox.h>
 
-struct _CstBoxPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstBox, cst_box, CST_TYPE_WIDGET);
+SYS_DEFINE_TYPE(CstBox, cst_box, CST_TYPE_WIDGET);
 
 CstBox* cst_box_new(void) {
-  CstBox *o = sys_object_new(CST_TYPE_BOX);
-  return o;
+  return sys_object_new(CST_TYPE_BOX);
 }
 
-static void cst_box_init(SysObject* o, SysPointer first_param, ...) {
+static void cst_box_init(SysObject* o) {
   CstBox *self = CST_BOX(o);
   CstBoxPrivate* priv = o->priv = cst_box_get_private(self);
 

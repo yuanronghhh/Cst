@@ -8,6 +8,7 @@ set(INC
   ${GLFW3_INCLUDE_DIRS}
   ${UNITY_INCLUDE_DIRS}
   ${GLAD_INCLUDE_DIRS}
+  ${OPENSSL_INCLUDE_DIRS}
 )
 
 set(INC_SYS
@@ -177,6 +178,7 @@ target_link_libraries(CstCore
   System
   ${PANGO_LIBRARIES}
   ${GLIB_LIBRARIES}
+  ${OPENSSL_LIBRARIES}
 )
 set_property(TARGET CstCore PROPERTY FOLDER CstProject)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/Config/CstConfig.h.in

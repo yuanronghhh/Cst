@@ -17,6 +17,7 @@ include_dep_dirs(
   ${UNITY_INCLUDE_DIRS}
   ${MONO_INCLUDE_DIRS}
   ${TINYEXPR_INCLUDE_DIRS}
+  ${OPENSSL_INCLUDE_DIRS}
 )
 
 set(SRC
@@ -65,6 +66,7 @@ set_property(TARGET CstCoreTest PROPERTY FOLDER CstProject)
 target_link_libraries(CstCoreTest
   CstCore
   System
+  ${OPENSSL_LIBRARIES}
   ${MONO_LIBRARIES}
   ${PIXMAN_LIBRARIES}
   ${VLD_LIBRARIES}
@@ -85,6 +87,7 @@ target_link_libraries(CstCoreTest
 )
 
 target_copy_files(CstCoreTest
+  "${OPENSSL_FILES}"
   "${VLD_FILES}"
   "${CAIRO_FILES}"
   "${PANGO_FILES}"

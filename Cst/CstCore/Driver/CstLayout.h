@@ -15,7 +15,8 @@ struct _CstLayout {
   SysObject parent;
 
   /* < private > */
-  CST_RENDER_STATE_ENUM state;
+  int state;
+  FRContext* cr;
 };
 
 struct _CstLayoutClass {
@@ -27,10 +28,10 @@ struct _CstLayoutClass {
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
 CstLayout *cst_layout_new_I(void);
-CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
-void cst_layout_set_flag(CstLayout *self, CST_RENDER_STATE_ENUM state);
-SysBool cst_layout_state_layout(CstLayout *self);
-void cst_layout_layout_children(CstLayout *self, CstLayoutNode *v_parent, CstLayoutNode *lnode, FRDraw *draw);
+int cst_layout_get_state(CstLayout *self);
+void cst_layout_set_state(CstLayout *self, int state);
+
+FRContext* cst_layout_get_cr(CstLayout* self);
 
 SYS_END_DECLS
 

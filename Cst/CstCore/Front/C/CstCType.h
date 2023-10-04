@@ -53,17 +53,9 @@ SYS_BEGIN_DECLS
 
 typedef struct _CstNode CstNode;
 typedef struct _CstNodeClass CstNodeClass;
-typedef struct _CstNodePrivate CstNodePrivate;
-
-typedef struct _CstLayout CstLayout;
-typedef struct _CstLayoutClass CstLayoutClass;
-
-typedef struct _CstLayoutNode CstLayoutNode;
-typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 
 typedef struct _CstWidget CstWidget;
 typedef struct _CstWidgetClass CstWidgetClass;
-typedef struct _CstWidgetPrivate CstWidgetPrivate;
 
 typedef struct _CstComNode CstComNode;
 typedef struct _CstComNodeClass CstComNodeClass;
@@ -79,7 +71,6 @@ typedef struct _CstTextPrivate CstTextPrivate;
 
 typedef struct _CstLBox CstLBox;
 typedef struct _CstLBoxClass CstLBoxClass;
-typedef struct _CstLBoxPrivate CstLBoxPrivate;
 
 typedef struct _CstLDiv CstLDiv;
 typedef struct _CstLDivClass CstLDivClass;

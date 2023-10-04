@@ -8,7 +8,9 @@ SYS_BEGIN_DECLS
 
 struct _CstWidget {
   CstNode parent;
-  CstWidgetPrivate* priv;
+
+  /* <private> */
+  CstNode *component_node;
 };
 
 struct _CstWidgetClass {

@@ -1,4 +1,6 @@
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstLayoutContext.h>
 
 
 SYS_DEFINE_TYPE(CstLayout, cst_layout, SYS_TYPE_OBJECT);
@@ -26,20 +28,52 @@ CstLayout *cst_layout_new_I(void) {
   return o;
 }
 
-CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self) {
+int cst_layout_get_state(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
   return self->state;
 }
 
-void cst_layout_set_flag(CstLayout *self, CST_RENDER_STATE_ENUM state) {
+void cst_layout_set_state(CstLayout *self, int state) {
   sys_return_if_fail(self != NULL);
 
   self->state = state;
 }
 
-void cst_layout_layout_children(CstLayout *self, CstLayoutNode *v_parent, CstLayoutNode *lnode, FRDraw *draw) {
+FRContext *cst_layout_get_cr(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->cr;
 }
+
+void cst_layout_layout(CstLayout* self, CstLayoutNode* p_layout_node, CstLayoutNode* lnode, CstLayoutContext *lctx) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(p_layout_node != NULL);
+
+  if (!cst_layout_context_need_layout(lctx)) {
+    return;
+  }
+
+  cst_paint_context_paint(self, );
+  cst_node_render_enter(self, cr, layout);
+  cst_node_layout_init(self);
+
+  if (self->children) {
+    cst_node_layout(v_module, self, self->children, draw, layout);
+  }
+
+  cst_node_expand(self);
+
+  cst_node_relayout(v_module, p_layout_node, self, draw, layout);
+
+  if (self->next) {
+    cst_node_layout(v_module, p_layout_node, self->next, draw, layout);
+  }
+
+  cst_node_render_leave(self, cr, layout);
+  cst_node_set_need_relayout(self, false);
+}
+
 
 /* object api */
 static void cst_layout_init(CstLayout *self) {

@@ -135,11 +135,26 @@ typedef struct _CstAbsLayerPrivate CstAbsLayerPrivate;
 typedef struct _CstCssGroup CstCssGroup;
 typedef struct _CstCssGroupClass CstCssGroupClass;
 
+typedef struct _CstPaintNode CstPaintNode;
+typedef struct _CstPaintNodeClass CstPaintNodeClass;
+typedef struct _CstPaintContext CstPaintContext;
+typedef struct _CstPaintContextClass CstPaintContextClass;
+
+typedef struct _CstLayoutNode CstLayoutNode;
+typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
+typedef struct _CstLayoutContext CstLayoutContext;
+typedef struct _CstLayoutContextClass CstLayoutContextClass;
+
+typedef struct _CstLayout CstLayout;
+typedef struct _CstLayoutClass CstLayoutClass;
+
 typedef struct _CstCssClosure CstCssClosure;
+
 typedef struct _CstCssValue CstCssValue;
 typedef struct _CstCssValueClass CstCssValueClass;
-typedef struct _CstCssValueNode CstCssValueNode;
+
 typedef struct _CstCssPair CstCssPair;
+typedef struct _CstCssPairClass CstCssPairClass;
 
 typedef struct _CstCssEnv CstCssEnv;
 typedef struct _CstCssEnvClass CstCssEnvClass;
@@ -166,7 +181,7 @@ typedef SysValue CstPropValue;
 
 typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
-typedef void (*CstCssCalcFunc) (CstNode *v_parent, CstNode *v_node, FRContext *cr, SysPointer data);
+typedef void (*CstCssCalcFunc) (CstLayoutNode *lnode, CstLayoutContext *layout_ctx, CstPaintNode *pnode, CstPaintContext *paint_ctx, SysPointer user_data);
 
 SYS_END_DECLS
 

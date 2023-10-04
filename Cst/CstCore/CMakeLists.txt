@@ -83,6 +83,10 @@ set(SRC
   ./Driver/CstModule.c
   ./Driver/CstModule.h
 
+  ./Driver/Css/CstCssGroup.c
+  ./Driver/Css/CstCssGroup.h
+  ./Driver/Css/CstCssPair.c
+  ./Driver/Css/CstCssPair.h
   ./Driver/Css/CstCssValue.c
   ./Driver/Css/CstCssValue.h
   ./Driver/Css/CstCssEnv.c
@@ -91,8 +95,14 @@ set(SRC
   ./Driver/Css/CstCss.h
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
+  ./Driver/CstLayoutContext.h
+  ./Driver/CstLayoutContext.c
+  ./Driver/CstPaintContext.h
+  ./Driver/CstPaintContext.c
   ./Driver/CstLayoutNode.h
   ./Driver/CstLayoutNode.c
+  ./Driver/CstPaintNode.h
+  ./Driver/CstPaintNode.c
 
   ./Front/Common/CstNodePrivate.h
   ./Front/Common/CstNode.h

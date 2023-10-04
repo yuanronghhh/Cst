@@ -25,8 +25,6 @@ if(DEBUG)
   find_package(vld REQUIRED)
 endif()
 
-set(DBG_LIBRAREIS "Dbghelp.lib")
-
 find_package(harfbuzz REQUIRED)
 find_package(pango REQUIRED)
 find_package(png REQUIRED)
@@ -34,6 +32,7 @@ find_package(zlib REQUIRED)
 find_package(cairo REQUIRED)
 find_package(gtk REQUIRED)
 
+set(DBG_LIBRAREIS "Dbghelp.lib")
 set(SDL2_MIXER_DIR ${SDL2_DIR})
 set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_INCLUDE_DIRS})
 set(SDL2_MIXER_DLL ${SDL2_MIXER_DLL}/lib/SDL2_mixer.dll)

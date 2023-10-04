@@ -2,25 +2,10 @@
 #include <CstCore/Front/C/CstCWidget.h>
 
 
-struct _CstWidgetPrivate {
-  /* property */
-  CstNode *component_node;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstWidget, cst_widget, CST_TYPE_NODE);
+SYS_DEFINE_TYPE(CstWidget, cst_widget, CST_TYPE_NODE);
 /* api */
 
 /* widget api */
-CstNode* cst_widget_new(void) {
-  return sys_object_new(CST_TYPE_WIDGET, NULL);
-}
-
-static void cst_widget_init(CstWidget *self) {
-  CstWidgetPrivate* priv = self->priv = cst_widget_get_private(self);
-
-  priv->component_node = NULL;
-}
-
 static void cst_widget_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
   CST_NODE_CLASS(cst_widget_parent_class)->relayout(v_module, v_parent, v_node, draw, layout);
 }
@@ -41,6 +26,14 @@ static CstNode* cst_widget_dclone_i(CstNode *v_node) {
   return CST_NODE_CLASS(cst_widget_parent_class)->dclone(v_node);
 }
 
+/* object api */
+CstNode* cst_widget_new(void) {
+  return sys_object_new(CST_TYPE_WIDGET, NULL);
+}
+
+static void cst_widget_init(CstWidget *self) {
+  self->component_node = NULL;
+}
 static void cst_widget_construct(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
   CST_NODE_CLASS(cst_widget_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
 }

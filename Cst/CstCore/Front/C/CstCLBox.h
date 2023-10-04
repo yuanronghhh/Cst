@@ -7,7 +7,6 @@ SYS_BEGIN_DECLS
 
 struct _CstLBox {
   CstWidget parent;
-  CstLBoxPrivate* priv;
 };
 
 struct _CstLBoxClass {

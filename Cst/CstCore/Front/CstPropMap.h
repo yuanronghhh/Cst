@@ -16,7 +16,9 @@ SYS_BEGIN_DECLS
 struct _CstPropMap {
   SysObject parent;
 
-  CstPropMapPrivate *priv;
+  /* <private> */
+  SysChar* key;
+  SysInt data_type;
 };
 
 struct _CstPropMapClass {

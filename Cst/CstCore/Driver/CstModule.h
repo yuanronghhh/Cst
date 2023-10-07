@@ -16,7 +16,18 @@ struct _CstModuleClass {
 
 struct _CstModule {
   FREnv parent;
-  CstModulePrivate *priv;
+
+  /* <private> */
+  CstManager* manager;
+
+  SysChar* path;
+  SysInt count;
+  FREnv* function_env;
+  SysList* awatches;
+
+  SysBool loaded;
+  CstComponent* root_component;
+  AstNode* ast_node;
 };
 
 SYS_API SysType cst_module_get_type(void);

@@ -1,7 +1,7 @@
 #ifndef __CST_CLFLOW_H__
 #define __CST_CLFLOW_H__
 
-#include <CstCore/Front/C/CstCWidget.h>
+#include <CstCore/Driver/CstLayoutContext.h>
 
 SYS_BEGIN_DECLS
 
@@ -11,12 +11,12 @@ SYS_BEGIN_DECLS
 #define CST_LFLOW(o) ((CstLFlow* )o)
 
 struct _CstLFlow {
-  CstWidget parent;
+  CstLayoutContext parent;
   CstLFlowPrivate* priv;
 };
 
 struct _CstLFlowClass {
-  CstWidgetClass parent;
+  CstLayoutContextClass parent;
 };
 
 SYS_API SysType cst_lflow_get_type(void);

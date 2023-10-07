@@ -1,11 +1,11 @@
-#include <CstCore/Front/C/CstCComponent.h>
+#include <CstCore/Front/CstComponent.h>
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
-#include <CstCore/Driver/Css/CstCss.h>
-#include <CstCore/Driver/Css/CstCssEnv.h>
+#include <CstCore/Driver/Css/CstCssCore.h>
+
 
 SYS_DEFINE_TYPE(CstComponent, cst_component, FR_TYPE_ENV);
 
@@ -176,8 +176,8 @@ static void cst_component_class_init(CstComponentClass* cls) {
 static void cst_component_dispose(SysObject* o) {
   CstComponent *self = CST_COMPONENT(o);
 
-  sys_clear_pointer(&self->style_env, (SysDestroyFunc)_sys_object_unref);
-  sys_clear_pointer(&self->prop_maps_env, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->style_env, _sys_object_unref);
+  sys_clear_pointer(&self->prop_maps_env, _sys_object_unref);
 
   cst_node_unlink_node_r(self->layout_node);
 

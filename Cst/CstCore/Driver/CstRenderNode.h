@@ -21,19 +21,22 @@ struct _CstRenderNode {
   /* render_node */
   CstLayoutNode *layout_node;
   CstLayoutContext *layout_ctx;
-  SysPtrArray *css_groups;
 };
 
 struct _CstRenderNodeClass {
   SysObjectClass parent;
 
-  void (*construct)(CstRenderNode *self, CstNode *node);
+  void (*construct)(CstRenderNode *self, CstNode* node, CstLayoutContext* layout_ctx);
+  void (*relayout)(CstRenderNode* self, CstLayout* layout);
+  void (*repaint)(CstRenderNode* self, CstLayout* layout);
   CstRenderNode* (*get_parent)(CstRenderNode *self);
 };
 
-SYS_API SysType cst_render_node_get_type(void);
-SYS_API CstRenderNode *cst_render_node_new(void);
-SYS_API CstRenderNode *cst_render_node_new_I(CstNode *node);
+SysType cst_render_node_get_type(void);
+CstRenderNode *cst_render_node_new(void);
+CstRenderNode* cst_render_node_new_I(CstNode* node, CstLayoutContext* layout_ctx);
+
+CST_RENDER_NODE_ENUM cst_render_node_get_by_name(const SysChar* name);
 
 void cst_render_node_prepare(CstRenderNode *self);
 void cst_render_node_get_mbp(CstRenderNode* self, FRSInt4* m4);
@@ -58,13 +61,20 @@ SysBool cst_render_node_is_visible(CstRenderNode* self);
 SysBool cst_render_node_can_wrap(CstRenderNode* self);
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self);
 const SysChar* cst_render_node_get_id(CstRenderNode *self);
+
 const SysChar* cst_render_node_get_name(CstRenderNode *self);
+void cst_render_node_set_name(CstRenderNode* self, const SysChar* name);
 
 void cst_render_node_relayout_self(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout);
 
+void cst_render_node_fill_rectangle(CstRenderNode* self, CstLayout* layout);
+void cst_render_node_stroke_rectangle(CstRenderNode* self, CstLayout* layout);
+
+CstLayoutContext* cst_render_get_layout_context(CstRenderNode* self);
+CstLayoutNode* cst_render_get_layout_node(CstRenderNode* self);
+
 /* css */
-SysBool cst_render_node_set_css_r(CstRenderNode *self, CstCssGroup *g);
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout);
 

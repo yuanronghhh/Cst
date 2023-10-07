@@ -5,6 +5,8 @@
 
 SYS_BEGIN_DECLS
 
+#include <CstCore/Front/CstType.h>
+
 SYS_END_DECLS
 
 #endif

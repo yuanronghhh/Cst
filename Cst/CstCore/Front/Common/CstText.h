@@ -1,14 +1,27 @@
 #ifndef __CST_TEXT_H__
 #define __CST_TEXT_H__
 
-#include <CstCore/Front/Common/CstWidget.h>
+#include <CstCore/Driver/CstNode.h>
 
 SYS_BEGIN_DECLS
 
-#define CST_TYPE_TEXT _CST_TYPE_TEXT
-#define CST_TEXT(o) _CST_TEXT(o)
-#define CST_TEXT_CLASS(o) _CST_TEXT_CLASS(o)
-#define CST_TEXT_GET_CLASS(o) _CST_TEXT_GET_CLASS(o)
+#define CST_TYPE_TEXT (cst_text_get_type())
+#define CST_TEXT(o) ((CstText* )sys_object_cast_check(o, CST_TYPE_TEXT))
+#define CST_TEXT_CLASS(o) ((CstTextClass *)sys_class_cast_check(o, CST_TYPE_TEXT))
+#define CST_TEXT_GET_CLASS(o) sys_instance_get_class(o, CstTextClass)
+
+
+struct _CstText {
+  CstNode parent;
+
+  /* <private> */
+  PangoLayout *playout;
+  PangoFontDescription *font_desc;
+};
+
+struct _CstTextClass {
+  CstNodeClass parent;
+};
 
 SysType cst_text_get_type(void);
 CstNode* cst_text_new(void);

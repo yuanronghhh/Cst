@@ -1,11 +1,11 @@
 #include <CstCore/Driver/CstRender.h>
-#include <CstCore/Front/C/CstCLFlow.h>
+#include <CstCore/Front/Common/CstLFlow.h>
 
 struct _CstLFlowPrivate {
   SysChar reserved;
 };
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstLFlow, cst_lflow, CST_TYPE_WIDGET);
+SYS_DEFINE_TYPE_WITH_PRIVATE(CstLFlow, cst_lflow, CST_TYPE_LAYOUT_CONTEXT);
 
 CstNode* cst_lflow_new(void) {
   return sys_object_new(CST_TYPE_LFLOW, NULL);
@@ -15,12 +15,12 @@ static void cst_lflow_init(CstLFlow *self) {
   self->priv = cst_lflow_get_private(self);
 }
 
-static void cst_lflow_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  CST_NODE_CLASS(cst_lflow_parent_class)->relayout(v_module, v_parent, v_node, draw, layout);
+static void cst_lflow_relayout_i(CstRenderNode *self, CstLayout *layout) {
+  CST_NODE_CLASS(cst_lflow_parent_class)->relayout(self, layout);
 }
 
-static void cst_lflow_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  CST_NODE_CLASS(cst_lflow_parent_class)->repaint(v_module, v_parent, v_node, draw, layout);
+static void cst_lflow_repaint_i(CstRenderNode *self, CstLayout *layout) {
+  CST_NODE_CLASS(cst_lflow_parent_class)->repaint(self, layout);
 
   cst_node_stroke_rectangle(v_node, draw);
 }

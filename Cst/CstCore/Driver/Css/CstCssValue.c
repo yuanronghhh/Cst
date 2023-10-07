@@ -1,5 +1,4 @@
 #include <CstCore/Driver/Css/CstCssValue.h>
-#include <CstCore/Driver/Css/CstCssValueX.h>
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/Css/CstCssClosure.h>
@@ -7,9 +6,11 @@
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstLayout.h>
 
+#include <CstCore/Driver/Css/CstCssValueX.h>
 
 
 SYS_DEFINE_TYPE(CstCssValue, cst_css_value, SYS_TYPE_OBJECT);
+
 
 static SysHashTable *gcss_node_ht = NULL;
 
@@ -38,7 +39,6 @@ void cst_css_value_calc(CstCssValue *self, CstRenderNode *render_node, CstLayout
 
   CstCssValueClass *cls = CST_CSS_VALUE_GET_CLASS(self);
   int state = cst_layout_get_state(layout);
-  FRContext *cr = cst_layout_get_cr(layout);
 
   if (!(state & self->state_flag)) {
     return;

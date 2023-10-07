@@ -4,6 +4,8 @@
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/CstManager.h>
+#include <CstCore/Front/CstComponent.h>
+
 
 #define MODULE_LOCK
 #define MODULE_UNLOCK
@@ -21,7 +23,7 @@ struct _CstModulePrivate {
   AstNode* ast_node;
 };
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstModule, cst_module, FR_TYPE_ENV);
+SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
 
 SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const SysChar *path) {
   sys_return_val_if_fail(path != NULL, false);
@@ -68,33 +70,25 @@ void cst_module_load_gstyle(CstModule *self, GStyle *gstyle) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(gstyle != NULL);
 
-  CstModulePrivate *priv = self->priv;
-
-  cst_css_env_load_gstyle(gstyle, priv->path);
+  cst_css_env_load_gstyle(gstyle, self->path);
 }
 
 CstManager *cst_module_get_manager(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  return priv->manager;
+  return self->manager;
 }
 
 SysBool cst_module_is_loaded(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  return priv->loaded;
+  return self->loaded;
 }
 
 SysBool cst_module_realize(CstModule *self, CstNode *v_parent, CstRender *v_render) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  CstComponent *comp = priv->root_component;
+  CstComponent *comp = self->root_component;
   cst_component_realize(self, comp, v_parent, v_render);
 
   return true;
@@ -102,10 +96,8 @@ SysBool cst_module_realize(CstModule *self, CstNode *v_parent, CstRender *v_rend
 
 static SysBool module_parse(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
-  CstModulePrivate *priv = self->priv;
-
   Parser* ps;
-  ps = cst_parser_new(priv->path);
+  ps = cst_parser_new(self->path);
   if (ps == NULL) {
     goto fail;
   }
@@ -116,7 +108,7 @@ static SysBool module_parse(CstModule *self) {
     goto fail;
   }
 
-  priv->ast_node = cst_parser_get_root(ps);
+  self->ast_node = cst_parser_get_root(ps);
 
   cst_parser_free(ps, false);
   return true;
@@ -132,86 +124,66 @@ CstModule* cst_module_new(void) {
 SysBool cst_module_load(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
+  ast_module_parse(self->ast_node, self);
 
-  ast_module_parse(priv->ast_node, self);
+  ast_node_free(self->ast_node);
 
-  ast_node_free(priv->ast_node);
-
-  priv->loaded = true;
+  self->loaded = true;
 
   return true;
 }
 
 void cst_module_set_root_comp(CstModule *self, CstComponent *comp) {
   sys_return_if_fail(self != NULL);
-  CstModulePrivate *priv = self->priv;
-
-  priv->root_component = comp;
+  self->root_component = comp;
 }
 
 CstComponent *cst_module_get_root_comp(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
-  CstModulePrivate *priv = self->priv;
-
-  return priv->root_component;
+  return self->root_component;
 }
 
 SysInt cst_module_count(CstModule* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  return priv->count;
+  return self->count;
 }
 
 SysInt cst_module_count_dec(CstModule* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  return --priv->count;
+  return --self->count;
 }
 
 SysInt cst_module_count_inc(CstModule* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  return ++priv->count;
+  return ++self->count;
 }
 
 SysInt cst_module_get_hashcode(CstModule* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstModulePrivate *priv = self->priv;
-
-  return sys_str_hash((SysPointer)priv->path);
+  return sys_str_hash((SysPointer)self->path);
 }
 
 SysChar* cst_module_get_path(CstModule* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstModulePrivate *priv = self->priv;
-
-  return priv->path;
+  return self->path;
 }
 
 AstNode* cst_module_get_ast_node(CstModule* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstModulePrivate *priv = self->priv;
-
-  return priv->ast_node;
+  return self->ast_node;
 }
 
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name) {
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(func_name != NULL, NULL);
 
-  CstModulePrivate *priv = self->priv;
-
-  return (SysFunc)fr_env_get_r(priv->function_env, func_name);
+  return (SysFunc)fr_env_get_r(self->function_env, func_name);
 }
 
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func) {
@@ -221,9 +193,7 @@ void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc 
   sys_return_if_fail(sys_strneq(func_name, "F_", 2));
   sys_return_if_fail(func != NULL);
 
-  CstModulePrivate *priv = self->priv;
-
-  fr_env_set(priv->function_env, sys_strdup(func_name), (SysPointer)func);
+  fr_env_set(self->function_env, sys_strdup(func_name), (SysPointer)func);
 }
 
 void cst_module_set_comp(CstModule *self, const SysChar *key, CstComponent *comp) {
@@ -249,21 +219,18 @@ SysList* cst_module_add_awatch(CstModule *self, SysPointer user_data, const SysC
   sys_return_val_if_fail(func != NULL, NULL);
   sys_return_val_if_fail(props != NULL, NULL);
 
-  CstModulePrivate *priv = self->priv;
   FRAWatch *awatch = fr_awatch_new_bind(user_data, watch_name, func_name, func, props);
 
-  priv->awatches = sys_list_prepend(priv->awatches, awatch);
+  self->awatches = sys_list_prepend(self->awatches, awatch);
 
-  return priv->awatches;
+  return self->awatches;
 }
 
 void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(awatch_link != NULL);
 
-  CstModulePrivate *priv = self->priv;
-
-  priv->awatches = sys_list_delete_link(priv->awatches, awatch_link);
+  self->awatches = sys_list_delete_link(self->awatches, awatch_link);
 
   sys_object_unref(awatch_link->data);
 }
@@ -276,18 +243,16 @@ static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, const SysChar *path) {
   SysHashTable *ht;
 
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
+  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, _sys_object_unref);
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
-  CstModulePrivate *priv = self->priv;
-
-  priv->manager = manager;
-  priv->path = sys_strdup(path);
+  self->manager = manager;
+  self->path = sys_strdup(path);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
-  priv->function_env = fr_env_new_I(ht, NULL);
+  self->function_env = fr_env_new_I(ht, NULL);
 
-  priv->root_component = NULL;
+  self->root_component = NULL;
 
   if (!module_parse(self)) {
     sys_abort_N("module parse failed: %s", path);
@@ -303,27 +268,25 @@ CstModule* cst_module_new_I(CstManager* manager, CstModule* pmodule, const SysCh
 }
 
 static void cst_module_init(CstModule *self) {
-  CstModulePrivate *priv = self->priv = cst_module_get_private(self);
-
-  priv->loaded = false;
+  self->loaded = false;
 }
 
 static void cst_module_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
   CstModule *self = CST_MODULE(o);
-  CstModulePrivate *priv = self->priv;
 
-  sys_object_unref(priv->root_component);
-  sys_object_unref(priv->function_env);
-  sys_list_free_full(priv->awatches, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->root_component, _sys_object_unref);
+  sys_clear_pointer(&self->function_env, _sys_object_unref);
+
+  sys_list_free_full(self->awatches, _sys_object_unref);
 
   fr_env_set_parent(FR_ENV(self), NULL);
 
-  sys_free_N(priv->path);
+  sys_clear_pointer(&self->path, sys_free);
 
-  if (!priv->loaded) {
-    ast_node_free(priv->ast_node);
+  if (!self->loaded) {
+    sys_clear_pointer(&self->ast_node, ast_node_free);
   }
 
   SYS_OBJECT_CLASS(cst_module_parent_class)->dispose(o);

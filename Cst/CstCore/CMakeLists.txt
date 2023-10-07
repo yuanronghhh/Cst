@@ -15,43 +15,25 @@ set(INC_SYS
 )
 
 
-set(MONO_API_SRC
-  ./Front/Mono/CstMType.h
-
-  ./Front/Mono/CstMNode.c
-  ./Front/Mono/CstMNode.h
-  ./Front/Mono/CstMNodePrivate.h
-  ./Front/Mono/CstMComponent.c
-  ./Front/Mono/CstMComponent.h
-  ./Front/Mono/CstMText.c
-  ./Front/Mono/CstMText.h
-  ./Front/Mono/CstMWidget.c
-  ./Front/Mono/CstMWidget.h
-)
-
 set(C_API_SRC
-  ./Front/C/CstCType.h
+  ./Front/CstType.h
+  ./Front/Common/CstComNode.c
+  ./Front/Common/CstComNode.h
+  ./Front/Common/CstLBox.c
+  ./Front/Common/CstLBox.h
+  ./Front/Common/CstLDiv.c
+  ./Front/Common/CstLDiv.h
+  ./Front/Common/CstLBody.c
+  ./Front/Common/CstLBody.h
+  ./Front/Common/CstText.c
+  ./Front/Common/CstText.h
+  ./Front/Common/CstComNode.h
+  ./Front/Common/CstComNode.c
 
-  ./Front/C/CstCNode.c
-  ./Front/C/CstCNode.h
-  ./Front/C/CstCWidget.c
-  ./Front/C/CstCWidget.h
-  ./Front/C/CstCComNode.c
-  ./Front/C/CstCComNode.h
-  ./Front/C/CstCLFlow.c
-  ./Front/C/CstCLFlow.h
-  ./Front/C/CstCLBox.c
-  ./Front/C/CstCLBox.h
-  ./Front/C/CstCLDiv.c
-  ./Front/C/CstCLDiv.h
-  ./Front/C/CstCLBody.c
-  ./Front/C/CstCLBody.h
-  ./Front/C/CstCLGrid.c
-  ./Front/C/CstCLGrid.h
-  ./Front/C/CstCText.c
-  ./Front/C/CstCText.h
-  ./Front/C/CstCComponent.c
-  ./Front/C/CstCComponent.h
+  ./Front/Common/CstLGridContext.c
+  ./Front/Common/CstLGridContext.h
+  ./Front/Common/CstLBoxContext.c
+  ./Front/Common/CstLBoxContext.h
 )
 
 set(SRC
@@ -82,6 +64,8 @@ set(SRC
   ./Driver/CstManager.h
   ./Driver/CstModule.c
   ./Driver/CstModule.h
+  ./Driver/CstNode.c
+  ./Driver/CstNode.h
 
   ./Driver/Css/CstCssGroup.c
   ./Driver/Css/CstCssGroup.h
@@ -97,6 +81,8 @@ set(SRC
   ./Driver/Css/CstCssEnv.h
   ./Driver/Css/CstCss.c
   ./Driver/Css/CstCss.h
+  ./Driver/Css/CstCssCore.h
+
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
   ./Driver/CstLayoutContext.h
@@ -108,40 +94,17 @@ set(SRC
   ./Driver/CstBoxNode.h
   ./Driver/CstBoxNode.c
 
-  ./Front/Common/CstNodePrivate.h
-  ./Front/Common/CstNode.h
-  ./Front/Common/CstNode.c
-  ./Front/Common/CstComNode.h
-  ./Front/Common/CstComNode.c
-  ./Front/Common/CstNodeMap.h
-  ./Front/Common/CstNodeMap.c
-  ./Front/Common/CstPropMap.h
-  ./Front/Common/CstPropMap.c
-  ./Front/Common/CstPropPair.h
-  ./Front/Common/CstPropPair.c
-  ./Front/Common/CstNodeMapCore.h
-  ./Front/Common/CstComponentPrivate.h
-  ./Front/Common/CstComponent.h
-  ./Front/Common/CstComponent.c
-  ./Front/Common/CstTextPrivate.h
-  ./Front/Common/CstText.h
-  ./Front/Common/CstText.c
-  ./Front/Common/CstWidgetPrivate.h
-  ./Front/Common/CstWidget.h
-  ./Front/Common/CstWidget.c
-  ./Front/Common/CstLBodyPrivate.h
-  ./Front/Common/CstLBody.h
-  ./Front/Common/CstLBody.c
-  ./Front/Common/CstLBoxPrivate.h
-  ./Front/Common/CstLBox.h
-  ./Front/Common/CstLBox.c
-  ./Front/Common/CstLDiv.h
-  ./Front/Common/CstLDiv.c
-  ./Front/Common/CstLGridPrivate.h
-  ./Front/Common/CstLGrid.h
-  ./Front/Common/CstLGrid.c
-  ./Front/CstAnime.c
-  ./Front/CstAnime.h
+
+  ./Front/CstNodeMap.h
+  ./Front/CstNodeMap.c
+  ./Front/CstPropMap.h
+  ./Front/CstPropMap.c
+  ./Front/CstPropPair.h
+  ./Front/CstPropPair.c
+  ./Front/CstNodeMapCore.h
+  ./Front/CstComponent.h
+  ./Front/CstComponent.c
+
   ./Front/CstFrontCore.h
 
   ./Parser/CstCli.l
@@ -169,7 +132,6 @@ set(SRC
 )
 
 if(USE_MONO)
-    LIST(APPEND SRC ${MONO_API_SRC})
 else()
     LIST(APPEND SRC ${C_API_SRC})
 endif()

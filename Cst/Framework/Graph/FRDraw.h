@@ -35,12 +35,14 @@ SYS_API FRDraw* fr_draw_new_I(FRWindow *window);
 SYS_API void fr_draw_frame_begin(FRDraw *self, FRRegion *region);
 SYS_API void fr_draw_frame_end(FRDraw *self, FRRegion *region);
 SYS_API SysBool fr_draw_frame_need_draw(FRDraw *self);
-void fr_draw_get_size(FRDraw * self, SysInt * width, SysInt * height);
+SYS_API void fr_draw_get_size(FRDraw * self, SysInt * width, SysInt * height);
 SYS_API FRContext* fr_draw_create_cr(FRDraw* self);
 SYS_API FRSurface *fr_draw_get_surface(FRDraw *self);
-FRContext* fr_draw_get_cr(FRDraw* self);
 void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, FRSInt4* m4, FRSInt4* p4);
 void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound);
+
+/* text render */
+void fr_playout_show_text(FRDraw* self, PangoLayout* playout, FRRect* bound, FRInt4 m4);
 
 SYS_END_DECLS
 

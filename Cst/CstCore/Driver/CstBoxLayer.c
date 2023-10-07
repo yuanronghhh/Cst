@@ -26,7 +26,7 @@ void cst_box_layer_insert_after(CstBoxLayer *box, CstBoxNode *parent, CstBoxNode
   cst_box_node_insert_after(parent, last_child, nnode);
 }
 
-void cst_box_layer_append(CstLayer *layer, CstBoxNode *parent, CstBoxNode *child) {
+static void cst_box_layer_append(CstLayer *layer, CstBoxNode *parent, CstBoxNode *child) {
   sys_return_if_fail(layer != NULL);
   sys_return_if_fail(child != NULL);
 
@@ -187,6 +187,7 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   ocls->dispose = cst_box_layer_dispose;
 
   lcls->construct = cst_box_layer_construct;
+  lcls->append_node = cst_box_layer_append;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

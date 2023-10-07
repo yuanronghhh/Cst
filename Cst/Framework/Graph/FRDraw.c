@@ -1,3 +1,4 @@
+#include "FRDraw.h"
 #include <Framework/Graph/FRDraw.h>
 #include <Framework/Device/FRDisplay.h>
 #include <Framework/Device/FRWindow.h>
@@ -29,7 +30,7 @@ void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, FRSInt4* m4, FRSInt4* 
 
   FRContext *cr = self->cr;
 
-  SysInt x = bound->x + m4->m0;
+  SysInt x = bound->x + m4->m3;
   SysInt y = bound->y + m4->m0;
   SysInt width = bound->width + p4->m1 + p4->m3;
   SysInt height = bound->height + p4->m0 + p4->m2;
@@ -52,12 +53,6 @@ void fr_draw_get_size(FRDraw *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
 
   fr_window_get_framebuffer_size(self->window, width, height);
-}
-
-FRContext* fr_draw_get_cr(FRDraw* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->cr;
 }
 
 FRContext* fr_draw_create_cr(FRDraw* self) {
@@ -157,6 +152,14 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
   sys_clear_pointer(&self->paint_surface, cairo_surface_destroy);
 
   self->is_painting = false;
+}
+
+/* text render */
+void fr_playout_show_text(FRDraw* self, PangoLayout *playout, FRRect *bound, FRInt4 m4) {
+  FRContext* cr = self->cr;
+
+  fr_context_move_to(cr, bound->x + m4.m1, bound->y + m4.m0);
+  pango_cairo_show_layout(cr, playout);
 }
 
 /* object api */

@@ -122,7 +122,6 @@ typedef struct _CstManagerClass CstManagerClass;
 
 typedef struct _CstModule CstModule;
 typedef struct _CstModuleClass CstModuleClass;
-typedef struct _CstModulePrivate CstModulePrivate;
 
 typedef struct _CstRender CstRender;
 typedef struct _CstRenderClass CstRenderClass;
@@ -165,21 +164,15 @@ typedef struct _CstCssPairClass CstCssPairClass;
 typedef struct _CstCssEnv CstCssEnv;
 typedef struct _CstCssEnvClass CstCssEnvClass;
 
-#if CST_USE_MONO
-#include <CstCore/Front/Mono/CstMType.h>
-#else
-#include <CstCore/Front/C/CstCType.h>
-#endif
+#include <CstCore/Front/CstType.h>
 
 typedef struct _CstNodeProps CstNodeProps;
 typedef struct _CstComponentProps CstComponentProps;
 typedef struct _CstNodeMap CstNodeMap;
 typedef struct _CstNodeMapClass CstNodeMapClass;
-typedef struct _CstNodeMapPrivate CstNodeMapPrivate;
 
 typedef struct _CstPropMap CstPropMap;
 typedef struct _CstPropMapClass CstPropMapClass;
-typedef struct _CstPropMapPrivate CstPropMapPrivate;
 
 typedef struct _CstPropPair CstPropPair;
 typedef SysValue CstPropValue;

@@ -3,7 +3,6 @@
 
 #include <CstCore/Driver/CstCommon.h>
 
-
 SYS_BEGIN_DECLS
 
 #define CST_TYPE_LAYOUT_CONTEXT (cst_layout_context_get_type())
@@ -31,16 +30,12 @@ struct _CstLayoutContext {
   // self constraint
   CstCssClosure  *width_calc;
   CstCssClosure  *height_calc;
-
-  // constraint for child, may be NULL.
-  CstCssClosure  *child_width_calc;
-  CstCssClosure  *child_height_calc;
 };
 
 struct _CstLayoutContextClass {
   SysObjectClass parent;
 
-  void (*layout_self) (CstLayoutContext *self, CstRenderNode *render_node, CstLayout *layout);
+  void (*layout_self) (CstLayoutContext* self, CstRenderNode* render_node, CstLayout* layout);
   void (*layout_children) (CstLayoutContext *self, CstRenderNode *render_node, CstLayout *layout);
 };
 
@@ -56,6 +51,10 @@ void cst_layout_context_set_mbp(CstLayoutContext* self, FRSInt4* m4);
 const FRSInt4* cst_layout_context_get_mbp(CstLayoutContext* self);
 
 void cst_layout_context_set_node_type(CstLayoutContext* self, SysInt flag);
+
+void cst_layout_context_set_width_closure(CstLayoutContext* self, CstCssClosure* c);
+void cst_layout_context_set_height_closure(CstLayoutContext* self, CstCssClosure* c);
+
 SysBool cst_layout_context_is_abs_node(CstLayoutContext* self);
 SysBool cst_layout_context_is_box_node(CstLayoutContext* self);
 

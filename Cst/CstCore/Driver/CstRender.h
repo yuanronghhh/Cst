@@ -40,7 +40,6 @@ void cst_render_rerender(CstRender *self, FRRegion *region);
 CstBoxLayer *cst_render_get_box_layer(CstRender *render);
 CstAbsLayer *cst_render_get_abs_layer(CstRender *render);
 CstNode* cst_render_get_root(CstRender* self);
-void cst_render_set_root(CstRender* self, CstNode* root);
 
 SYS_END_DECLS
 

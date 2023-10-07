@@ -25,7 +25,7 @@ static void cst_css_pair_dispose(SysObject* o) {
   CstCssPair *self = CST_CSS_PAIR(o);
 
   sys_clear_pointer(&self->key, sys_free);
-  sys_clear_pointer(&self->value, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->value, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_css_pair_parent_class)->dispose(o);
 }

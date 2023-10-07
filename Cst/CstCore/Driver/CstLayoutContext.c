@@ -50,31 +50,11 @@ void cst_layout_context_set_node_type(CstLayoutContext *self, SysInt flag) {
   self->node_type = flag;
 }
 
-void cst_layout_context_set_child_width_closure(CstLayoutContext* self, CstCssClosure* c) {
-  sys_return_if_fail(self != NULL);
-
-  if (self->child_width_calc) {
-    sys_clear_pointer(&self->child_width_calc, (SysDestroyFunc)_sys_object_unref);
-  }
-
-  self->child_width_calc = c;
-}
-
-void cst_layout_context_set_child_height_closure(CstLayoutContext* self, CstCssClosure* c) {
-  sys_return_if_fail(self != NULL);
-
-  if (self->child_height_calc) {
-    sys_clear_pointer(&self->child_height_calc, (SysDestroyFunc)_sys_object_unref);
-  }
-
-  self->child_height_calc = c;
-}
-
 void cst_layout_context_set_width_closure(CstLayoutContext* self, CstCssClosure* c) {
   sys_return_if_fail(self != NULL);
 
   if (self->width_calc) {
-    sys_clear_pointer(&self->width_calc, (SysDestroyFunc)_sys_object_unref);
+    sys_clear_pointer(&self->width_calc, _sys_object_unref);
   }
 
   self->width_calc = c;
@@ -84,7 +64,7 @@ void cst_layout_context_set_height_closure(CstLayoutContext* self, CstCssClosure
   sys_return_if_fail(self != NULL);
 
   if (self->height_calc) {
-    sys_clear_pointer(&self->height_calc, (SysDestroyFunc)_sys_object_unref);
+    sys_clear_pointer(&self->height_calc, _sys_object_unref);
   }
 
   self->height_calc = c;
@@ -153,10 +133,16 @@ CstLayoutContext* cst_layout_context_dclone(CstLayoutContext *o) {
   SysType type = sys_type_from_instance(o);
   CstLayoutContext *n = sys_object_new(type, NULL);
 
+  n->need_relayout = o->need_relayout;
+  n->need_repaint = o->need_repaint;
+  n->is_visible = o->is_visible;
+  n->wrap = o->wrap;
+  n->line_space = o->line_space;
+  n->node_type = o->node_type;
+  n->child_count = o->child_count;
+  n->mbp = o->mbp;
   n->prefer_height = o->prefer_height;
   n->prefer_width = o->prefer_width;
-  n->need_relayout = o->need_relayout;
-  // TODO
 
   return n;
 }

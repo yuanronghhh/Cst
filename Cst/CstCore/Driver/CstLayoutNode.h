@@ -14,7 +14,6 @@ SYS_BEGIN_DECLS
 struct _CstLayoutNode {
   SysObject parent;
 
-  /* <private> */
   FRRect bound;
 
   FRSInt4 border;

@@ -1,12 +1,6 @@
-#include <CstCore/Front/Common/CstPropMap.h>
+#include <CstCore/Front/CstPropMap.h>
 
-
-struct _CstPropMapPrivate {
-  SysChar *key;
-  SysInt data_type;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstPropMap, cst_prop_map, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstPropMap, cst_prop_map, SYS_TYPE_OBJECT);
 
 CstPropMap* cst_prop_map_new(void) {
   return sys_object_new(CST_TYPE_PROP_MAP, NULL);
@@ -15,29 +9,22 @@ CstPropMap* cst_prop_map_new(void) {
 const SysChar* cst_prop_map_key(CstPropMap *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstPropMapPrivate* priv = self->priv;
-
-  return priv->key;
+  return self->key;
 }
 
 SysInt cst_prop_map_prop_data_type(CstPropMap *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  CstPropMapPrivate* priv = self->priv;
-
-  return priv->data_type;
+  return self->data_type;
 }
 
 /* object api */
 static void cst_prop_map_init(CstPropMap *self) {
-  self->priv = cst_prop_map_get_private(self);
 }
 
 static void cst_prop_map_construct(CstPropMap* self, const SysChar *key, CST_PROP_VALUE_ENUM data_type) {
-  CstPropMapPrivate* priv = self->priv;
-
-  priv->key = sys_strdup(key);
-  priv->data_type = data_type;
+  self->key = sys_strdup(key);
+  self->data_type = data_type;
 }
 
 SysInt cst_prop_map_parse_type(const SysChar *key, const SysChar* type_str) {
@@ -67,9 +54,7 @@ CstPropMap* cst_prop_map_new_I(const SysChar *key, CST_PROP_VALUE_ENUM data_type
 
 static void cst_prop_map_dispose(SysObject* o) {
   CstPropMap *self = CST_PROP_MAP(o);
-  CstPropMapPrivate* priv = self->priv;
-
-  sys_free_N(priv->key);
+  sys_free_N(self->key);
 
   SYS_OBJECT_CLASS(cst_prop_map_parent_class)->dispose(o);
 }

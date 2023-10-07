@@ -13,6 +13,10 @@ typedef  struct  _FRSInt4          FRSInt4;
 typedef  struct _cairo_region  FRRegion;
 typedef  struct _cairo_rectangle_int FRRect;
 
+typedef  struct _cairo_pattern FRPattern;
+typedef  struct _cairo_surface FRSurface;
+typedef  struct _cairo FRContext;
+
 struct _FRPoint {
   SysInt x;
   SysInt y;

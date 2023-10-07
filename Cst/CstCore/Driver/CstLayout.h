@@ -17,7 +17,7 @@ struct _CstLayout {
   /* <private> */
   int state;
   FRRegion *region;
-  FRContext *cr;
+  FRDraw *draw;
 };
 
 struct _CstLayoutClass {
@@ -26,14 +26,14 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(FRContext *cr, FRRegion *region);
+CstLayout *cst_layout_new_I(FRDraw *cr, FRRegion *region);
 
 int cst_layout_get_state(CstLayout *self);
 void cst_layout_set_state(CstLayout *self, int state);
 SysBool cst_layout_state_layout(CstLayout *self);
 
 FRRegion *cst_layout_get_region(CstLayout* self);
-FRContext *cst_layout_get_cr(CstLayout* self);
+FRDraw *cst_layout_get_draw(CstLayout* self);
 
 void cst_layout_layout_box(CstLayout* self, FRDraw *draw, CstRenderNode *render_node);
 

@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstPropPair.h>
+#include <CstCore/Front/CstPropPair.h>
 
 
 struct _CstPropPair {

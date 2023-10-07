@@ -23,12 +23,14 @@ struct _CstLayerClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayer *layer);
+  void (*append_node) (CstLayer *layer, CstBoxNode *parent, CstBoxNode *child);
 };
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
 
-SYS_API void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
+void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
+void cst_layer_append_node(CstLayer *self, CstRenderNode *parent, CstRenderNode *node);
 
 SYS_END_DECLS
 

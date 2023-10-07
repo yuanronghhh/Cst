@@ -1,4 +1,5 @@
 #include <CstCore/Driver/CstBoxNode.h>
+#include <CstCore/Front/Common/CstLBox.h>
 #include <CstCore/Driver/CstLayout.h>
 
 
@@ -108,7 +109,7 @@ void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {
 static void box_node_repaint_box_node_r(CstBoxNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  FRContext *cr = cst_layout_get_cr(layout);
+  FRDraw *draw = cst_layout_get_draw(layout);
 
   cst_box_node_paint(self, layout);
 
@@ -163,8 +164,9 @@ static void cst_box_node_dispose(SysObject* o) {
 }
 
 static void cst_box_node_construct(CstRenderNode* o, CstNode *node) {
+  CstLayoutContext* ctx = cst_lbox_context_new_I();
 
-  CST_RENDER_NODE_GET_CLASS(cst_box_node_parent_class)->construct(o, node);
+  CST_RENDER_NODE_GET_CLASS(cst_box_node_parent_class)->construct(o, node, ctx);
 }
 
 CstRenderNode *cst_box_node_new_I(CstNode *node) {

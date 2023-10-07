@@ -1,8 +1,8 @@
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstLayout.h>
-#include <CstCore/Front/Common/CstComponent.h>
+#include <CstCore/Front/CstComponent.h>
 #include <CstCore/Front/Common/CstLBody.h>
-#include <CstCore/Front/Common/CstWidget.h>
+#include <CstCore/Driver/CstLayoutContext.h>
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
@@ -34,12 +34,6 @@ CstNode *cst_render_get_root(CstRender* self) {
   return self->root;
 }
 
-void cst_render_set_root(CstRender* self, CstNode *root) {
-  sys_return_if_fail(self != NULL);
-
-  self->root = root;
-}
-
 FRRegion *render_create_region(FRWindow *window) {
   FRRegion *region;
   FRRect bound = { 0 };
@@ -62,7 +56,7 @@ void cst_render_rerender(CstRender *self, FRRegion *region) {
   sys_return_if_fail(self != NULL);
 
   FRDraw *draw = fr_draw_new_I(self->window);
-  CstLayout *layout = cst_layout_new_I(fr_draw_get_cr(draw), region);
+  CstLayout *layout = cst_layout_new_I(draw, region);
 
   cst_box_layer_check(self->box_layer, layout);
   cst_box_layer_layout(self->box_layer, layout);
@@ -101,6 +95,8 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 
   fr_region_destroy(region);
 }
+
+
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
@@ -115,6 +111,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   self->box_layer = (CstBoxLayer *)cst_box_layer_new_I();
   self->abs_layer = (CstAbsLayer *)cst_abs_layer_new_I();
+  self->root = cst_lbody_new();
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

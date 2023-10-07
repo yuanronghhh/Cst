@@ -1,13 +1,22 @@
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Front/Common/CstNode.h>
-#include <CstCore/Front/Common/CstComponent.h>
+#include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstLayoutContext.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Front/CstComponent.h>
 
 
 SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, SYS_TYPE_OBJECT);
+
+
+static const SysChar* CST_RENDER_NODE_NAMES[] = {
+  "box", "absolute"
+};
+
+CST_RENDER_NODE_ENUM cst_render_node_get_by_name(const SysChar* name) {
+  return fr_get_type_by_name(CST_RENDER_NODE_NAMES, ARRAY_SIZE(CST_RENDER_NODE_NAMES), name);
+}
 
 void cst_render_node_set_layout(CstRenderNode *self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
@@ -84,7 +93,6 @@ void cst_render_node_get_mbp(CstRenderNode* self, FRSInt4* m4) {
   cst_layout_node_get_mbp(self->layout_node, m4);
 }
 
-
 SysBool cst_render_node_is_dirty(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, false);
 
@@ -119,7 +127,7 @@ CstRenderNode* cst_render_node_get_parent(CstRenderNode* self) {
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  cst_css_render_groups(self->css_groups, self, layout);
+  // cst_css_render_groups(self->css_groups, self, layout);
   cst_render_node_prepare(self);
 }
 
@@ -131,15 +139,7 @@ CstRenderNode* cst_render_node_dclone_i(CstRenderNode *o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysType type = sys_type_from_instance(o);
 
-  SysPtrArray *ptr;
   CstRenderNode *n = sys_object_new(type, NULL);
-
-  ptr = n->css_groups;
-  for(SysUInt i = 0; i < ptr->len; i++) {
-    CstCssGroup *g = cst_css_group_clone(ptr->pdata[i]);
-
-    sys_ptr_array_add(n->css_groups, g);
-  }
 
   n->node = cst_node_dclone(o->node);
   n->layout_node = cst_layout_node_clone(o->layout_node);
@@ -165,76 +165,60 @@ const SysChar* cst_render_node_get_name(CstRenderNode *self) {
   return cst_node_get_name(self->node);
 }
 
+void cst_render_node_set_name(CstRenderNode* self, const SysChar*name) {
+  sys_return_if_fail(self != NULL);
+
+  cst_node_set_name(self->node, name);
+}
+
 void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 }
 
-/* css */
-static SysBool render_node_css_exists(SysPtrArray *css_list, const SysChar *node_id, CstCssGroup *g) {
-  sys_return_val_if_fail(css_list == NULL, false);
-  sys_return_val_if_fail(node_id == NULL, false);
+void cst_render_node_fill_rectangle(CstRenderNode *self, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
 
-  if (css_list->len == 0) { return false; }
+  const FRRect* bound = cst_render_node_get_bound(self);
+  FRDraw* draw = cst_layout_get_draw(layout);
 
-  for (SysInt i = 0; i < (SysInt)css_list->len; i++) {
-    CstCssGroup * cg = css_list->pdata[i];
-
-    if (cg == g) {
-      sys_warning_N("load duplicate css: %s, %s", node_id, cst_css_group_get_id(g));
-      return true;
-    }
-  }
-
-  return false;
+  fr_draw_fill_rectangle(draw, bound);
 }
 
-static SysBool render_node_set_css_r_i(CstRenderNode *self, CstCssGroup *g) {
-  const SysChar *id;
-  SysPtrArray* base;
+void cst_render_node_stroke_rectangle(CstRenderNode *self, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
 
-  sys_return_val_if_fail(g != NULL, false);
+  FRSInt4 m4, p4;
+  const FRRect* bound;
+  FRDraw* draw = cst_layout_get_draw(layout);
 
-  id = cst_css_group_get_id(g);
-  sys_return_val_if_fail(id != NULL, false);
+  cst_layout_node_get_margin(self->layout_node, &m4);
+  cst_layout_node_get_padding(self->layout_node, &p4);
 
-  base = cst_css_group_get_base(g);
-  if (render_node_css_exists(self->css_groups, cst_node_get_id(self->node), g)) {
-    return false;
-  }
+  bound = cst_render_node_get_bound(self);
 
-  sys_object_ref(g);
-  sys_ptr_array_add(self->css_groups, g);
+  fr_draw_stroke_mp(draw, bound, &m4, &p4);
 
-  if (base == NULL || base->len == 0) {
-    return true;
-  }
-
-  for(SysInt i = 0; i < (SysInt)base->len; i++) {
-    CstCssGroup * ng = base->pdata[i];
-
-    sys_assert(cst_css_group_get_id(ng) != NULL && "CstCssGroup id should not be null, maybe destroyed ?");
-
-    render_node_set_css_r_i(self, ng);
-  }
-
-  return false;
+#if 0
+  sys_debug_N("repaint render_node: %s,%s<%d,%d,%d,%d>",
+      cst_render_node_get_id(self),
+      cst_render_node_get_name(self),
+      bound->x,
+      bound->y,
+      bound->width,
+      bound->height);
+#endif
 }
 
-SysBool cst_render_node_set_css_r(CstRenderNode *self, CstCssGroup *g) {
-  return render_node_set_css_r_i(self, g);
+CstLayoutContext* cst_render_get_layout_context(CstRenderNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->layout_ctx;
 }
 
-SysBool cst_render_node_set_css_by_id(CstRenderNode *self, SysChar *id, CstComponent *comp) {
-  sys_return_val_if_fail(id != NULL, false);
-  sys_return_val_if_fail(self != NULL, false);
+CstLayoutNode* cst_render_get_layout_node(CstRenderNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstCssGroup *g = cst_component_get_css_r(comp, id);
-  if (g == NULL) {
-    sys_error_N("Not found css: %s", id);
-    return false;
-  }
-
-  return cst_render_node_set_css_r(self, g);
+  return self->layout_node;
 }
 
 /* object api */
@@ -244,10 +228,10 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-static void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
+static void cst_render_node_construct(CstRenderNode* self, CstNode *node, CstLayoutContext *layout_ctx) {
   self->node = node;
   self->layout_node = cst_layout_node_new_I(0, 0, -1, 1);
-  self->layout_ctx = cst_layout_context_new_I();
+  self->layout_ctx = layout_ctx;
 
   sys_object_ref(SYS_OBJECT(node));
 }
@@ -256,10 +240,10 @@ CstRenderNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstNode *node) {
+CstRenderNode *cst_render_node_new_I(CstNode *node, CstLayoutContext* layout_ctx) {
   CstRenderNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, node);
+  cst_render_node_construct(o, node, layout_ctx);
 
   return o;
 }

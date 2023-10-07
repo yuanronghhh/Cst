@@ -6,10 +6,10 @@
 SYS_BEGIN_DECLS
 
 void cst_prop_pair_free(CstPropPair * pair);
-CstPropPair * cst_prop_pair_new(SysChar * key, SysValue * value);
+CstPropPair* cst_prop_pair_new(SysChar * key, SysValue * value);
 
-SysValue * cst_prop_pair_value(CstPropPair * pair);
-SysChar * cst_prop_pair_key(CstPropPair * pair);
+SysValue* cst_prop_pair_value(CstPropPair * pair);
+SysChar* cst_prop_pair_key(CstPropPair * pair);
 
 SYS_END_DECLS
 

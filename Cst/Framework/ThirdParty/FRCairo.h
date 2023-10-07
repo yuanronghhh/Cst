@@ -20,10 +20,6 @@ SYS_BEGIN_DECLS
   #include <cairo/cairo-win32.h>
 #endif
 
-typedef  struct _cairo_pattern FRPattern;
-typedef  struct _cairo_surface FRSurface;
-typedef  struct _cairo FRContext;
-
 #define fr_region_destroy cairo_region_destroy
 #define fr_region_create_rectangle cairo_region_create_rectangle
 #define fr_region_create cairo_region_create
@@ -81,7 +77,7 @@ typedef  struct _cairo FRContext;
 #define FRFontFace cairo_font_face_t
 #define FRSCaledFont cairo_scaled_font_t
 
-void fr_cairo_demo(cairo_t *cr);
+void fr_cairo_demo(cairo_t* cr);
 
 SYS_END_DECLS
 

@@ -1,15 +1,33 @@
 #ifndef __CST_COMPONENT__
 #define __CST_COMPONENT__
 
-#include <CstCore/Front/Common/CstNode.h>
-#include <CstCore/Front/Common/CstNodeMap.h>
+#include <CstCore/Front/CstNodeMap.h>
 
 SYS_BEGIN_DECLS
 
-#define CST_TYPE_COMPONENT _CST_TYPE_COMPONENT
-#define CST_COMPONENT(o) _CST_COMPONENT(o)
-#define CST_COMPONENT_CLASS(o) _CST_COMPONENT_CLASS(o)
-#define CST_COMPONENT_GET_CLASS(o) _CST_COMPONENT_GET_CLASS(o)
+#define CST_TYPE_COMPONENT (cst_component_get_type())
+#define CST_COMPONENT(o) ((CstComponent* )sys_object_cast_check(o, CST_TYPE_COMPONENT))
+#define CST_COMPONENT_CLASS(o) ((CstComponentClass *)sys_class_cast_check(o, CST_TYPE_COMPONENT))
+#define CST_COMPONENT_GET_CLASS(o) sys_instance_get_class(o, CstComponentClass)
+
+struct _CstComponent {
+  FREnv parent;
+
+  /* <private> */
+  CstModule *v_module;
+  SysChar *id;
+  /* ComStyle : CstCssGroup */
+  FREnv *style_env;
+  /* ComProps: CstPropMap */
+  FREnv *prop_maps_env;
+  CstNode *layout_node;
+};
+
+struct _CstComponentClass {
+  FREnvClass parent;
+
+  void (*construct) (CstComponent *self, CstModule *v_module, CstComponent *v_parent);
+};
 
 struct _CstComponentProps {
   SysChar *v_id;

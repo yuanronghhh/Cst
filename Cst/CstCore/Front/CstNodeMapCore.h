@@ -7,8 +7,8 @@
 SYS_BEGIN_DECLS
 
 #include <CstCore/Front/Common/CstComNode.h>
-#include <CstCore/Front/Common/CstPropMap.h>
-#include <CstCore/Front/Common/CstNodeMap.h>
+#include <CstCore/Front/CstPropMap.h>
+#include <CstCore/Front/CstNodeMap.h>
 
 SYS_END_DECLS
 

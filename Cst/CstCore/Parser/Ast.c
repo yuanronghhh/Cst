@@ -1,7 +1,7 @@
 #include <CstCore/Parser/Ast.h>
-#include <CstCore/Front/Common/CstComponent.h>
-#include <CstCore/Front/Common/CstNodeMapCore.h>
-#include <CstCore/Front/Common/CstPropPair.h>
+#include <CstCore/Front/CstComponent.h>
+#include <CstCore/Front/CstNodeMapCore.h>
+#include <CstCore/Front/CstPropPair.h>
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstManager.h>
@@ -9,7 +9,7 @@
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/Css/CstCssPair.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
-#include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 
 
 typedef struct _AstModulePass AstModulePass;
@@ -374,7 +374,11 @@ static SysBool component_style_node_func(JNode *jnode, CstComponent *self) {
   return true;
 }
 
-void cst_node_props_destroy(CstNodeProps *props) {
+CstNodeProps* cst_node_props_new(void) {
+  return sys_new0_N(CstNodeProps, 1);
+}
+
+void cst_node_props_free(CstNodeProps *props) {
   if (props->v_base_len > 0) {
     sys_free_N(props->v_base);
   }
@@ -429,11 +433,12 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   SysObject *o;
   JNode *njnode;
   CstNode *v_node;
+  CstRenderNode* render_node;
   CstNode *v_parent;
   SysType type;
   const SysChar *cus_name;
   SysChar *tname;
-  CstNodeProps v_props = { 0 };
+  CstNodeProps* v_props = cst_node_props_new();
 
   JPair *pair = jnode->v.v_pair;
   sys_return_val_if_fail(pair != NULL, false);
@@ -455,7 +460,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
     cus_name = cst_component_get_id(child_comp);
 
     v_node = cst_com_node_new_with_component(child_comp);
-    ast_com_node_parse(jnode, v_component, v_node, &v_props);
+    ast_com_node_parse(jnode, v_component, v_node, v_props);
 
     tname = sys_strdup_printf("<%s>", pair->key);
     cst_node_set_name(v_node, tname);
@@ -476,11 +481,11 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
     }
 
     v_node = CST_NODE(o);
-    ast_node_parse(jnode, v_component, &v_props);
+    ast_node_parse(jnode, v_component, v_props);
   }
 
-  cst_node_construct(v_module, v_component, v_parent, v_node, &v_props);
-  cst_node_props_destroy(&v_props);
+  cst_node_construct(v_module, v_component, v_parent, v_node, v_props);
+  cst_node_props_free(v_props);
 
   cst_module_count_inc(v_module);
   cst_node_append(v_parent, v_node);
@@ -743,7 +748,7 @@ static void node_parse_action(CstNodeProps *props, const SysChar *watch_name, co
   }
 
   FRAWatchProps awatch_props = {0};
-  awatch_props.get_bound_func = (FRGetBoundFunc)cst_layout_node_get_bound;
+  awatch_props.get_bound_func = (FRGetBoundFunc)cst_render_node_get_bound;
 
   awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
   sys_clear_pointer(&bind_var, sys_free);
@@ -856,7 +861,7 @@ static SysBool node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
         return false;
       }
 
-      props->v_absolute = !!(nnode->v.v_int);
+      props->v_position = cst_render_node_get_by_name(nnode->v.v_string);
       break;
     case CST_NODE_PROP_ACTION:
       if (nnode->type != AstJString) {

@@ -16,10 +16,11 @@ struct _CstManagerPrivate {
 SYS_DEFINE_TYPE(CstManager, cst_manager, SYS_TYPE_OBJECT);
 
 static void cst_manager_meta_setup(CstManager *manager) {
-  cst_manager_set_meta(manager, "LBox", CST_TYPE_LBOX);
-  cst_manager_set_meta(manager, "LDiv", CST_TYPE_LDIV);
-  cst_manager_set_meta(manager, "LGrid", CST_TYPE_LGRID);
-  cst_manager_set_meta(manager, "LBody", CST_TYPE_LBODY);
+  cst_manager_set_meta(manager, "LBox", CST_TYPE_NODE);
+  cst_manager_set_meta(manager, "LDiv", CST_TYPE_NODE);
+  cst_manager_set_meta(manager, "LGrid", CST_TYPE_NODE);
+  cst_manager_set_meta(manager, "LBody", CST_TYPE_NODE);
+
   cst_manager_set_meta(manager, "Text", CST_TYPE_TEXT);
 }
 
@@ -72,19 +73,12 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
   sys_return_if_fail(v_module != NULL);
 
   CstComponent *v_component = NULL;
-  CstBoxLayer *box = cst_render_get_box_layer(v_render);
-  CstNode *body = cst_lbody_new();
-  CstBoxNode *bnode = (CstBoxNode *)cst_box_node_new_I(body);
   FRWindow *window = cst_render_get_default_window(v_render);
+  CstNode* body = cst_render_get_root(v_render);
 
   CstNodeProps props = { 0 };
 
   cst_node_construct(v_module, v_component, NULL, body, &props);
-
-  fr_window_set_tree_root(window, SYS_OBJECT(body));
-  cst_box_layer_set_root(box, bnode);
-  cst_render_set_root(v_render, body);
-
   cst_node_realize(v_module, NULL, NULL, body, v_render);
 
   cst_module_realize(v_module, body, v_render);

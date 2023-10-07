@@ -1,7 +1,7 @@
 #ifndef __CST_NODE_MAP__
 #define __CST_NODE_MAP__
 
-#include <CstCore/Front/Common/CstPropMap.h>
+#include <CstCore/Front/CstPropMap.h>
 
 
 SYS_BEGIN_DECLS
@@ -14,7 +14,15 @@ SYS_BEGIN_DECLS
 struct _CstNodeMap {
   SysObject parent;
 
-  CstNodeMapPrivate *priv;
+  /* <private> */
+  CstPropMap* prop_map;
+  SysType node_type;
+
+  /* CST_TYPE_NODE_PROP */
+  SysInt prop_type;
+  SysChar* prop_name;
+  SysValue* value;
+  CstNodeMapFunc func;
 };
 
 struct _CstNodeMapClass {

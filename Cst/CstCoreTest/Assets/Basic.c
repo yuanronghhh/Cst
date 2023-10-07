@@ -3,7 +3,7 @@
 #define MATH_POWER(t) (t < 0.5 ? Math.pow(t * 2, 6) / 2 : 1 - Math.pow(t * -2 + 2, 6) / 2)
 
 #line 5 /home/greyhound/Git/Cst/src/CstCoreTest/Assets/Basic.c
-static void basic_style_func_1(CstWidget *w, CstWidget *pw) {
+static void basic_style_func_1(CstLayoutContext *w, CstLayoutContext *pw) {
   SysChar *s_id = "white-btn";
   SysChar *base_ids[] = { "btn", "click-btn" };
 

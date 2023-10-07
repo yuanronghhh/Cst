@@ -1,7 +1,7 @@
 #ifndef __CST_BOX_H__
 #define __CST_BOX_H__
 
-#include <CstCore/Front/CstWidget.h>
+#include <CstCore/Front/CstLayoutContext.h>
 
 SYS_BEGIN_DECLS
 
@@ -10,14 +10,6 @@ SYS_BEGIN_DECLS
 
 typedef struct _CstBox CstBox;
 typedef struct _CstBoxClass CstBoxClass;
-
-struct _CstBox {
-  CstWidget parent;
-};
-
-struct _CstBoxClass {
-  CstWidgetClass parent;
-};
 
 SYS_API SysType cst_box_get_type(void);
 

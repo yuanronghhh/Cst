@@ -8,7 +8,7 @@ SYS_BEGIN_DECLS
 
 typedef MonoObject CstText;
 typedef MonoObject CstNode;
-typedef MonoObject CstWidget;
+typedef MonoObject CstLayoutContext;
 typedef MonoObject CstComponent;
 
 SYS_END_DECLS

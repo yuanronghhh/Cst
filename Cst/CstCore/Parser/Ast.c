@@ -1,6 +1,5 @@
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Front/CstComponent.h>
-#include <CstCore/Front/CstNodeMapCore.h>
 #include <CstCore/Front/CstPropPair.h>
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstModule.h>
@@ -433,7 +432,6 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   SysObject *o;
   JNode *njnode;
   CstNode *v_node;
-  CstRenderNode* render_node;
   CstNode *v_parent;
   SysType type;
   const SysChar *cus_name;
@@ -1104,7 +1102,7 @@ SysInt ast_css_value_parse(JNode *jnode, CstCssValue *value) {
 
         node = ast_jnode_jnode(node);
         if (node->type != AstJInt) {
-          sys_warning_N("%s", "css value array only should be int and length should be 4.");
+          sys_warning_N("%s", "css value type should be int and length should be 4 when it is an array.");
           continue;
         }
 

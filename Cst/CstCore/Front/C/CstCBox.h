@@ -1,7 +1,7 @@
 #ifndef __CST_BOX_H__
 #define __CST_BOX_H__
 
-#include <CstCore/Front/CstLayoutContext.h>
+#include <CstCore/Front/CstRenderContext.h>
 
 SYS_BEGIN_DECLS
 

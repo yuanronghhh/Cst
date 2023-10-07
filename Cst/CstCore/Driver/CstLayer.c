@@ -10,12 +10,6 @@ void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *render_node) {
   sys_queue_push_tail(self->draw_queue, render_node);
 }
 
-void cst_layer_append_node(CstLayer *self, CstRenderNode *parent, CstRenderNode *node) {
-  CstNodeClass* cls = CST_NODE_GET_CLASS(self);
-
-  cls->append_node(self, parent, node);
-}
-
 /* object api */
 static void cst_layer_dispose(SysObject* o) {
   CstLayer *self = CST_LAYER(o);

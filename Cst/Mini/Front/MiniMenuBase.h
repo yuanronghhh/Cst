@@ -16,11 +16,9 @@ SYS_BEGIN_DECLS
 
 typedef struct _MiniMenuBase MiniMenuBase;
 typedef struct _MiniMenuBaseClass MiniMenuBaseClass;
-typedef struct _MiniMenuBasePrivate MiniMenuBasePrivate;
 
 struct _MiniMenuBase {
   CstComponent parent;
-  MiniMenuBasePrivate *priv;
 };
 
 struct _MiniMenuBaseClass {

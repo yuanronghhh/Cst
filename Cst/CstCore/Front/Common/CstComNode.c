@@ -1,5 +1,4 @@
 #include <CstCore/Front/Common/CstComNode.h>
-#include <CstCore/Front/CstNodeMapCore.h>
 #include <CstCore/Front/CstComponent.h>
 #include <CstCore/Front/CstFrontCore.h>
 
@@ -50,11 +49,11 @@ static void text_set_text_i(CstNode *v_node, const SysChar *key, const SysChar *
 static void node_set_awatch_func_i(CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
   SysType tp = fr_awatch_get_type_by_name(key);
 
-  FRAWatch *awatch = cst_render_node_get_awatch(v_node, tp, bind_var);
+  FRAWatch *awatch = cst_node_get_awatch(v_node, tp, bind_var);
   if (awatch == NULL) {
     sys_warning_N("Not found awatch in node: %s, %s, %s", 
-      cst_render_node_get_name(v_node), 
-      cst_render_node_get_id(v_node), 
+      cst_node_get_name(v_node),
+      cst_node_get_id(v_node),
       key);
 
     return;
@@ -97,15 +96,13 @@ void cst_com_node_construct_i(CstModule *v_module, CstComponent *v_component, Cs
 
 }
 
-static CstNode* cst_com_node_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
-  sys_return_val_if_fail(v_module != NULL, NULL);
-  sys_return_val_if_fail(v_parent != NULL, NULL);
-  sys_return_val_if_fail(v_node != NULL, NULL);
+static void cst_com_node_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
+  sys_return_if_fail(v_module != NULL);
+  sys_return_if_fail(v_parent != NULL);
+  sys_return_if_fail(v_node != NULL);
 
   CstComNode *self = CST_COM_NODE(v_node);
   cst_component_realize_full(v_module, self->component, v_parent, self, v_render);
-
-  return NULL;
 }
 
 static void cst_com_node_class_init(CstComNodeClass* cls) {

@@ -32,6 +32,7 @@ struct _CstCssValue {
   SysChar *name;
   /* CST_CSS_PROP_ENUM */
   SysInt css_type;
+  SysInt css_gtype;
   /* CST_RENDER_STATE_ENUM */
   SysInt state_flag;
   CST_CSS_VALUE_ENUM d_type;

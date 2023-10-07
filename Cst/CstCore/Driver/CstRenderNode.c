@@ -1,13 +1,12 @@
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
-#include <CstCore/Driver/CstLayoutNode.h>
-#include <CstCore/Driver/CstLayoutContext.h>
+#include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Front/CstComponent.h>
 
 
-SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE);
 
 
 static const SysChar* CST_RENDER_NODE_NAMES[] = {
@@ -21,83 +20,86 @@ CST_RENDER_NODE_ENUM cst_render_node_get_by_name(const SysChar* name) {
 void cst_render_node_set_layout(CstRenderNode *self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_context_set_layout(self->layout_ctx, bvalue);
+  cst_render_context_set_layout(self->render_ctx, bvalue);
 }
 
 SysBool cst_render_node_need_layout(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return cst_layout_context_need_layout(self->layout_ctx);
+  return cst_render_context_need_layout(self->render_ctx);
 }
 
 void cst_render_node_set_paint(CstRenderNode *self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_context_set_paint(self->layout_ctx, bvalue);
+  cst_render_context_set_paint(self->render_ctx, bvalue);
 }
 
 SysBool cst_render_node_need_paint(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return cst_layout_context_need_paint(self->layout_ctx);
+  return cst_render_context_need_paint(self->render_ctx);
 }
 
 void cst_render_node_set_abs_node(CstRenderNode *self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_context_set_abs_node(self->layout_ctx, bvalue);
+  cst_render_context_set_abs_node(self->render_ctx, bvalue);
 }
 
 SysBool cst_render_node_is_abs_node(CstRenderNode *self) {
-  sys_return_val_if_fail(self != NULL, false);
 
-  return cst_layout_context_is_abs_node(self->layout_ctx);
+  return cst_render_context_is_abs_node(self->render_ctx);
 }
 
 const FRRect *cst_render_node_get_bound(CstRenderNode* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_layout_node_get_bound(self->layout_node);
+  return cst_layout_node_get_bound(CST_LAYOUT_NODE(self));
+}
+
+void cst_render_node_get_mbp(CstRenderNode* self, FRSInt4* m4) {
+
+  cst_layout_node_get_mbp(CST_LAYOUT_NODE(self), m4);
 }
 
 void cst_render_node_set_x(CstRenderNode* self, SysInt x) {
 
-  cst_layout_node_set_x(self->layout_node, x);
+  cst_layout_node_set_x(CST_LAYOUT_NODE(self), x);
 }
 
 void cst_render_node_set_width(CstRenderNode* self, SysInt width) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_node_set_width(self->layout_node, width);
+  cst_layout_node_set_width(CST_LAYOUT_NODE(self), width);
+}
+
+void cst_render_node_set_margin(CstRenderNode *self, FRSInt4 *m4) {
+
+  cst_layout_node_set_margin(CST_LAYOUT_NODE(self), m4);
 }
 
 void cst_render_node_set_height(CstRenderNode* self, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_node_set_height(self->layout_node, height);
+  cst_layout_node_set_height(CST_LAYOUT_NODE(self), height);
 }
 
 void cst_render_node_prepare(CstRenderNode *self) {
   sys_return_if_fail(self != NULL);
 
   FRSInt4 m4 = { 0 };
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(self);
 
-  cst_layout_node_get_mbp(self->layout_node, &m4);
-  cst_layout_context_set_mbp(self->layout_ctx, &m4);
-  cst_layout_context_calc_size(self->layout_ctx, self);
-}
-
-void cst_render_node_get_mbp(CstRenderNode* self, FRSInt4* m4) {
-  sys_return_if_fail(self != NULL);
-
-  cst_layout_node_get_mbp(self->layout_node, m4);
+  cst_layout_node_get_mbp(lnode, &m4);
+  cst_render_context_set_mbp(self->render_ctx, &m4);
+  cst_render_context_calc_size(self->render_ctx, self);
 }
 
 SysBool cst_render_node_is_dirty(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return cst_layout_context_need_layout(self->layout_ctx)
-    || cst_layout_context_need_paint(self->layout_ctx);
+  return cst_render_context_need_layout(self->render_ctx)
+    || cst_render_context_need_paint(self->render_ctx);
 }
 
 void cst_render_node_mark_dirty(CstRenderNode* self, SysBool bvalue) {
@@ -106,13 +108,13 @@ void cst_render_node_mark_dirty(CstRenderNode* self, SysBool bvalue) {
 SysBool cst_render_node_is_visible(CstRenderNode* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return cst_layout_context_is_visible(self->layout_ctx);
+  return cst_render_context_is_visible(self->render_ctx);
 }
 
 SysBool cst_render_node_can_wrap(CstRenderNode* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return cst_layout_context_can_wrap(self->layout_ctx);
+  return cst_render_context_can_wrap(self->render_ctx);
 }
 
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self) {
@@ -142,15 +144,14 @@ CstRenderNode* cst_render_node_dclone_i(CstRenderNode *o) {
   CstRenderNode *n = sys_object_new(type, NULL);
 
   n->node = cst_node_dclone(o->node);
-  n->layout_node = cst_layout_node_clone(o->layout_node);
-  n->layout_ctx = cst_layout_context_dclone(o->layout_ctx);
+  n->render_ctx = cst_render_context_dclone(o->render_ctx);
 
   return n;
 }
 
 void cst_render_node_relayout_self(CstRenderNode *self, CstLayout *layout) {
 
-  cst_layout_context_layout_self(self->layout_ctx, self, layout);
+  cst_render_context_layout_self(self->render_ctx, self, layout);
 }
 
 const SysChar* cst_render_node_get_id(CstRenderNode *self) {
@@ -191,8 +192,8 @@ void cst_render_node_stroke_rectangle(CstRenderNode *self, CstLayout *layout) {
   const FRRect* bound;
   FRDraw* draw = cst_layout_get_draw(layout);
 
-  cst_layout_node_get_margin(self->layout_node, &m4);
-  cst_layout_node_get_padding(self->layout_node, &p4);
+  cst_layout_node_get_margin(CST_LAYOUT_NODE(self), &m4);
+  cst_layout_node_get_padding(CST_LAYOUT_NODE(self), &p4);
 
   bound = cst_render_node_get_bound(self);
 
@@ -209,16 +210,10 @@ void cst_render_node_stroke_rectangle(CstRenderNode *self, CstLayout *layout) {
 #endif
 }
 
-CstLayoutContext* cst_render_get_layout_context(CstRenderNode* self) {
+CstRenderContext* cst_render_node_get_context(CstRenderNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->layout_ctx;
-}
-
-CstLayoutNode* cst_render_get_layout_node(CstRenderNode* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->layout_node;
+  return self->render_ctx;
 }
 
 /* object api */
@@ -228,22 +223,23 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-static void cst_render_node_construct(CstRenderNode* self, CstNode *node, CstLayoutContext *layout_ctx) {
+static void cst_render_node_construct(CstRenderNode* self, CstNode *node, CstRenderContext *render_ctx) {
+  CST_LAYOUT_NODE_CLASS(cst_render_node_parent_class)->construct(CST_LAYOUT_NODE(self));
+
   self->node = node;
-  self->layout_node = cst_layout_node_new_I(0, 0, -1, 1);
-  self->layout_ctx = layout_ctx;
+  self->render_ctx = render_ctx;
 
   sys_object_ref(SYS_OBJECT(node));
 }
 
-CstRenderNode *cst_render_node_new(void) {
+CstLayoutNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstNode *node, CstLayoutContext* layout_ctx) {
-  CstRenderNode *o = cst_render_node_new();
+CstLayoutNode *cst_render_node_new_I(CstNode *node, CstRenderContext* render_ctx) {
+  CstLayoutNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, node, layout_ctx);
+  cst_render_node_construct(CST_RENDER_NODE(o), node, render_ctx);
 
   return o;
 }
@@ -252,7 +248,6 @@ static void cst_render_node_class_init(CstRenderNodeClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_render_node_dispose;
-
   cls->construct = cst_render_node_construct;
 }
 

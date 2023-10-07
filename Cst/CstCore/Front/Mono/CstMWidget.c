@@ -9,7 +9,7 @@ SysType cst_widget_get_type(void) {
   }
 
   FRMonoContext *c = cst_context_get_mono_context();
-  meta = fr_mono_get_meta_from_name(c, "CstGUI.CstCore", "CstLayoutContext");
+  meta = fr_mono_get_meta_from_name(c, "CstGUI.CstCore", "CstRenderContext");
 
   return meta;
 }

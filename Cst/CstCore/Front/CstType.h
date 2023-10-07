@@ -9,8 +9,8 @@ SYS_BEGIN_DECLS
 typedef struct _CstNode CstNode;
 typedef struct _CstNodeClass CstNodeClass;
 
-typedef struct _CstLayoutContext CstLayoutContext;
-typedef struct _CstLayoutContextClass CstLayoutContextClass;
+typedef struct _CstRenderContext CstRenderContext;
+typedef struct _CstRenderContextClass CstRenderContextClass;
 
 typedef struct _CstComNode CstComNode;
 typedef struct _CstComNodeClass CstComNodeClass;

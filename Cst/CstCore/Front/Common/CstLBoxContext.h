@@ -1,7 +1,7 @@
 #ifndef __CST_LBOX_CONTEXT_H__
 #define __CST_LBOX_CONTEXT_H__
 
-#include <CstCore/Driver/CstLayoutContext.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 SYS_BEGIN_DECLS
 
@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 
 
 struct _CstLBoxContext {
-  CstLayoutContext parent;
+  CstRenderContext parent;
 
   /* <private> */
   CstCssClosure* child_width_calc;
@@ -21,10 +21,11 @@ struct _CstLBoxContext {
 };
 
 struct _CstLBoxContextClass {
-  CstLayoutContextClass parent;
+  CstRenderContextClass parent;
 };
 
-CstLayoutContext* cst_lbox_context_new(void);
+CstRenderContext* cst_lbox_context_new(void);
+CstRenderContext* cst_lbox_context_new_I(void);
 SysType cst_lbox_context_get_type(void);
 
 SYS_END_DECLS

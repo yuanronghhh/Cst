@@ -18,23 +18,6 @@ void cst_box_layer_set_root(CstBoxLayer *self, CstBoxNode *root) {
   self->tree = root;
 }
 
-void cst_box_layer_insert_after(CstBoxLayer *box, CstBoxNode *parent, CstBoxNode *last_child, CstBoxNode *nnode) {
-  sys_return_if_fail(box != NULL);
-  sys_return_if_fail(parent != NULL);
-  sys_return_if_fail(nnode != NULL);
-
-  cst_box_node_insert_after(parent, last_child, nnode);
-}
-
-static void cst_box_layer_append(CstLayer *layer, CstBoxNode *parent, CstBoxNode *child) {
-  sys_return_if_fail(layer != NULL);
-  sys_return_if_fail(child != NULL);
-
-  cst_box_node_append(parent, child);
-
-  sys_object_ref(child);
-}
-
 SysInt box_node_check_dirty(CstBoxNode *box_node, FRRegion *region) {
   CstRenderNode *render_node = CST_RENDER_NODE(box_node);
   const FRRect *nbound = cst_render_node_get_bound (render_node);
@@ -144,6 +127,19 @@ void cst_box_node_unlink_node_r(CstBoxNode *self) {
   sys_object_unref(o);
 }
 
+void cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *parent, CstNode *node) {
+  sys_return_if_fail(box_layer != NULL);
+  sys_return_if_fail(node != NULL);
+
+  CstBoxNode* child;
+
+  parent = parent ? parent : box_layer->tree;
+
+  child = (CstBoxNode *)cst_box_node_new_I(node);
+
+  cst_box_node_append(parent, child);
+  sys_object_ref(child);
+}
 
 /* object api */
 CstLayer* cst_box_layer_new(void) {
@@ -187,7 +183,6 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   ocls->dispose = cst_box_layer_dispose;
 
   lcls->construct = cst_box_layer_construct;
-  lcls->append_node = cst_box_layer_append;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

@@ -6,7 +6,7 @@
 SYS_BEGIN_DECLS
 
 #define _CST_TYPE_LAYOUT_CONTEXT (cst_widget_get_type())
-#define _CST_LAYOUT_CONTEXT(o) ((CstLayoutContext* )o)
+#define _CST_RENDER_CONTEXT(o) ((CstRenderContext* )o)
 
 SysType cst_widget_get_type(void);
 CstNode* _cst_widget_new(void);

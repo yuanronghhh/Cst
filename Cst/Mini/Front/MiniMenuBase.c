@@ -4,18 +4,13 @@
 
 #include <Mini/Front/MiniMenuBase.h>
 
-struct _MiniMenuBasePrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(MiniMenuBase, mini_menubase, CST_TYPE_COMPONENT);
+SYS_DEFINE_TYPE(MiniMenuBase, mini_menubase, CST_TYPE_COMPONENT);
 
 MiniMenuBase* mini_menubase_new(void) {
   return sys_object_new(MINI_TYPE_MENUBASE, NULL);
 }
 
 static void mini_menubase_init(MiniMenuBase *self) {
-  self->priv = mini_menubase_get_private(self);
 }
 
 static void mini_menubase_construct(CstComponent *comp, CstModule *v_module, CstComponent *v_inherit) {

@@ -6,13 +6,37 @@
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstLayout.h>
 
-#include <CstCore/Driver/Css/CstCssValueX.h>
+#include <CstCore/Driver/Css/CstCssPosition.h>
+#include <CstCore/Driver/Css/CstCssGap.h>
 
 
 SYS_DEFINE_TYPE(CstCssValue, cst_css_value, SYS_TYPE_OBJECT);
 
 
 static SysHashTable *gcss_node_ht = NULL;
+
+typedef struct _CstCssMapInfo CstCssMapInfo;
+
+struct _CstCssMapInfo {
+  SysChar *name;
+  SysInt ptype;
+  SysType type;
+};
+
+CstCssMapInfo *cst_css_map_new(const SysChar *name, SysInt ptype, SysType type) {
+  CstCssMapInfo *o = sys_new0_N(CstCssMapInfo, 1);
+
+  o->name = sys_strdup(name);
+  o->ptype = ptype;
+  o->type = type;
+
+  return o;
+}
+
+void cst_css_map_free(CstCssMapInfo *o) {
+  sys_free_N(o->name);
+  sys_free_N(o);
+}
 
 SysInt cst_css_value_get_state(CstCssValue *self) {
   sys_return_val_if_fail(self != NULL, -1);
@@ -181,11 +205,11 @@ void cst_css_value_height_percent(CstRenderNode *render_node, SysPointer user_da
   SysInt pheight;
   FRSInt4 m4;
   SysInt64 d;
+
   CstRenderNode *pnode;
 
   d = POINTER_TO_INT(user_data);
   pnode = cst_render_node_get_parent(render_node);
-
   bound = cst_render_node_get_bound(pnode);
 
   cst_render_node_get_mbp(render_node, &m4);
@@ -194,25 +218,28 @@ void cst_css_value_height_percent(CstRenderNode *render_node, SysPointer user_da
   cst_render_node_set_height(render_node, (SysInt)(pheight * d * 0.01));
 }
 
-static void cst_css_value_bind_map(const SysChar *name, SysType type) {
-  sys_hash_table_insert(gcss_node_ht, (SysPointer)name, (SysPointer)type);
+static void cst_css_value_bind_map(const SysChar *name, SysInt ptype, SysType type) {
+  CstCssMapInfo *map = cst_css_map_new(name, ptype, type);
+
+  sys_hash_table_insert(gcss_node_ht, (SysPointer)map->name, (SysPointer)map);
 }
 
 void cst_css_value_setup(void) {
   sys_assert(gcss_node_ht == NULL && "css value should setup only once.");
 
-  gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);
+  gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, cst_css_map_free);
 
-  cst_css_value_bind_map("x", CST_TYPE_CSS_VALUE_X);
-  // cst_css_value_bind_map("y",           CST_CSS_TYPE_Y           );
-  // cst_css_value_bind_map("padding",     CST_CSS_TYPE_PADDING     );
-  // cst_css_value_bind_map("margin",      CST_CSS_TYPE_MARGIN      );
-  // cst_css_value_bind_map("width",       CST_CSS_TYPE_W           );
-  // cst_css_value_bind_map("height",      CST_CSS_TYPE_H           );
-  // cst_css_value_bind_map("font-family", CST_CSS_TYPE_FONT_FAMILY );
-  // cst_css_value_bind_map("font-size",   CST_CSS_TYPE_FONT_SIZE   );
-  // cst_css_value_bind_map("wrap",        CST_CSS_TYPE_WRAP        );
-  // cst_css_value_bind_map("color",       CST_CSS_TYPE_COLOR       );
+  cst_css_value_bind_map("x"            ,  CST_CSS_PROP_X            ,  CST_TYPE_CSS_POSITION  );
+  cst_css_value_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_TYPE_CSS_POSITION  );
+  cst_css_value_bind_map("width"        ,  CST_CSS_PROP_W            ,  CST_TYPE_CSS_POSITION  );
+  cst_css_value_bind_map("height"       ,  CST_CSS_PROP_H            ,  CST_TYPE_CSS_GAP       );
+  cst_css_value_bind_map("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_TYPE_CSS_GAP       );
+  cst_css_value_bind_map("border"       ,  CST_CSS_PROP_BORDER       ,  CST_TYPE_CSS_GAP       );
+  cst_css_value_bind_map("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_TYPE_CSS_GAP       );
+  cst_css_value_bind_map("font-family"  ,  CST_CSS_PROP_FONT_FAMILY  ,  0                      );
+  cst_css_value_bind_map("font-size"    ,  CST_CSS_PROP_FONT_SIZE    ,  0                      );
+  cst_css_value_bind_map("wrap"         ,  CST_CSS_PROP_WRAP         ,  0                      );
+  cst_css_value_bind_map("color"        ,  CST_CSS_PROP_COLOR        ,  0                      );
 }
 
 void cst_css_value_teardown(void) {

@@ -8,18 +8,20 @@
 SYS_BEGIN_DECLS
 
 typedef enum _CST_CSS_PROP_ENUM {
-  CST_CSS_PROP_X = 1,
+  CST_CSS_PROP_X,
   CST_CSS_PROP_Y,
   CST_CSS_PROP_W,
   CST_CSS_PROP_H,
-  CST_CSS_PROP_PADDING,
+  CST_CSS_PROP_POSITION,
   CST_CSS_PROP_MARGIN,
-  CST_CSS_PROP_LEFT,
-  CST_CSS_PROP_RIGHT,
   CST_CSS_PROP_BORDER,
-  CST_CSS_PROP_WRAP,
+  CST_CSS_PROP_PADDING,
+  CST_CSS_PROP_GAP,
   CST_CSS_PROP_FONT_SIZE,
   CST_CSS_PROP_FONT_FAMILY,
+  CST_CSS_PROP_FRONT,
+
+  CST_CSS_PROP_WRAP,
   CST_CSS_PROP_COLOR,
   CST_CSS_PROP_BACGROUND,
   CST_CSS_PROP_BORDERRADIUS,
@@ -138,8 +140,8 @@ typedef struct _CstCssGroupClass CstCssGroupClass;
 
 typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
-typedef struct _CstLayoutContext CstLayoutContext;
-typedef struct _CstLayoutContextClass CstLayoutContextClass;
+typedef struct _CstRenderContext CstRenderContext;
+typedef struct _CstRenderContextClass CstRenderContextClass;
 
 typedef struct _CstLayout CstLayout;
 typedef struct _CstLayoutClass CstLayoutClass;
@@ -155,8 +157,10 @@ typedef struct _CstCssClosureClass CstCssClosureClass;
 typedef struct _CstCssValue CstCssValue;
 typedef struct _CstCssValueClass CstCssValueClass;
 
-typedef struct _CstCssValueX CstCssValueX;
-typedef struct _CstCssValueXClass CstCssValueXClass;
+typedef struct _CstCssPosition CstCssPosition;
+typedef struct _CstCssPositionClass CstCssPositionClass;
+typedef struct _CstCssGap CstCssGap;
+typedef struct _CstCssGapClass CstCssGapClass;
 
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;

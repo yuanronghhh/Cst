@@ -32,7 +32,7 @@ struct _CstNode {
   SysPtrArray* css_groups;
 
   /* CST_RENDER_NODE_ENUM  */
-  SysInt v_position;
+  SysInt position;
 };
 
 struct _CstNodeClass {
@@ -40,7 +40,7 @@ struct _CstNodeClass {
 
   void (*construct) (CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props);
   CstNode * (*dclone) (CstNode *node);
-  CstRenderNode *(*realize) (CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render);
+  void (*realize) (CstModule* v_module, CstComNode* com_node, CstNode* v_parent, CstNode* self, CstRender* v_render);
 };
 
 struct _CstNodeProps {

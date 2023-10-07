@@ -1,7 +1,7 @@
 #ifndef __CST_CLGRID_H__
 #define __CST_CLGRID_H__
 
-#include <CstCore/Driver/CstLayoutContext.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 SYS_BEGIN_DECLS
 

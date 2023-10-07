@@ -11,6 +11,8 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/Css/CstCssPair.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
+#include <CstCore/Driver/Css/CstCssPosition.h>
+#include <CstCore/Driver/Css/CstCssGap.h>
 
 SYS_END_DECLS
 

@@ -75,8 +75,10 @@ set(SRC
   ./Driver/Css/CstCssClosure.h
   ./Driver/Css/CstCssValue.c
   ./Driver/Css/CstCssValue.h
-  ./Driver/Css/CstCssValueX.c
-  ./Driver/Css/CstCssValueX.h
+  ./Driver/Css/CstCssPosition.c
+  ./Driver/Css/CstCssPosition.h
+  ./Driver/Css/CstCssGap.c
+  ./Driver/Css/CstCssGap.h
   ./Driver/Css/CstCssEnv.c
   ./Driver/Css/CstCssEnv.h
   ./Driver/Css/CstCss.c
@@ -85,10 +87,10 @@ set(SRC
 
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
-  ./Driver/CstLayoutContext.h
-  ./Driver/CstLayoutContext.c
   ./Driver/CstLayoutNode.h
   ./Driver/CstLayoutNode.c
+  ./Driver/CstRenderContext.h
+  ./Driver/CstRenderContext.c
   ./Driver/CstRenderNode.h
   ./Driver/CstRenderNode.c
   ./Driver/CstBoxNode.h
@@ -101,7 +103,6 @@ set(SRC
   ./Front/CstPropMap.c
   ./Front/CstPropPair.h
   ./Front/CstPropPair.c
-  ./Front/CstNodeMapCore.h
   ./Front/CstComponent.h
   ./Front/CstComponent.c
 

@@ -1,7 +1,7 @@
 #ifndef __CST_LGRID_CONTEXT_H__
 #define __CST_LGRID_CONTEXT_H__
 
-#include <CstCore/Driver/CstLayoutContext.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 SYS_BEGIN_DECLS
 
@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 
 
 struct _CstLGridContext {
-  CstLayoutContext parent;
+  CstRenderContext parent;
 
   /* <private> */
   CstCssClosure* child_width_calc;
@@ -21,10 +21,10 @@ struct _CstLGridContext {
 };
 
 struct _CstLGridContextClass {
-  CstLayoutContextClass parent;
+  CstRenderContextClass parent;
 };
 
-CstLayoutContext* cst_lgrid_context_new(void);
+CstRenderContext* cst_lgrid_context_new(void);
 SysType cst_lgrid_context_get_type(void);
 
 SYS_END_DECLS

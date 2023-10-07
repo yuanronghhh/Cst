@@ -1,5 +1,5 @@
 #include <CstCore/Driver/CstLayoutNode.h>
-#include <CstCore/Driver/CstLayoutContext.h>
+#include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
 
 SYS_DEFINE_TYPE(CstLayoutNode, cst_layout_node, SYS_TYPE_OBJECT);
@@ -153,11 +153,11 @@ void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4) {
   m4->m3 = self->margin.m3 + self->border.m3 + self->padding.m3;
 }
 
-void cst_layout_node_maybe_expand(CstLayoutNode* self, CstLayoutContext *ctx) {
+void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext *ctx) {
   sys_return_if_fail(self != NULL);
   SysInt pw, ph;
 
-  cst_layout_context_get_prefer_size(ctx, &pw, &ph);
+  cst_render_context_get_prefer_size(ctx, &pw, &ph);
 
   if (self->bound.width == -1) {
     self->bound.width = pw;

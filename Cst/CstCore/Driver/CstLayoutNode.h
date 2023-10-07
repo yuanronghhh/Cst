@@ -24,6 +24,7 @@ struct _CstLayoutNode {
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
 
+  void (*construct) (CstLayoutNode *o);
   CstLayoutNode* (*dclone) (CstLayoutNode *o);
 };
 
@@ -54,7 +55,7 @@ void cst_layout_node_set_border(CstLayoutNode* self, FRSInt4* m4);
 void cst_layout_node_get_border(CstLayoutNode* self, FRSInt4* m4);
 
 void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4);
-void cst_layout_node_maybe_expand(CstLayoutNode* self, CstLayoutContext* ctx);
+void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext* ctx);
 
 const FRRect *cst_layout_node_get_bound(CstLayoutNode* self);
 void cst_layout_node_set_bound(CstLayoutNode* self, const FRRect *bound);

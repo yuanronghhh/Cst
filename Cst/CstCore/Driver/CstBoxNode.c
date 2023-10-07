@@ -1,5 +1,5 @@
 #include <CstCore/Driver/CstBoxNode.h>
-#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/Common/CstLBoxContext.h>
 #include <CstCore/Driver/CstLayout.h>
 
 
@@ -164,7 +164,7 @@ static void cst_box_node_dispose(SysObject* o) {
 }
 
 static void cst_box_node_construct(CstRenderNode* o, CstNode *node) {
-  CstLayoutContext* ctx = cst_lbox_context_new_I();
+  CstRenderContext* ctx = cst_lbox_context_new_I();
 
   CST_RENDER_NODE_GET_CLASS(cst_box_node_parent_class)->construct(o, node, ctx);
 }

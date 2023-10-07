@@ -2,7 +2,7 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Front/CstComponent.h>
 #include <CstCore/Front/Common/CstLBody.h>
-#include <CstCore/Driver/CstLayoutContext.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 

@@ -35,6 +35,7 @@ SYS_API void cst_box_layer_print_tree(CstBoxLayer *self);
 SYS_API CstBoxNode *cst_box_layer_get_root(CstBoxLayer *self);
 SYS_API void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root);
 SYS_API void cst_box_layer_insert_after (CstBoxLayer *self, CstBoxNode *parent, CstBoxNode *last_child, CstBoxNode *nnode);
+SYS_API void cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *parent, CstNode *node);
 
 SYS_END_DECLS
 

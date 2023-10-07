@@ -2,24 +2,17 @@
 #include <Framework/Event/Base/FREventCursorMove.h>
 
 
-struct _FRACursorMovePrivate {
-  SysDouble x;
-  SysDouble y;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRACursorMove, fr_acursor_move, FR_TYPE_ACTION);
+SYS_DEFINE_TYPE(FRACursorMove, fr_acursor_move, FR_TYPE_ACTION);
 
 SysBool fr_acursor_move_get_position (FRACursorMove *self, SysDouble *x, SysDouble *y) {
   sys_return_val_if_fail(self != NULL, false);
 
-  FRACursorMovePrivate* priv = self->priv;
-
-  if(priv->x == 0 || priv->y == 0) {
+  if(self->x == 0 || self->y == 0) {
     return false;
   }
 
-  *x = priv->x;
-  *y = priv->y;
+  *x = self->x;
+  *y = self->y;
 
   return true;
 }
@@ -39,10 +32,9 @@ static SysBool fr_acursor_move_check_i (FRAction *self, FREvent *e) {
 
 static void fr_acursor_move_dispatch_i (FRAction *o, FREvent *e) {
   FRACursorMove *self = FR_ACURSOR_MOVE(o);
-  FRACursorMovePrivate* priv = self->priv;
   FREventCursorMove *ecur = FR_EVENT_CURSOR_MOVE(e);
 
-  fr_event_cursor_move_position(ecur, &priv->x, &priv->y);
+  fr_event_cursor_move_position(ecur, &self->x, &self->y);
 
   FR_ACTION_CLASS(fr_acursor_move_parent_class)->dispatch(o, e);
 }
@@ -77,7 +69,6 @@ static void fr_acursor_move_class_init(FRACursorMoveClass* cls) {
 }
 
 static void fr_acursor_move_init(FRACursorMove *self) {
-  self->priv = fr_acursor_move_get_private(self);
 
   fr_action_set_name(FR_ACTION(self), "cursor_move");
 }

@@ -17,7 +17,10 @@ struct _FREventMouseKeyClass {
 struct _FREventMouseKey {
   FREvent parent;
 
-  FREventMouseKeyPrivate *priv;
+  /* <private> */
+  SysInt button;
+  SysInt action;
+  SysInt mods;
 };
 
 SYS_API SysType fr_event_mousekey_get_type(void);

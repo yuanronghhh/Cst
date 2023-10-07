@@ -10,12 +10,6 @@ CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
 }
 
-FRDraw *cst_render_get_draw(CstRender *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->draw;
-}
-
 FRWindow *cst_render_get_default_window(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -25,13 +19,13 @@ FRWindow *cst_render_get_default_window(CstRender *self) {
 CstBoxLayer *cst_render_get_box_layer(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return CST_BOX_LAYER(self->box_layer);
+  return self->box_layer;
 }
 
 CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return CST_ABS_LAYER(self->abs_layer);
+  return self->abs_layer;
 }
 
 CstNode *cst_render_get_root(CstRender* self) {
@@ -46,42 +40,39 @@ void cst_render_set_root(CstRender* self, CstNode *root) {
   self->root = root;
 }
 
-void cst_render_render(CstRender *self) {
-  sys_return_if_fail(self != NULL);
-
+FRRegion *render_create_region(FRWindow *window) {
   FRRegion *region;
-
   FRRect bound = { 0 };
-  FRDraw *draw = self->draw;
-  CstLayout *layout = self->layout;
 
-  sys_assert(draw != NULL && "draw must init before render use");
-
-  fr_window_get_framebuffer_size(self->window, &bound.width, &bound.height);
+  fr_window_get_framebuffer_size(window, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
 
-  fr_draw_frame_begin(draw, region);
+  return region;
+}
 
-  cst_layer_render(self->box_layer, draw, layout);
-  cst_layer_render(self->abs_layer, draw, layout);
+void cst_render_render(CstRender *self) {
+  FRRegion *region = render_create_region(self->window);
 
-  fr_draw_frame_end(draw, region);
+  cst_render_rerender(self, region);
 
   fr_region_destroy(region);
 }
 
-void cst_render_set_node(CstRender *self, CstNode *parent, CstNode *node) {
-  sys_return_if_fail(node != NULL);
-  sys_return_if_fail(parent != NULL);
+void cst_render_rerender(CstRender *self, FRRegion *region) {
+  sys_return_if_fail(self != NULL);
 
-  CstNode *last_child;
-  CstBoxLayer *box_layer = cst_render_get_box_layer(self);
+  FRDraw *draw = fr_draw_new_I(self->window);
+  CstLayout *layout = cst_layout_new_I(fr_draw_get_cr(draw), region);
 
-  last_child = cst_node_get_last_child(parent);
+  cst_box_layer_check(self->box_layer, layout);
+  cst_box_layer_layout(self->box_layer, layout);
+  cst_box_layer_render(self->box_layer, layout);
 
-  cst_box_layer_insert_after(box_layer, parent, last_child, node);
+  // cst_layer_check(self->abs_layer, layout);
+  // cst_layer_layout(self->abs_layer, layout);
+  // cst_layer_render(self->abs_layer, draw, region);
 
-  cst_node_set_last_child(parent, node);
+  sys_object_unref(draw);
 }
 
 void cst_render_resize_window(CstRender *self) {
@@ -105,31 +96,11 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   bound.height = height;
 
   region = fr_region_create_rectangle(&bound);
+
   cst_render_rerender(self, region);
+
   fr_region_destroy(region);
 }
-
-void cst_render_rerender(CstRender *self, FRRegion *region) {
-  sys_return_if_fail(self != NULL);
-
-  FRDraw *draw = self->draw;
-  CstLayout *layout = self->layout;
-
-  if (!fr_draw_frame_need_draw(draw)) {
-    return;
-  }
-
-  fr_draw_frame_begin(draw, region);
-
-  cst_layer_check(self->box_layer, draw, region);
-  cst_layer_check(self->abs_layer, draw, region);
-
-  cst_layer_rerender(self->box_layer, draw, layout);
-  cst_layer_rerender(self->abs_layer, draw, layout);
-
-  fr_draw_frame_end(draw, region);
-}
-
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
@@ -142,11 +113,8 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
     self->window = fr_window_top_new(self->display);
   }
 
-  self->draw = fr_draw_new_I(self->window);
-  self->layout = cst_layout_new_I();
-
-  self->box_layer = cst_box_layer_new_I();
-  self->abs_layer = cst_abs_layer_new_I();
+  self->box_layer = (CstBoxLayer *)cst_box_layer_new_I();
+  self->abs_layer = (CstAbsLayer *)cst_abs_layer_new_I();
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {
@@ -167,9 +135,6 @@ static void cst_render_dispose(SysObject* o) {
 
   sys_object_unref(self->box_layer);
   sys_object_unref(self->abs_layer);
-
-  sys_clear_pointer(&self->draw, _sys_object_unref);
-  sys_clear_pointer(&self->layout, _sys_object_unref);
 
   if (self->window) {
     sys_object_unref(self->window);

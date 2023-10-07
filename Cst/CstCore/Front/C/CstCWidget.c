@@ -5,17 +5,8 @@
 SYS_DEFINE_TYPE(CstWidget, cst_widget, CST_TYPE_NODE);
 /* api */
 
-/* widget api */
-static void cst_widget_relayout_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  CST_NODE_CLASS(cst_widget_parent_class)->relayout(v_module, v_parent, v_node, draw, layout);
-}
-
-static void cst_widget_repaint_i(CstModule *v_module, CstNode *v_parent, CstNode *v_node, FRDraw *draw, CstLayout *layout) {
-  CST_NODE_CLASS(cst_widget_parent_class)->repaint(v_module, v_parent, v_node, draw, layout);
-}
-
 static CstNode* cst_widget_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
-  CstNode *nnode = cst_node_deep_clone(v_node);
+  CstNode *nnode = cst_node_dclone(v_node);
 
   CST_NODE_CLASS(cst_widget_parent_class)->realize(v_module, ncomp_node, v_parent, nnode, v_render);
 
@@ -51,7 +42,5 @@ static void cst_widget_class_init(CstWidgetClass* wcls) {
   ncls->dclone = cst_widget_dclone_i;
   ncls->construct = cst_widget_construct;
   ncls->realize = cst_widget_realize_i;
-  ncls->relayout = cst_widget_relayout_i;
-  ncls->repaint = cst_widget_repaint_i;
 }
 

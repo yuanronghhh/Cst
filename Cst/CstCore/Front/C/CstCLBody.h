@@ -8,7 +8,6 @@ SYS_BEGIN_DECLS
 
 struct _CstLBody {
   CstNode parent;
-  CstLBodyPrivate *priv;
 };
 
 struct _CstLBodyClass {

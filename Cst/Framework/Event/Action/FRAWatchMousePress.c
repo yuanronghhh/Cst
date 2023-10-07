@@ -17,7 +17,7 @@ static SysBool fr_awatch_mouse_press_check_i(FRAWatch *o, FREvent *e) {
   FRAWatchMousePressPrivate *priv = self->priv;
   FRACursorMove *acursor;
   SysDouble x = 0, y = 0;
-  FRRect bound;
+  const FRRect *bound;
 
   if(!fr_event_is(e, FR_TYPE_EVENT_MOUSEKEY)) {
     return false;
@@ -33,14 +33,13 @@ static SysBool fr_awatch_mouse_press_check_i(FRAWatch *o, FREvent *e) {
     acursor = FR_ACURSOR_MOVE(FR_ACURSOR_MOVE_STATIC);
 
     SysPointer user_data = fr_awatch_get_data(o);
-    priv->get_bound_func(user_data, &bound);
+    bound = priv->get_bound_func(user_data);
 
     if(!fr_acursor_move_get_position(acursor, &x, &y)) {
       return false;
     }
 
-    // sys_debug_N("<%d,%d,%d,%d> %lf,%lf,%d", bound.x, bound.y, bound.width, bound.height, x, y, fr_rect_in_range(&bound, x, y));
-    if(!fr_rect_in_range(&bound, (SysInt)x, (SysInt)y)) {
+    if(!fr_rect_in_range(bound, (SysInt)x, (SysInt)y)) {
       return false;
     }
   }

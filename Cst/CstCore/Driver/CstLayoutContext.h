@@ -15,13 +15,13 @@ struct _CstLayoutContext {
   SysObject parent;
 
   /* < private > */
-  CstLayoutContext* pctx;
   SysBool need_relayout;
   SysBool need_repaint;
   SysBool is_visible;
   SysBool wrap;
   SysInt16 line_space;
 
+  SysInt node_type;
   SysInt child_count;
   FRSInt4 mbp;
 
@@ -40,26 +40,40 @@ struct _CstLayoutContext {
 struct _CstLayoutContextClass {
   SysObjectClass parent;
 
-  void (*layout_self) (CstLayoutContext *self, CstLayoutContext* pself, CstLayoutNode *layout_node, CstLayout *layout);
-  void (*layout_children) (CstLayoutContext *self, CstLayoutContext *pself, CstLayoutNode *layout_node, CstLayout *layout);
+  void (*layout_self) (CstLayoutContext *self, CstRenderNode *render_node, CstLayout *layout);
+  void (*layout_children) (CstLayoutContext *self, CstRenderNode *render_node, CstLayout *layout);
 };
 
 SysType cst_layout_context_get_type(void);
 CstLayoutContext *cst_layout_context_new(void);
 CstLayoutContext *cst_layout_context_new_I(void);
 
-void cst_layout_context_layout_self(CstLayoutContext* self, CstLayoutContext* pself, CstLayoutNode* layout_node, CstLayout* layout);
-void cst_layout_context_layout_children(CstLayoutContext* self, CstLayoutContext* pself, CstLayoutNode* layout_node, CstLayout* layout);
+void cst_layout_context_layout_self(CstLayoutContext* self, CstRenderNode *render_node, CstLayout* layout);
+void cst_layout_context_layout_children(CstLayoutContext* self, CstRenderNode *render_node, CstLayout* layout);
+CstLayoutContext* cst_layout_context_dclone(CstLayoutContext *o);
 
 void cst_layout_context_set_mbp(CstLayoutContext* self, FRSInt4* m4);
 const FRSInt4* cst_layout_context_get_mbp(CstLayoutContext* self);
+
+void cst_layout_context_set_node_type(CstLayoutContext* self, SysInt flag);
+SysBool cst_layout_context_is_abs_node(CstLayoutContext* self);
+SysBool cst_layout_context_is_box_node(CstLayoutContext* self);
 
 void cst_layout_context_set_prefer_size(CstLayoutContext* self, SysInt width, SysInt height);
 void cst_layout_context_get_prefer_size(CstLayoutContext* self, SysInt* width, SysInt* height);
 
 SysBool cst_layout_context_need_layout(CstLayoutContext* self);
-void cst_layout_context_calc_size(CstLayoutContext* self, CstLayoutNode* layout_node);
+void cst_layout_context_set_layout(CstLayoutContext *self, SysBool bvalue);
+
+void cst_layout_context_calc_size(CstLayoutContext *self, CstRenderNode *render_node);
 SysBool cst_layout_context_can_wrap(CstLayoutContext* self);
+
+void cst_layout_context_set_abs_node(CstLayoutContext* self, SysInt bvalue);
+
+/* paint */
+SysBool cst_layout_context_need_paint(CstLayoutContext *self);
+SysBool cst_layout_context_is_visible(CstLayoutContext* self);
+void cst_layout_context_set_paint(CstLayoutContext *self, SysBool bvalue);
 
 
 SYS_END_DECLS

@@ -22,12 +22,10 @@ struct _CstRender {
   FRDisplay *display;
   FRWindow *window;
 
-  FRDraw *draw;
-  CstLayout *layout;
   CstNode* root;
 
-  CstLayer *box_layer;
-  CstLayer *abs_layer;
+  CstBoxLayer *box_layer;
+  CstAbsLayer *abs_layer;
 };
 
 SysType cst_render_get_type(void);
@@ -36,11 +34,9 @@ CstRender* cst_render_new_I(SysBool is_offscreen);
 FRWindow *cst_render_get_default_window(CstRender *self);
 void cst_render_resize_window(CstRender *self);
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
+void cst_render_render(CstRender *self);
 void cst_render_rerender(CstRender *self, FRRegion *region);
-void cst_render_render(CstRender *render);
 
-void cst_render_set_node(CstRender * self, CstNode * parent, CstNode * node);
-FRDraw *cst_render_get_draw(CstRender *self);
 CstBoxLayer *cst_render_get_box_layer(CstRender *render);
 CstAbsLayer *cst_render_get_abs_layer(CstRender *render);
 CstNode* cst_render_get_root(CstRender* self);

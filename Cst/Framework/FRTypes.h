@@ -67,7 +67,6 @@ typedef  struct  _FRDisplayClass      FRDisplayClass;
 
 typedef  struct  _FRDraw              FRDraw;
 typedef  struct  _FRDrawClass         FRDrawClass;
-typedef  struct  _FRDrawPrivate       FRDrawPrivate;
 
 typedef  struct  _FRWindow           FRWindow;
 typedef  struct  _FRWindowClass      FRWindowClass;
@@ -84,12 +83,10 @@ typedef  struct  _FRAMouseKeyClass      FRAMouseKeyClass;
 typedef  struct  _FRAMouseKeyPrivate    FRAMouseKeyPrivate;
 typedef  struct  _FRACursorMove         FRACursorMove;
 typedef  struct  _FRACursorMoveClass    FRACursorMoveClass;
-typedef  struct  _FRACursorMovePrivate  FRACursorMovePrivate;
 
 typedef  struct  _FRAWatchProps              FRAWatchProps;
 typedef  struct  _FRAWatch                   FRAWatch;
 typedef  struct  _FRAWatchClass              FRAWatchClass;
-typedef  struct  _FRAWatchPrivate            FRAWatchPrivate;
 typedef  struct  _FRAWatchAny                FRAWatchAny;
 typedef  struct  _FRAWatchAnyClass           FRAWatchAnyClass;
 typedef  struct  _FRAWatchAnyPrivate         FRAWatchAnyPrivate;
@@ -111,7 +108,6 @@ typedef  struct  _FRAWatchMouseReleaseClass    FRAWatchMouseReleaseClass;
 typedef  struct  _FRAWatchMouseReleasePrivate  FRAWatchMouseReleasePrivate;
 typedef  struct  _FRAWatchCursorMove         FRAWatchCursorMove;
 typedef  struct  _FRAWatchCursorMoveClass    FRAWatchCursorMoveClass;
-typedef  struct  _FRAWatchCursorMovePrivate  FRAWatchCursorMovePrivate;
 
 
 typedef  struct  _FREvent                   FREvent;
@@ -128,10 +124,8 @@ typedef  struct  _FREventKeyClass           FREventKeyClass;
 typedef  struct  _FREventKeyPrivate         FREventKeyPrivate;
 typedef  struct  _FREventMouseKey           FREventMouseKey;
 typedef  struct  _FREventMouseKeyClass      FREventMouseKeyClass;
-typedef  struct  _FREventMouseKeyPrivate    FREventMouseKeyPrivate;
 typedef  struct  _FREventCursorMove         FREventCursorMove;
 typedef  struct  _FREventCursorMoveClass    FREventCursorMoveClass;
-typedef  struct  _FREventCursorMovePrivate  FREventCursorMovePrivate;
 
 typedef  struct  _FREnv           FREnv;
 typedef  struct  _FREnvClass      FREnvClass;

@@ -18,22 +18,17 @@ struct _CstLayer {
   SysQueue *draw_queue;
 };
 
+/* abstract class */
 struct _CstLayerClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayer *layer);
-  void (*check) (CstLayer *layer, FRDraw *draw, FRRegion *region);
-  void (*rerender) (CstLayer *layer, FRDraw *draw, CstLayout *layout);
-  void (*render) (CstLayer *layer, FRDraw *draw, CstLayout *layout);
 };
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
 
-SYS_API void cst_layer_check(CstLayer *self, FRDraw *draw, FRRegion *region);
-SYS_API void cst_layer_render(CstLayer *self, FRDraw *draw, CstLayout *layout);
-SYS_API void cst_layer_rerender(CstLayer *self, FRDraw *draw, CstLayout *layout);
-SYS_API void cst_layer_queue_draw_node(CstLayer *self, CstNode *v_node);
+SYS_API void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
 
 SYS_END_DECLS
 

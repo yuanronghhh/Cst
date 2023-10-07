@@ -17,7 +17,9 @@ struct _FREventCursorMoveClass {
 struct _FREventCursorMove {
   FREvent parent;
 
-  FREventCursorMovePrivate *priv;
+  /* <private> */
+  SysDouble xpos;
+  SysDouble ypos;
 };
 
 SYS_API SysType fr_event_cursor_move_get_type(void);

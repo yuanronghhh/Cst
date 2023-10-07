@@ -5,16 +5,15 @@ struct _FREventCursorMovePrivate {
   SysDouble ypos;
 };
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(FREventCursorMove, fr_event_cursor_move, FR_TYPE_EVENT);
+SYS_DEFINE_TYPE(FREventCursorMove, fr_event_cursor_move, FR_TYPE_EVENT);
 
 
 void fr_event_cursor_move_position(FREventCursorMove *self, SysDouble *x, SysDouble *y) {
   sys_return_if_fail(self != NULL);
 
-  FREventCursorMovePrivate* priv = self->priv;
 
-  *x = priv->xpos;
-  *y = priv->ypos;
+  *x = self->xpos;
+  *y = self->ypos;
 }
 
 /* object api */
@@ -22,10 +21,9 @@ static void fr_event_cursor_move_construct(FREvent *o, FRWindow *window, SysDoub
   FR_EVENT_CLASS(fr_event_cursor_move_parent_class)->construct(o, window);
 
   FREventCursorMove* self = FR_EVENT_CURSOR_MOVE(o);
-  FREventCursorMovePrivate* priv = self->priv;
 
-  priv->xpos = xpos;
-  priv->ypos = ypos;
+  self->xpos = xpos;
+  self->ypos = ypos;
 }
 
 FREvent* fr_event_cursor_move_new(void) {
@@ -52,6 +50,5 @@ static void fr_event_cursor_move_class_init(FREventCursorMoveClass* cls) {
 }
 
 void fr_event_cursor_move_init(FREventCursorMove *self) {
-  self->priv = fr_event_cursor_move_get_private(self);
 }
 

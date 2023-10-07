@@ -1,7 +1,7 @@
 #ifndef __FR_DRAW_H__
 #define __FR_DRAW_H__
 
-#include <Framework/Graph/FRGraph.h>
+#include <Framework/FRCommon.h>
 
 
 SYS_BEGIN_DECLS
@@ -20,7 +20,14 @@ struct _FRDrawClass {
 struct _FRDraw {
   SysObject parent;
 
-  FRDrawPrivate *priv;
+  /* <private> */
+  SysPointer v;
+
+  FRContext *cr;
+  FRSurface *window_surface;
+  FRSurface * paint_surface;
+  FRWindow *window;
+  SysBool is_painting;
 };
 
 SYS_API SysType fr_draw_get_type(void);

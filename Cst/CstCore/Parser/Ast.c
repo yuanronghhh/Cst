@@ -1,11 +1,15 @@
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Front/Common/CstComponent.h>
 #include <CstCore/Front/Common/CstNodeMapCore.h>
+#include <CstCore/Front/Common/CstPropPair.h>
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstManager.h>
-#include <CstCore/Front/Common/CstPropPair.h>
-#include <CstCore/Driver/Css/CstCss.h>
+#include <CstCore/Driver/Css/CstCssValue.h>
+#include <CstCore/Driver/Css/CstCssGroup.h>
+#include <CstCore/Driver/Css/CstCssPair.h>
+#include <CstCore/Driver/Css/CstCssEnv.h>
+#include <CstCore/Driver/CstLayoutNode.h>
 
 
 typedef struct _AstModulePass AstModulePass;
@@ -739,7 +743,7 @@ static void node_parse_action(CstNodeProps *props, const SysChar *watch_name, co
   }
 
   FRAWatchProps awatch_props = {0};
-  awatch_props.get_bound_func = (FRGetBoundFunc)cst_node_get_bound_mbp;
+  awatch_props.get_bound_func = (FRGetBoundFunc)cst_layout_node_get_bound;
 
   awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
   sys_clear_pointer(&bind_var, sys_free);
@@ -898,7 +902,7 @@ void ast_node_parse(JNode *jnode, CstComponent *component, CstNodeProps *props) 
 CstCssPair *ast_css_pair_parse(JNode *jnode) {
   sys_return_val_if_fail(jnode->type == AstJPair, NULL);
 
-  CstCssValueNode *node;
+  SysType type;
   CstCssValue *value;
   CstCssPair *pair = NULL;
   JPair *jpair = jnode->v.v_pair;
@@ -906,17 +910,17 @@ CstCssPair *ast_css_pair_parse(JNode *jnode) {
 
   sys_return_val_if_fail(key != NULL, NULL);
 
-  node = cst_css_value_node_lookup(key);
-  if (node == NULL) {
+  type = cst_css_value_node_lookup(key);
+  if (type == 0) {
     sys_warning_N("Failed to lookup css key: \"%s\"", key);
     return NULL;
   }
 
-  value = cst_css_value_new(node);
+  value = sys_object_new(type, NULL);
 
   cst_css_value_parse(ast_jnode_jnode(jpair->value), value);
 
-  pair = cst_css_pair_new(key, value);
+  pair = cst_css_pair_new_I(key, value);
 
   return pair;
 }
@@ -1072,8 +1076,6 @@ SysInt ast_css_value_parse(JNode *jnode, CstCssValue *value) {
 
   FRSInt4 *v_m4;
 
-  CstCssValueNode *node = cst_css_value_get_node(value);
-
   switch (jnode->type) {
     case AstJBool:
       cst_css_value_set_bool(value, jnode->v.v_bool);
@@ -1124,7 +1126,7 @@ SysInt ast_css_value_parse(JNode *jnode, CstCssValue *value) {
       cst_css_value_set_double(value, jnode->v.v_double);
       break;
     default:
-      sys_warning_N("Failed to parse css value with key: %s", cst_css_value_node_name(node));
+      sys_warning_N("Failed to parse css value with key: %s", cst_css_value_node_name(value));
       break;
   }
 

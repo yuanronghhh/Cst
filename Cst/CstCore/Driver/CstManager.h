@@ -19,7 +19,11 @@ struct _CstManagerClass {
 
 struct _CstManager {
   FREnv parent;
-  CstManagerPrivate *priv;
+
+  /* <private> */
+  FREnv* module_env;
+  SysHashTable* meta_ht;
+  FREnv* function_env;
 };
 
 SYS_API SysType cst_manager_get_type(void);
@@ -39,7 +43,6 @@ SYS_API CstModule* cst_manager_load_module(CstManager* manager, CstModule* paren
 
 void cst_manager_gencode(CstManager *manager, CstModule* mod);
 void cst_manager_realize(CstManager * self, CstModule * v_module, CstRender * v_render);
-void cst_manager_set_root(CstManager * self, CstModule * v_module);
 
 SYS_END_DECLS
 

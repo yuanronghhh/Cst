@@ -20,7 +20,9 @@ struct _FRACursorMoveClass {
 struct _FRACursorMove {
   FRAction parent;
 
-  FRACursorMovePrivate *priv;
+  /* <private> */
+  SysDouble x;
+  SysDouble y;
 };
 
 SYS_API FRAction *fr_acursor_move_get_static(void);

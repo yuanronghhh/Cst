@@ -14,24 +14,28 @@ SYS_BEGIN_DECLS
 struct _CstLayout {
   SysObject parent;
 
-  /* < private > */
+  /* <private> */
   int state;
-  FRContext* cr;
+  FRRegion *region;
+  FRContext *cr;
 };
 
 struct _CstLayoutClass {
   SysObjectClass parent;
-
-  void (*construct) (CstLayout* o);
 };
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(void);
+CstLayout *cst_layout_new_I(FRContext *cr, FRRegion *region);
+
 int cst_layout_get_state(CstLayout *self);
 void cst_layout_set_state(CstLayout *self, int state);
+SysBool cst_layout_state_layout(CstLayout *self);
 
-FRContext* cst_layout_get_cr(CstLayout* self);
+FRRegion *cst_layout_get_region(CstLayout* self);
+FRContext *cst_layout_get_cr(CstLayout* self);
+
+void cst_layout_layout_box(CstLayout* self, FRDraw *draw, CstRenderNode *render_node);
 
 SYS_END_DECLS
 

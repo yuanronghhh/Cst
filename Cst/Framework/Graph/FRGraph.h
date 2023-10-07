@@ -1,7 +1,7 @@
 #ifndef __FR_GRAPH_H__
 #define __FR_GRAPH_H__
 
-#include <Framework/FRCommon.h>
+#include <Framework/ThirdParty/FRCairo.h>
 #include <pixman.h>
 
 SYS_BEGIN_DECLS
@@ -10,6 +10,8 @@ typedef  struct  _FRRGBA           FRColor;
 typedef  struct  _FRPoint          FRPoint;
 typedef  struct  _FRInt4           FRInt4;
 typedef  struct  _FRSInt4          FRSInt4;
+typedef  struct _cairo_region  FRRegion;
+typedef  struct _cairo_rectangle_int FRRect;
 
 struct _FRPoint {
   SysInt x;
@@ -41,7 +43,7 @@ struct _FRSInt4 {
 
 SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FRColor *color);
 SYS_API FRColor* fr_color_rgba_new(const SysChar *rgba);
-SYS_API SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y) ;
+SYS_API SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y);
 FRSInt4* fr_sint4_clone(FRSInt4* m);
 FRSInt4* fr_sint4_new(void);
 void fr_sint4_free(FRSInt4* o);

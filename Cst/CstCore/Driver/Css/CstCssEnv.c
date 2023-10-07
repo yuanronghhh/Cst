@@ -1,15 +1,9 @@
 #include <CstCore/Driver/Css/CstCssEnv.h>
-#include <CstCore/Driver/Css/CstCss.h>
-#include <CstCore/Driver/CstModule.h>
 #include <CstCore/Parser/CstParserCore.h>
-
-struct _CstCssEnvPrivate {
-  SysChar reserved;
-};
 
 static CstCssEnv *gcss_env = NULL;
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstCssEnv, cst_css_env, FR_TYPE_ENV);
+SYS_DEFINE_TYPE(CstCssEnv, cst_css_env, FR_TYPE_ENV);
 
 void cst_css_env_load_gstyle(GStyle *gstyle, const SysChar *path) {
   sys_return_if_fail(gstyle != NULL);
@@ -96,5 +90,4 @@ static void cst_css_env_class_init(CstCssEnvClass* cls) {
 }
 
 static void cst_css_env_init(CstCssEnv *self) {
-  self->priv = cst_css_env_get_private(self);
 }

@@ -8,10 +8,15 @@ SYS_DEFINE_TYPE(CstCssPair, cst_css_pair, SYS_TYPE_OBJECT);
 CstCssPair *cst_css_pair_clone(CstCssPair *o) {
   sys_return_val_if_fail(o != NULL, NULL);
 
-  CstCssValue *nvalue = cst_css_value_clone(o->value);
+  CstCssValue *nvalue = cst_css_value_dclone(o->value);
   CstCssPair *npair = cst_css_pair_new_I(o->key, nvalue);
 
   return npair;
+}
+
+void cst_css_pair_calc(CstCssPair *pair, CstRenderNode *render_node, CstLayout *layout) {
+  cst_css_value_calc(pair->value, render_node, layout);
+  cst_css_value_set_value(pair->value, render_node, layout);
 }
 
 /* object api */

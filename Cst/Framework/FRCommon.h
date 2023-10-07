@@ -10,6 +10,8 @@ SYS_BEGIN_DECLS
 #include <Framework/ThirdParty/FRCairo.h>
 #include <Framework/ThirdParty/FRGlfw.h>
 #include <Framework/ThirdParty/FRFont.h>
+
+#include <Framework/Graph/FRGraph.h>
 #include <Framework/Event/Base/FREventMapping.h>
 #include <Framework/FRTypes.h>
 

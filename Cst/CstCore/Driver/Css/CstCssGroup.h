@@ -15,8 +15,9 @@ struct _CstCssGroup {
   SysObject parent;
 
   /* < private > */
-  SysChar *key;
-  CstCssValue *value;
+  SysPtrArray* base;
+  SysPtrArray* pairs;
+  SysChar* id;
 };
 
 struct _CstCssGroupClass {
@@ -26,7 +27,17 @@ struct _CstCssGroupClass {
 SYS_API SysType cst_css_group_get_type(void);
 SYS_API CstCssGroup *cst_css_group_new(void);
 SYS_API CstCssGroup *cst_css_group_clone(CstCssGroup *o);
-SYS_API CstCssGroup *cst_css_group_new_I(SysChar *key, CstCssValue *value);
+SYS_API CstCssGroup *cst_css_group_new_I(const SysChar *id);
+
+SYS_API SysPtrArray* cst_css_group_get_base(CstCssGroup *g);
+SYS_API void cst_css_group_pair_add(CstCssGroup *g, CstCssPair *pair);
+SYS_API SysBool cst_css_group_set_base_r(CstCssGroup *g, CstCssGroup *ng);
+SYS_API SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *g);
+SYS_API SysBool cst_css_group_set_by_id(SysPtrArray *ptr, CstCssEnv *env, const SysChar *id);
+SYS_API const SysChar* cst_css_group_get_id(CstCssGroup *g);
+SYS_API void cst_css_group_add_pair(CstCssGroup *g, SysChar *key, CstCssValue *value);
+SYS_API void cst_css_render_groups(SysPtrArray *gs, CstRenderNode *render_node, CstLayout *layout);
+
 
 SYS_END_DECLS
 

@@ -103,6 +103,12 @@ typedef enum _CST_DIRTY_STATE_ENUM {
   CST_DIRTY_MASK = CST_DIRTY_DIRTY,
 } CST_DIRTY_STATE_ENUM;
 
+typedef enum _CST_RENDER_NODE_ENUM {
+  CST_RENDER_NODE_BOX = 1 << 0,
+  CST_RENDER_NODE_ABS = 1 << 1,
+  CST_RENDER_NODE_MASK = 0x03,
+} CST_RENDER_NODE_ENUM;
+
 typedef SYS_VALUE_ENUM CST_PROP_VALUE_ENUM;
 
 typedef struct _CstContext CstContext;
@@ -113,7 +119,6 @@ typedef struct _CstApplicationPrivate CstApplicationPrivate;
 
 typedef struct _CstManager CstManager;
 typedef struct _CstManagerClass CstManagerClass;
-typedef struct _CstManagerPrivate CstManagerPrivate;
 
 typedef struct _CstModule CstModule;
 typedef struct _CstModuleClass CstModuleClass;
@@ -124,21 +129,13 @@ typedef struct _CstRenderClass CstRenderClass;
 
 typedef struct _CstLayer CstLayer;
 typedef struct _CstLayerClass CstLayerClass;
-typedef struct _CstLayerPrivate CstLayerPrivate;
 typedef struct _CstBoxLayer CstBoxLayer;
 typedef struct _CstBoxLayerClass CstBoxLayerClass;
-typedef struct _CstBoxLayerPrivate CstBoxLayerPrivate;
 typedef struct _CstAbsLayer CstAbsLayer;
 typedef struct _CstAbsLayerClass CstAbsLayerClass;
-typedef struct _CstAbsLayerPrivate CstAbsLayerPrivate;
 
 typedef struct _CstCssGroup CstCssGroup;
 typedef struct _CstCssGroupClass CstCssGroupClass;
-
-typedef struct _CstPaintNode CstPaintNode;
-typedef struct _CstPaintNodeClass CstPaintNodeClass;
-typedef struct _CstPaintContext CstPaintContext;
-typedef struct _CstPaintContextClass CstPaintContextClass;
 
 typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
@@ -148,17 +145,25 @@ typedef struct _CstLayoutContextClass CstLayoutContextClass;
 typedef struct _CstLayout CstLayout;
 typedef struct _CstLayoutClass CstLayoutClass;
 
+typedef struct _CstRenderNode CstRenderNode;
+typedef struct _CstRenderNodeClass CstRenderNodeClass;
+typedef struct _CstBoxNode CstBoxNode;
+typedef struct _CstBoxNodeClass CstBoxNodeClass;
+
 typedef struct _CstCssClosure CstCssClosure;
+typedef struct _CstCssClosureClass CstCssClosureClass;
 
 typedef struct _CstCssValue CstCssValue;
 typedef struct _CstCssValueClass CstCssValueClass;
+
+typedef struct _CstCssValueX CstCssValueX;
+typedef struct _CstCssValueXClass CstCssValueXClass;
 
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;
 
 typedef struct _CstCssEnv CstCssEnv;
 typedef struct _CstCssEnvClass CstCssEnvClass;
-typedef struct _CstCssEnvPrivate CstCssEnvPrivate;
 
 #if CST_USE_MONO
 #include <CstCore/Front/Mono/CstMType.h>
@@ -181,7 +186,7 @@ typedef SysValue CstPropValue;
 
 typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
-typedef void (*CstCssCalcFunc) (CstLayoutNode *lnode, CstLayoutContext *layout_ctx, CstPaintNode *pnode, CstPaintContext *paint_ctx, SysPointer user_data);
+typedef void (*CstCssCalcFunc) (CstRenderNode *render_node, SysPointer user_data);
 
 SYS_END_DECLS
 

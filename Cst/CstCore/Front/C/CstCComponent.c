@@ -5,23 +5,10 @@
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/Css/CstCss.h>
+#include <CstCore/Driver/Css/CstCssEnv.h>
 
+SYS_DEFINE_TYPE(CstComponent, cst_component, FR_TYPE_ENV);
 
-struct _CstComponentPrivate {
-  CstModule *v_module;
-
-  SysChar *id;
-
-  /* ComStyle : CstCssGroup */
-  FREnv *style_env;
-
-  /* ComProps: CstPropMap */
-  FREnv *prop_maps_env;
-
-  CstNode *layout_node;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstComponent, cst_component, FR_TYPE_ENV);
 
 static const SysChar* COMPONENT_BODY_NAMES[] = {
   "Data", "Component", "Layout", "Style", "Props"
@@ -46,93 +33,71 @@ CstComponent* cst_component_new(void) {
 void cst_component_set_layout_node(CstComponent *self, CstNode *node) {
   sys_return_if_fail(self != NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  priv->layout_node = node;
+  self->layout_node = node;
 }
 
 CstNode *cst_component_get_layout_node(CstComponent *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  return priv->layout_node;
+  return self->layout_node;
 }
 
 void cst_component_set_id(CstComponent* self, const SysChar *id) {
   sys_return_if_fail(self != NULL);
 
-  CstComponentPrivate* priv = self->priv;
+  sys_assert(self->id == NULL);
 
-  sys_assert(priv->id == NULL);
-
-  priv->id = sys_strdup(id);
+  self->id = sys_strdup(id);
 }
 
 void cst_component_print(CstComponent* self) {
   sys_return_if_fail(self != NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  cst_node_print_node_r(priv->layout_node);
+  cst_node_print_node_r(self->layout_node);
 }
 
 const SysChar* cst_component_get_id(CstComponent* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  return priv->id;
+  return self->id;
 }
 
 void cst_component_set_css(CstComponent* self, CstCssGroup *g) {
   sys_return_if_fail(self != NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  cst_css_env_set(priv->style_env, (SysPointer)cst_css_group_get_id(g), g);
+  cst_css_env_set(self->style_env, (SysPointer)cst_css_group_get_id(g), g);
 }
 
 SysBool cst_component_remove_css(CstComponent* self, CstCssGroup *g) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstComponentPrivate* priv = self->priv;
-
-  return cst_css_env_remove(priv->style_env, cst_css_group_get_id(g));
+  return cst_css_env_remove(self->style_env, cst_css_group_get_id(g));
 }
 
 FREnv *cst_component_get_css_env(CstComponent* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  return priv->style_env;
+  return self->style_env;
 }
 
 CstCssGroup *cst_component_get_css(CstComponent* self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  return cst_css_env_get(CST_CSS_ENV(priv->style_env), key);
+  return cst_css_env_get(CST_CSS_ENV(self->style_env), key);
 }
 
 CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(key != NULL, NULL);
 
-  CstComponentPrivate* priv = self->priv;
-
-  return cst_css_env_get_r(CST_CSS_ENV(priv->style_env), key);
+  return cst_css_env_get_r(CST_CSS_ENV(self->style_env), key);
 }
 
 SysFunc cst_component_get_function(CstComponent *self, const SysChar *func_name) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(func_name != NULL, false);
 
-  CstComponentPrivate *priv = self->priv;
-
-  return cst_module_get_function(priv->v_module, func_name);
+  return cst_module_get_function(self->v_module, func_name);
 }
 
 void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysFunc func) {
@@ -141,33 +106,25 @@ void cst_component_set_function(CstComponent *self, const SysChar *func_name, Sy
   sys_return_if_fail(sys_strneq(func_name, FR_FUNC_PREFIX, 2));
   sys_return_if_fail(func != NULL);
 
-  CstComponentPrivate *priv = self->priv;
-
-  cst_module_set_function(priv->v_module, func_name, func);
+  cst_module_set_function(self->v_module, func_name, func);
 }
 
 CstPropMap *cst_component_get_props_map(CstComponent *self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstComponentPrivate *priv = self->priv;
-
-  return fr_env_get_r(priv->prop_maps_env, key);
+  return fr_env_get_r(self->prop_maps_env, key);
 }
 
 void cst_component_set_props_map(CstComponent *self, CstPropMap *map) {
   sys_return_if_fail(self != NULL);
 
-  CstComponentPrivate *priv = self->priv;
-
-  fr_env_set(priv->prop_maps_env, cst_prop_map_key(map), (SysPointer)map);
+  fr_env_set(self->prop_maps_env, cst_prop_map_key(map), (SysPointer)map);
 }
 
 void cst_component_realize_full(CstModule *v_module, CstComponent *self, CstNode *v_parent, CstComNode *ncomp_node, CstRender *v_render) {
   sys_return_if_fail(self != NULL);
 
-  CstComponentPrivate *priv = self->priv;
-
-  cst_node_realize_root(v_module, ncomp_node, priv->layout_node, v_parent, v_render);
+  cst_node_realize_root(v_module, ncomp_node, self->layout_node, v_parent, v_render);
 }
 
 void cst_component_realize(CstModule *v_module, CstComponent *self, CstNode *v_parent, CstRender *v_render) {
@@ -184,12 +141,10 @@ void cst_component_construct(CstComponent *self, CstModule *v_module, CstCompone
   cls->construct(self, v_module, v_parent);
 }
 
-void cst_component_bind_parent(CstComponent *self, CstComponent *v_parent) {
-  CstComponentPrivate *priv = self->priv;
-  CstComponentPrivate *ppriv = v_parent->priv;
+void cst_component_bind_parent(CstComponent *self, CstComponent *pself) {
 
-  fr_env_set_parent(priv->prop_maps_env, ppriv->prop_maps_env);
-  fr_env_set_parent(priv->style_env, ppriv->style_env);
+  fr_env_set_parent(self->prop_maps_env, pself->prop_maps_env);
+  fr_env_set_parent(self->style_env, pself->style_env);
 }
 
 static void cst_component_construct_i(CstComponent *self, CstModule *v_module, CstComponent *v_parent) {
@@ -199,18 +154,16 @@ static void cst_component_construct_i(CstComponent *self, CstModule *v_module, C
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_parent));
 
-  CstComponentPrivate *priv = self->priv;
-
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
-  priv->prop_maps_env = fr_env_new_I(ht, NULL);
+  self->prop_maps_env = fr_env_new_I(ht, NULL);
 
-  priv->style_env = cst_css_env_new_I(NULL);
-  priv->v_module = v_module;
+  self->style_env = cst_css_env_new_I(NULL);
+  self->v_module = v_module;
 
   if (v_parent) {
   }
 
-  priv->layout_node = NULL;
+  self->layout_node = NULL;
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {
@@ -222,18 +175,16 @@ static void cst_component_class_init(CstComponentClass* cls) {
 
 static void cst_component_dispose(SysObject* o) {
   CstComponent *self = CST_COMPONENT(o);
-  CstComponentPrivate* priv = self->priv;
 
-  sys_object_unref(priv->style_env);
-  sys_object_unref(priv->prop_maps_env);
+  sys_clear_pointer(&self->style_env, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->prop_maps_env, (SysDestroyFunc)_sys_object_unref);
 
-  cst_node_unlink_node_r(priv->layout_node);
+  cst_node_unlink_node_r(self->layout_node);
 
-  sys_free_N(priv->id);
+  sys_clear_pointer(&self->id, sys_free);
 
   SYS_OBJECT_CLASS(cst_component_parent_class)->dispose(o);
 }
 
 static void cst_component_init(CstComponent *self) {
-  self->priv = cst_component_get_private(self);
 }

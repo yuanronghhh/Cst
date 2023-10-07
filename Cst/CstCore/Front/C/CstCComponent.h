@@ -8,7 +8,15 @@ SYS_BEGIN_DECLS
 
 struct _CstComponent {
   FREnv parent;
-  CstComponentPrivate* priv;
+  
+  /* <private> */
+  CstModule *v_module;
+  SysChar *id;
+  /* ComStyle : CstCssGroup */
+  FREnv *style_env;
+  /* ComProps: CstPropMap */
+  FREnv *prop_maps_env;
+  CstNode *layout_node;
 };
 
 struct _CstComponentClass {

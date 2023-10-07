@@ -1,7 +1,7 @@
 #ifndef __FR_AWATCH_H__
 #define __FR_AWATCH_H__
 
-#include <Framework/FRCommon.h>
+#include <Framework/Event/Action/FRAction.h>
 
 SYS_BEGIN_DECLS
 
@@ -10,7 +10,7 @@ SYS_BEGIN_DECLS
 #define FR_AWATCH_CLASS(o) ((FRAWatchClass *)sys_class_cast_check(o, FR_TYPE_AWATCH))
 #define FR_AWATCH_GET_CLASS(o) sys_instance_get_class(o, FRAWatchClass)
 
-typedef void (*FRGetBoundFunc) (SysPointer user_data, FRRect *rect);
+typedef const FRRect* (*FRGetBoundFunc) (SysPointer user_data);
 
 struct _FRAWatchProps {
   /**
@@ -37,7 +37,12 @@ struct _FRAWatchProps {
 struct _FRAWatch {
   SysObject parent;
 
-  FRAWatchPrivate *priv;
+  /* <private> */
+  FRAction *action;
+  FREventFunc func;
+  SysChar *func_name;
+  SysPointer user_data;
+  SysList *action_link;
 };
 
 struct _FRAWatchClass {

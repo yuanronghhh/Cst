@@ -10,40 +10,26 @@
 #include <Framework/Event/Action/FRAWatchRefresh.h>
 
 
-struct _FRAWatchPrivate {
-  FRAction *action;
-  FREventFunc func;
-  SysChar *func_name;
-  SysPointer user_data;
-  SysList *action_link;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRAWatch, fr_awatch, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(FRAWatch, fr_awatch, SYS_TYPE_OBJECT);
 
 static SysHashTable *g_awatch_nodes = NULL;
 
 SysPointer fr_awatch_get_data(FRAWatch *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  return priv->user_data;
+  return self->user_data;
 }
 
 FRAction *fr_awatch_get_action(FRAWatch *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  return priv->action;
+  return self->action;
 }
 
 void fr_awatch_set_action(FRAWatch *self, FRAction *action) {
   sys_return_if_fail(self != NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  priv->action = action;
+  self->action = action;
 }
 
 void fr_action_watch_register_type(const SysChar *name, SysType type) {
@@ -77,38 +63,31 @@ static SysBool fr_awatch_check_i(FRAWatch *self, FREvent *e) {
 static void fr_awatch_dispatch_i(FRAWatch *self, FREvent *e) {
   sys_return_if_fail(self != NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-  sys_return_if_fail(priv->func != NULL && "awatch bind is correct ?");
+  sys_return_if_fail(self->func != NULL && "awatch bind is correct ?");
 
-  priv->func(e, priv->user_data);
+  self->func(e, self->user_data);
 }
 
 const SysChar *fr_awatch_get_func_name(FRAWatch *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  return priv->func_name;
+  return self->func_name;
 }
 
 void fr_awatch_set_func_name(FRAWatch *self, const SysChar *func_name) {
   sys_return_if_fail(self != NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  if (priv->func_name) {
-    sys_clear_pointer(&priv->func_name, sys_free);
+  if (self->func_name) {
+    sys_clear_pointer(&self->func_name, sys_free);
   }
 
-  priv->func_name = sys_strdup(func_name);
+  self->func_name = sys_strdup(func_name);
 }
 
 void fr_awatch_set_function(FRAWatch *self, FREventFunc func) {
   sys_return_if_fail(self != NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  priv->func = func;
+  self->func = func;
 }
 
 FRAWatch *fr_awatch_new(void) {
@@ -123,39 +102,34 @@ FRAWatch *fr_awatch_clone(FRAWatch *self) {
   return cls->dclone(self);
 }
 
-static FRAWatch *fr_awatch_dclone_i(FRAWatch *old) {
-  sys_return_val_if_fail(old != NULL, NULL);
-  SysType type = sys_type_from_instance(old);
+static FRAWatch *fr_awatch_dclone_i(FRAWatch *oself) {
+  sys_return_val_if_fail(oself != NULL, NULL);
+  SysType type = sys_type_from_instance(oself);
 
-  FRAWatch *nawatch = sys_object_new(type, NULL);
+  FRAWatch *nself = sys_object_new(type, NULL);
 
-  FRAWatchPrivate *opriv = old->priv;
-  FRAWatchPrivate *npriv = nawatch->priv;
-
-  npriv->func = opriv->func;
-  npriv->func_name = sys_strdup(opriv->func_name);
-  npriv->user_data = opriv->user_data;
-  npriv->action_link = NULL;
-  npriv->action = fr_action_ref(opriv->action);
+  nself->func = oself->func;
+  nself->func_name = sys_strdup(oself->func_name);
+  nself->user_data = oself->user_data;
+  nself->action_link = NULL;
+  nself->action = fr_action_ref(oself->action);
 
   // clone only for component now, this check maybe remove later.
-  sys_assert(opriv->user_data == NULL && "awatch bind user_data should be null when clone");
-  sys_assert(opriv->action_link == NULL && "awatch bind action_link should be null when clone");
+  sys_assert(oself->user_data == NULL && "awatch bind user_data should be null when clone");
+  sys_assert(oself->action_link == NULL && "awatch bind action_link should be null when clone");
 
-  return nawatch;
+  return nself;
 }
 
 void fr_awatch_bind(FRAWatch *self, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
 
-  FRAWatchPrivate *priv = self->priv;
-
-  if(priv->action == NULL) {
+  if(self->action == NULL) {
     sys_abort_N("%s", "action must not be NULL");
   }
 
-  priv->action_link = fr_action_bind_awatch(priv->action, self);
-  priv->user_data = user_data;
+  self->action_link = fr_action_bind_awatch(self->action, self);
+  self->user_data = user_data;
 }
 
 void fr_awatch_create(FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
@@ -169,30 +143,26 @@ void fr_awatch_create(FRAWatch* self, const SysChar *func_name, FREventFunc func
 /* object api */
 static void fr_awatch_dispose(SysObject* o) {
   FRAWatch *self = FR_AWATCH(o);
-  FRAWatchPrivate *priv = self->priv;
-
-  if (priv->action_link) {
-    fr_action_unbind_awatch(priv->action, priv->action_link);
+  if (self->action_link) {
+    fr_action_unbind_awatch(self->action, self->action_link);
   }
 
-  priv->action_link = NULL;
-  sys_object_unref(priv->action);
+  self->action_link = NULL;
+  sys_object_unref(self->action);
 
-  if (priv->func_name) {
-    sys_clear_pointer(&priv->func_name, sys_free);
+  if (self->func_name) {
+    sys_clear_pointer(&self->func_name, sys_free);
   }
 
   SYS_OBJECT_CLASS(fr_awatch_parent_class)->dispose(o);
 }
 
 static void fr_awatch_create_i(FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  FRAWatchPrivate* priv = self->priv;
+  self->user_data = NULL;
+  self->func = func;
+  self->func_name = func_name != NULL ? sys_strdup(func_name) : NULL;
 
-  priv->user_data = NULL;
-  priv->func = func;
-  priv->func_name = func_name != NULL ? sys_strdup(func_name) : NULL;
-
-  sys_object_ref(priv->action);
+  sys_object_ref(self->action);
 }
 
 FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
@@ -239,7 +209,6 @@ static void fr_awatch_class_init(FRAWatchClass* cls) {
 }
 
 static void fr_awatch_init(FRAWatch *self) {
-  self->priv = fr_awatch_get_private(self);
 }
 
 void fr_awatch_setup(void) {

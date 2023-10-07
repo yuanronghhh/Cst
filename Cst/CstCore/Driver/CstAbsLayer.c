@@ -1,11 +1,9 @@
 #include <CstCore/Driver/CstAbsLayer.h>
 
 
-struct _CstAbsLayerPrivate {
-  SysChar reserved;
-};
+SYS_DEFINE_TYPE(CstAbsLayer, cst_abs_layer, CST_TYPE_LAYER);
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstAbsLayer, cst_abs_layer, CST_TYPE_LAYER);
+static CstAbsLayer *g_abs_layer = NULL;
 
 void cst_abs_layer_check_i(CstLayer *self, FRDraw *draw, FRRegion *region) {
 }
@@ -41,12 +39,8 @@ static void cst_abs_layer_class_init(CstAbsLayerClass* cls) {
   CstLayerClass *lcls = CST_LAYER_CLASS(cls);
 
   lcls->construct = cst_abs_layer_construct;
-  lcls->check = cst_abs_layer_check_i;
-  lcls->render = cst_abs_layer_render_i;
-
   ocls->dispose = cst_abs_layer_dispose;
 }
 
 static void cst_abs_layer_init(CstAbsLayer *self) {
-  self->priv = cst_abs_layer_get_private(self);
 }

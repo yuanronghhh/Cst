@@ -21,8 +21,6 @@ SYS_BEGIN_DECLS
 #endif
 
 typedef  struct _cairo_pattern FRPattern;
-typedef  struct _cairo_region  FRRegion;
-typedef  struct _cairo_rectangle_int FRRect;
 typedef  struct _cairo_surface FRSurface;
 typedef  struct _cairo FRContext;
 

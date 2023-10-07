@@ -17,7 +17,8 @@ struct _FRAWatchCursorMoveClass {
 struct _FRAWatchCursorMove {
   FRAWatch parent;
 
-  FRAWatchCursorMovePrivate *priv;
+  /* <private> */
+  FRGetBoundFunc get_bound_func;
 };
 
 SYS_API FRAWatchCursorMove* fr_awatch_cursor_move_new(void);

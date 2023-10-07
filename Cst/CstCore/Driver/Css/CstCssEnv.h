@@ -16,7 +16,6 @@ struct _CstCssEnvClass {
 
 struct _CstCssEnv {
   FREnv env;
-  CstCssEnvPrivate *priv;
 };
 
 SYS_API SysType cst_css_env_get_type(void);

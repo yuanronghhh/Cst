@@ -14,8 +14,6 @@ SYS_BEGIN_DECLS
 
 struct _CstAbsLayer {
   CstLayer parent;
-
-  CstAbsLayerPrivate *priv;
 };
 
 struct _CstAbsLayerClass {

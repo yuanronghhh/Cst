@@ -1,29 +1,18 @@
 #include <Framework/Event/Base/FREventMouseKey.h>
 
-
-struct _FREventMouseKeyPrivate {
-  SysInt button;
-  SysInt action;
-  SysInt mods;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FREventMouseKey, fr_event_mousekey, FR_TYPE_EVENT);
+SYS_DEFINE_TYPE(FREventMouseKey, fr_event_mousekey, FR_TYPE_EVENT);
 
 
 SysInt fr_event_mousekey_key(FREventMouseKey *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  FREventMouseKeyPrivate* priv = self->priv;
-
-  return priv->button;
+  return self->button;
 }
 
 SysInt fr_event_mousekey_action(FREventMouseKey *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  FREventMouseKeyPrivate* priv = self->priv;
-
-  return priv->action;
+  return self->action;
 }
 
 /* object api */
@@ -31,11 +20,10 @@ static void fr_event_mousekey_construct(FREvent *o, FRWindow *window, SysInt but
   FR_EVENT_CLASS(fr_event_mousekey_parent_class)->construct(o, window);
 
   FREventMouseKey* self = FR_EVENT_MOUSEKEY(o);
-  FREventMouseKeyPrivate* priv = self->priv;
 
-  priv->button = button;
-  priv->action = action;
-  priv->mods = mods;
+  self->button = button;
+  self->action = action;
+  self->mods = mods;
 }
 
 FREvent* fr_event_mousekey_new(void) {
@@ -62,6 +50,5 @@ static void fr_event_mousekey_class_init(FREventMouseKeyClass* cls) {
 }
 
 void fr_event_mousekey_init(FREventMouseKey *self) {
-  self->priv = fr_event_mousekey_get_private(self);
 }
 

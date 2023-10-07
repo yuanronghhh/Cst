@@ -3,11 +3,7 @@
 #include <CstCore/Driver/CstRender.h>
 
 
-struct _CstLBodyPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstLBody, cst_lbody, CST_TYPE_NODE);
+SYS_DEFINE_TYPE(CstLBody, cst_lbody, CST_TYPE_NODE);
 
 CstNode* _cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
@@ -22,10 +18,7 @@ void cst_lbody_construct(CstModule *v_module, CstComponent *v_component, CstNode
 }
 
 static void cst_lbody_init(CstLBody *self) {
-  self->priv = cst_lbody_get_private(self);
   CstNode *node = CST_NODE(self);
-
-  self->priv = cst_lbody_get_private(self);
 
   cst_node_set_name(node, "LBody");
 }

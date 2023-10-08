@@ -6,7 +6,6 @@
 
 SYS_BEGIN_DECLS
 
-typedef struct _Expression Expression;
 typedef struct _AstNode AstNode;
 typedef struct _Source Source;
 typedef struct _Component Component;
@@ -26,7 +25,8 @@ typedef Source JSource;
 typedef SysPointer JPointer;
 
 typedef struct _SConst SConst;
-typedef struct _Parser Parser;
+typedef struct _CstParser CstParser;
+typedef struct _CstParserClass CstParserClass;
 
 typedef struct _CodeGen CodeGen;
 

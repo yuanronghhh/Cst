@@ -17,7 +17,7 @@ SYS_BEGIN_DECLS
 #define SAVE_TOKEN(t) SAVE_VALUE(v_token, t)
 
 #define SCONST(cstr) { cstr##_token, #cstr, (sizeof(#cstr) - 1) }
-#define YY_EXTRA_TYPE Parser*
+#define YY_EXTRA_TYPE CstParser*
 #define YY_USER_ACTION yylloc.first_line = yylloc.last_line = yyget_lineno(yyscanner); \
                     yylloc.first_column = yyget_column(yyscanner);  \
                     yylloc.last_column = yylloc.first_column + yyget_leng(yyscanner) - 1; \
@@ -27,7 +27,7 @@ SYS_BEGIN_DECLS
 
 #include <CstCore/Parser/CstCli.yy.h>
 #define LEX_PARAMS_VALS ps, yylval_param, yyscanner
-#define LEX_PARAMS Parser *ps, YYSTYPE * yylval_param, yyscan_t yyscanner
+#define LEX_PARAMS CstParser *ps, YYSTYPE * yylval_param, yyscan_t yyscanner
 #define YY_DECL int yylex(LEX_PARAMS)
 
 int yylex(LEX_PARAMS);

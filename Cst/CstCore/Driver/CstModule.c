@@ -66,13 +66,6 @@ SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const S
   return true;
 }
 
-void cst_module_load_gstyle(CstModule *self, GStyle *gstyle) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(gstyle != NULL);
-
-  cst_css_env_load_gstyle(gstyle, self->path);
-}
-
 CstManager *cst_module_get_manager(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
@@ -94,29 +87,6 @@ SysBool cst_module_realize(CstModule *self, CstNode *v_parent, CstRender *v_rend
   return true;
 }
 
-static SysBool module_parse(CstModule *self) {
-  sys_return_val_if_fail(self != NULL, false);
-  Parser* ps;
-  ps = cst_parser_new(self->path);
-  if (ps == NULL) {
-    goto fail;
-  }
-
-  cst_parser_set_data(ps, self);
-
-  if (!cst_parser_parse(ps)) {
-    goto fail;
-  }
-
-  self->ast_node = cst_parser_get_root(ps);
-
-  cst_parser_free(ps, false);
-  return true;
-fail:
-  cst_parser_free(ps, true);
-  return false;
-}
-
 CstModule* cst_module_new(void) {
   return (CstModule *)sys_object_new(CST_TYPE_MODULE, NULL);
 }
@@ -124,9 +94,7 @@ CstModule* cst_module_new(void) {
 SysBool cst_module_load(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  ast_module_parse(self->ast_node, self);
-
-  ast_node_free(self->ast_node);
+  cst_parser_module_parse(self->parser, self);
 
   self->loaded = true;
 
@@ -135,6 +103,7 @@ SysBool cst_module_load(CstModule *self) {
 
 void cst_module_set_root_comp(CstModule *self, CstComponent *comp) {
   sys_return_if_fail(self != NULL);
+
   self->root_component = comp;
 }
 
@@ -164,19 +133,13 @@ SysInt cst_module_count_inc(CstModule* self) {
 SysInt cst_module_get_hashcode(CstModule* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return sys_str_hash((SysPointer)self->path);
+  return sys_str_hash((SysPointer)cst_module_get_path(self));
 }
 
-SysChar* cst_module_get_path(CstModule* self) {
+const SysChar* cst_module_get_path(CstModule* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->path;
-}
-
-AstNode* cst_module_get_ast_node(CstModule* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->ast_node;
+  return cst_parser_get_filename(self->parser);
 }
 
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name) {
@@ -237,34 +200,40 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
 
 /* object api */
 static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
+
   FR_ENV_CLASS(cst_module_parent_class)->construct(o, ht, parent);
 }
 
-static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, const SysChar *path) {
+static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, CstParser *ps) {
   SysHashTable *ht;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, _sys_object_unref);
+
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
   self->manager = manager;
-  self->path = sys_strdup(path);
+  self->parser = ps;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
   self->function_env = fr_env_new_I(ht, NULL);
 
   self->root_component = NULL;
-
-  if (!module_parse(self)) {
-    sys_abort_N("module parse failed: %s", path);
-  }
 }
 
 CstModule* cst_module_new_I(CstManager* manager, CstModule* pmodule, const SysChar* path) {
-  CstModule* o = cst_module_new();
+  CstModule* self = cst_module_new();
 
-  cst_module_construct(o, manager, pmodule, path);
+  CstParser* ps = cst_parser_new_I(path);
 
-  return o;
+  cst_module_construct(self, manager, pmodule, ps);
+
+  cst_parser_set_data(self->parser, self);
+  if (!cst_parser_parse(self->parser)) {
+
+    sys_clear_pointer(&self->parser, _sys_object_unref);
+  }
+
+  return self;
 }
 
 static void cst_module_init(CstModule *self) {
@@ -283,11 +252,7 @@ static void cst_module_dispose(SysObject* o) {
 
   fr_env_set_parent(FR_ENV(self), NULL);
 
-  sys_clear_pointer(&self->path, sys_free);
-
-  if (!self->loaded) {
-    sys_clear_pointer(&self->ast_node, ast_node_free);
-  }
+  sys_clear_pointer(&self->parser, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_module_parent_class)->dispose(o);
 }

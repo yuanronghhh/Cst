@@ -17,7 +17,8 @@ struct _FRAWatchMouseReleaseClass {
 struct _FRAWatchMouseRelease {
   FRAWatch parent;
 
-  FRAWatchMouseReleasePrivate *priv;
+  /* <private> */
+  FRGetBoundFunc get_bound_func;
 };
 
 SYS_API FRAWatchMouseRelease* fr_awatch_mouse_release_new(void);

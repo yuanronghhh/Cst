@@ -16,7 +16,7 @@ static void test_parser_leak(void) {
 static void test_parser_basic(void) {
   SysChar *entry = CST_PROJECT_DIR"/Cst/CstCoreTest/Front/AppComponent.cst";
 
-  Parser *ps = cst_parser_new(entry);
+  CstParser *ps = cst_parser_new(entry);
 
   TEST_ASSERT_NOT_NULL(ps);
   TEST_ASSERT_TRUE(cst_parser_parse(ps));

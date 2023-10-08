@@ -25,7 +25,7 @@ typedef enum _CST_CSS_PROP_ENUM {
   CST_CSS_PROP_COLOR,
   CST_CSS_PROP_BACGROUND,
   CST_CSS_PROP_BORDERRADIUS,
-  CST_CSS_PROP_LAST,
+  CST_CSS_PROP_INVALID,
 } CST_CSS_PROP_ENUM;
 
 typedef enum _CST_CSS_VALUE_ENUM {
@@ -154,14 +154,14 @@ typedef struct _CstBoxNodeClass CstBoxNodeClass;
 typedef struct _CstCssClosure CstCssClosure;
 typedef struct _CstCssClosureClass CstCssClosureClass;
 
+typedef struct _CstCssParser CstCssParser;
+typedef struct _CstCssParserClass CstCssParserClass;
+
+typedef union _CstCssValueV CstCssValueV;
 typedef struct _CstCssValue CstCssValue;
 typedef struct _CstCssValueClass CstCssValueClass;
 
-typedef struct _CstCssPosition CstCssPosition;
-typedef struct _CstCssPositionClass CstCssPositionClass;
-typedef struct _CstCssGap CstCssGap;
-typedef struct _CstCssGapClass CstCssGapClass;
-
+typedef struct _CstCssNode CstCssNode;
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;
 

@@ -5,16 +5,11 @@
 #include <Framework/Graph/FRGraph.h>
 
 
-struct _FRAWatchMouseReleasePrivate {
-  FRGetBoundFunc get_bound_func;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRAWatchMouseRelease, fr_awatch_mouse_release, FR_TYPE_AWATCH);
+SYS_DEFINE_TYPE(FRAWatchMouseRelease, fr_awatch_mouse_release, FR_TYPE_AWATCH);
 
 
 static SysBool fr_awatch_mouse_release_check_i(FRAWatch *o, FREvent *e) {
   FRAWatchMouseRelease *self = FR_AWATCH_MOUSE_RELEASE(o);
-  FRAWatchMouseReleasePrivate *priv = self->priv;
   FRACursorMove *acursor;
   SysDouble x = 0, y = 0;
   const FRRect *bound;
@@ -29,11 +24,11 @@ static SysBool fr_awatch_mouse_release_check_i(FRAWatch *o, FREvent *e) {
     return false;
   }
 
-  if(priv->get_bound_func) {
+  if(self->get_bound_func) {
     acursor = FR_ACURSOR_MOVE(FR_ACURSOR_MOVE_STATIC);
 
     SysPointer user_data = fr_awatch_get_data(o);
-    bound = priv->get_bound_func(user_data);
+    bound = self->get_bound_func(user_data);
 
     if(!fr_acursor_move_get_position(acursor, &x, &y)) {
       return false;
@@ -47,25 +42,25 @@ static SysBool fr_awatch_mouse_release_check_i(FRAWatch *o, FREvent *e) {
   return true;
 }
 
-static FRAWatch* fr_awatch_mouse_release_dclone_i(FRAWatch* old) {
-  FRAWatch* nw = FR_AWATCH_CLASS(fr_awatch_mouse_release_parent_class)->dclone(old);
+static FRAWatch* fr_awatch_mouse_release_dclone_i(FRAWatch* owatch) {
+  FRAWatch* nwatch = FR_AWATCH_CLASS(fr_awatch_mouse_release_parent_class)->dclone(owatch);
 
-  FRAWatchMouseReleasePrivate *npriv = FR_AWATCH_MOUSE_RELEASE(nw)->priv;
-  FRAWatchMouseReleasePrivate *opriv = FR_AWATCH_MOUSE_RELEASE(old)->priv;
+  FRAWatchMouseRelease *n = FR_AWATCH_MOUSE_RELEASE(nwatch);
+  FRAWatchMouseRelease *o = FR_AWATCH_MOUSE_RELEASE(owatch);
 
-  npriv->get_bound_func = opriv->get_bound_func;
+  n->get_bound_func = o->get_bound_func;
 
-  return nw;
+  return nwatch;
 }
 
 static void fr_awatch_mouse_release_create_i(FRAWatch* o, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
   FR_AWATCH_CLASS(fr_awatch_mouse_release_parent_class)->create(o, func_name, func, props);
 
   FRAWatchMouseRelease *self = FR_AWATCH_MOUSE_RELEASE(o);
-  FRAWatchMouseReleasePrivate *priv = self->priv;
 
   if(props->get_bound_func) {
-    priv->get_bound_func = props->get_bound_func;
+
+    self->get_bound_func = props->get_bound_func;
   }
 }
 
@@ -91,8 +86,6 @@ static void fr_awatch_mouse_release_class_init(FRAWatchMouseReleaseClass* cls) {
 }
 
 void fr_awatch_mouse_release_init(FRAWatchMouseRelease *self) {
-  self->priv = fr_awatch_mouse_release_get_private(self);
-
   fr_awatch_set_action(FR_AWATCH(self), FR_AMOUSE_KEY_STATIC);
 }
 

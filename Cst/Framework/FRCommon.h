@@ -16,6 +16,7 @@ SYS_BEGIN_DECLS
 #include <Framework/FRTypes.h>
 
 SYS_API SysInt fr_get_type_by_name(const SysChar *names[], SysInt len, const SysChar *name);
+SYS_API const SysChar* fr_get_name_by_type(const SysChar *names[], SysInt len, SysInt type);
 
 SYS_END_DECLS
 

@@ -17,8 +17,11 @@ struct _FREnvClass {
 };
 
 struct _FREnv {
-  SysObject parent;
-  FREnvPrivate *priv;
+  SysObject unowned;
+
+  /* <private> */
+  FREnv *parent;
+  SysHashTable *ht;
 };
 
 SYS_API SysType fr_env_get_type(void);

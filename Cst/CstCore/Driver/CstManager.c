@@ -7,12 +7,6 @@
 #define MANAGER_LOCK
 #define MANAGER_UNLOCK
 
-struct _CstManagerPrivate {
-  FREnv* module_env;
-  SysHashTable* meta_ht;
-  FREnv* function_env;
-};
-
 SYS_DEFINE_TYPE(CstManager, cst_manager, SYS_TYPE_OBJECT);
 
 static void cst_manager_meta_setup(CstManager *manager) {

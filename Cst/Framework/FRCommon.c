@@ -17,3 +17,11 @@ SysInt fr_get_type_by_name(const SysChar *names[], SysInt len, const SysChar *na
 
   return -1;
 }
+
+const SysChar* fr_get_name_by_type(const SysChar *names[], SysInt len, SysInt type) {
+  sys_return_val_if_fail(type >= 0 && type < len, NULL);
+  sys_return_val_if_fail(names != NULL, NULL);
+  sys_return_val_if_fail(len > 0, NULL);
+
+  return names[type];
+}

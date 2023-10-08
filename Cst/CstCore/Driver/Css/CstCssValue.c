@@ -6,43 +6,27 @@
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstLayout.h>
 
-#include <CstCore/Driver/Css/CstCssPosition.h>
-#include <CstCore/Driver/Css/CstCssGap.h>
+union _CstCssValueV {
+  SysBool v_bool;
+  SysDouble v_double;
+  SysInt v_int;
+  SysChar* v_string;
 
-
-SYS_DEFINE_TYPE(CstCssValue, cst_css_value, SYS_TYPE_OBJECT);
-
-
-static SysHashTable *gcss_node_ht = NULL;
-
-typedef struct _CstCssMapInfo CstCssMapInfo;
-
-struct _CstCssMapInfo {
-  SysChar *name;
-  SysInt ptype;
-  SysType type;
+  SysPointer v_pointer;
+  FRSInt4* v_m4;
+  FRColor* v_color;
+  CstCssClosure* v_closure;
 };
 
-CstCssMapInfo *cst_css_map_new(const SysChar *name, SysInt ptype, SysType type) {
-  CstCssMapInfo *o = sys_new0_N(CstCssMapInfo, 1);
+struct _CstCssValue {
+  SysObject parent;
 
-  o->name = sys_strdup(name);
-  o->ptype = ptype;
-  o->type = type;
+  /* <private> */
+  SysUInt d_type;
+  CstCssValueV v;
+};
 
-  return o;
-}
-
-void cst_css_map_free(CstCssMapInfo *o) {
-  sys_free_N(o->name);
-  sys_free_N(o);
-}
-
-SysInt cst_css_value_get_state(CstCssValue *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->state_flag;
-}
+SYS_DEFINE_TYPE(CstCssValue, cst_css_value, SYS_TYPE_OBJECT);
 
 CstCssValue *cst_css_value_dclone(CstCssValue *self) {
   CstCssValueClass *cls = CST_CSS_VALUE_GET_CLASS(self);
@@ -54,43 +38,8 @@ CstCssValue *cst_css_value_dclone(CstCssValue *self) {
 void cst_css_value_set_value(CstCssValue *self, CstRenderNode *render_node, CstLayout *layout) {
   CstCssValueClass *cls = CST_CSS_VALUE_GET_CLASS(self);
 
-  sys_return_if_fail(cls->dclone != NULL);
+  sys_return_if_fail(cls->set_value != NULL);
   cls->set_value(self, render_node, layout);
-}
-
-void cst_css_value_calc(CstCssValue *self, CstRenderNode *render_node, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstCssValueClass *cls = CST_CSS_VALUE_GET_CLASS(self);
-  int state = cst_layout_get_state(layout);
-
-  if (!(state & self->state_flag)) {
-    return;
-  }
-
-  switch (state) {
-    case CST_RENDER_STATE_LAYOUT:
-    case CST_RENDER_STATE_RELAYOUT:
-
-      cls->calc(self, render_node, layout);
-      break;
-    case CST_RENDER_STATE_PAINT:
-    case CST_RENDER_STATE_REPAINT:
-      break;
-
-    default:
-      sys_warning_N("Not support css render state: %d.", self->state_flag);
-      break;
-  }
-}
-
-SysInt cst_css_value_parse(JNode *jnode, CstCssValue *value) {
-  sys_return_val_if_fail(value != NULL, -1);
-
-  CstCssValueClass *cls = CST_CSS_VALUE_GET_CLASS(value);
-  sys_return_val_if_fail(cls->parse != NULL, -1);
-
-  return cls->parse(jnode, value);
 }
 
 void cst_css_value_set_bool(CstCssValue* value, SysBool v) {
@@ -156,13 +105,9 @@ void cst_css_value_set_closure(CstCssValue* value, CstCssClosure* v) {
   value->v.v_closure = v;
 }
 
-const SysChar *cst_css_value_node_name(CstCssValue *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->name;
-}
-
 CstCssClosure* cst_css_value_parse_calc(SysChar *s, CstCssCalcFunc func) {
+  sys_return_val_if_fail(s != NULL, NULL);
+
   SysSize slen = sys_strlen(s, 5);
   SysInt64 r = 0;
 
@@ -218,48 +163,11 @@ void cst_css_value_height_percent(CstRenderNode *render_node, SysPointer user_da
   cst_render_node_set_height(render_node, (SysInt)(pheight * d * 0.01));
 }
 
-static void cst_css_value_bind_map(const SysChar *name, SysInt ptype, SysType type) {
-  CstCssMapInfo *map = cst_css_map_new(name, ptype, type);
-
-  sys_hash_table_insert(gcss_node_ht, (SysPointer)map->name, (SysPointer)map);
-}
-
-void cst_css_value_setup(void) {
-  sys_assert(gcss_node_ht == NULL && "css value should setup only once.");
-
-  gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, cst_css_map_free);
-
-  cst_css_value_bind_map("x"            ,  CST_CSS_PROP_X            ,  CST_TYPE_CSS_POSITION  );
-  cst_css_value_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_TYPE_CSS_POSITION  );
-  cst_css_value_bind_map("width"        ,  CST_CSS_PROP_W            ,  CST_TYPE_CSS_POSITION  );
-  cst_css_value_bind_map("height"       ,  CST_CSS_PROP_H            ,  CST_TYPE_CSS_GAP       );
-  cst_css_value_bind_map("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_TYPE_CSS_GAP       );
-  cst_css_value_bind_map("border"       ,  CST_CSS_PROP_BORDER       ,  CST_TYPE_CSS_GAP       );
-  cst_css_value_bind_map("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_TYPE_CSS_GAP       );
-  cst_css_value_bind_map("font-family"  ,  CST_CSS_PROP_FONT_FAMILY  ,  0                      );
-  cst_css_value_bind_map("font-size"    ,  CST_CSS_PROP_FONT_SIZE    ,  0                      );
-  cst_css_value_bind_map("wrap"         ,  CST_CSS_PROP_WRAP         ,  0                      );
-  cst_css_value_bind_map("color"        ,  CST_CSS_PROP_COLOR        ,  0                      );
-}
-
-void cst_css_value_teardown(void) {
-  sys_assert(gcss_node_ht != NULL && "css value should init before use.");
-
-  sys_hash_table_unref(gcss_node_ht);
-}
-
-SysType cst_css_value_node_lookup(const SysChar *name) {
-  return (SysType)sys_hash_table_lookup(gcss_node_ht, (const SysPointer)name);
-}
-
 /* object api */
 static void cst_css_value_dispose(SysObject* o) {
   CstCssValue *self = CST_CSS_VALUE(o);
 
   SYS_OBJECT_CLASS(cst_css_value_parent_class)->dispose(o);
-}
-
-static void cst_css_value_construct(CstCssValue* self) {
 }
 
 CstCssValue *cst_css_value_new(void) {
@@ -270,8 +178,6 @@ static void cst_css_value_class_init(CstCssValueClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_css_value_dispose;
-
-  cls->parse = ast_css_value_parse;
 }
 
 static void cst_css_value_init(CstCssValue *self) {

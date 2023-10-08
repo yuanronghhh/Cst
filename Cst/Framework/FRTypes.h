@@ -105,7 +105,6 @@ typedef  struct  _FRAWatchMousePressClass    FRAWatchMousePressClass;
 typedef  struct  _FRAWatchMousePressPrivate  FRAWatchMousePressPrivate;
 typedef  struct  _FRAWatchMouseRelease         FRAWatchMouseRelease;
 typedef  struct  _FRAWatchMouseReleaseClass    FRAWatchMouseReleaseClass;
-typedef  struct  _FRAWatchMouseReleasePrivate  FRAWatchMouseReleasePrivate;
 typedef  struct  _FRAWatchCursorMove         FRAWatchCursorMove;
 typedef  struct  _FRAWatchCursorMoveClass    FRAWatchCursorMoveClass;
 
@@ -129,14 +128,12 @@ typedef  struct  _FREventCursorMoveClass    FREventCursorMoveClass;
 
 typedef  struct  _FREnv           FREnv;
 typedef  struct  _FREnvClass      FREnvClass;
-typedef  struct  _FREnvPrivate    FREnvPrivate;
 
 typedef  struct  _FRMain           FRMain;
 typedef  struct  _FRMainClass      FRMainClass;
 
 typedef  struct  _FRSource           FRSource;
 typedef  struct  _FRSourceClass      FRSourceClass;
-typedef  struct  _FRSourcePrivate    FRSourcePrivate;
 
 typedef  struct  _FRApplication           FRApplication;
 typedef  struct  _FRApplicationClass      FRApplicationClass;

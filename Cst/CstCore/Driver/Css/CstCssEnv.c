@@ -5,21 +5,13 @@ static CstCssEnv *gcss_env = NULL;
 
 SYS_DEFINE_TYPE(CstCssEnv, cst_css_env, FR_TYPE_ENV);
 
-void cst_css_env_load_gstyle(GStyle *gstyle, const SysChar *path) {
-  sys_return_if_fail(gstyle != NULL);
-
-  ast_gstyle_parse(gstyle, gcss_env, path);
-}
-
 void cst_css_env_setup(void) {
-  Parser* ps;
-  AstNode* root;
-
+  CstParser* ps;
   SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
 
   gcss_env = (CstCssEnv *)cst_css_env_new_I(NULL);
 
-  ps = cst_parser_new(buildin_css_path);
+  ps = cst_parser_new_I(buildin_css_path);
   if (ps == NULL) {
     sys_abort_N(SYS_("Failed to load base style in path: %s"), buildin_css_path);
     return;
@@ -30,12 +22,9 @@ void cst_css_env_setup(void) {
     return;
   }
 
-  root = cst_parser_get_root(ps);
+  cst_parser_gstyle_parse(ps, gcss_env);
 
-  GStyle *gstyle = ast_root_get_gstyle(root);
-  cst_css_env_load_gstyle(gstyle, cst_parser_get_filename(ps));
-
-  cst_parser_free(ps, true);
+  sys_object_unref(ps);
 }
 
 void cst_css_env_teardown(void) {

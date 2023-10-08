@@ -15,19 +15,31 @@ struct _CstCssPair {
   SysObject parent;
 
   /* < private > */
-  SysChar *key;
+
+  CstCssNode *css_node;
   CstCssValue *value;
 };
 
 struct _CstCssPairClass {
   SysObjectClass parent;
+
+  CstCssValue *(*parse) (CstCssParser *ps);
 };
 
 SYS_API SysType cst_css_pair_get_type(void);
+SYS_API CstCssPair* cst_css_pair_new_I(CstCssNode* node, CstCssValue* value);
+SYS_API CstCssPair* cst_css_pair_new_by_key(const SysChar* key);
 SYS_API CstCssPair *cst_css_pair_new(void);
-SYS_API CstCssPair *cst_css_pair_new_I(SysChar *key, CstCssValue *value);
 SYS_API CstCssPair *cst_css_pair_clone(CstCssPair *o);
 SYS_API void cst_css_pair_calc(CstCssPair *pair, CstRenderNode *render_node, CstLayout *layout);
+
+SYS_API void cst_css_pair_setup(void);
+SYS_API void cst_css_pair_teardown(void);
+
+const SysChar* cst_css_node_name(CstCssNode* o);
+SysBool cst_css_node_check(CstCssNode* self, SysInt state);
+CstCssNode* cst_css_node_lookup(const SysChar* name);
+
 
 SYS_END_DECLS
 

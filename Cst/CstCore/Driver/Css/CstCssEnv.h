@@ -29,7 +29,6 @@ SYS_API CstCssEnv * cst_css_env_get_gcss(void);
 
 CstCssGroup *cst_css_env_get(CstCssEnv *self, const SysChar *key);
 CstCssGroup *cst_css_env_get_r(CstCssEnv *self, const SysChar *key);
-void cst_css_env_load_gstyle(GStyle *gstyle, const SysChar *path);
 
 SYS_API void cst_css_env_setup(void);
 SYS_API void cst_css_env_teardown(void);

@@ -31,8 +31,8 @@
 
 %define parse.error verbose
 %locations
-%lex-param {Parser *ps}{YYSTYPE * yylval_param } {yyscan_t yyscanner}
-%parse-param {Parser *ps} {YYSTYPE * yylval_param} {yyscan_t yyscanner}
+%lex-param {CstParser *ps}{YYSTYPE * yylval_param } {yyscan_t yyscanner}
+%parse-param {CstParser *ps} {YYSTYPE * yylval_param} {yyscan_t yyscanner}
 
 %destructor {
   ast_node_free($$);

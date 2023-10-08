@@ -112,10 +112,8 @@ SysBool cst_css_group_set_base_r(CstCssGroup *self, CstCssGroup *ng) {
   return cst_css_group_set_r(self->base, ng);
 }
 
-void cst_css_group_add_pair(CstCssGroup *self, SysChar *key, CstCssValue *value) {
+void cst_css_group_add_pair(CstCssGroup *self, CstCssPair *pair) {
   sys_return_if_fail(self != NULL);
-
-  CstCssPair *pair = cst_css_pair_new_I(key, value);
 
   sys_ptr_array_add(self->pairs, pair);
 }

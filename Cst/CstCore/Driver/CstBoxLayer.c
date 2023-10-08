@@ -162,6 +162,8 @@ static void cst_box_layer_dispose(SysObject* o) {
 }
 
 static void cst_box_layer_construct(CstLayer* o) {
+  CST_LAYER_CLASS(cst_box_layer_parent_class)->construct(o);
+
   CstBoxLayer *self = CST_BOX_LAYER(o);
 
   self->tree = NULL;

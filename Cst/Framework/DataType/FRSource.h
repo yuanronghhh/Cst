@@ -25,7 +25,9 @@ struct _FRSourceClass {
 struct _FRSource {
   SysObject parent;
 
-  FRSourcePrivate *priv;
+  /* <private> */
+  FRMain *main;
+  SysPointer user_data;
 };
 
 SYS_API SysType fr_source_get_type(void);

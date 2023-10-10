@@ -108,7 +108,7 @@ typedef enum _CST_DIRTY_STATE_ENUM {
 typedef enum _CST_RENDER_NODE_ENUM {
   CST_RENDER_NODE_BOX = 1 << 0,
   CST_RENDER_NODE_ABS = 1 << 1,
-  CST_RENDER_NODE_MASK = 0x03,
+  CST_RENDER_NODE_MASK = ~0x03,
 } CST_RENDER_NODE_ENUM;
 
 typedef SYS_VALUE_ENUM CST_PROP_VALUE_ENUM;
@@ -142,6 +142,8 @@ typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
+typedef struct _CstLayoutFlex CstLayoutFlex;
+typedef struct _CstLayoutFlexClass CstLayoutFlexClass;
 
 typedef struct _CstLayout CstLayout;
 typedef struct _CstLayoutClass CstLayoutClass;

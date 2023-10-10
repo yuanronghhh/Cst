@@ -3,7 +3,7 @@
 #include <CstCore/Front/CstFrontCore.h>
 
 
-SYS_DEFINE_TYPE(CstComNode, cst_com_node, CST_TYPE_COM_NODE);
+SYS_DEFINE_TYPE(CstComNode, cst_com_node, CST_TYPE_NODE);
 
 
 CstNode* cst_com_node_new(void) {

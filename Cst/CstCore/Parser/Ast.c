@@ -412,10 +412,12 @@ CstNodeProps* cst_node_props_new(void) {
   return sys_new0_N(CstNodeProps, 1);
 }
 
-void cst_node_props_free(CstNodeProps *props) {
-  if (props->v_base_len > 0) {
-    sys_free_N(props->v_base);
+void cst_node_props_free(CstNodeProps *self) {
+  if (self->v_base_len > 0) {
+    sys_clear_pointer(&self->v_base, sys_free);
   }
+
+  sys_free_N(self);
 }
 
 CstPropValue* ast_jnode_new_value(JNode *jnode) {

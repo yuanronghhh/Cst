@@ -74,7 +74,6 @@ typedef  struct  _FRWindowPrivate    FRWindowPrivate;
 
 typedef  struct  _FRAction              FRAction;
 typedef  struct  _FRActionClass         FRActionClass;
-typedef  struct  _FRActionPrivate       FRActionPrivate;
 typedef  struct  _FRAKey                FRAKey;
 typedef  struct  _FRAKeyClass           FRAKeyClass;
 typedef  struct  _FRAKeyPrivate         FRAKeyPrivate;

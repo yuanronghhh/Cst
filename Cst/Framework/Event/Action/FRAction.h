@@ -22,7 +22,9 @@ struct _FRActionClass {
 struct _FRAction {
   SysObject parent;
 
-  FRActionPrivate *priv;
+  /* <private> */
+  SysList *awatch_list;
+  SysChar *name;
 };
 
 SYS_API FRAction* fr_action_new_I(void);

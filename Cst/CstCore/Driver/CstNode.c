@@ -154,7 +154,7 @@ static SysBool node_realize_render_node(CstNode *self, CstRender *v_render, CstR
       break;
 
     default:
-      sys_warning_N("unknow node position: %s,%s", self->position);
+      sys_warning_N("unknow node position: %d", self->position);
       return false;
   }
 
@@ -197,8 +197,8 @@ void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode 
 
 /* css */
 static SysBool node_css_exists(SysPtrArray *css_list, const SysChar *node_id, CstCssGroup *g) {
-  sys_return_val_if_fail(css_list == NULL, false);
-  sys_return_val_if_fail(node_id == NULL, false);
+  sys_return_val_if_fail(css_list != NULL, false);
+  sys_return_val_if_fail(node_id != NULL, false);
 
   if (css_list->len == 0) { return false; }
 
@@ -613,5 +613,6 @@ static void cst_node_init(CstNode *self) {
   self->id = NULL;
   self->last_child = NULL;
   self->awatches = NULL;
+  self->css_groups = node_new_css_groups();
 }
 

@@ -147,8 +147,6 @@ static void cst_text_init(CstText *self) {
   self->playout = pango_layout_new (pctx);
 
   g_object_unref(pctx);
-
-  cst_node_set_name(node, "Text");
 }
 
 static void cst_text_dispose(SysObject* o) {

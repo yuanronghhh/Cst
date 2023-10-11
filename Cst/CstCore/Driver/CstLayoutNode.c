@@ -175,17 +175,21 @@ const FRRect *cst_layout_node_get_bound(CstLayoutNode* self) {
 }
 
 /* object api */
-static void cst_layout_node_construct(CstLayoutNode *self, SysInt x, SysInt y, SysInt width, SysInt height) {
+static void cst_layout_node_construct_i(CstLayoutNode *self, SysInt x, SysInt y, SysInt width, SysInt height) {
   self->bound.x = x;
   self->bound.y = y;
   self->bound.width = width;
   self->bound.height = height;
 }
 
+static void cst_layout_node_construct2_i(CstLayoutNode* self) {
+  cst_layout_node_construct_i(self, 0, 0, -1, -1);
+}
+
 CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt height) {
   CstLayoutNode * o = cst_layout_node_new();
 
-  cst_layout_node_construct(o, x, y, width, height);
+  cst_layout_node_construct_i(o, x, y, width, height);
 
   return o;
 }
@@ -203,5 +207,7 @@ static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_layout_node_dispose;
+
+  cls->construct = cst_layout_node_construct2_i;
   cls->dclone = cst_layout_node_clone_i;
 }

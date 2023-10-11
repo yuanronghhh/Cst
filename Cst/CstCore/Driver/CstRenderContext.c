@@ -150,41 +150,36 @@ CstRenderContext* cst_render_context_dclone(CstRenderContext *o) {
 void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
 
-  // SysInt w = 0, h = 0;
-  // FRSInt4 *mbp = &self->mbp;
-  // 
-  // cst_layout_node_get_size(layout_node, &w, &h);
-  // 
-  // w = w + mbp->m1 + mbp->m3;
-  // h = h + mbp->m2 + mbp->m0;
-  // 
-  // if (pself->child_width_calc) {
-  //   pself->prefer_width = max(w, pself->prefer_width);
-  //   cst_css_closure_calc(pself->child_width_calc, layout_node, self, NULL, NULL);
-  // }
-  // 
-  // if (pself->child_height_calc) {
-  //   pself->prefer_height = max(h, pself->prefer_height);
-  //   cst_css_closure_calc(pself->child_height_calc, layout_node, self, NULL, NULL);
-  // }
-  // 
-  // pself->prefer_width += w;
-  // pself->prefer_height = max(h, pself->prefer_height);
+  CstRenderNode* pnode = cst_render_node_get_parent(rnode);
+  CstRenderContext* pctx = cst_render_node_get_context(pnode);
+
+  SysInt w = 0, h = 0;
+  const FRRect* bound;
+  FRSInt4* mbp = &self->mbp;
+
+  bound = cst_render_node_get_bound(rnode);
+
+  w = bound->width + mbp->m1 + mbp->m3;
+  h = bound->height + mbp->m2 + mbp->m0;
+
+  cst_render_node_constrain_size(rnode, self);
+
+  self->prefer_width += w;
+  self->prefer_height = max(h, pctx->prefer_height);
+}
+
+void cst_render_context_layout_children_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
 }
 
 /* constraint */
-void cst_render_context_constrain_same_width(CstRenderNode* self, CstRenderContext* pctx) {
-  CstRenderContext* rctx = cst_render_node_get_context(self);
-  CstLayoutNode* layout_node = CST_LAYOUT_NODE(self);
+void cst_render_context_constraint_width(CstRenderContext *self, CstRenderContext *pctx, SysInt *width) {
 
-  layout_node->bound.height = pctx->prefer_width - rctx->mbp.m3 - rctx->mbp.m1;
+  *width = pctx->prefer_width - self->mbp.m3 - self->mbp.m1;
 }
 
-void cst_render_context_constrain_same_height(CstRenderNode* self, CstRenderContext* pctx) {
-  CstRenderContext* rctx = cst_render_node_get_context(self);
-  CstLayoutNode* layout_node = CST_LAYOUT_NODE(self);
+void cst_render_context_constraint_height(CstRenderContext *self, CstRenderContext *pctx, SysInt *height) {
 
-  layout_node->bound.height = pctx->prefer_height - rctx->mbp.m0 - rctx->mbp.m2;
+  *height = pctx->prefer_height - self->mbp.m0 - self->mbp.m2;
 }
 
 /* paint */
@@ -225,4 +220,7 @@ static void cst_render_context_class_init(CstRenderContextClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_render_context_dispose;
+
+  cls->layout_self = cst_render_context_layout_self_i;
+  cls->layout_children = cst_render_context_layout_children_i;
 }

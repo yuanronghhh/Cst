@@ -59,6 +59,7 @@ void cst_render_node_set_layout(CstRenderNode *self, SysBool bvalue);
 SysBool cst_render_node_is_visible(CstRenderNode* self);
 SysBool cst_render_node_can_wrap(CstRenderNode* self);
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self);
+CstRenderContext* cst_render_node_get_context(CstRenderNode* self);
 const SysChar* cst_render_node_get_id(CstRenderNode *self);
 
 const SysChar* cst_render_node_get_name(CstRenderNode *self);
@@ -70,7 +71,8 @@ void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_fill_rectangle(CstRenderNode* self, CstLayout* layout);
 void cst_render_node_stroke_rectangle(CstRenderNode* self, CstLayout* layout);
 
-CstRenderContext* cst_render_node_get_context(CstRenderNode* self);
+void cst_render_node_layout(CstRenderNode* self, CstLayout *layout);
+void cst_render_node_constrain_size(CstRenderNode* self, CstRenderContext* pctx);
 
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);

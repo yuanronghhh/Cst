@@ -127,18 +127,20 @@ void cst_box_node_unlink_node_r(CstBoxNode *self) {
   sys_object_unref(o);
 }
 
-void cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *parent, CstNode *node) {
-  sys_return_if_fail(box_layer != NULL);
-  sys_return_if_fail(node != NULL);
+CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *parent, CstNode *node) {
+  sys_return_val_if_fail(box_layer != NULL, NULL);
+  sys_return_val_if_fail(node != NULL, NULL);
 
-  CstBoxNode* child;
+  CstRenderNode* child;
 
   parent = parent ? parent : box_layer->tree;
 
-  child = (CstBoxNode *)cst_box_node_new_I(node);
+  child = cst_box_node_new_I(node);
 
-  cst_box_node_append(parent, child);
+  cst_box_node_append(parent, CST_BOX_NODE(child));
   sys_object_ref(child);
+
+  return child;
 }
 
 /* object api */

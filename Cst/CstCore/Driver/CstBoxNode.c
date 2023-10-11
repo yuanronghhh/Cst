@@ -152,6 +152,18 @@ void cst_box_node_print_node_r(CstBoxNode *self) {
   }
 }
 
+void cst_box_node_layout_children(CstBoxNode* self, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(layout != NULL);
+
+  CstBoxNode* node;
+  for (node = self->children; node; node = node->next) {
+
+    cst_render_node_layout(CST_RENDER_NODE(node), layout);
+  }
+}
+
+
 /* object api */
 CstRenderNode* cst_box_node_new(void) {
   return sys_object_new(CST_TYPE_BOX_NODE, NULL);
@@ -163,10 +175,11 @@ static void cst_box_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }
 
+
 static void cst_box_node_construct(CstRenderNode* o, CstNode *node) {
   CstRenderContext* ctx = cst_lbox_context_new_I();
 
-  CST_RENDER_NODE_GET_CLASS(cst_box_node_parent_class)->construct(o, node, ctx);
+  CST_RENDER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node, ctx);
 }
 
 CstRenderNode *cst_box_node_new_I(CstNode *node) {
@@ -179,6 +192,7 @@ CstRenderNode *cst_box_node_new_I(CstNode *node) {
 
 static void cst_box_node_class_init(CstBoxNodeClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  CstRenderNodeClass* rcls = CST_RENDER_NODE_CLASS(cls);
 
   ocls->dispose = cst_box_node_dispose;
 }

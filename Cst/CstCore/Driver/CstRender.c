@@ -28,6 +28,12 @@ CstAbsLayer *cst_render_get_abs_layer(CstRender *self) {
   return self->abs_layer;
 }
 
+void cst_render_set_layer_root(CstRender* self, CstRenderNode *root) {
+  sys_return_if_fail(self != NULL);
+
+  cst_box_layer_set_root(self->box_layer, root);
+}
+
 CstNode *cst_render_get_root(CstRender* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -45,6 +51,8 @@ FRRegion *render_create_region(FRWindow *window) {
 }
 
 void cst_render_render(CstRender *self) {
+  sys_return_if_fail(self != NULL);
+
   FRRegion *region = render_create_region(self->window);
 
   cst_render_rerender(self, region);

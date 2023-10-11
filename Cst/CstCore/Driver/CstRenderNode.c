@@ -121,9 +121,15 @@ CstRenderNode* cst_render_node_get_parent(CstRenderNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstRenderNodeClass *cls = CST_RENDER_NODE_GET_CLASS(self);
-  sys_return_val_if_fail(cls->get_parent == NULL, NULL);
+  sys_return_val_if_fail(cls->get_parent != NULL, NULL);
 
   return cls->get_parent(self);
+}
+
+CstRenderContext* cst_render_node_get_context(CstRenderNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->render_ctx;
 }
 
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
@@ -210,10 +216,16 @@ void cst_render_node_stroke_rectangle(CstRenderNode *self, CstLayout *layout) {
 #endif
 }
 
-CstRenderContext* cst_render_node_get_context(CstRenderNode* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+void cst_render_node_layout(CstRenderNode* self, CstLayout *layout) {
 
-  return self->render_ctx;
+  cst_render_context_layout_self(self->render_ctx, self, layout);
+}
+
+void cst_render_node_constrain_size(CstRenderNode* self, CstRenderContext* pctx) {
+  CstLayoutNode* layout_node = CST_LAYOUT_NODE(self);
+
+  cst_render_context_constraint_width(self->render_ctx, pctx, &layout_node->bound.width);
+  cst_render_context_constraint_height(self->render_ctx, pctx, &layout_node->bound.height);
 }
 
 /* object api */

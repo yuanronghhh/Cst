@@ -24,7 +24,8 @@ struct _CstLayoutNode {
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
 
-  void (*construct) (CstLayoutNode *o);
+  void (*construct) (CstLayoutNode* o);
+
   CstLayoutNode* (*dclone) (CstLayoutNode *o);
 };
 

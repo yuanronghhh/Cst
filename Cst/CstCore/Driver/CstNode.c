@@ -135,16 +135,17 @@ CstNode* cst_node_dclone_i(CstNode *o) {
   return n;
 }
 
-static SysBool node_realize_render_node(CstNode *self, CstRender *v_render, CstRenderNode *rnode_p) {
+static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_render, CstRenderNode *rnode_p) {
   sys_return_val_if_fail(self != NULL, false);
 
   CstBoxLayer *box_layer;
   CstAbsLayer *abs_layer;
+  CstRenderNode* n_rnode;
 
   switch (self->position) {
     case CST_RENDER_NODE_BOX:
       box_layer = cst_render_get_box_layer(v_render);
-      cst_box_layer_realize_node(box_layer, CST_BOX_NODE(rnode_p), self);
+      n_rnode = cst_box_layer_realize_node(box_layer, CST_BOX_NODE(rnode_p), self);
       break;
 
     case CST_RENDER_NODE_ABS:
@@ -158,7 +159,7 @@ static SysBool node_realize_render_node(CstNode *self, CstRender *v_render, CstR
       return false;
   }
 
-  return true;
+  return n_rnode;
 }
 
 static void cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *self, CstRenderNode *rnode_p, CstRender *v_render) {
@@ -168,7 +169,7 @@ static void cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstN
   cst_node_realize(v_module, ncomp_node, v_parent, self, v_render);
   cst_module_count_inc(v_module);
 
-  if(!node_realize_render_node(self, v_render, rnode_p)) {
+  if(node_realize_render_node(self, v_render, rnode_p) != NULL) {
 
     sys_warning_N("failed to relize node: %s,%s", cst_node_get_name(self), cst_node_get_id(self));
     return;
@@ -189,9 +190,12 @@ void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode 
   sys_return_if_fail(root != NULL);
   sys_return_if_fail(new_root != NULL);
 
+  CstRenderNode* n_rnode = node_realize_render_node(new_root, v_render, NULL);
+  cst_render_set_layer_root(v_render, n_rnode);
+
   if (root->children) {
 
-    cst_node_realize_r(v_module, ncomp_node, new_root, root->children, NULL, v_render);
+    cst_node_realize_r(v_module, ncomp_node, new_root, root->children, n_rnode, v_render);
   }
 }
 
@@ -577,7 +581,17 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
     cst_css_group_set_by_id(self->css_groups, NULL, self->name);
   }
   
-  self->position = v_props->v_position;
+  switch (v_props->v_position) {
+    case CST_LAYER_BOX:
+      self->position = CST_LAYER_BOX;
+      break;
+    case CST_LAYER_ABS:
+      self->position = CST_LAYER_ABS;
+      break;
+    default:
+      self->position = CST_LAYER_BOX;
+      break;
+  }
 
   sys_assert(self->id != NULL && "node id must be set, construct not correct ?");
 }

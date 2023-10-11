@@ -73,8 +73,6 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
   CstNodeProps props = { 0 };
 
   cst_node_construct(v_module, v_component, NULL, body, &props);
-  cst_node_realize(v_module, NULL, NULL, body, v_render);
-
   cst_module_realize(v_module, body, v_render);
 }
 

@@ -13,6 +13,7 @@ void cst_lbody_construct(CstModule *v_module, CstComponent *v_component, CstNode
   sys_return_if_fail(v_props != NULL);
 
   v_props->v_id = "id.body.0";
+  v_props->v_position = CST_LAYER_BOX;
 
   CST_NODE_CLASS(cst_lbody_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
 }

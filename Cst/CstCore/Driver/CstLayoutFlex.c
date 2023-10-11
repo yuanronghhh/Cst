@@ -5,9 +5,16 @@
 SYS_DEFINE_TYPE(CstLayoutFlex, cst_layout_flex, SYS_TYPE_OBJECT);
 
 
-void cst_layout_flex_layout(CstLayoutFlex* self, CstRenderNode *render_node) {
+void cst_layout_flex_layout(CstLayoutFlex* self, CstBoxNode *box_node) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(render_node != NULL);
+
+  CstBoxNode *node;
+
+  for(node = box_node->children; node; node = node->next) {
+
+    cst_render_context_layout(node);
+  }
 }
 
 /* object api */

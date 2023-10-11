@@ -69,8 +69,8 @@ SysBool cst_render_context_can_wrap(CstRenderContext* self);
 
 void cst_render_context_set_abs_node(CstRenderContext* self, SysInt bvalue);
 
-void cst_render_context_constrain_same_width(CstRenderNode* self, CstRenderContext* pctx);
-void cst_render_context_constrain_same_height(CstRenderNode* self, CstRenderContext* pctx);
+void cst_render_context_constraint_height(CstRenderContext *self, CstRenderContext *pctx, SysInt *height);
+void cst_render_context_constraint_width(CstRenderContext *self, CstRenderContext *pctx, SysInt *width);
 
 /* paint */
 SysBool cst_render_context_need_paint(CstRenderContext *self);

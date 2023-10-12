@@ -72,7 +72,7 @@ CstNode* cst_text_dclone_i(CstNode *node) {
   return nnode;
 }
 
-static void cst_text_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
+static void cst_text_construct_i(CstNodeProvider *provider, CstNodeProps *v_props) {
   sys_return_if_fail(v_module != NULL);
   sys_return_if_fail(v_props != NULL);
 
@@ -83,13 +83,9 @@ static void cst_text_construct_i(CstModule *v_module, CstComponent *v_component,
 
   value = v_props->v_value;
   if (value) {
+
     cst_text_set_text(self, value);
   }
-}
-
-void cst_text_realize_i (CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
-
-  CST_NODE_CLASS(cst_text_parent_class)->realize(v_module, ncomp_node, v_parent, v_node, v_render);
 }
 
 #if 0
@@ -171,5 +167,4 @@ static void cst_text_class_init(CstTextClass* cls) {
 
   ncls->dclone = cst_text_dclone_i;
   ncls->construct = cst_text_construct_i;
-  ncls->realize = cst_text_realize_i;
 }

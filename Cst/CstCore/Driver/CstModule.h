@@ -42,7 +42,7 @@ SYS_API SysInt cst_module_count_inc(CstModule* self);
 SYS_API SysInt cst_module_get_hashcode(CstModule* self);
 
 const SysChar *cst_module_get_path(CstModule* self);
-SysBool cst_module_realize(CstModule * self, CstNode * v_parent, CstRender * v_render);
+SysBool cst_module_realize(CstModule * self, CstRenderNode * v_parent, CstRender * v_render);
 SYS_API SysBool cst_module_is_loaded(CstModule *self);
 
 SYS_API CstManager *cst_module_get_manager(CstModule *self);

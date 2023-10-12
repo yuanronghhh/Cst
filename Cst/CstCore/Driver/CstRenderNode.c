@@ -3,7 +3,7 @@
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
-#include <CstCore/Front/CstComponent.h>
+#include <CstCore/Driver/CstComponent.h>
 
 
 SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE);
@@ -228,6 +228,29 @@ void cst_render_node_constrain_size(CstRenderNode* self, CstRenderContext* pctx)
   cst_render_context_constraint_height(self->render_ctx, pctx, &layout_node->bound.height);
 }
 
+SysInt cst_render_node_check_dirty(CstRenderNode* rnode, FRRegion* region) {
+  const FRRect* nbound = cst_render_node_get_bound(rnode);
+
+  if (fr_region_is_empty(region)) {
+    return -4;
+  }
+
+  if (cst_render_node_is_dirty(rnode)) {
+    return -1;
+  }
+
+  if (!cst_render_node_is_visible(rnode)) {
+    return -1;
+  }
+
+  SysInt s = fr_region_contains_rectangle(region, nbound);
+  if (s == CAIRO_REGION_OVERLAP_OUT) {
+    return -3;
+  }
+
+  return 1;
+}
+
 /* object api */
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode *self = CST_RENDER_NODE(o);
@@ -235,11 +258,11 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-static void cst_render_node_construct(CstRenderNode* self, CstNode *node, CstRenderContext *render_ctx) {
+static void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
   CST_LAYOUT_NODE_CLASS(cst_render_node_parent_class)->construct(CST_LAYOUT_NODE(self));
 
   self->node = node;
-  self->render_ctx = render_ctx;
+  self->render_ctx = cst_node_new_default_context(node);
 
   sys_object_ref(SYS_OBJECT(node));
 }
@@ -248,10 +271,10 @@ CstLayoutNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstLayoutNode *cst_render_node_new_I(CstNode *node, CstRenderContext* render_ctx) {
+CstLayoutNode *cst_render_node_new_I(CstNode *node) {
   CstLayoutNode *o = cst_render_node_new();
 
-  cst_render_node_construct(CST_RENDER_NODE(o), node, render_ctx);
+  cst_render_node_construct(CST_RENDER_NODE(o), node);
 
   return o;
 }

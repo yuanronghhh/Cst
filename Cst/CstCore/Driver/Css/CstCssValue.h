@@ -37,7 +37,7 @@ void cst_css_value_set_closure(CstCssValue* value, CstCssClosure* v);
 SYS_API CstCssValue *cst_css_value_dclone(CstCssValue *o);
 SYS_API void cst_css_value_set_value(CstCssValue* self, CstRenderNode* render_node, CstLayout* layout);
 
-SYS_API CstCssClosure* cst_css_value_parse_calc(SysChar* s, CstCssCalcFunc func);
+SYS_API CstCssClosure* cst_css_value_parse_calc(SysChar* s, CstRenderNodeFunc func);
 SYS_API void cst_css_value_width_percent(CstRenderNode* render_node, SysPointer user_data);
 SYS_API void cst_css_value_height_percent(CstRenderNode* render_node, SysPointer user_data);
 

@@ -6,12 +6,8 @@ static void test_module_load(void) {
 
   CstManager *manager = cst_manager_new();
 
-  cst_manager_lock(manager);
-
   mod = cst_manager_load_module(manager, NULL, entry);
   TEST_ASSERT_NOT_NULL(mod);
-
-  cst_manager_unlock(manager);
 
   sys_object_unref(manager);
 }

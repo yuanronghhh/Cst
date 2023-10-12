@@ -1,7 +1,7 @@
 #ifndef __CST_NODE_MAP__
 #define __CST_NODE_MAP__
 
-#include <CstCore/Front/CstPropMap.h>
+#include <CstCore/Driver/CstPropMap.h>
 
 
 SYS_BEGIN_DECLS

@@ -69,7 +69,6 @@ SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue * value);
 SysInt ast_css_value_width_parse(JNode * v, CstCssValue * value);
 SysInt ast_css_value_height_parse(JNode * v, CstCssValue * value);
 SysInt ast_css_value_color_parse(JNode * v, CstCssValue * value);
-void ast_codegen_node_parse(CodeGen * cg, AstNode * node);
 SysValue * ast_jnode_new_value(JNode * jnode);
 
 SysChar * ast_jnode_extract_index(const SysChar * index_str, SysInt len);

@@ -27,15 +27,15 @@ struct _CstBoxLayerClass {
 SYS_API SysType cst_box_layer_get_type(void);
 SYS_API CstLayer * cst_box_layer_new_I(void);
 
-SYS_API void cst_box_layer_check(CstBoxLayer *layer, CstLayout *layout);
-SYS_API void cst_box_layer_layout(CstBoxLayer *self, CstLayout *layout);
-SYS_API void cst_box_layer_render(CstBoxLayer *self, CstLayout *layout);
+SYS_API void cst_box_layer_check(CstLayer *layer, CstLayout *layout);
+SYS_API void cst_box_layer_layout(CstLayer*self, CstLayout *layout);
+SYS_API void cst_box_layer_render(CstLayer*self, CstLayout *layout);
 
-SYS_API void cst_box_layer_print_tree(CstBoxLayer *self);
 SYS_API CstBoxNode *cst_box_layer_get_root(CstBoxLayer *self);
 SYS_API void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root);
-SYS_API void cst_box_layer_insert_after (CstBoxLayer *self, CstBoxNode *parent, CstBoxNode *last_child, CstBoxNode *nnode);
 SYS_API CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *parent, CstNode *node);
+
+SYS_API void cst_box_layer_print_tree(CstBoxLayer* self);
 
 SYS_END_DECLS
 

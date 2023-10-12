@@ -5,19 +5,7 @@
 #include <CstCore/Driver/CstRender.h>
 
 
-struct _CstApplicationPrivate  {
-  CstManager *manager;
-  FRMain* main_loop;
-  FRMain* work_loop;
-  FRSource *app_source;
-  FRWorker *worker_source;
-  CstRender *render;
-  CstModule *main_module;
-  SysInt status;
-};
-
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(CstApplication, cst_application, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstApplication, cst_application, SYS_TYPE_OBJECT);
 
 
 SysUInt64 last_time = 0;
@@ -27,9 +15,7 @@ static CstApplication *g_application = NULL;
 void cst_application_stop (CstApplication *self) {
   sys_return_if_fail(self != NULL);
 
-  CstApplicationPrivate *priv = self->priv;
-
-  fr_main_stop(priv->main_loop);
+  fr_main_stop(self->main_loop);
 }
 
 FR_FUNC_DEFINE_EVENT(cst_application_event_func) {
@@ -45,33 +31,19 @@ FR_FUNC_DEFINE_EVENT(cst_application_event_func) {
 
 FR_FUNC_DEFINE_EVENT(app_window_resize_test) {
   CstApplication *app = CST_APPLICATION(user_data);
-  CstApplicationPrivate *priv = app->priv;
-  CstRender *render = priv->render;
+  CstRender *render = app->render;
 
   cst_render_resize_window(render);
 
   return 0;
 }
 
-void cst_application_set_meta(CstApplication *self, const SysChar *name, SysType stype) {
-  sys_return_if_fail(self != NULL);
-
-  CstApplicationPrivate *priv = self->priv;
-  CstManager *manager = priv->manager;
-
-  cst_manager_lock(manager);
-  cst_manager_set_meta(manager, name, stype);
-  cst_manager_unlock(manager);
-}
-
 static void cst_application_active(CstApplication* self) {
   sys_return_if_fail(self != NULL);
 
-  CstApplicationPrivate *priv = self->priv;
-
-  CstModule* v_module = priv->main_module;
-  CstManager *v_manager = priv->manager;
-  CstRender *v_render = priv->render;
+  CstModule* v_module = self->main_module;
+  CstManager *v_manager = self->manager;
+  CstRender *v_render = self->render;
   FRAWatchProps props = { 0 };
 
   props.etype = FR_TYPE_EVENT;
@@ -98,10 +70,11 @@ void cst_application_env_setup(void) {
   fr_window_setup();
   fr_canvas_setup();
   cst_css_setup();
+  cst_node_setup();
   fr_events_setup();
 
 #if CST_USE_MONO
-    fr_mono_setup(CST_MONO_HOME);
+  fr_mono_setup(CST_MONO_HOME);
 #endif
 
   cst_context_setup(2, NULL);
@@ -115,10 +88,11 @@ void cst_application_env_teardown(void) {
     return;
   }
 
+  cst_node_teardown();
   cst_css_teardown();
+  fr_events_teardown();
   fr_canvas_teardown();
   fr_window_teardown();
-  fr_events_teardown();
   fr_main_teardown();
   cst_context_teardown();
 
@@ -128,17 +102,16 @@ void cst_application_env_teardown(void) {
 SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
   sys_return_val_if_fail(self != NULL, 1);
 
-  CstApplicationPrivate *priv = self->priv;
   CstRender *v_render = cst_render_new_I(false);
 
-  priv->render = v_render;
-  priv->main_module = cst_manager_load_module(priv->manager, NULL, main_path);
+  self->render = v_render;
+  self->main_module = cst_manager_load_module(self->manager, NULL, main_path);
 
   cst_application_active(self);
 
-  fr_main_run(priv->main_loop);
+  fr_main_run(self->main_loop);
 
-  return priv->status;
+  return self->status;
 }
 
 CstApplication *cst_application_acquire(void) {
@@ -150,10 +123,8 @@ CstApplication *cst_application_acquire(void) {
 /* object api */
 static void cst_application_dispose(SysObject* o) {
   CstApplication *self = CST_APPLICATION(o);
-  CstApplicationPrivate *priv = self->priv;
-
-  sys_clear_pointer(&priv->manager, _sys_object_unref);
-  sys_clear_pointer(&priv->render, _sys_object_unref);
+  sys_clear_pointer(&self->manager, _sys_object_unref);
+  sys_clear_pointer(&self->render, _sys_object_unref);
 
   cst_application_env_teardown();
 
@@ -161,14 +132,12 @@ static void cst_application_dispose(SysObject* o) {
 }
 
 void cst_application_construct(CstApplication* self, const SysChar *appname) {
-  CstApplicationPrivate *priv = self->priv;
+  self->main_loop = fr_main_get_main_loop();
+  self->app_source = fr_application_new_I(self);
 
-  priv->main_loop = fr_main_get_main_loop();
-  priv->app_source = fr_application_new_I(self);
+  fr_main_attach(self->main_loop, self->app_source);
 
-  fr_main_attach(priv->main_loop, priv->app_source);
-
-  priv->manager = cst_manager_new_I();
+  self->manager = cst_manager_new_I();
 }
 
 CstApplication *cst_application_new(void) {
@@ -201,5 +170,4 @@ static void cst_application_class_init(CstApplicationClass* cls) {
 }
 
 static void cst_application_init(CstApplication *self) {
-  self->priv = cst_application_get_private(self);
 }

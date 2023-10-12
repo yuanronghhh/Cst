@@ -21,8 +21,8 @@ set(C_API_SRC
   ./Front/Common/CstComNode.h
   ./Front/Common/CstLBox.c
   ./Front/Common/CstLBox.h
-  ./Front/Common/CstLDiv.c
-  ./Front/Common/CstLDiv.h
+  ./Front/Common/CstLGrid.c
+  ./Front/Common/CstLGrid.h
   ./Front/Common/CstLBody.c
   ./Front/Common/CstLBody.h
   ./Front/Common/CstText.c
@@ -42,7 +42,6 @@ set(SRC
   ./BuildIn/Components/CstLabel.cst
 
   ./Driver/CstTypes.h
-  ./Driver/CstMacros.h
   ./Driver/CstCommon.c
   ./Driver/CstCommon.h
 
@@ -95,16 +94,14 @@ set(SRC
   ./Driver/CstRenderNode.c
   ./Driver/CstBoxNode.h
   ./Driver/CstBoxNode.c
-
-
-  ./Front/CstNodeMap.h
-  ./Front/CstNodeMap.c
-  ./Front/CstPropMap.h
-  ./Front/CstPropMap.c
-  ./Front/CstPropPair.h
-  ./Front/CstPropPair.c
-  ./Front/CstComponent.h
-  ./Front/CstComponent.c
+  ./Driver/CstNodeMap.h
+  ./Driver/CstNodeMap.c
+  ./Driver/CstPropMap.h
+  ./Driver/CstPropMap.c
+  ./Driver/CstPropPair.h
+  ./Driver/CstPropPair.c
+  ./Driver/CstComponent.h
+  ./Driver/CstComponent.c
 
   ./Front/CstFrontCore.h
 

@@ -77,6 +77,9 @@ SysBool cst_render_context_need_paint(CstRenderContext *self);
 SysBool cst_render_context_is_visible(CstRenderContext* self);
 void cst_render_context_set_paint(CstRenderContext *self, SysBool bvalue);
 
+void cst_render_context_setup(void);
+void cst_render_context_teardown(void);
+
 
 SYS_END_DECLS
 

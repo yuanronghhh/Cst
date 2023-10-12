@@ -4,7 +4,7 @@
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/CstManager.h>
-#include <CstCore/Front/CstComponent.h>
+#include <CstCore/Driver/CstComponent.h>
 
 
 #define MODULE_LOCK
@@ -40,8 +40,6 @@ SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const S
 
   manager = cst_module_get_manager(self);
 
-  cst_manager_lock(manager);
-
   child = cst_manager_load_module(manager, self, path);
   if (child == NULL) {
     sys_error_N("import module failed: %s", path);
@@ -61,8 +59,6 @@ SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const S
     }
   }
 
-  cst_manager_unlock(manager);
-
   return true;
 }
 
@@ -78,7 +74,7 @@ SysBool cst_module_is_loaded(CstModule *self) {
   return self->loaded;
 }
 
-SysBool cst_module_realize(CstModule *self, CstNode *v_parent, CstRender *v_render) {
+SysBool cst_module_realize(CstModule *self, CstRenderNode *v_parent, CstRender *v_render) {
   sys_return_val_if_fail(self != NULL, false);
 
   CstComponent *comp = self->root_component;

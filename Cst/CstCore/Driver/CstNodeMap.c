@@ -1,6 +1,6 @@
-#include <CstCore/Front/CstNodeMap.h>
+#include <CstCore/Driver/CstNodeMap.h>
 #include <CstCore/Front/CstFrontCore.h>
-#include <CstCore/Front/CstPropPair.h>
+#include <CstCore/Driver/CstPropPair.h>
 #include <CstCore/Front/Common/CstComNode.h>
 
 

@@ -8,7 +8,7 @@
 
 SYS_BEGIN_DECLS
 
-SYS_API void mini_types_setup(CstApplication *app);
+SYS_API void mini_types_setup(void);
 
 SYS_END_DECLS
 

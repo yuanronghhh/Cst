@@ -1,5 +1,5 @@
 #include <CstCore/Front/Common/CstComNode.h>
-#include <CstCore/Front/CstComponent.h>
+#include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Front/CstFrontCore.h>
 
 
@@ -91,18 +91,20 @@ CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt
 }
 
 /* sys object api */
-void cst_com_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *v_node, CstNodeProps *v_props) {
-  CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
+void cst_com_node_construct_i(CstNodeProvider *provider, CstNodeProps *v_props) {
 
+  CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
 }
 
-static void cst_com_node_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *v_node, CstRender *v_render) {
-  sys_return_if_fail(v_module != NULL);
-  sys_return_if_fail(v_parent != NULL);
-  sys_return_if_fail(v_node != NULL);
+static CstRenderNode* cst_com_node_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *v_node, CstRender *v_render) {
+  sys_return_val_if_fail(v_module != NULL, NULL);
+  sys_return_val_if_fail(v_parent != NULL, NULL);
+  sys_return_val_if_fail(v_node != NULL, NULL);
 
   CstComNode *self = CST_COM_NODE(v_node);
-  cst_component_realize_full(v_module, self->component, v_parent, self, v_render);
+  CstRenderNode *rnode = cst_component_realize(v_module, self->component, v_parent, v_render);
+
+  return rnode;
 }
 
 static void cst_com_node_class_init(CstComNodeClass* cls) {

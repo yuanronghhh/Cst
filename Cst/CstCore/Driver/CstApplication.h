@@ -14,7 +14,15 @@ SYS_BEGIN_DECLS
 struct _CstApplication {
   SysObject parent;
 
-  CstApplicationPrivate *priv;
+  /* <private> */
+  CstManager *manager;
+  FRMain* main_loop;
+  FRMain* work_loop;
+  FRSource *app_source;
+  FRWorker *worker_source;
+  CstRender *render;
+  CstModule *main_module;
+  SysInt status;
 };
 
 struct _CstApplicationClass {
@@ -27,7 +35,6 @@ SYS_API CstApplication * cst_application_new_I(const SysChar * appname);
 SYS_API void cst_application_env_setup(void);
 SYS_API void cst_application_env_teardown(void);
 
-SYS_API void cst_application_set_meta(CstApplication *app, const SysChar *name, SysType stype);
 SYS_API SysInt cst_application_run(CstApplication * self, const SysChar * main_path);
 SYS_API CstApplication * cst_application_acquire(void);
 SYS_API void cst_application_stop (CstApplication *app);

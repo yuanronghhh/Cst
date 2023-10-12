@@ -6,6 +6,7 @@
 
 SYS_DEFINE_TYPE(CstRenderContext, cst_render_context, SYS_TYPE_OBJECT);
 
+static SysHashTable* grctx_ht = NULL;
 
 CstRenderContext* cst_render_context_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT_CONTEXT, NULL);
@@ -199,6 +200,17 @@ SysBool cst_render_context_is_visible(CstRenderContext* self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->is_visible;
+}
+
+void cst_render_context_setup(void) {
+
+  grctx_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);
+}
+
+void cst_render_context_teardown(void) {
+  sys_assert(grctx_ht != NULL && "render context should init before use.");
+
+  sys_hash_table_unref(grctx_ht);
 }
 
 /* object api */

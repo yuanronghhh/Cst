@@ -22,17 +22,12 @@ SYS_BEGIN_DECLS
 
 typedef struct _${TypeName} ${TypeName};
 typedef struct _${TypeName}Class ${TypeName}Class;
-typedef struct _${TypeName}Private ${TypeName}Private;
 
 struct _${TypeName}Class {
   SysObjectClass parent;
 };
 
-struct _${TypeName} {
-  SysObject parent;
-
-  ${TypeName}Private *priv;
-};
+${StructType}
 
 SYS_API SysType ${type_name}_get_type(void);
 SYS_API ${TypeName} *${type_name}_new_I(void);
@@ -44,22 +39,15 @@ SYS_END_DECLS
 
 
 c_template = """\
-#include <Framework/Event/Action/${TypeName}.h>
+#include <CstCore/Driver/CstCommon.h>
 
-struct _${TypeName}Private {
-  SysInt reserved;
-};
-
-SYS_DEFINE_TYPE(FR_EVENT_TYPE, ${TypeName}, ${type_name});
+SYS_DEFINE_TYPE(${PARENT_TYPE}, ${TypeName}, ${type_name});
 
 /* object api */
 static void ${type_name}_construct(SysObject *o) {
   SYS_OBJECT_CLASS(${type_name}_parent_class)->construct(o);
 
   ${TypeName}* self = ${TYPE_NAME}(o);
-  ${TypeName}Private* priv = self->priv;
-
-
 }
 
 ${TypeName}* ${type_name}_new(void) {
@@ -95,35 +83,60 @@ void ${type_name}_init(SysObject* o) {
 
 """
 
-def gen_class_code(info):
-    h_result = ""
-    c_result = ""
+template_struct = """
+struct _CstNodeProvider {
+  /* <private> */
+  CstModule* v_module;
+  CstComponent* v_component;
+  CstNode* v_parent;
+  CstNode* v_node;
+};
+"""
 
-    h_result = h_template\
-            .replace("${TYPE_NAME}", info[0])\
-            .replace("${type_name}", info[1])\
-            .replace("${TypeName}", info[2])
+class TemplateInfo:
+    def __init__(self, structStr):
+        self.tpl = structStr;
+        self.FName = ""
+        self.F_NAME = ""
+        self.f_name = ""
+        self.F_TYPE_NAME = ""
+        self.F_TYPE_PARENT_NAME = ""
+        self.f_parent_name = ""
+        self.FParentName = ""
+        self.F_PARENT_NAME = ""
+        self.prefix = ""
 
-    c_result = c_template\
-            .replace("${TYPE_NAME}", info[0])\
-            .replace("${type_name}", info[1])\
-            .replace("${TypeName}", info[2])
+    def parse_info(self):
+        sp = self.tpl.split("\n")
+        self.prefix = sp.parse_prefix(sp[0])
+        self.FName = sp.parse_struct_name(sp[0])
 
-    return [h_result, c_result]
+    def parse_prefix(self, line):
+        pass
+
+class TemplateGenerator:
+
+    def __init__(self, structStr, dstDir):
+        self.sInfo = new TemplateInfo(structStr)
+        self.dstDir = dstDir
+
+    def generate_file(self):
+        info = self.sInfo
+        h_file = self.dstDir + info.TypeName + ".h"
+        c_file = self.dstDir + info.TypeName + ".c"
+
 
 def main():
-    dst = os.getcwd() + "/Cst/Framework/Event/Action/"
+    dst = os.getcwd() + "/Cst/Driver/"
     dst = dst.replace("\\", "/")
 
-    infos = [
-            ["FR_AAREA",    "fr_aarea",       "FRAArea"],
-            ]
+    gen = TemplateGenerator(template_struct, dst)
+    gen.parse_info()
+    gen.generate_file()
 
     for info in infos:
         h_file = dst + info[2] + ".h"
         c_file = dst + info[2] + ".c"
-
-        # print("#include <Framework/Event/Action/%s%s>" % (info[2], ".h"))
 
         result = gen_class_code(info)
 

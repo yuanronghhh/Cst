@@ -4,27 +4,8 @@
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstBoxNode.h>
 
-#define MANAGER_LOCK
-#define MANAGER_UNLOCK
-
 SYS_DEFINE_TYPE(CstManager, cst_manager, SYS_TYPE_OBJECT);
 
-static void cst_manager_meta_setup(CstManager *manager) {
-  cst_manager_set_meta(manager, "LBox", CST_TYPE_NODE);
-  cst_manager_set_meta(manager, "LDiv", CST_TYPE_NODE);
-  cst_manager_set_meta(manager, "LGrid", CST_TYPE_NODE);
-  cst_manager_set_meta(manager, "LBody", CST_TYPE_NODE);
-
-  cst_manager_set_meta(manager, "Text", CST_TYPE_TEXT);
-}
-
-void cst_manager_lock(CstManager *manager) {
-  MANAGER_LOCK
-}
-
-void cst_manager_unlock(CstManager *manager) {
-  MANAGER_UNLOCK
-}
 
 CstModule* cst_manager_load_module(CstManager *self, CstModule* parent, const SysChar* path) {
   sys_return_val_if_fail(path != NULL, NULL);
@@ -68,12 +49,13 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
 
   CstComponent *v_component = NULL;
   FRWindow *window = cst_render_get_default_window(v_render);
-  CstNode* body = cst_render_get_root(v_render);
+  CstRenderNode* body = cst_render_render_node_new_root(v_render, v_module);
+  CstLayer* box_layer = cst_render_get_box_layer(v_render);
 
-  CstNodeProps props = { 0 };
-
-  cst_node_construct(v_module, v_component, NULL, body, &props);
+  cst_render_set_layer_root(v_render, body);
   cst_module_realize(v_module, body, v_render);
+
+  cst_box_layer_print_tree(CST_BOX_LAYER(box_layer));
 }
 
 CstManager *cst_manager_new(void) {
@@ -94,19 +76,6 @@ SysPointer cst_manager_get_function(CstManager *self, const SysChar *funcname) {
   return fr_env_get(self->function_env, funcname);
 }
 
-void cst_manager_set_meta(CstManager *self, const SysChar *name, SysType stype) {
-  sys_return_if_fail(self != NULL);
-
-  sys_hash_table_insert(self->meta_ht, (SysPointer)sys_strdup(name), (SysPointer)stype);
-}
-
-SysType cst_manager_get_meta(CstManager *self, const SysChar *name) {
-  sys_return_val_if_fail(self != NULL, 0);
-  sys_return_val_if_fail(name != NULL, 0);
-
-  return (SysType)sys_hash_table_lookup(self->meta_ht, (SysPointer)name);
-}
-
 /* object api */
 void cst_manager_construct(CstManager *self) {
   SysHashTable *ht;
@@ -114,12 +83,9 @@ void cst_manager_construct(CstManager *self) {
   self->module_env = fr_env_new_I(ht, NULL);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
-  self->meta_ht = ht;
-
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
   self->function_env = fr_env_new_I(ht, NULL);
 
-  cst_manager_meta_setup(self);
+  sys_rec_mutex_init(&self->mlock);
 }
 
 CstManager* cst_manager_new_I(void) {
@@ -137,10 +103,10 @@ static void cst_manager_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
   CstManager *self = CST_MANAGER(o);
-  sys_hash_table_unref(self->meta_ht);
 
   sys_object_unref(self->module_env);
   sys_object_unref(self->function_env);
+  sys_rec_mutex_clear(&self->mlock);
 
   SYS_OBJECT_CLASS(cst_manager_parent_class)->dispose(o);
 }

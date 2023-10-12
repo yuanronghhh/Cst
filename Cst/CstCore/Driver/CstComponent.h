@@ -1,7 +1,7 @@
 #ifndef __CST_COMPONENT__
 #define __CST_COMPONENT__
 
-#include <CstCore/Front/CstNodeMap.h>
+#include <CstCore/Driver/CstNodeMap.h>
 
 SYS_BEGIN_DECLS
 
@@ -38,8 +38,8 @@ CstComponent* cst_component_new(void);
 SysType cst_component_get_type(void);
 CstPropMap * cst_component_get_props_map(CstComponent * self, const SysChar * key);
 void cst_component_set_props_map(CstComponent * self, CstPropMap * map);
-void cst_component_realize_full(CstModule * v_module, CstComponent * self, CstNode * v_parent, CstComNode * ncomp_node, CstRender * v_render);
-void cst_component_realize(CstModule * v_module, CstComponent * self, CstNode * v_parent, CstRender * v_render);
+CstRenderNode* cst_component_realize(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstRender *v_render);
+CstRenderNode* cst_component_realize_full(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstComNode *ncomp_node, CstRender *v_render);
 void cst_component_construct(CstComponent * self, CstModule * v_module, CstComponent * v_parent);
 
 const SysChar* cst_component_get_id(CstComponent* self);

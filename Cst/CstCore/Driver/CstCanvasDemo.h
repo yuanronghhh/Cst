@@ -1,13 +1,12 @@
 #ifndef __CST_CANVAS_DEMO_H__
 #define __CST_CANVAS_DEMO_H__
 
-#include <CstCore/Driver/CstSystem.h>
-#include <UI/CstCanvas.h>
+#include <CstCore/Driver/CstCanvas.h>
 
-CST_BEGIN_DECLS
+SYS_BEGIN_DECLS
 
-CST_API void cst_canvas_draw_hello(CstCanvas *canvas, CstInt x, CstInt y);
+SYS_API void cst_canvas_draw_hello(CstCanvas *canvas, CstInt x, CstInt y);
 
-CST_END_DECLS
+SYS_END_DECLS
 
 #endif

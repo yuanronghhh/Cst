@@ -14,7 +14,7 @@ SysBool cst_css_parser_parse_color(CstCssParser* parser, FRColor* color) {
   return false;
 }
 
-CstCssClosure *cst_css_parser_parse_calc(CstCssParser* parser, SysChar *str, CstCssCalcFunc func) {
+CstCssClosure *cst_css_parser_parse_calc(CstCssParser* parser, SysChar *str, CstRenderNodeFunc func) {
   sys_return_val_if_fail(parser != NULL, NULL);
 
   return NULL;

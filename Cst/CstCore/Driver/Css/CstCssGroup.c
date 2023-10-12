@@ -69,7 +69,6 @@ SysBool cst_css_group_set_by_id(SysPtrArray *ptr, CstCssEnv *env, const SysChar 
 SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *self) {
   sys_return_val_if_fail(ptr != NULL, false);
   sys_return_val_if_fail(self != NULL, false);
-
   sys_return_val_if_fail(self->id != NULL, false);
 
   if (cst_css_exists(ptr, self)) {

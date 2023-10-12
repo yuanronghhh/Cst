@@ -29,7 +29,7 @@ struct _CstBoxNodeClass {
 
 SYS_API SysType cst_box_node_get_type(void);
 SYS_API CstRenderNode* cst_box_node_new(void);
-SYS_API CstRenderNode* cst_box_node_new_I(CstNode *node);
+SYS_API CstRenderNode *cst_box_node_new_I(CstNode *node);
 
 SYS_API CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
 SYS_API void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);
@@ -39,7 +39,8 @@ SYS_API CstBoxNode *cst_box_node_children(CstBoxNode *self);
 SYS_API CstBoxNode *cst_box_node_next(CstBoxNode *self);
 SYS_API void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout);
 SYS_API void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
-SYS_API void cst_box_node_print_node_r(CstBoxNode *self);
+
+SYS_API void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data);
 
 SYS_END_DECLS
 

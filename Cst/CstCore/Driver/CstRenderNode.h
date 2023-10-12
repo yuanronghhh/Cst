@@ -24,7 +24,7 @@ struct _CstRenderNode {
 struct _CstRenderNodeClass {
   CstLayoutNodeClass parent;
 
-  void (*construct) (CstRenderNode *self, CstNode* node, CstRenderContext* layout_ctx);
+  void (*construct) (CstRenderNode *self, CstNode* node);
   void (*relayout) (CstRenderNode* self, CstLayout* layout);
   void (*repaint) (CstRenderNode* self, CstLayout* layout);
   CstRenderNode* (*get_parent)(CstRenderNode *self);
@@ -32,7 +32,7 @@ struct _CstRenderNodeClass {
 
 SysType cst_render_node_get_type(void);
 CstLayoutNode *cst_render_node_new(void);
-CstLayoutNode* cst_render_node_new_I(CstNode* node, CstRenderContext* layout_ctx);
+CstLayoutNode *cst_render_node_new_I(CstNode *node);
 
 CST_RENDER_NODE_ENUM cst_render_node_get_by_name(const SysChar* name);
 
@@ -73,6 +73,8 @@ void cst_render_node_stroke_rectangle(CstRenderNode* self, CstLayout* layout);
 
 void cst_render_node_layout(CstRenderNode* self, CstLayout *layout);
 void cst_render_node_constrain_size(CstRenderNode* self, CstRenderContext* pctx);
+
+SysInt cst_render_node_check_dirty(CstRenderNode* rnode, FRRegion* region);
 
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);

@@ -1,6 +1,6 @@
 #include <CstCore/Parser/Ast.h>
-#include <CstCore/Front/CstComponent.h>
-#include <CstCore/Front/CstPropPair.h>
+#include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstPropPair.h>
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstManager.h>
@@ -502,9 +502,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
     sys_free_N(tname);
   } else {
 
-    cst_manager_lock(v_manager);
-    type = cst_manager_get_meta(v_manager, cus_name);
-    cst_manager_unlock(v_manager);
+    type = cst_node_get_meta(cus_name);
     if (type == 0) {
       sys_error_N("Not found node or component \"%s\".", cus_name);
       return false;
@@ -1045,9 +1043,7 @@ static SysBool ast_module_parse_component(CstModule *v_module, Component *comp_a
 
   comp_id = prop.v_id;
 
-  cst_manager_lock(manager);
-  SysType type = cst_manager_get_meta(manager, comp_id);
-  cst_manager_unlock(manager);
+  SysType type = cst_node_get_meta(comp_id);
 
   if (type == 0) {
     sys_error_N("Not found %s in component, maybe not init types ?", comp_id);

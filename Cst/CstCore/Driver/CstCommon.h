@@ -7,7 +7,6 @@
 SYS_BEGIN_DECLS
 
 #include <CstCore/Parser/CstParserTypes.h>
-#include <CstCore/Driver/CstMacros.h>
 #include <CstCore/Driver/CstTypes.h>
 #include <CstCore/Driver/CstContext.h>
 

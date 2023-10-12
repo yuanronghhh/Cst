@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
 
   app = cst_application_new_I("MiniAPP");
 
-  mini_types_setup(app);
+  mini_types_setup();
 
   status = cst_application_run(app, main_path);
   sys_object_unref(app);

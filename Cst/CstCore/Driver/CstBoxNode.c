@@ -1,9 +1,20 @@
 #include <CstCore/Driver/CstBoxNode.h>
-#include <CstCore/Front/Common/CstLBoxContext.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstNode.h>
+#include <CstCore/Front/Common/CstLBoxContext.h>
+
+
+typedef struct _BoxNodeContext BoxNodeContext;
+
+struct _BoxNodeContext {
+  SysQueue* queue;
+  CstRenderNodeFunc func;
+  SysPointer user_data;
+};
 
 
 SYS_DEFINE_TYPE(CstBoxNode, cst_box_node, CST_TYPE_RENDER_NODE);
+
 
 CstBoxNode *cst_box_node_children(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -127,29 +138,49 @@ void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout) {
   box_node_repaint_box_node_r(self, layout);
 }
 
-void cst_box_node_print_node_r(CstBoxNode *self) {
+void cst_box_node_handle_r(CstBoxNode *self, BoxNodeContext* ctx) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderNode* node, *pnode;
-  
-  node = CST_RENDER_NODE(self);
-
-  if (self->parent) {
-    pnode = CST_RENDER_NODE(self->parent);
-
-    sys_debug_N("<%s,%s,%s>", cst_render_node_get_id(pnode), cst_render_node_get_name(node), cst_render_node_get_id(node));
-  } else {
-
-    sys_debug_N("<%s,%s>", cst_render_node_get_name(node), cst_render_node_get_id(node));
-  }
+  ctx->func(CST_RENDER_NODE(self), ctx->user_data);
 
   if (self->children) {
-    cst_box_node_print_node_r(self->children);
+
+    cst_box_node_handle_r(self->children, ctx);
   }
 
   if (self->next) {
-    cst_box_node_print_node_r(self->next);
+
+    cst_box_node_handle_r(self->next, ctx);
   }
+}
+
+void cst_box_node_bfs_handle_r(CstBoxNode *self, BoxNodeContext *ctx) {
+  CstBoxNode* node;
+  CstBoxNode* nnode;
+  SysQueue* queue = ctx->queue;
+
+  sys_queue_push_head(queue, (SysPointer)self);
+
+  while (!sys_queue_is_empty(queue)) {
+    node = sys_queue_pop_tail(queue);
+
+    ctx->func(CST_RENDER_NODE(node), ctx->user_data);
+
+    for(nnode = node->children; nnode; nnode = nnode->next) {
+
+      sys_queue_push_head(queue, nnode);
+    }
+  }
+}
+
+void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data) {
+  SysQueue *queue = sys_queue_new();
+
+  BoxNodeContext ctx = { queue, func, user_data };
+
+  cst_box_node_bfs_handle_r(self, &ctx);
+
+  sys_queue_free(queue);
 }
 
 void cst_box_node_layout_children(CstBoxNode* self, CstLayout* layout) {
@@ -163,7 +194,6 @@ void cst_box_node_layout_children(CstBoxNode* self, CstLayout* layout) {
   }
 }
 
-
 /* object api */
 CstRenderNode* cst_box_node_new(void) {
   return sys_object_new(CST_TYPE_BOX_NODE, NULL);
@@ -175,11 +205,9 @@ static void cst_box_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }
 
-
 static void cst_box_node_construct(CstRenderNode* o, CstNode *node) {
-  CstRenderContext* ctx = cst_lbox_context_new_I();
 
-  CST_RENDER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node, ctx);
+  CST_RENDER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node);
 }
 
 CstRenderNode *cst_box_node_new_I(CstNode *node) {

@@ -1,5 +1,4 @@
 #include <CstCore/Driver/CstCanvasDemo.h>
-#include <UI/CstCanvasPrivate.h>
 
 
 static CstInt dx = 20;

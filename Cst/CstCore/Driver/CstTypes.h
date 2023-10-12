@@ -117,7 +117,6 @@ typedef struct _CstContext CstContext;
 
 typedef struct _CstApplication CstApplication;
 typedef struct _CstApplicationClass CstApplicationClass;
-typedef struct _CstApplicationPrivate CstApplicationPrivate;
 
 typedef struct _CstManager CstManager;
 typedef struct _CstManagerClass CstManagerClass;
@@ -173,6 +172,7 @@ typedef struct _CstCssEnvClass CstCssEnvClass;
 #include <CstCore/Front/CstType.h>
 
 typedef struct _CstNodeProps CstNodeProps;
+typedef struct _CstNodeProvider CstNodeProvider;
 typedef struct _CstComponentProps CstComponentProps;
 typedef struct _CstNodeMap CstNodeMap;
 typedef struct _CstNodeMapClass CstNodeMapClass;
@@ -185,7 +185,7 @@ typedef SysValue CstPropValue;
 
 typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
-typedef void (*CstCssCalcFunc) (CstRenderNode *render_node, SysPointer user_data);
+typedef void (*CstRenderNodeFunc) (CstRenderNode *node, SysPointer user_data);
 
 SYS_END_DECLS
 

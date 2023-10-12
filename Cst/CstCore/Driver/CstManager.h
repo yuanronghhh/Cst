@@ -22,18 +22,12 @@ struct _CstManager {
 
   /* <private> */
   FREnv* module_env;
-  SysHashTable* meta_ht;
   FREnv* function_env;
+  SysRecMutex mlock;
 };
 
 SYS_API SysType cst_manager_get_type(void);
 SYS_API CstManager* cst_manager_new(void);
-
-SYS_API void cst_manager_lock(CstManager *manager);
-SYS_API void cst_manager_unlock(CstManager *manager);
-
-SYS_API void cst_manager_set_meta(CstManager* manager, const SysChar *name, SysType stype);
-SYS_API SysType cst_manager_get_meta(CstManager* manager, const SysChar *name);
 
 CstManager * cst_manager_new_I(void);
 

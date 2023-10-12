@@ -5,16 +5,10 @@
 
 SYS_BEGIN_DECLS
 
-#include <CstCore/Front/CstFrontCommon.h>
-#include <CstCore/Front/CstComponent.h>
-#include <CstCore/Front/CstNodeMap.h>
-#include <CstCore/Front/CstPropMap.h>
-#include <CstCore/Front/CstPropPair.h>
-
 #include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLBox.h>
-#include <CstCore/Front/Common/CstLDiv.h>
+#include <CstCore/Front/Common/CstLGrid.h>
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLGridContext.h>
 #include <CstCore/Front/Common/CstLBoxContext.h>

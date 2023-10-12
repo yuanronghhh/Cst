@@ -105,7 +105,7 @@ void cst_css_value_set_closure(CstCssValue* value, CstCssClosure* v) {
   value->v.v_closure = v;
 }
 
-CstCssClosure* cst_css_value_parse_calc(SysChar *s, CstCssCalcFunc func) {
+CstCssClosure* cst_css_value_parse_calc(SysChar *s, CstRenderNodeFunc func) {
   sys_return_val_if_fail(s != NULL, NULL);
 
   SysSize slen = sys_strlen(s, 5);

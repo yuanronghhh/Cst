@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstNode.h>
-#include <CstCore/Front/CstComponent.h>
+#include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/Css/CstCss.h>
@@ -13,14 +14,23 @@
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
 
+#include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/Common/CstLBody.h>
+#include <CstCore/Front/Common/CstLGrid.h>
+#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Front/Common/CstLGridContext.h>
 
-#define NODE_ID_FORMAT "id.%d.%d"
+
+static SysMutex gnode_meta_lock;
+#define NODE_META_LOCK sys_mutex_lock(&gnode_meta_lock)
+#define NODE_META_UNLOCK sys_mutex_unlock(&gnode_meta_lock)
+SysHashTable* gnode_meta_ht = NULL;
 
 static const SysChar* CST_NODE_PROP_NAMES[] = {
   "id","value","base","position", "label",
   "key_up","key_down",
 };
-
 
 SYS_DEFINE_TYPE(CstNode, cst_node, SYS_TYPE_OBJECT);
 
@@ -39,20 +49,20 @@ static void node_default_constraint_height(CstNode *v_parent, CstNode *self, FRC
   sys_return_if_fail(self != NULL);
 }
 
-static SYS_INLINE SysChar *node_gen_id(CstNode* node, CstModule *mod) {
+static SYS_INLINE SysChar *node_gen_id(CstNode* node, CstModule *v_module) {
   SysChar *nid = NULL;
-  SysInt mid;
-  SysInt ccount = 0;
+  SysUInt mid;
+  SysUInt ccount = 0;
 
-  if (mod) {
-    mid = cst_module_get_hashcode(mod);
-    ccount = cst_module_count(mod);
+  if (v_module) {
+    mid = cst_module_get_hashcode(v_module);
+    ccount = cst_module_count(v_module);
 
   } else {
-    mid = sys_str_hash((SysPointer)"croot");
+    mid = sys_str_hash((SysPointer)"root-node");
   }
 
-  nid = sys_strdup_printf(NODE_ID_FORMAT, mid, ccount);
+  nid = sys_strdup_printf("id.%u.%u", mid, ccount);
 
   return nid;
 }
@@ -135,68 +145,63 @@ CstNode* cst_node_dclone_i(CstNode *o) {
   return n;
 }
 
-static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_render, CstRenderNode *rnode_p) {
+static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_render, CstRenderNode *v_parent) {
   sys_return_val_if_fail(self != NULL, false);
 
-  CstBoxLayer *box_layer;
-  CstAbsLayer *abs_layer;
+  CstLayer *layer;
   CstRenderNode* n_rnode;
 
   switch (self->position) {
     case CST_RENDER_NODE_BOX:
-      box_layer = cst_render_get_box_layer(v_render);
-      n_rnode = cst_box_layer_realize_node(box_layer, CST_BOX_NODE(rnode_p), self);
+      layer = cst_render_get_box_layer(v_render);
+      n_rnode = cst_box_layer_realize_node(CST_BOX_LAYER(layer), CST_BOX_NODE(v_parent), self);
       break;
 
     case CST_RENDER_NODE_ABS:
       // TODO
-      abs_layer = cst_render_get_abs_layer(v_render);
-      // cst_abs_layer_realize_node(abs_layer, rnode_p, rnode);
+      layer = cst_render_get_abs_layer(v_render);
+      n_rnode = NULL;
       break;
 
     default:
       sys_warning_N("unknow node position: %d", self->position);
-      return false;
+      n_rnode = NULL;
+      break;
   }
 
   return n_rnode;
 }
 
-static void cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *self, CstRenderNode *rnode_p, CstRender *v_render) {
-  CstRenderNode *rnode = NULL;
+CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render) {
   CstLayer *layer = NULL;
+  CstRenderNode *rnode;
 
-  cst_node_realize(v_module, ncomp_node, v_parent, self, v_render);
+  rnode = cst_node_realize(v_module, ncomp_node, v_parent, self, v_render);
   cst_module_count_inc(v_module);
 
-  if(node_realize_render_node(self, v_render, rnode_p) != NULL) {
+  if (rnode == NULL) {
 
-    sys_warning_N("failed to relize node: %s,%s", cst_node_get_name(self), cst_node_get_id(self));
-    return;
+    sys_warning_N("failed to realize node: %s,%s", cst_node_get_name(self), cst_node_get_id(self));
   }
 
   if(self->children) {
 
-    cst_node_realize_r(v_module, ncomp_node, self, self->children, rnode, v_render);
+    cst_node_realize_r(v_module, ncomp_node, rnode, self->children, v_render);
   }
 
   if(self->next) {
 
-    cst_node_realize_r(v_module, ncomp_node, v_parent, self->next, rnode_p, v_render);
+    cst_node_realize_r(v_module, ncomp_node, v_parent, self->next, v_render);
   }
+
+  return rnode;
 }
 
-void cst_node_realize_root(CstModule *v_module, CstComNode *ncomp_node, CstNode *root, CstNode *new_root, CstRender *v_render) {
-  sys_return_if_fail(root != NULL);
-  sys_return_if_fail(new_root != NULL);
+CstRenderNode* cst_node_realize_self(CstRenderNode* v_parent, CstNode* self, CstRender *v_render) {
+  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(v_parent != NULL, NULL);
 
-  CstRenderNode* n_rnode = node_realize_render_node(new_root, v_render, NULL);
-  cst_render_set_layer_root(v_render, n_rnode);
-
-  if (root->children) {
-
-    cst_node_realize_r(v_module, ncomp_node, new_root, root->children, n_rnode, v_render);
-  }
+  return node_realize_render_node(self, v_render, v_parent);
 }
 
 /* css */
@@ -338,9 +343,7 @@ const SysChar * cst_node_get_id(CstNode *self) {
 void cst_node_set_id(CstNode *self, const SysChar * id) {
   sys_return_if_fail(self != NULL);
 
-  if(self->id) {
-    sys_free_N(self->id);
-  }
+  sys_assert(self->id == NULL);
 
   self->id = sys_strdup(id);
 }
@@ -369,7 +372,7 @@ void cst_node_print_node_r(CstNode *self) {
   if (self->parent) {
     pnode = self->parent;
 
-    sys_debug_N("<%s,%s,%s>", cst_node_get_id(pnode), cst_node_get_name(self), cst_node_get_id(self));
+    sys_debug_N("<%s,%s,%s,%s>", cst_node_get_name(pnode), cst_node_get_id(pnode), cst_node_get_name(self), cst_node_get_id(self));
   } else {
 
     sys_debug_N("<%s,%s>", cst_node_get_name(self), cst_node_get_id(self));
@@ -408,13 +411,13 @@ void cst_node_bind(CstNode *self, CstComNode *com_node) {
   }
 }
 
-void cst_node_construct(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *self, CstNodeProps *v_props) {
-  sys_return_if_fail(self != NULL);
+void cst_node_construct(CstNodeProvider *provider, CstNodeProps *v_props) {
+  sys_return_if_fail(provider != NULL);
 
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
-
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(provider->v_node);
   sys_return_if_fail(ncls->construct != NULL);
-  ncls->construct(v_module, v_component, v_parent, self, v_props);
+  
+  ncls->construct(provider, v_props);
 }
 
 void cst_node_append(CstNode *parent, CstNode *node) {
@@ -473,13 +476,13 @@ void cst_node_set_last_child(CstNode *self, CstNode *last_child) {
 void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
 }
 
-void cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstNode *v_parent, CstNode *self, CstRender *v_render) {
-  sys_return_if_fail(self != NULL);
+CstRenderNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
   CstNodeClass* cls = CST_NODE_GET_CLASS(self);
-  sys_return_if_fail(cls->realize != NULL);
+  sys_return_val_if_fail(cls->realize != NULL, NULL);
 
-  cls->realize(v_module, ncomp_node, v_parent, self, v_render);
+  return cls->realize(v_module, ncomp_node, v_parent, self, v_render);
 }
 
 void cst_node_add_awatch(CstNode *self, FRAWatch *awatch) {
@@ -513,8 +516,8 @@ static void cst_node_relayout_down_i(CstModule* v_module, CstNode* v_parent, Cst
 
 }
 
-static void cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstNode* v_parent, CstNode* self, CstRender* v_render) {
-  sys_return_if_fail(self != NULL);
+static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
   FRAWatch* nwatch;
 
@@ -528,6 +531,8 @@ static void cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstNod
 
     cst_node_bind(self, com_node);
   }
+
+  return node_realize_render_node(self, v_render, v_parent);
 }
 
 static void cst_node_repaint_i(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw* draw, CstLayout* layout) {
@@ -541,9 +546,8 @@ static void cst_node_repaint_i(CstModule* v_module, CstNode* v_parent, CstNode* 
   // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", self->id, self->bound.x, self->bound.y, self->bound.width, self->bound.height);
 }
 
-static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component, CstNode *v_parent, CstNode *self, CstNodeProps *v_props) {
+static void cst_node_construct_i(CstModule* v_module, CstComponent* v_component, CstNode* v_parent, CstNode* self, CstNodeProps* v_props) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_module != NULL);
 
   sys_return_if_fail(self->name != NULL);
 
@@ -551,17 +555,18 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
     return;
   }
 
-  SysChar **v_base = v_props->v_base;
+  SysChar** v_base = v_props->v_base;
   SysInt v_base_len = v_props->v_base_len;
 
-  SysChar *id = self->id;
+  SysChar* id = self->id;
 
   sys_assert(id == NULL && "node build should noly once !");
 
   if (v_props->v_id) {
     id = sys_strdup(v_props->v_id);
 
-  } else {
+  }
+  else {
     id = node_gen_id(self, v_module);
   }
 
@@ -572,7 +577,7 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
   // LBody has no parent component.
   if (v_component) {
 
-    node_set_css_props(self, v_component, (const SysChar **)v_base, v_base_len);
+    node_set_css_props(self, v_component, (const SysChar**)v_base, v_base_len);
   }
 
   // set system css
@@ -580,20 +585,65 @@ static void cst_node_construct_i(CstModule *v_module, CstComponent *v_component,
 
     cst_css_group_set_by_id(self->css_groups, NULL, self->name);
   }
-  
+
   switch (v_props->v_position) {
-    case CST_LAYER_BOX:
-      self->position = CST_LAYER_BOX;
-      break;
-    case CST_LAYER_ABS:
-      self->position = CST_LAYER_ABS;
-      break;
-    default:
-      self->position = CST_LAYER_BOX;
-      break;
+  case CST_LAYER_BOX:
+    self->position = CST_LAYER_BOX;
+    break;
+  case CST_LAYER_ABS:
+    self->position = CST_LAYER_ABS;
+    break;
+  default:
+    self->position = CST_LAYER_BOX;
+    break;
   }
 
   sys_assert(self->id != NULL && "node id must be set, construct not correct ?");
+}
+
+void cst_node_set_meta(const SysChar *name, SysType stype) {
+  NODE_META_LOCK;
+  sys_hash_table_insert(gnode_meta_ht, (SysPointer)sys_strdup(name), (SysPointer)stype);
+  NODE_META_UNLOCK;
+}
+
+SysType cst_node_get_meta(const SysChar *name) {
+  sys_return_val_if_fail(name != NULL, 0);
+
+  SysType tp;
+
+  NODE_META_LOCK;
+  tp = (SysType)sys_hash_table_lookup(gnode_meta_ht, (SysPointer)name);
+  NODE_META_UNLOCK;
+
+  return tp;
+}
+
+void cst_node_setup(void) {
+  sys_mutex_init(&gnode_meta_lock);
+  cst_render_context_setup();
+
+  gnode_meta_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
+
+  cst_node_set_meta("LBox",   CST_TYPE_LBOX   );
+  cst_node_set_meta("LGrid",  CST_TYPE_LGRID  );
+  cst_node_set_meta("LBody",  CST_TYPE_LBODY  );
+  cst_node_set_meta("Text",   CST_TYPE_TEXT   );
+}
+
+void cst_node_teardown(void) {
+  sys_return_if_fail(gnode_meta_ht != NULL && "cst_node_setup must be called before use node");
+
+  sys_clear_pointer(&gnode_meta_ht, sys_hash_table_unref);
+  sys_mutex_clear(&gnode_meta_lock);
+  cst_render_context_teardown();
+}
+
+CstRenderContext* cst_node_new_default_context(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self->rctx_type != 0, NULL);
+
+  return (CstRenderContext *)sys_object_new(self->rctx_type, NULL);
 }
 
 /* sys object api */

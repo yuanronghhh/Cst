@@ -78,6 +78,12 @@ FRDraw *cst_layout_get_draw(CstLayout* self) {
   return self->draw;
 }
 
+void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
+
+  fr_draw_get_size(self->draw, width, height);
+}
+
 /* object api */
 static void cst_layout_init(CstLayout *self) {
 }

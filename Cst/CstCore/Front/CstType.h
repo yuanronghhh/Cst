@@ -36,6 +36,9 @@ typedef struct _CstLGridContextClass CstLGridContextClass;
 typedef struct _CstLBoxContext CstLBoxContext;
 typedef struct _CstLBoxContextClass CstLBoxContextClass;
 
+typedef struct _CstLBodyContext CstLBodyContext;
+typedef struct _CstLBodyContextClass CstLBodyContextClass;
+
 SYS_END_DECLS
 
 #endif

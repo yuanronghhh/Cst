@@ -34,6 +34,8 @@ set(C_API_SRC
   ./Front/Common/CstLGridContext.h
   ./Front/Common/CstLBoxContext.c
   ./Front/Common/CstLBoxContext.h
+  ./Front/Common/CstLBodyContext.c
+  ./Front/Common/CstLBodyContext.h
 )
 
 set(SRC

@@ -151,8 +151,8 @@ CstRenderContext* cst_render_context_dclone(CstRenderContext *o) {
 void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
 
+  CstRenderContext* pctx;
   CstRenderNode* pnode = cst_render_node_get_parent(rnode);
-  CstRenderContext* pctx = cst_render_node_get_context(pnode);
 
   SysInt w = 0, h = 0;
   const FRRect* bound;
@@ -163,10 +163,15 @@ void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rno
   w = bound->width + mbp->m1 + mbp->m3;
   h = bound->height + mbp->m2 + mbp->m0;
 
-  cst_render_node_constraint_size(rnode, self);
-
   self->prefer_width += w;
-  self->prefer_height = max(h, pctx->prefer_height);
+  self->prefer_height = h;
+
+  if (pnode) {
+    pctx = cst_render_node_get_context(pnode);
+
+    cst_render_node_constraint_size(rnode, pctx);
+    self->prefer_height = max(h, pctx->prefer_height);
+  }
 }
 
 void cst_render_context_layout_children_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {

@@ -41,8 +41,8 @@ void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child) {
 }
 
 CstBoxNode* cst_box_node_insert_after (CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node) {
-  sys_return_val_if_fail (parent != NULL, box_node);
-  sys_return_val_if_fail (box_node != NULL, box_node);
+  sys_return_val_if_fail (parent != NULL, NULL);
+  sys_return_val_if_fail (box_node != NULL, NULL);
 
   if (sibling) {
     sys_return_val_if_fail (sibling->parent == parent, box_node);
@@ -84,6 +84,21 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
 void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
 }
 
+void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+
+  cst_render_node_render_enter(self, layout);
+  cst_render_node_relayout_self(self, layout);
+
+  if (self->children) {
+
+    cst_box_node_relayout_node(self->children, layout);
+  }
+
+  cst_render_node_render_leave(render_node, layout);
+  cst_render_node_set_layout(render_node, false);
+}
+
 void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
@@ -94,7 +109,7 @@ void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
 
   if(self->children) {
 
-    cst_box_node_relayout_children(self->children, layout);
+    cst_box_node_relayout_node(self->children, layout);
   }
 
   cst_render_node_render_leave(render_node, layout);
@@ -194,6 +209,13 @@ void cst_box_node_layout_children(CstBoxNode* self, CstLayout* layout) {
   }
 }
 
+static CstRenderNode* cst_box_node_get_parent_i(CstRenderNode* o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+  CstBoxNode* self = CST_BOX_NODE(o);
+
+  return CST_RENDER_NODE(self->parent);
+}
+
 /* object api */
 CstRenderNode* cst_box_node_new(void) {
   return sys_object_new(CST_TYPE_BOX_NODE, NULL);
@@ -223,6 +245,9 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
   CstRenderNodeClass* rcls = CST_RENDER_NODE_CLASS(cls);
 
   ocls->dispose = cst_box_node_dispose;
+  
+  rcls->construct = cst_box_node_construct;
+  rcls->get_parent = cst_box_node_get_parent_i;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

@@ -1,10 +1,17 @@
 #include <CstCore/Front/Common/CstLBody.h>
+#include <CstCore/Front/Common/CstLBodyContext.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstLayout.h>
 
 
 SYS_DEFINE_TYPE(CstLBody, cst_lbody, CST_TYPE_NODE);
+
+
+static CstRenderContext* cst_body_new_default_context_i(CstNode* node) {
+
+  return cst_lbody_context_new_I();
+}
 
 CstNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
@@ -33,6 +40,7 @@ static void cst_lbody_class_init(CstLBodyClass* cls) {
   ocls->dispose = cst_lbody_dispose;
 
   ncls->construct = cst_lbody_construct;
+  ncls->new_default_context = cst_body_new_default_context_i;
 }
 
 static void cst_lbody_dispose(SysObject* o) {

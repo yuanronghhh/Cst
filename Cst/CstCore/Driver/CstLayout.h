@@ -35,6 +35,8 @@ SysBool cst_layout_state_layout(CstLayout *self);
 FRRegion *cst_layout_get_region(CstLayout* self);
 FRDraw *cst_layout_get_draw(CstLayout* self);
 
+void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
+
 SYS_END_DECLS
 
 #endif

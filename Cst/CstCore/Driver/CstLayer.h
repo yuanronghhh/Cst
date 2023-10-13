@@ -18,7 +18,6 @@ struct _CstLayer {
   SysQueue *draw_queue;
 };
 
-/* abstract class */
 struct _CstLayerClass {
   SysObjectClass parent;
 

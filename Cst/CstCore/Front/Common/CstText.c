@@ -1,4 +1,6 @@
 #include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
 
 
@@ -72,16 +74,20 @@ CstNode* cst_text_dclone_i(CstNode *node) {
   return nnode;
 }
 
-static void cst_text_construct_i(CstNodeProvider *provider, CstNodeProps *v_props) {
-  sys_return_if_fail(v_module != NULL);
-  sys_return_if_fail(v_props != NULL);
+CstRenderContext* cst_text_new_default_context_i(CstNode* node) {
+
+  return cst_lbox_context_new_I();
+}
+
+static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
+  sys_return_if_fail(v_node != NULL);
 
   const SysChar *value;
   CstText* self = CST_TEXT(v_node);
 
-  CST_NODE_CLASS(cst_text_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
+  CST_NODE_CLASS(cst_text_parent_class)->construct(v_node, builder);
 
-  value = v_props->v_value;
+  value = cst_node_builder_get_value(builder);
   if (value) {
 
     cst_text_set_text(self, value);

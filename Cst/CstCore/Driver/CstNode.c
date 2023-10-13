@@ -13,6 +13,7 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
@@ -47,24 +48,6 @@ static void node_default_constraint_width(CstNode *v_parent, CstNode *self, FRCo
 
 static void node_default_constraint_height(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
   sys_return_if_fail(self != NULL);
-}
-
-static SYS_INLINE SysChar *node_gen_id(CstNode* node, CstModule *v_module) {
-  SysChar *nid = NULL;
-  SysUInt mid;
-  SysUInt ccount = 0;
-
-  if (v_module) {
-    mid = cst_module_get_hashcode(v_module);
-    ccount = cst_module_count(v_module);
-
-  } else {
-    mid = sys_str_hash((SysPointer)"root-node");
-  }
-
-  nid = sys_strdup_printf("id.%u.%u", mid, ccount);
-
-  return nid;
 }
 
 CstNode *cst_node_children(CstNode *self) {
@@ -255,7 +238,7 @@ static SysBool node_set_css_r_i(CstNode *self, CstCssGroup *g) {
   return false;
 }
 
-static void node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len) {
+void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len) {
   sys_return_if_fail(comp != NULL);
   sys_return_if_fail(self != NULL);
 
@@ -293,12 +276,23 @@ static void node_set_css_props(CstNode *self, CstComponent* comp, const SysChar*
     node_set_css_r_i(self, g);
   }
 
+  // set system css
+  if (*self->name != '<') {
+
+    cst_css_group_set_by_id(self->css_groups, NULL, self->name);
+  }
   return;
 
 fail:
   if (g != NULL) {
     cst_component_remove_css(comp, g);
   }
+}
+
+void cst_node_set_position(CstNode *self, int position) {
+  sys_return_if_fail(self != NULL);
+
+  self->position = position;
 }
 
 SysBool cst_node_set_css_r(CstNode *self, CstCssGroup *g) {
@@ -411,13 +405,14 @@ void cst_node_bind(CstNode *self, CstComNode *com_node) {
   }
 }
 
-void cst_node_construct(CstNodeProvider *provider, CstNodeProps *v_props) {
-  sys_return_if_fail(provider != NULL);
+void cst_node_construct(CstNode *self, CstNodeBuilder *builder) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(builder != NULL);
 
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(provider->v_node);
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
   sys_return_if_fail(ncls->construct != NULL);
-  
-  ncls->construct(provider, v_props);
+
+  ncls->construct(self, builder);
 }
 
 void cst_node_append(CstNode *parent, CstNode *node) {
@@ -485,6 +480,18 @@ CstRenderNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, Cst
   return cls->realize(v_module, ncomp_node, v_parent, self, v_render);
 }
 
+void cst_node_set_awatch_list(CstNode *self, SysList *list) {
+  sys_return_if_fail(self != NULL);
+
+  self->awatches = list;
+}
+
+void cst_node_set_node_maps_list(CstNode *self, SysList *list) {
+  sys_return_if_fail(self != NULL);
+
+  self->node_maps = list;
+}
+
 void cst_node_add_awatch(CstNode *self, FRAWatch *awatch) {
   sys_return_if_fail(self != NULL);
 
@@ -546,57 +553,15 @@ static void cst_node_repaint_i(CstModule* v_module, CstNode* v_parent, CstNode* 
   // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", self->id, self->bound.x, self->bound.y, self->bound.width, self->bound.height);
 }
 
-static void cst_node_construct_i(CstModule* v_module, CstComponent* v_component, CstNode* v_parent, CstNode* self, CstNodeProps* v_props) {
+static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
   sys_return_if_fail(self != NULL);
-
   sys_return_if_fail(self->name != NULL);
-
-  if (v_props == NULL) {
-    return;
-  }
-
-  SysChar** v_base = v_props->v_base;
-  SysInt v_base_len = v_props->v_base_len;
+  sys_return_if_fail(builder != NULL);
 
   SysChar* id = self->id;
-
   sys_assert(id == NULL && "node build should noly once !");
 
-  if (v_props->v_id) {
-    id = sys_strdup(v_props->v_id);
-
-  }
-  else {
-    id = node_gen_id(self, v_module);
-  }
-
-  self->id = id;
-  self->awatches = v_props->v_awatches;
-  self->node_maps = v_props->v_node_maps;
-
-  // LBody has no parent component.
-  if (v_component) {
-
-    node_set_css_props(self, v_component, (const SysChar**)v_base, v_base_len);
-  }
-
-  // set system css
-  if (*self->name != '<') {
-
-    cst_css_group_set_by_id(self->css_groups, NULL, self->name);
-  }
-
-  switch (v_props->v_position) {
-  case CST_LAYER_BOX:
-    self->position = CST_LAYER_BOX;
-    break;
-  case CST_LAYER_ABS:
-    self->position = CST_LAYER_ABS;
-    break;
-  default:
-    self->position = CST_LAYER_BOX;
-    break;
-  }
+  cst_node_builder_build(builder, self);
 
   sys_assert(self->id != NULL && "node id must be set, construct not correct ?");
 }
@@ -641,9 +606,14 @@ void cst_node_teardown(void) {
 
 CstRenderContext* cst_node_new_default_context(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(self->rctx_type != 0, NULL);
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
 
-  return (CstRenderContext *)sys_object_new(self->rctx_type, NULL);
+  return ncls->new_default_context(self);
+}
+
+static CstRenderContext* cst_node_new_default_context_i(CstNode* node) {
+
+  return cst_lbox_context_new_I();
 }
 
 /* sys object api */
@@ -659,6 +629,7 @@ static void cst_node_class_init(CstNodeClass *cls) {
   cls->construct = cst_node_construct_i;
   cls->dclone = cst_node_dclone_i;
   cls->realize = cst_node_realize_i;
+  cls->new_default_context = cst_node_new_default_context_i;
 }
 
 static void cst_node_dispose(SysObject* o) {

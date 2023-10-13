@@ -91,9 +91,9 @@ CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt
 }
 
 /* sys object api */
-void cst_com_node_construct_i(CstNodeProvider *provider, CstNodeProps *v_props) {
+void cst_com_node_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
 
-  CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
+  CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_node, builder);
 }
 
 static CstRenderNode* cst_com_node_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *v_node, CstRender *v_render) {

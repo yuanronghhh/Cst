@@ -39,34 +39,10 @@ struct _CstNode {
 struct _CstNodeClass {
   SysObjectClass parent;
 
-  void (*construct) (CstNodeProvider *provider, CstNodeProps *v_props);
+  void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
   CstNode * (*dclone) (CstNode *node);
+  CstRenderContext* (*new_default_context) (CstNode* v_node);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
-};
-
-struct _CstNodeProps {
-  SysList *v_awatches;
-  SysList *v_node_maps;
-
-  const SysChar* v_id;
-  const SysChar *v_tag;
-  SysChar **v_base;
-  SysInt  v_base_len;
-  SysInt v_position;
-  SysChar *v_value;
-  SysChar *v_label;
-  SysInt  v_z_index;
-  SysBool v_pass;
-};
-
-struct _CstNodeProvider {
-  SysObject parent;
-
-  /* <private> */
-  CstModule* v_module;
-  CstComponent* v_component;
-  CstNode* v_parent;
-  CstNode* v_node;
 };
 
 CstNode* cst_node_new(void);
@@ -96,14 +72,18 @@ CstNode *cst_node_next(CstNode *node);
 FRAWatch *cst_node_get_awatch(CstNode *node, SysType atype, const SysChar *bind_var);
 CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);
+void cst_node_set_position(CstNode *self, int position);
+void cst_node_set_node_maps_list(CstNode *self, SysList *list);
+void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len);
 void cst_node_add_awatch(CstNode *node, FRAWatch *awatch);
+void cst_node_set_awatch_list(CstNode *self, SysList *list);
 
 CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render);
 CstRenderNode* cst_node_realize_self(CstRenderNode* v_parent, CstNode* self, CstRender *v_render);
 
 CstNode *cst_node_dclone(CstNode *v_node);
 void cst_node_bind(CstNode *self, CstComNode *com_node);
-void cst_node_construct(CstNodeProvider *provider, CstNodeProps *v_props);
+void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
 void cst_node_set_meta(const SysChar *name, SysType stype);
 SysType cst_node_get_meta(const SysChar *name);

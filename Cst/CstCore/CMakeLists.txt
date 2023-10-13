@@ -65,6 +65,8 @@ set(SRC
   ./Driver/CstModule.h
   ./Driver/CstNode.c
   ./Driver/CstNode.h
+  ./Driver/CstNodeBuilder.c
+  ./Driver/CstNodeBuilder.h
 
   ./Driver/Css/CstCssGroup.c
   ./Driver/Css/CstCssGroup.h
@@ -100,6 +102,9 @@ set(SRC
   ./Driver/CstPropMap.c
   ./Driver/CstPropPair.h
   ./Driver/CstPropPair.c
+
+  ./Driver/CstComponentBuilder.c
+  ./Driver/CstComponentBuilder.h
   ./Driver/CstComponent.h
   ./Driver/CstComponent.c
 

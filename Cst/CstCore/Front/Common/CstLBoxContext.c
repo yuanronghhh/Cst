@@ -13,6 +13,7 @@ CstRenderContext* cst_lbox_context_new(void) {
 
 CstRenderContext* cst_lbox_context_new_I(void) {
   CstRenderContext* o = cst_lbox_context_new();
+
   return o;
 }
 

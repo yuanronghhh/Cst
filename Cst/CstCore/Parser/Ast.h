@@ -59,10 +59,10 @@ void ast_gstyle_free(GStyle* gstyle);
 /* user api */
 GStyle *ast_root_get_gstyle(AstNode *root);
 void ast_gstyle_parse(GStyle * gstyle, CstCssEnv * gcss_env, const SysChar * path);
-void ast_node_parse(JNode * jnode, CstComponent * component, CstNodeProps * props);
+void ast_node_parse(JNode * jnode, CstComponent * component, CstNodeBuilder *builder);
 CstCssGroup * ast_css_group_new_with_jpair(CstCssEnv *env, JPair * pair, SysBool key_lookup);
 void ast_module_parse(AstNode * root, CstModule * self);
-SysBool ast_component_property_parse(JNode * jnode, CstComponentProps * v_props);
+SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *v_comp_bd);
 void ast_import_parse(CstParser * ps, AstNode * node);
 
 SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue * value);

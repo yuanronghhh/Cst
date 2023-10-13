@@ -13,7 +13,7 @@ static const SysChar* CST_RENDER_NODE_NAMES[] = {
   "box", "absolute"
 };
 
-CST_RENDER_NODE_ENUM cst_render_node_get_by_name(const SysChar* name) {
+CST_RENDER_NODE_ENUM cst_render_node_type_by_name(const SysChar* name) {
   return fr_get_type_by_name(CST_RENDER_NODE_NAMES, ARRAY_SIZE(CST_RENDER_NODE_NAMES), name);
 }
 
@@ -221,7 +221,7 @@ void cst_render_node_layout(CstRenderNode* self, CstLayout *layout) {
   cst_render_context_layout_self(self->render_ctx, self, layout);
 }
 
-void cst_render_node_constrain_size(CstRenderNode* self, CstRenderContext* pctx) {
+void cst_render_node_constraint_size(CstRenderNode* self, CstRenderContext* pctx) {
   CstLayoutNode* layout_node = CST_LAYOUT_NODE(self);
 
   cst_render_context_constraint_width(self->render_ctx, pctx, &layout_node->bound.width);
@@ -243,6 +243,7 @@ SysInt cst_render_node_check_dirty(CstRenderNode* rnode, FRRegion* region) {
     return -1;
   }
 
+  sys_assert(nbound->width != -1 && "width should be set before check dirty.");
   SysInt s = fr_region_contains_rectangle(region, nbound);
   if (s == CAIRO_REGION_OVERLAP_OUT) {
     return -3;

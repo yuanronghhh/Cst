@@ -162,6 +162,19 @@ typedef union _CstCssValueV CstCssValueV;
 typedef struct _CstCssValue CstCssValue;
 typedef struct _CstCssValueClass CstCssValueClass;
 
+typedef struct _CstComponentBuilder CstComponentBuilder;
+typedef struct _CstComponentBuilderClass CstComponentBuilderClass;
+typedef struct _CstComponent CstComponent;
+typedef struct _CstComponentClass CstComponentClass;
+
+typedef struct _CstRenderContext CstRenderContext;
+typedef struct _CstRenderContextClass CstRenderContextClass;
+
+typedef struct _CstNodeBuilder CstNodeBuilder;
+typedef struct _CstNodeBuilderClass CstNodeBuilderClass;
+typedef struct _CstNode CstNode;
+typedef struct _CstNodeClass CstNodeClass;
+
 typedef struct _CstCssNode CstCssNode;
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;
@@ -171,9 +184,6 @@ typedef struct _CstCssEnvClass CstCssEnvClass;
 
 #include <CstCore/Front/CstType.h>
 
-typedef struct _CstNodeProps CstNodeProps;
-typedef struct _CstNodeProvider CstNodeProvider;
-typedef struct _CstComponentProps CstComponentProps;
 typedef struct _CstNodeMap CstNodeMap;
 typedef struct _CstNodeMapClass CstNodeMapClass;
 

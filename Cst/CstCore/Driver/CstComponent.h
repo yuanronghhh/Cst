@@ -29,11 +29,6 @@ struct _CstComponentClass {
   void (*construct) (CstComponent *self, CstModule *v_module, CstComponent *v_parent);
 };
 
-struct _CstComponentProps {
-  SysChar *v_id;
-  SysChar *v_base_name;
-};
-
 CstComponent* cst_component_new(void);
 SysType cst_component_get_type(void);
 CstPropMap * cst_component_get_props_map(CstComponent * self, const SysChar * key);

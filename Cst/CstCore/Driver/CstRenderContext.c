@@ -163,7 +163,7 @@ void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rno
   w = bound->width + mbp->m1 + mbp->m3;
   h = bound->height + mbp->m2 + mbp->m0;
 
-  cst_render_node_constrain_size(rnode, self);
+  cst_render_node_constraint_size(rnode, self);
 
   self->prefer_width += w;
   self->prefer_height = max(h, pctx->prefer_height);
@@ -213,17 +213,33 @@ void cst_render_context_teardown(void) {
   sys_hash_table_unref(grctx_ht);
 }
 
+void constraint_width(CstRenderNode *rnode, SysPointer user_data) {
+}
+
+void constraint_height(CstRenderNode* rnode, SysPointer user_data) {
+}
+
 /* object api */
 CstRenderContext *cst_render_context_new_I(void) {
   CstRenderContext *o = cst_render_context_new();
+
   return o;
 }
 
 static void cst_render_context_init(CstRenderContext *self) {
+  self->width_calc = cst_css_closure_new_I(self, constraint_width, NULL);
+  self->height_calc = cst_css_closure_new_I(self, constraint_height, NULL);
+  self->is_visible = true;
+  self->wrap = false;
 }
 
 static void cst_render_context_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
+
+  CstRenderContext* self = CST_RENDER_CONTEXT(o);
+
+  sys_clear_pointer(&self->width_calc, _sys_object_unref);
+  sys_clear_pointer(&self->height_calc, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_render_context_parent_class)->dispose(o);
 }

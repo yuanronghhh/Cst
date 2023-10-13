@@ -6,17 +6,8 @@
 
 SYS_BEGIN_DECLS
 
-typedef struct _CstNode CstNode;
-typedef struct _CstNodeClass CstNodeClass;
-
-typedef struct _CstRenderContext CstRenderContext;
-typedef struct _CstRenderContextClass CstRenderContextClass;
-
 typedef struct _CstComNode CstComNode;
 typedef struct _CstComNodeClass CstComNodeClass;
-
-typedef struct _CstComponent CstComponent;
-typedef struct _CstComponentClass CstComponentClass;
 
 typedef struct _CstText CstText;
 typedef struct _CstTextClass CstTextClass;

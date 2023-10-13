@@ -1,5 +1,5 @@
-#include "CstRender.h"
 #include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstComponent.h>
@@ -129,10 +129,8 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
   self->abs_layer = cst_abs_layer_new_I();
   self->body_node = cst_lbody_new();
 
-  CstNodeProps props = { 0 };
-
-  CstNodeProvider* provider = cst_node_provider_new_I();
-  cst_node_construct(NULL, NULL, NULL, self->body_node, &props);
+  CstNodeBuilder* builder = cst_node_builder_new();
+  cst_node_construct(self->body_node, builder);
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

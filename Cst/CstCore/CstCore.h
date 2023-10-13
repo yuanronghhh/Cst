@@ -18,7 +18,6 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstLayoutFlex.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstManager.h>
-#include <CstCore/Driver/CstMapFunction.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstNodeMap.h>

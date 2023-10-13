@@ -1,4 +1,5 @@
 #include <CstCore/Front/Common/CstLBody.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstLayout.h>
 
@@ -9,13 +10,14 @@ CstNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
 }
 
-void cst_lbody_construct(CstNodeProvider *provider, CstNodeProps *v_props) {
-  sys_return_if_fail(v_props != NULL);
+void cst_lbody_construct(CstNode *v_node, CstNodeBuilder *builder) {
+  sys_return_if_fail(v_node != NULL);
+  sys_return_if_fail(builder != NULL);
 
-  v_props->v_id = "id.body.0";
-  v_props->v_position = CST_LAYER_BOX;
+  cst_node_builder_set_id(builder, "id.body.0");
+  cst_node_builder_set_position(builder, CST_LAYER_BOX);
 
-  CST_NODE_CLASS(cst_lbody_parent_class)->construct(v_module, v_component, v_parent, v_node, v_props);
+  CST_NODE_CLASS(cst_lbody_parent_class)->construct(v_node, builder);
 }
 
 static void cst_lbody_init(CstLBody *self) {

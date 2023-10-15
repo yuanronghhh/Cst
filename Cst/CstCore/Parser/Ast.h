@@ -66,9 +66,7 @@ SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *v_comp_b
 void ast_import_parse(CstParser * ps, AstNode * node);
 
 SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue * value);
-SysInt ast_css_value_width_parse(JNode * v, CstCssValue * value);
-SysInt ast_css_value_height_parse(JNode * v, CstCssValue * value);
-SysInt ast_css_value_color_parse(JNode * v, CstCssValue * value);
+SysBool ast_css_value_color_parse(SysChar *s, CstCssValue * value);
 SysValue * ast_jnode_new_value(JNode * jnode);
 
 SysChar * ast_jnode_extract_index(const SysChar * index_str, SysInt len);

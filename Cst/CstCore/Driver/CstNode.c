@@ -95,6 +95,14 @@ static SysPtrArray *node_new_css_groups(void) {
   return ptr;
 }
 
+void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(rnode != NULL);
+  sys_return_if_fail(layout != NULL);
+
+  cst_css_render_groups(self->css_groups, rnode, layout);
+}
+
 CstNode* cst_node_dclone_i(CstNode *o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysType type = sys_type_from_instance(o);
@@ -133,8 +141,9 @@ static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_rende
 
   CstLayer *layer;
   CstRenderNode* n_rnode;
+  CstRenderContext *rctx = self->render_ctx;
 
-  switch (self->position) {
+  switch (rctx->position) {
     case CST_RENDER_NODE_BOX:
       layer = cst_render_get_box_layer(v_render);
       n_rnode = cst_box_layer_realize_node(CST_BOX_LAYER(layer), CST_BOX_NODE(v_parent), self);
@@ -147,7 +156,7 @@ static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_rende
       break;
 
     default:
-      sys_warning_N("unknow node position: %d", self->position);
+      sys_warning_N("unknow node position: %d", rctx->position);
       n_rnode = NULL;
       break;
   }
@@ -239,41 +248,46 @@ static SysBool node_set_css_r_i(CstNode *self, CstCssGroup *g) {
 }
 
 void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len) {
-  sys_return_if_fail(comp != NULL);
   sys_return_if_fail(self != NULL);
+  sys_return_if_fail(self->name != NULL);
 
   CstCssGroup *g, *ng;
   const SysChar *pname;
+  const SysChar *comp_id;
 
   const SysChar *id = cst_node_get_id(self);
-  const SysChar *comp_id = cst_component_get_id(comp);
 
-  g = cst_component_get_css_r(comp, id);
+  if (comp) {
+    comp_id = cst_component_get_id(comp);
+    g = cst_component_get_css_r(comp, id);
 
-  if (v_base_len > 0) {
-    if (g == NULL) {
-      g = cst_css_group_new_I(id);
-      cst_component_set_css(comp, g);
-    }
+    if (v_base_len > 0) {
 
-    for (SysInt i = 0; i < v_base_len; i++) {
-      pname = v_base[i];
-      if (pname == NULL) {
-        goto fail;
+      if (g == NULL) {
+        g = cst_css_group_new_I(id);
+        cst_component_set_css(comp, g);
       }
 
-      ng = cst_component_get_css_r(comp, pname);
-      if (ng && ng != g) {
-        cst_css_group_set_base_r(g, ng);
+      for (SysInt i = 0; i < v_base_len; i++) {
+        pname = v_base[i];
+        if (pname == NULL) {
+          goto fail;
+        }
 
-      } else {
-        sys_warning_N("css \"%s\" in component \"%s\" not found", pname, comp_id);
+        ng = cst_component_get_css_r(comp, pname);
+        if (ng && ng != g) {
+          cst_css_group_set_base_r(g, ng);
+
+        } else {
+          sys_warning_N("css \"%s\" in component \"%s\" not found", pname, comp_id);
+        }
       }
     }
-  }
 
-  if (g != NULL) {
-    node_set_css_r_i(self, g);
+    if (g != NULL) {
+
+      node_set_css_r_i(self, g);
+    }
   }
 
   // set system css
@@ -281,6 +295,7 @@ void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_
 
     cst_css_group_set_by_id(self->css_groups, NULL, self->name);
   }
+
   return;
 
 fail:
@@ -292,7 +307,7 @@ fail:
 void cst_node_set_position(CstNode *self, int position) {
   sys_return_if_fail(self != NULL);
 
-  self->position = position;
+  cst_render_context_set_position(self->render_ctx, position);
 }
 
 SysBool cst_node_set_css_r(CstNode *self, CstCssGroup *g) {

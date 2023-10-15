@@ -27,6 +27,7 @@ static void cst_lbody_context_layout_self_i(CstRenderContext *self, CstRenderNod
 
   cst_layout_get_buffer_size(layout, &w, &h);
   cst_layout_node_set_size(lnode, w, h);
+  cst_render_context_set_prefer_size(self, w, h);
 
   CST_RENDER_CONTEXT_CLASS(cst_lbody_context_parent_class)->layout_self(self, render_node, layout);
 }

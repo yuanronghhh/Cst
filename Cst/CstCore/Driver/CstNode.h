@@ -11,7 +11,7 @@ SYS_BEGIN_DECLS
 #define CST_NODE_GET_CLASS(o) sys_instance_get_class(o, CstNodeClass)
 
 struct _CstNode {
-  SysObject unowned;
+  CstLayoutNode unowned;
 
   CstNode   *next;
   CstNode   *prev;
@@ -22,7 +22,6 @@ struct _CstNode {
   CstNode     *last_child;
   SysChar     *name;
   SysChar     *id;
-  SysType     rctx_type;
 
   /* Type: FRAWatch */
   SysList *awatches;
@@ -32,15 +31,15 @@ struct _CstNode {
 
   SysPtrArray* css_groups;
 
-  /* CST_RENDER_NODE_ENUM  */
-  SysInt position;
+  /* render_node */
+  CstRenderContext *render_ctx;
 };
 
 struct _CstNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstNode * (*dclone) (CstNode *node);
+  CstNode * (*dclone) (CstNode *v_node);
   CstRenderContext* (*new_default_context) (CstNode* v_node);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
 };
@@ -75,6 +74,7 @@ void cst_node_set_last_child(CstNode *node, CstNode *last_child);
 void cst_node_set_position(CstNode *self, int position);
 void cst_node_set_node_maps_list(CstNode *self, SysList *list);
 void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len);
+void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout);
 void cst_node_add_awatch(CstNode *node, FRAWatch *awatch);
 void cst_node_set_awatch_list(CstNode *self, SysList *list);
 

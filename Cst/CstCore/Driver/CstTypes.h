@@ -25,7 +25,6 @@ typedef enum _CST_CSS_PROP_ENUM {
   CST_CSS_PROP_COLOR,
   CST_CSS_PROP_BACGROUND,
   CST_CSS_PROP_BORDERRADIUS,
-  CST_CSS_PROP_INVALID,
 } CST_CSS_PROP_ENUM;
 
 typedef enum _CST_CSS_VALUE_ENUM {
@@ -63,8 +62,6 @@ typedef enum _CST_AWATCH_ENUM {
   CST_AWATCH_CSS_VALUE,
   CST_AWATCH_FUNCTION
 } CST_AWATCH_ENUM;
-
-typedef enum _FR_ACTION_ENUM CST_ACTION_ENUM;
 
 typedef enum _CST_COMPONENT_BODY_ENUM {
   CST_COMPONENT_BDATA,
@@ -111,7 +108,9 @@ typedef enum _CST_RENDER_NODE_ENUM {
   CST_RENDER_NODE_MASK = ~0x03,
 } CST_RENDER_NODE_ENUM;
 
+
 typedef SYS_VALUE_ENUM CST_PROP_VALUE_ENUM;
+typedef enum _FR_ACTION_ENUM CST_ACTION_ENUM;
 
 typedef struct _CstContext CstContext;
 
@@ -196,6 +195,7 @@ typedef SysValue CstPropValue;
 typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *node, SysPointer user_data);
+typedef void (*CstCssFunc) (CstRenderNode *node, CstLayout *layout, SysPointer user_data);
 
 SYS_END_DECLS
 

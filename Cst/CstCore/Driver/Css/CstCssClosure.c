@@ -5,11 +5,11 @@ SYS_DEFINE_TYPE(CstCssClosure, cst_css_closure, SYS_TYPE_OBJECT);
 
 
 /* closure */
-void cst_css_closure_calc(CstCssClosure* self, CstRenderNode *render_node) {
+void cst_css_closure_calc(CstCssClosure* self, CstLayout *layout, CstRenderNode *render_node) {
   sys_return_if_fail(self != NULL);
 
   sys_return_if_fail(self->func != NULL);
-  self->func(render_node, self->data);
+  self->func(render_node, layout, self->data);
 }
 
 CstCssClosure* cst_css_closure_clone(CstCssClosure *c) {
@@ -33,7 +33,7 @@ static void cst_css_closure_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_css_closure_parent_class)->dispose(o);
 }
 
-static void cst_css_closure_construct(CstCssClosure* self, SysPointer data, CstRenderNodeFunc calc, SysDestroyFunc free) {
+static void cst_css_closure_construct(CstCssClosure* self, SysPointer data, CstCssFunc calc, SysDestroyFunc free) {
   self->data = data;
   self->func = calc;
   self->free = free;
@@ -43,7 +43,7 @@ CstCssClosure *cst_css_closure_new(void) {
   return sys_object_new(CST_TYPE_CSS_CLOSURE, NULL);
 }
 
-CstCssClosure* cst_css_closure_new_I(SysPointer data, CstRenderNodeFunc calc, SysDestroyFunc free) {
+CstCssClosure* cst_css_closure_new_I(SysPointer data, CstCssFunc calc, SysDestroyFunc free) {
   CstCssClosure *o = cst_css_closure_new();
 
   cst_css_closure_construct(o, data, calc, free);

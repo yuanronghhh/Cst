@@ -20,7 +20,7 @@ struct _CstRenderContext {
   SysBool wrap;
   SysInt16 line_space;
 
-  SysInt node_type;
+  SysInt position;
   SysInt child_count;
   FRSInt4 mbp;
 
@@ -50,13 +50,8 @@ CstRenderContext* cst_render_context_dclone(CstRenderContext *o);
 void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4);
 const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self);
 
-void cst_render_context_set_node_type(CstRenderContext* self, SysInt flag);
-
 void cst_render_context_set_width_closure(CstRenderContext* self, CstCssClosure* c);
 void cst_render_context_set_height_closure(CstRenderContext* self, CstCssClosure* c);
-
-SysBool cst_render_context_is_abs_node(CstRenderContext* self);
-SysBool cst_render_context_is_box_node(CstRenderContext* self);
 
 void cst_render_context_set_prefer_size(CstRenderContext* self, SysInt width, SysInt height);
 void cst_render_context_get_prefer_size(CstRenderContext* self, SysInt* width, SysInt* height);
@@ -64,10 +59,9 @@ void cst_render_context_get_prefer_size(CstRenderContext* self, SysInt* width, S
 SysBool cst_render_context_need_layout(CstRenderContext* self);
 void cst_render_context_set_layout(CstRenderContext *self, SysBool bvalue);
 
-void cst_render_context_calc_size(CstRenderContext *self, CstRenderNode *rnode);
-SysBool cst_render_context_can_wrap(CstRenderContext* self);
-
-void cst_render_context_set_abs_node(CstRenderContext* self, SysInt bvalue);
+void cst_render_context_calc_width(CstRenderContext * self, CstLayout * layout, CstRenderNode * rnode);
+void cst_render_context_calc_height(CstRenderContext * self, CstLayout * layout, CstRenderNode * rnode);
+void cst_render_context_calc_size(CstRenderContext * self, CstLayout * layout, CstRenderNode * rnode);
 
 void cst_render_context_constraint_height(CstRenderContext *self, CstRenderContext *pctx, SysInt *height);
 void cst_render_context_constraint_width(CstRenderContext *self, CstRenderContext *pctx, SysInt *width);
@@ -80,6 +74,11 @@ void cst_render_context_set_paint(CstRenderContext *self, SysBool bvalue);
 void cst_render_context_setup(void);
 void cst_render_context_teardown(void);
 
+void cst_render_context_set_position(CstRenderContext *self, SysInt position);
+SysInt cst_render_context_get_position(CstRenderContext *self);
+
+void cst_render_context_set_wrap(CstRenderContext *self, SysBool wrap);
+SysBool cst_render_context_get_wrap(CstRenderContext *self);
 
 SYS_END_DECLS
 

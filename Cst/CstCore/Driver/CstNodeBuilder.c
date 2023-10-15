@@ -46,10 +46,7 @@ void cst_node_builder_build_props(CstNodeBuilder *self, CstNode *v_node) {
   cst_node_set_awatch_list(v_node, self->v_awatches);
 
   // LBody has no parent component.
-  if (self->v_component) {
-
-    cst_node_set_css_props(v_node, self->v_component, (const SysChar**)v_base, v_base_len);
-  }
+  cst_node_set_css_props(v_node, self->v_component, (const SysChar**)v_base, v_base_len);
 
   switch (self->v_position) {
     case CST_LAYER_BOX:

@@ -83,6 +83,16 @@ void cst_layout_node_set_bound(CstLayoutNode* self, const FRRect *bound) {
   *(&self->bound) = *bound;
 }
 
+void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(m4 != NULL);
+
+  m4->m0 = self->margin.m0 + self->border.m0 + self->padding.m0;
+  m4->m1 = self->margin.m1 + self->border.m1 + self->padding.m1;
+  m4->m2 = self->margin.m2 + self->border.m2 + self->padding.m2;
+  m4->m3 = self->margin.m3 + self->border.m3 + self->padding.m3;
+}
+
 CstLayoutNode* cst_layout_node_clone(CstLayoutNode* oself) {
   sys_return_val_if_fail(oself != NULL, NULL);
 
@@ -108,49 +118,40 @@ CstLayoutNode* cst_layout_node_clone_i(CstLayoutNode* oself) {
   return nself;
 }
 
-void cst_layout_node_set_padding(CstLayoutNode *self, FRSInt4 *m4) {
+void cst_layout_node_set_margin(CstLayoutNode *self, const FRSInt4 * margin) {
   sys_return_if_fail(self != NULL);
 
-  self->padding = *m4;
+  self->margin = *margin;
 }
 
-void cst_layout_node_get_padding(CstLayoutNode *self, FRSInt4 *m4) {
-  sys_return_if_fail(self != NULL);
+const FRSInt4 * cst_layout_node_get_margin(CstLayoutNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  *m4 = self->padding;
+  return &self->margin;
 }
 
-void cst_layout_node_set_margin(CstLayoutNode *self, FRSInt4 *m4) {
+void cst_layout_node_set_padding(CstLayoutNode *self, const FRSInt4 * padding) {
   sys_return_if_fail(self != NULL);
 
-  self->margin = *m4;
+  self->padding = *padding;
 }
 
-void cst_layout_node_get_margin(CstLayoutNode *self, FRSInt4 *m4) {
-  sys_return_if_fail(self != NULL);
+const FRSInt4 * cst_layout_node_get_padding(CstLayoutNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  *m4 = self->margin;
+  return &self->padding;
 }
 
-void cst_layout_node_set_border(CstLayoutNode* self, FRSInt4* m4) {
+void cst_layout_node_set_border(CstLayoutNode *self, const FRSInt4 * border) {
   sys_return_if_fail(self != NULL);
 
-  self->border = *m4;
+  self->border = *border;
 }
 
-void cst_layout_node_get_border(CstLayoutNode* self, FRSInt4* m4) {
-  sys_return_if_fail(self != NULL);
+const FRSInt4 * cst_layout_node_get_border(CstLayoutNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  *m4 = self->border;
-}
-
-void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4) {
-  sys_return_if_fail(self != NULL);
-
-  m4->m0 = self->margin.m0 + self->border.m0 + self->padding.m0;
-  m4->m1 = self->margin.m1 + self->border.m1 + self->padding.m1;
-  m4->m2 = self->margin.m2 + self->border.m2 + self->padding.m2;
-  m4->m3 = self->margin.m3 + self->border.m3 + self->padding.m3;
+  return &self->border;
 }
 
 void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext *ctx) {

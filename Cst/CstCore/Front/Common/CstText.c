@@ -1,15 +1,9 @@
 #include <CstCore/Front/Common/CstText.h>
-#include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Front/Common/CstLContentContext.h>
+#include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
-
-
-typedef enum _CST_TEXT_DIRTY_ENUM {
-  CST_TEXT_DIRTY = CST_DIRTY_DIRTY,
-  CST_TEXT_DIRTY_FONT_SIZE = 1 << 3,
-  CST_TEXT_DIRTY_OVERLAY = 1 << 4,
-} CST_TEXT_DIRTY_ENUM;
-
 
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_NODE);
 
@@ -76,7 +70,7 @@ CstNode* cst_text_dclone_i(CstNode *node) {
 
 CstRenderContext* cst_text_new_default_context_i(CstNode* node) {
 
-  return cst_lbox_context_new_I();
+  return cst_lcontent_context_new_I();
 }
 
 static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
@@ -94,50 +88,39 @@ static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   }
 }
 
-#if 0
 static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
-  CstText *self = CST_TEXT(v_node);
-  CstTextPrivate *priv = self->priv;
+  CstText *self = CST_TEXT(node);
   FRSInt4 m4;
 
-  const FRRect *bound = cst_render_node_get_bound(v_node);
-  PangoLayout *playout = self->playout;
+  FRDrawLayout *playout = self->playout;
+  FRDraw *draw = cst_layout_get_draw(layout);
+  FRRect *bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
 
-  cst_render_node_get_margin(v_node, &m4);
-
-  if(cst_render_node_is_dirty(v_node)) {
-
-    fr_playout_show_text(draw, playout, bound, &m4);
-    cst_render_node_set_need_repaint(v_node, false);
-  }
-
-  CST_NODE_CLASS(cst_text_parent_class)->repaint(self, layout);
+  
+  fr_draw_show_text(draw, playout, bound, );
 }
 
-static void cst_text_relayout_i(CstNode *self, CstLayout *layout) {
-  CstText *self = CST_TEXT(v_node);
+static void cst_text_relayout_i(CstNode *o, CstLayout *layout) {
+  CstText *self = CST_TEXT(o);
   SysInt width = 0;
   SysInt height = 0;
 
-  PangoLayout *playout = self->playout;
+  FRDrawLayout *playout = self->playout;
   PangoFontDescription *font_desc = self->font_desc;
-  FRContext *cr = fr_draw_get_cr(draw);
+  FRDraw *draw = cst_layout_get_draw(layout);
 
   pango_layout_set_font_description (playout, font_desc);
-
-  if (cst_render_node_is_dirty(v_node)) {
-    pango_cairo_update_layout (cr, playout);
-    pango_layout_get_pixel_size (playout, &width, &height);
-
-    cst_render_node_set_size(v_node, width, height);
-    cst_render_node_set_need_relayout(v_node, false);
-  }
-
-  cst_render_node_relayout_h(self, layout);
-
-  CST_NODE_CLASS(cst_text_parent_class)->relayout(self, layout);
+  fr_draw_layout_text(draw, playout);
 }
-#endif
+
+void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
+  sys_return_if_fail(o != NULL);
+
+  CstText *self = CST_TEXT(o);
+  FRDrawLayout *playout = self->playout;
+
+  pango_layout_get_pixel_size(playout, width, height);
+}
 
 /* object api */
 static void cst_text_init(CstText *self) {
@@ -173,4 +156,5 @@ static void cst_text_class_init(CstTextClass* cls) {
 
   ncls->dclone = cst_text_dclone_i;
   ncls->construct = cst_text_construct_i;
+  ncls->new_default_context = cst_text_new_default_context_i;
 }

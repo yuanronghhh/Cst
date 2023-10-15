@@ -1,11 +1,17 @@
 #include <CstCore/Driver/Css/CstCssPair.h>
+#include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
+#include <CstCore/Driver/Css/CstCssClosure.h>
+#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstLayout.h>
 
 
 struct _CstCssNode {
   SysChar* name;
   SysInt css_ptype;
   SysInt css_state;
+
+  CstCssFunc set_value;
 };
 
 static const SysChar* CST_CSS_NODE_NAMES[] = {
@@ -23,12 +29,13 @@ static SysHashTable* gcss_node_ht = NULL;
 SYS_DEFINE_TYPE(CstCssPair, cst_css_pair, SYS_TYPE_OBJECT);
 
 /* css node */
-CstCssNode* cst_css_node_new(SysChar* name, SysInt css_ptype, SysInt css_state) {
+CstCssNode* cst_css_node_new(SysChar* name, SysInt css_ptype, SysInt css_state, CstCssFunc set_value) {
   CstCssNode* self = sys_new0_N(CstCssNode, 1);
 
   self->name = name;
   self->css_ptype = css_ptype;
   self->css_state = css_state;
+  self->set_value = set_value;
 
   return self;
 }
@@ -56,7 +63,17 @@ CstCssNode *cst_css_node_lookup(const SysChar *name) {
   return sys_hash_table_lookup(gcss_node_ht, (const SysPointer)name);
 }
 
-CstCssPair *cst_css_pair_clone(CstCssPair *o) {
+CST_CSS_PROP_ENUM cst_css_node_get_css_ptype(const SysChar *name) {
+  CstCssNode *node = sys_hash_table_lookup(gcss_node_ht, (const SysPointer)name);
+  if (node == NULL) {
+
+    return -1;
+  }
+
+  return node->css_ptype;
+}
+
+CstCssPair *cst_css_pair_dclone(CstCssPair *o) {
   sys_return_val_if_fail(o != NULL, NULL);
 
   CstCssValue *nvalue = cst_css_value_dclone(o->value);
@@ -65,13 +82,187 @@ CstCssPair *cst_css_pair_clone(CstCssPair *o) {
   return npair;
 }
 
-void cst_css_pair_calc(CstCssPair *pair, CstRenderNode *render_node, CstLayout *layout) {
+void cst_css_pair_calc(CstCssPair *self, CstRenderNode *rnode, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+  CstCssNode *node = self->css_node;
 
-  cst_css_value_set_value(pair->value, render_node, layout);
+  if (cst_layout_is_state(layout, node->css_state)) {
+    node->set_value(rnode, layout, self);
+  }
 }
 
-static void cst_css_pair_bind_map(SysChar* name, SysInt css_type, SysInt css_state) {
-  CstCssNode* node = cst_css_node_new(name, css_type, css_state);
+void cst_css_pair_set_x(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_CLOSURE)) {
+    CstCssClosure *v = cst_css_value_get_v_closure(self->value);
+
+    cst_css_closure_calc(v, layout, render_node);
+  }
+
+  if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_INT)) {
+    SysInt v = cst_css_value_get_v_int(self->value);
+    cst_render_node_set_x(render_node, v);
+  }
+
+}
+
+void cst_css_pair_set_y(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  SysInt v = cst_css_value_get_v_int(self->value);
+  sys_return_if_fail(v != -1);
+
+  cst_render_node_set_y(render_node, v);
+}
+
+void cst_css_pair_set_width(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_CLOSURE)) {
+    CstCssClosure *v = cst_css_value_get_v_closure(self->value);
+
+    cst_css_closure_calc(v, layout, render_node);
+  }
+
+  if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_INT)) {
+    SysInt v = cst_css_value_get_v_int(self->value);
+    cst_render_node_set_width(render_node, v);
+  }
+}
+
+void cst_css_pair_set_height(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  SysInt v = cst_css_value_get_v_int(self->value);
+  sys_return_if_fail(v != -1);
+
+  cst_render_node_set_height(render_node, v);
+}
+
+void cst_css_pair_set_position(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  SysInt v = cst_css_value_get_v_int(self->value);
+  sys_return_if_fail(v != -1);
+
+  cst_render_node_set_position(render_node, v);
+}
+
+void cst_css_pair_set_margin(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  FRSInt4 *v = cst_css_value_get_v_m4(self->value);
+  sys_return_if_fail(v != NULL);
+
+  cst_render_node_set_margin(render_node, v);
+}
+
+void cst_css_pair_set_border(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  FRSInt4 *v = cst_css_value_get_v_m4(self->value);
+  sys_return_if_fail(v != NULL);
+
+  cst_render_node_set_border(render_node, v);
+}
+
+void cst_css_pair_set_padding(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  FRSInt4 *v = cst_css_value_get_v_m4(self->value);
+  sys_return_if_fail(v != NULL);
+
+  cst_render_node_set_padding(render_node, v);
+}
+
+void cst_css_pair_set_font_family(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  const SysChar *v = cst_css_value_get_v_string(self->value);
+  sys_return_if_fail(v != NULL);
+
+  cst_text_set_font_desc(CST_TEXT(render_node), v);
+}
+
+void cst_css_pair_set_font_size(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  SysInt v = cst_css_value_get_v_int(self->value);
+  sys_return_if_fail(v != -1);
+
+  cst_text_set_font_size(CST_TEXT(render_node), v);
+}
+
+void cst_css_pair_set_wrap(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  SysBool v = cst_css_value_get_v_bool(self->value);
+
+  cst_render_node_set_wrap(render_node, v);
+}
+
+void cst_css_pair_set_color(CstRenderNode* render_node, CstLayout *layout, SysPointer user_data) {
+  CstCssPair *self = user_data;
+  sys_return_if_fail(self != NULL);
+
+  FRColor* v = cst_css_value_get_v_color(self->value);
+  sys_return_if_fail(v != NULL);
+
+  FRDraw *draw = cst_layout_get_draw(layout);
+  sys_return_if_fail(draw != NULL);
+
+  fr_draw_set_color(draw, v);
+}
+
+void cst_css_pair_width_percent(CstRenderNode *render_node, CstLayout *layout, SysInt64 d) {
+  sys_return_if_fail(render_node != NULL);
+
+  const FRRect *bound;
+  SysInt pwidth;
+  FRSInt4 m4;
+  CstRenderNode *pnode;
+
+  pnode = cst_render_node_get_parent(render_node);
+  bound = cst_render_node_get_bound(pnode);
+
+  cst_render_node_get_mbp(render_node, &m4);
+  pwidth = bound->width - m4.m1 - m4.m3;
+
+  cst_render_node_set_width(render_node, (SysInt)(pwidth * d * 0.01));
+}
+
+void cst_css_pair_height_percent(CstRenderNode *render_node, CstLayout *layout, SysInt64 d) {
+  sys_return_if_fail(render_node != NULL);
+
+  const FRRect *bound;
+  SysInt pheight;
+  FRSInt4 m4;
+
+  CstRenderNode *pnode;
+
+  pnode = cst_render_node_get_parent(render_node);
+  bound = cst_render_node_get_bound(pnode);
+
+  cst_render_node_get_mbp(render_node, &m4);
+  pheight = bound->height - m4.m0 - m4.m2;
+
+  cst_render_node_set_height(render_node, (SysInt)(pheight * d * 0.01));
+}
+
+static void cst_css_pair_bind_map(SysChar* name, SysInt css_type, SysInt css_state, CstCssFunc set_value) {
+  CstCssNode* node = cst_css_node_new(name, css_type, css_state, set_value);
 
   sys_hash_table_insert(gcss_node_ht, (SysPointer)node->name, (SysPointer)node);
 }
@@ -81,18 +272,18 @@ void cst_css_pair_setup(void) {
 
   gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, cst_css_node_free);
 
-  cst_css_pair_bind_map("x"            ,  CST_CSS_PROP_X            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("width"        ,  CST_CSS_PROP_W            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("height"       ,  CST_CSS_PROP_H            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("position"     ,  CST_CSS_PROP_POSITION     ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("border"       ,  CST_CSS_PROP_BORDER       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  );
-  cst_css_pair_bind_map("font-family"  ,  CST_CSS_PROP_FONT_FAMILY  ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   );
-  cst_css_pair_bind_map("font-size"    ,  CST_CSS_PROP_FONT_SIZE    ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   );
-  cst_css_pair_bind_map("wrap"         ,  CST_CSS_PROP_WRAP         ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   );
-  cst_css_pair_bind_map("color"        ,  CST_CSS_PROP_COLOR        ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   );
+  cst_css_pair_bind_map("x"            ,  CST_CSS_PROP_X            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_x);
+  cst_css_pair_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_y);
+  cst_css_pair_bind_map("width"        ,  CST_CSS_PROP_W            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_width);
+  cst_css_pair_bind_map("height"       ,  CST_CSS_PROP_H            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_height);
+  cst_css_pair_bind_map("position"     ,  CST_CSS_PROP_POSITION     ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_position);
+  cst_css_pair_bind_map("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_margin);
+  cst_css_pair_bind_map("border"       ,  CST_CSS_PROP_BORDER       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_border);
+  cst_css_pair_bind_map("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_padding);
+  cst_css_pair_bind_map("font-family"  ,  CST_CSS_PROP_FONT_FAMILY  ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_font_family);
+  cst_css_pair_bind_map("font-size"    ,  CST_CSS_PROP_FONT_SIZE    ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_font_size);
+  cst_css_pair_bind_map("wrap"         ,  CST_CSS_PROP_WRAP         ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_wrap);
+  cst_css_pair_bind_map("color"        ,  CST_CSS_PROP_COLOR        ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_color);
 }
 
 void cst_css_pair_teardown(void) {
@@ -100,7 +291,6 @@ void cst_css_pair_teardown(void) {
 
   sys_hash_table_unref(gcss_node_ht);
 }
-
 
 /* object api */
 static void cst_css_pair_dispose(SysObject* o) {

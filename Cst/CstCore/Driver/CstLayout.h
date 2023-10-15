@@ -15,7 +15,9 @@ struct _CstLayout {
   SysObject parent;
 
   /* <private> */
-  int state;
+
+  /* CST_RENDER_STATE_ENUM */
+  SysInt state;
   FRRegion *region;
   FRDraw *draw;
 };
@@ -28,14 +30,18 @@ SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
 CstLayout *cst_layout_new_I(FRDraw *cr, FRRegion *region);
 
-int cst_layout_get_state(CstLayout *self);
 void cst_layout_set_state(CstLayout *self, int state);
-SysBool cst_layout_state_layout(CstLayout *self);
-
+SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FRRegion *cst_layout_get_region(CstLayout* self);
 FRDraw *cst_layout_get_draw(CstLayout* self);
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
+
+void cst_layout_begin_layout(CstLayout * self);
+void cst_layout_end_layout(CstLayout * self);
+
+void cst_layout_begin_paint(CstLayout * self);
+void cst_layout_end_paint(CstLayout * self);
 
 SYS_END_DECLS
 

@@ -16,30 +16,45 @@ struct _CstCssValueClass {
   SysObjectClass parent;
 
   void (*construct) (CstCssValue *self, SysInt state_flag);
-  void (*set_value) (CstCssValue* self, CstRenderNode* render_node, CstLayout* layout);
   CstCssValue* (*parse) (CstCssParser *parser);
   CstCssValue *(*dclone)(CstCssValue *o);
 };
 
 
-SYS_API SysType cst_css_value_get_type(void);
-SYS_API CstCssValue *cst_css_value_new(void);
+SysType cst_css_value_get_type(void);
+CstCssValue *cst_css_value_new(void);
 
-void cst_css_value_set_bool(CstCssValue* value, SysBool v);
-void cst_css_value_set_string(CstCssValue* value, const SysChar* v);
-void cst_css_value_set_null(CstCssValue* value, SysPointer v);
-void cst_css_value_set_pointer(CstCssValue* value, SysPointer v);
-void cst_css_value_set_m4(CstCssValue* value, FRSInt4* m4);
-void cst_css_value_set_int(CstCssValue* value, SysInt v);
-void cst_css_value_set_double(CstCssValue* value, SysDouble v);
-void cst_css_value_set_color(CstCssValue* value, FRColor* v);
-void cst_css_value_set_closure(CstCssValue* value, CstCssClosure* v);
-SYS_API CstCssValue *cst_css_value_dclone(CstCssValue *o);
-SYS_API void cst_css_value_set_value(CstCssValue* self, CstRenderNode* render_node, CstLayout* layout);
+CstCssValue *cst_css_value_dclone(CstCssValue *o);
 
-SYS_API CstCssClosure* cst_css_value_parse_calc(SysChar* s, CstRenderNodeFunc func);
-SYS_API void cst_css_value_width_percent(CstRenderNode* render_node, SysPointer user_data);
-SYS_API void cst_css_value_height_percent(CstRenderNode* render_node, SysPointer user_data);
+CstCssClosure* cst_css_value_parse_percent(SysChar* s, CstCssFunc func);
+
+void cst_css_value_set_v_int(CstCssValue *self, SysInt v_int);
+SysInt cst_css_value_get_v_int(CstCssValue *self);
+
+void cst_css_value_set_v_bool(CstCssValue *self, SysBool v_bool);
+SysBool cst_css_value_get_v_bool(CstCssValue *self);
+
+void cst_css_value_set_v_string(CstCssValue *self, const SysChar* v_string);
+const SysChar* cst_css_value_get_v_string(CstCssValue *self);
+
+void cst_css_value_set_v_null(CstCssValue *self);
+
+void cst_css_value_set_v_pointer(CstCssValue *self, SysPointer v_pointer);
+SysPointer cst_css_value_get_v_pointer(CstCssValue *self);
+
+void cst_css_value_set_v_m4(CstCssValue *self, FRSInt4* v_m4);
+FRSInt4* cst_css_value_get_v_m4(CstCssValue *self);
+
+void cst_css_value_set_v_double(CstCssValue *self, SysDouble v_double);
+SysDouble cst_css_value_get_v_double(CstCssValue *self);
+
+void cst_css_value_set_v_color(CstCssValue *self, FRColor* v_color);
+FRColor* cst_css_value_get_v_color(CstCssValue *self);
+
+void cst_css_value_set_v_closure(CstCssValue *self, CstCssClosure* v_closure);
+CstCssClosure* cst_css_value_get_v_closure(CstCssValue *self);
+
+SysBool cst_css_value_is_d_type(CstCssValue * self, SysInt tp);
 
 SYS_END_DECLS
 

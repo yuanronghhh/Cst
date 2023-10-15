@@ -86,34 +86,37 @@ void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
 
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
+  CstRenderNode *rnode = CST_RENDER_NODE(self);
 
-  cst_render_node_render_enter(self, layout);
-  cst_render_node_relayout_self(self, layout);
-
+  cst_render_node_render_enter(rnode, layout);
   if (self->children) {
 
     cst_box_node_relayout_node(self->children, layout);
   }
 
-  cst_render_node_render_leave(render_node, layout);
-  cst_render_node_set_layout(render_node, false);
+  cst_render_node_print(rnode);
+  cst_render_node_relayout_self(rnode, layout);
+  cst_render_node_print(rnode);
+
+  cst_render_node_render_leave(rnode, layout);
+  cst_render_node_set_layout(rnode, false);
 }
 
 void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderNode *render_node = CST_RENDER_NODE(self);
+  CstRenderNode *rnode = CST_RENDER_NODE(self);
 
-  cst_render_node_render_enter(render_node, layout);
-  cst_render_node_relayout_self(render_node, layout);
+  cst_render_node_render_enter(rnode, layout);
+  cst_render_node_relayout_self(rnode, layout);
 
   if(self->children) {
 
     cst_box_node_relayout_node(self->children, layout);
   }
 
-  cst_render_node_render_leave(render_node, layout);
-  cst_render_node_set_layout(render_node, false);
+  cst_render_node_render_leave(rnode, layout);
+  cst_render_node_set_layout(rnode, false);
 }
 
 void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {

@@ -1103,6 +1103,37 @@ void ast_module_parse(AstNode *root, CstModule *self) {
 }
 
 /* CstCssValue */
+SysBool ast_css_parse_string(SysChar *s, SysChar *key, CstCssValue *value) {
+  SysBool r = false;
+  CstCssClosure *c = NULL;
+  CST_CSS_PROP_ENUM prop = cst_css_node_get_css_ptype(key);
+
+  switch (prop) {
+    case CST_CSS_PROP_W:
+      c = cst_css_value_parse_percent(s, (CstCssFunc)cst_css_pair_width_percent);
+      break;
+    case CST_CSS_PROP_H:
+      c = cst_css_value_parse_percent(s, (CstCssFunc)cst_css_pair_height_percent);
+      break;
+    default:
+      break;
+  }
+
+  if (c != NULL) {
+
+    cst_css_value_set_v_closure(value, c);
+    r = true;
+  } else {
+    if (sys_str_startswith(s, "#")) {
+
+      r = ast_css_value_color_parse(s, value);
+    }
+  }
+
+
+  return r;
+}
+
 SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
   sys_return_val_if_fail(value != NULL, SYS_FAILED);
   sys_return_val_if_fail(jnode != NULL, SYS_FAILED);
@@ -1111,14 +1142,17 @@ SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
 
   switch (jnode->type) {
     case AstJBool:
-      cst_css_value_set_bool(value, jnode->v.v_bool);
+      cst_css_value_set_v_bool(value, jnode->v.v_bool);
       break;
     case AstJSource:
     case AstJString:
-      cst_css_value_set_string(value, jnode->v.v_string);
+      if (jnode->v.v_string != NULL) {
+        ast_css_parse_string(jnode->v.v_string, key, value);
+      }
+
       break;
     case AstJNull:
-      cst_css_value_set_null(value, NULL);
+      cst_css_value_set_v_null(value);
       break;
     case AstJArray:
       if (jnode->v.v_array->len != 4) {
@@ -1144,19 +1178,19 @@ SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
       v_m4->m2 = tm4[2];
       v_m4->m3 = tm4[3];
 
-      cst_css_value_set_m4(value, v_m4);
+      cst_css_value_set_v_m4(value, v_m4);
       break;
     case AstJNode:
     case AstJProperty:
     case AstJObject:
     case AstJPair:
-      cst_css_value_set_pointer(value, (SysPointer)jnode->v.v_node);
+      cst_css_value_set_v_pointer(value, (SysPointer)jnode->v.v_node);
       break;
     case AstJInt:
-      cst_css_value_set_int(value, jnode->v.v_int);
+      cst_css_value_set_v_int(value, jnode->v.v_int);
       break;
     case AstJDouble:
-      cst_css_value_set_double(value, jnode->v.v_double);
+      cst_css_value_set_v_double(value, jnode->v.v_double);
       break;
     default:
 
@@ -1167,70 +1201,17 @@ SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
   return SYS_SUCCESS;
 }
 
-SysInt ast_css_value_width_parse(JNode *v, CstCssValue *value) {
-  CstCssClosure *c;
-
-  if (v->type == AstJString) {
-    c = cst_css_value_parse_calc(v->v.v_string, cst_css_value_width_percent);
-    if (c == NULL) {
-      sys_warning_N("Faild to parse width percent: %s", v->v.v_string);
-      return SYS_FAILED;
-    }
-
-    cst_css_value_set_closure(value, c);
-
-  } else if (v->type == AstJInt) {
-
-    cst_css_value_set_int(value, v->v.v_int);
-  } else {
-    sys_warning_N("Cannot parse width type: %d.", v->type);
-
-    return SYS_FAILED;
-  }
-
-
-  return SYS_SUCCESS;
-}
-
-SysInt ast_css_value_height_parse(JNode *v, CstCssValue *value) {
-  CstCssClosure *c;
-
-  if (v->type == AstJString) {
-    c = cst_css_value_parse_calc(v->v.v_string, cst_css_value_height_percent);
-
-    if (c == NULL) {
-      sys_warning_N("Faild to parse height: %s", v->v.v_string);
-      return SYS_FAILED;
-    }
-
-    cst_css_value_set_closure(value, c);
-
-  } else if (v->type == AstJInt) {
-
-    cst_css_value_set_int(value, v->v.v_int);
-
-  } else {
-    sys_warning_N("Cannot parse height type: %d.", v->type);
-
-    return SYS_FAILED;
-  }
-
-
-  return SYS_SUCCESS;
-}
-
-SysInt ast_css_value_color_parse(JNode *v, CstCssValue *value) {
-  sys_return_val_if_fail(v != NULL, SYS_FAILED);
-  sys_return_val_if_fail(v->type == AstJString, SYS_FAILED);
+SysBool ast_css_value_color_parse(SysChar *s, CstCssValue *value) {
+  sys_return_val_if_fail(s != NULL, SYS_FAILED);
 
   FRColor *color = sys_new0_N(FRColor, 1);
 
-  if (!fr_color_rgba_parse(v->v.v_string, color)) {
-    sys_warning_N("Faild to parse %s.", v->v.v_string);
+  if (!fr_color_rgba_parse(s, color)) {
+    sys_warning_N("Faild to parse %s.", s);
     return SYS_FAILED;
   }
 
-  cst_css_value_set_color(value, color);
+  cst_css_value_set_v_color(value, color);
 
   return SYS_SUCCESS;
 }

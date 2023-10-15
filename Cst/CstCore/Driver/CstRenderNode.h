@@ -11,14 +11,12 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
 
 struct _CstRenderNode {
-  CstLayoutNode parent;
-
+  SysObject parent;
   /* < private > */
 
   /* ref node */
   CstNode *node;
-  /* render_node */
-  CstRenderContext *render_ctx;
+
 };
 
 struct _CstRenderNodeClass {
@@ -37,16 +35,9 @@ CstLayoutNode *cst_render_node_new_I(CstNode *node);
 
 CST_RENDER_NODE_ENUM cst_render_node_type_by_name(const SysChar* name);
 
-void cst_render_node_prepare(CstRenderNode *self);
-
-void cst_render_node_set_abs_node(CstRenderNode *self, SysBool bvalue);
-SysBool cst_render_node_is_abs_node(CstRenderNode *self);
 const FRRect *cst_render_node_get_bound(CstRenderNode* self);
 void cst_render_node_get_mbp(CstRenderNode * self, FRSInt4 * m4);
-void cst_render_node_set_x(CstRenderNode* self, SysInt x);
-void cst_render_node_set_width(CstRenderNode* self, SysInt width);
-void cst_render_node_set_margin(CstRenderNode * self, FRSInt4 * m4);
-void cst_render_node_set_height(CstRenderNode* self, SysInt height);
+
 
 void cst_render_node_mark_dirty(CstRenderNode* self, SysBool bvalue);
 SysBool cst_render_node_is_dirty(CstRenderNode* self);
@@ -60,7 +51,6 @@ void cst_render_node_set_layout(CstRenderNode *self, SysBool bvalue);
 SysBool cst_render_node_is_visible(CstRenderNode* self);
 SysBool cst_render_node_can_wrap(CstRenderNode* self);
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self);
-CstRenderContext* cst_render_node_get_context(CstRenderNode* self);
 const SysChar* cst_render_node_get_id(CstRenderNode *self);
 
 const SysChar* cst_render_node_get_name(CstRenderNode *self);
@@ -74,12 +64,47 @@ void cst_render_node_stroke_rectangle(CstRenderNode* self, CstLayout* layout);
 
 void cst_render_node_layout(CstRenderNode* self, CstLayout *layout);
 void cst_render_node_constraint_size(CstRenderNode* self, CstRenderContext* pctx);
+void cst_render_node_constraint_width(CstRenderNode * self, CstRenderContext * pctx);
+void cst_render_node_constraint_height(CstRenderNode * self, CstRenderContext * pctx);
 
 SysInt cst_render_node_check_dirty(CstRenderNode* rnode, FRRegion* region);
+void cst_render_node_print(CstRenderNode * self);
+
 
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout);
+
+void cst_render_node_set_size(CstRenderNode* self, SysInt width, SysInt height);
+
+void cst_render_node_set_render_ctx(CstRenderNode *self, CstRenderContext * render_ctx);
+CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self);
+
+void cst_render_node_set_y(CstRenderNode *self, SysInt y);
+SysInt cst_render_node_get_y(CstRenderNode *self);
+
+void cst_render_node_set_x(CstRenderNode* self, SysInt x);
+SysInt cst_render_node_get_x(CstRenderNode *self);
+
+void cst_render_node_set_width(CstRenderNode* self, SysInt width);
+void cst_render_node_set_height(CstRenderNode* self, SysInt height);
+
+void cst_render_node_set_position(CstRenderNode *self, SysInt position);
+SysInt cst_render_node_get_position(CstRenderNode *self);
+
+void cst_render_node_prepare(CstRenderNode * self, CstLayout * layout);
+
+void cst_render_node_set_margin(CstRenderNode *self, const FRSInt4 * margin);
+const FRSInt4 * cst_render_node_get_margin(CstRenderNode *self);
+
+void cst_render_node_set_border(CstRenderNode *self, const FRSInt4 * border);
+const FRSInt4 * cst_render_node_get_border(CstRenderNode *self);
+
+void cst_render_node_set_padding(CstRenderNode *self, const FRSInt4 * padding);
+const FRSInt4 * cst_render_node_get_padding(CstRenderNode *self);
+
+void cst_render_node_set_wrap(CstRenderNode *self, SysBool wrap);
+SysBool cst_render_node_get_wrap(CstRenderNode *self);
 
 SYS_END_DECLS
 

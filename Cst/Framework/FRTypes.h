@@ -65,6 +65,7 @@ typedef  struct  _FRValue          FRValue;
 typedef  struct  _FRDisplay           FRDisplay;
 typedef  struct  _FRDisplayClass      FRDisplayClass;
 
+typedef  struct  _PangoLayout         FRDrawLayout;
 typedef  struct  _FRDraw              FRDraw;
 typedef  struct  _FRDrawClass         FRDrawClass;
 

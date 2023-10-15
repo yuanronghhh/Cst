@@ -21,7 +21,7 @@ void fr_draw_surface_flush(FRDraw *self) {
   cairo_surface_flush(self->window_surface);
 }
 
-void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, FRSInt4* m4, FRSInt4* p4) {
+void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, const FRSInt4* p4) {
 
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(m4 != NULL);
@@ -102,6 +102,19 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   return surface;
 }
 
+void fr_draw_set_color(FRDraw *self, FRColor *color) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(self->cr != NULL);
+
+  fr_context_set_source_rgba(self->cr, color->r, color->g, color->b, color->a);
+}
+
+void fr_draw_layout_text(FRDraw *self, PangoLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  pango_cairo_update_layout(self->cr, layout);
+}
+
 void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   sys_return_if_fail(self != NULL);
 
@@ -155,11 +168,11 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
 }
 
 /* text render */
-void fr_playout_show_text(FRDraw* self, PangoLayout *playout, FRRect *bound, FRInt4 m4) {
+void fr_draw_show_text(FRDraw* self, FRDrawLayout *layout, SysInt x, SysInt y, SysInt m1, SysInt m0) {
   FRContext* cr = self->cr;
 
-  fr_context_move_to(cr, bound->x + m4.m1, bound->y + m4.m0);
-  pango_cairo_show_layout(cr, playout);
+  fr_context_move_to(cr, x + m1, y + m0);
+  pango_cairo_show_layout(cr, layout);
 }
 
 /* object api */

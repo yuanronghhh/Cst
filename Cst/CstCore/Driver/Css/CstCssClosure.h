@@ -15,7 +15,7 @@ struct _CstCssClosure {
 
   /* < private > */
   SysPointer data;
-  CstRenderNodeFunc func;
+  CstCssFunc func;
   SysDestroyFunc free;
 };
 
@@ -27,8 +27,8 @@ SYS_API SysType cst_css_closure_get_type(void);
 SYS_API CstCssClosure *cst_css_closure_new(void);
 
 /* CstCssClosure */
-SYS_API void cst_css_closure_calc(CstCssClosure *closure, CstRenderNode *render_node);
-SYS_API CstCssClosure* cst_css_closure_new_I(SysPointer data, CstRenderNodeFunc calc, SysDestroyFunc free);
+SYS_API void cst_css_closure_calc(CstCssClosure * self, CstLayout * layout, CstRenderNode * render_node);
+SYS_API CstCssClosure* cst_css_closure_new_I(SysPointer data, CstCssFunc calc, SysDestroyFunc free);
 CstCssClosure * cst_css_closure_clone(CstCssClosure * c);
 
 

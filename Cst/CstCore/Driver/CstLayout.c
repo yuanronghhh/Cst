@@ -14,10 +14,10 @@ static void cst_layout_construct(CstLayout* self, FRDraw *draw, FRRegion *region
   self->draw = draw;
 }
 
-SysBool cst_layout_state_layout(CstLayout *self) {
+SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   sys_return_val_if_fail(self, false);
 
-  return self->state & CST_RENDER_STATE_LAYOUT;
+  return self->state & state;
 }
 
 CstLayout *cst_layout_new_I(FRDraw *draw, FRRegion *region) {
@@ -82,6 +82,27 @@ void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) 
   sys_return_if_fail(self != NULL);
 
   fr_draw_get_size(self->draw, width, height);
+}
+
+void cst_layout_begin_layout(CstLayout* self) {
+  self->state = CST_RENDER_STATE_LAYOUT;
+  fr_draw_frame_begin(self->draw, self->region);
+}
+
+void cst_layout_end_layout(CstLayout* self) {
+
+  fr_draw_frame_end(self->draw, self->region);
+}
+
+void cst_layout_begin_paint(CstLayout* self) {
+  self->state = CST_RENDER_STATE_PAINT;
+
+  fr_draw_frame_begin(self->draw, self->region);
+}
+
+void cst_layout_end_paint(CstLayout* self) {
+
+  fr_draw_frame_end(self->draw, self->region);
 }
 
 /* object api */

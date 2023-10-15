@@ -18,7 +18,7 @@ CstCssGroup *cst_css_group_clone(CstCssGroup *oself) {
   SysPtrArray *ptr = oself->pairs;
 
   for(SysUInt i = 0; i < ptr->len; i++) {
-    CstCssPair *pair = cst_css_pair_clone(ptr->pdata[i]);
+    CstCssPair *pair = cst_css_pair_dclone(ptr->pdata[i]);
     sys_ptr_array_add(nself->pairs, pair);
   }
 

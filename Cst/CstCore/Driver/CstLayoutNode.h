@@ -24,14 +24,13 @@ struct _CstLayoutNode {
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
 
-  void (*construct) (CstLayoutNode* o);
-
   CstLayoutNode* (*dclone) (CstLayoutNode *o);
+  void (*layout) (CstLayoutNode* o);
 };
 
 SysType cst_layout_node_get_type(void);
-CstLayoutNode *cst_layout_node_new(void);
-CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt height);
+CstLayoutNode* cst_layout_node_new(void);
+CstLayoutNode *cst_layout_node_new_I(void);
 
 CstLayoutNode* cst_layout_node_clone(CstLayoutNode* olayout_node);
 void cst_layout_node_set_width(CstLayoutNode* self, SysInt width);
@@ -62,6 +61,14 @@ const FRSInt4 * cst_layout_node_get_padding(CstLayoutNode *self);
 
 void cst_layout_node_set_border(CstLayoutNode *self, const FRSInt4 * border);
 const FRSInt4 * cst_layout_node_get_border(CstLayoutNode *self);
+
+void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout);
+void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout);
+
+void cst_layout_node_constraint_width(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext* pctx);
+void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext* pctx);
+
+void cst_layout_node_layout(CstLayoutNode *self);
 
 SYS_END_DECLS
 

@@ -156,13 +156,18 @@ void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rno
   sys_return_if_fail(self != NULL);
 
   CstRenderContext* pctx;
-  CstRenderNode* pnode = cst_render_node_get_parent(rnode);
-
-  SysInt w = 0, h = 0;
+  CstRenderNode* pnode;
+  CstNode* node;
+  CstLayoutNode* lnode;
+  SysInt w, h;
   const FRRect* bound;
-  FRSInt4* mbp = &self->mbp;
+  FRSInt4* mbp;
 
-  bound = cst_render_node_get_bound(rnode);
+  mbp = &self->mbp;
+  node = cst_render_node_get_node(rnode);
+  lnode = CST_LAYOUT_NODE(node);
+  bound = cst_layout_node_get_bound(lnode);
+  pnode = cst_render_node_get_parent(rnode);
 
   w = bound->width + mbp->m1 + mbp->m3;
   h = bound->height + mbp->m2 + mbp->m0;
@@ -170,10 +175,8 @@ void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rno
   if (pnode) {
     pctx = cst_render_node_get_render_ctx(pnode);
 
-    pctx->prefer_height = h;
-
-    cst_render_node_constraint_size(rnode, pctx);
-    self->prefer_height = max(h, pctx->prefer_height);
+    cst_layout_node_constraint_width(lnode, self, pctx);
+    cst_layout_node_constraint_height(lnode, self, pctx);
   }
 }
 
@@ -191,6 +194,12 @@ void cst_render_context_constraint_height(CstRenderContext *self, CstRenderConte
 
   *height = pctx->prefer_height - self->mbp.m0 - self->mbp.m2;
   sys_assert(*height >= 0);
+}
+
+SysBool cst_render_context_is_dirty(CstRenderContext *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->need_relayout || self->need_repaint;
 }
 
 /* paint */
@@ -238,10 +247,15 @@ void constraint_width(CstRenderNode *rnode, CstLayout *layout, SysPointer user_d
 }
 
 void constraint_height(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
-  CstRenderContext *rctx = user_data;
+  CstRenderContext *rctx;
   CstRenderContext *pctx;
-  CstRenderNode *pnode;
+  CstRenderNode* pnode;
+  CstNode *node;
+  CstLayoutNode* lnode;
 
+  rctx = user_data;
+  node = cst_render_node_get_node(rnode);
+  lnode = CST_LAYOUT_NODE(node);
   pnode = cst_render_node_get_parent(rnode);
 
   if (pnode) {
@@ -249,8 +263,8 @@ void constraint_height(CstRenderNode* rnode, CstLayout *layout, SysPointer user_
 
     pctx->prefer_height = rctx->prefer_height;
 
-    cst_render_node_set_height(rnode, rctx->prefer_height);
-    cst_render_node_constraint_height(rnode, pctx);
+    cst_layout_node_set_height(lnode, rctx->prefer_height);
+    cst_layout_node_constraint_height(lnode, rctx, pctx);
   }
 }
 

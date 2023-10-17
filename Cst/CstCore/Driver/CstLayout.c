@@ -94,15 +94,12 @@ void cst_layout_end_layout(CstLayout* self) {
   fr_draw_frame_end(self->draw, self->region);
 }
 
-void cst_layout_begin_paint(CstLayout* self) {
-  self->state = CST_RENDER_STATE_PAINT;
+void cst_layout_begin_node(CstLayout* self) {
 
-  fr_draw_frame_begin(self->draw, self->region);
 }
 
-void cst_layout_end_paint(CstLayout* self) {
+void cst_layout_end_node(CstLayout* self) {
 
-  fr_draw_frame_end(self->draw, self->region);
 }
 
 /* object api */

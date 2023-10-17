@@ -23,7 +23,8 @@ static void cst_lbody_context_init(CstLBodyContext *o) {
 static void cst_lbody_context_layout_self_i(CstRenderContext *self, CstRenderNode* render_node, CstLayout *layout) {
   SysInt w, h;
 
-  CstLayoutNode *lnode = CST_LAYOUT_NODE(render_node);
+  CstNode *node = cst_render_node_get_node(render_node);
+  CstLayoutNode* lnode = CST_LAYOUT_NODE(node);
 
   cst_layout_get_buffer_size(layout, &w, &h);
   cst_layout_node_set_size(lnode, w, h);
@@ -32,10 +33,13 @@ static void cst_lbody_context_layout_self_i(CstRenderContext *self, CstRenderNod
   CST_RENDER_CONTEXT_CLASS(cst_lbody_context_parent_class)->layout_self(self, render_node, layout);
 }
 
-static void cst_lbody_context_layout_children_i(CstRenderContext* self, CstRenderNode* render_node, CstLayout* layout) {
-  cst_render_node_fill_rectangle(render_node, layout);
+static void cst_lbody_context_layout_children_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
+  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode* lnode = CST_LAYOUT_NODE(node);
+
+  cst_layout_node_fill_rectangle(lnode, layout);
   
-  CST_RENDER_CONTEXT_CLASS(cst_lbody_context_parent_class)->layout_children(self, render_node, layout);
+  CST_RENDER_CONTEXT_CLASS(cst_lbody_context_parent_class)->layout_children(self, rnode, layout);
 }
 
 static void cst_lbody_context_dispose(SysObject* o) {

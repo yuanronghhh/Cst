@@ -68,11 +68,6 @@ CstNode* cst_text_dclone_i(CstNode *node) {
   return nnode;
 }
 
-CstRenderContext* cst_text_new_default_context_i(CstNode* node) {
-
-  return cst_lcontent_context_new_I();
-}
-
 static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   sys_return_if_fail(v_node != NULL);
 
@@ -90,14 +85,13 @@ static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
 
 static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
   CstText *self = CST_TEXT(node);
-  FRSInt4 m4;
 
   FRDrawLayout *playout = self->playout;
   FRDraw *draw = cst_layout_get_draw(layout);
-  FRRect *bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
+  const FRRect *bound = cst_node_get_bound(node);
+  const FRSInt4 *m4 = cst_node_get_margin(node);
 
-  
-  fr_draw_show_text(draw, playout, bound, );
+  fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
 
 static void cst_text_relayout_i(CstNode *o, CstLayout *layout) {
@@ -109,17 +103,18 @@ static void cst_text_relayout_i(CstNode *o, CstLayout *layout) {
   PangoFontDescription *font_desc = self->font_desc;
   FRDraw *draw = cst_layout_get_draw(layout);
 
-  pango_layout_set_font_description (playout, font_desc);
-  fr_draw_layout_text(draw, playout);
+  fr_layout_set_font_description (playout, font_desc);
+  fr_layout_get_pixel_size(playout, width, height);
+  fr_draw_layout_layout(draw, playout);
+  fr_layout_get_size();
 }
 
 void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
   sys_return_if_fail(o != NULL);
 
   CstText *self = CST_TEXT(o);
-  FRDrawLayout *playout = self->playout;
+  PangoLayout *playout = self->playout;
 
-  pango_layout_get_pixel_size(playout, width, height);
 }
 
 /* object api */
@@ -151,10 +146,12 @@ static void cst_text_dispose(SysObject* o) {
 static void cst_text_class_init(CstTextClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
   CstNodeClass *ncls = CST_NODE_CLASS(cls);
+  CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_text_dispose;
 
   ncls->dclone = cst_text_dclone_i;
   ncls->construct = cst_text_construct_i;
-  ncls->new_default_context = cst_text_new_default_context_i;
+
+  lcls->layout = cst_text_relayout_i;
 }

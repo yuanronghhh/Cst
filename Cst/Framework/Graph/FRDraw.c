@@ -1,4 +1,5 @@
 #include "FRDraw.h"
+#include "FRDraw.h"
 #include <Framework/Graph/FRDraw.h>
 #include <Framework/Device/FRDisplay.h>
 #include <Framework/Device/FRWindow.h>
@@ -35,8 +36,8 @@ void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, con
   SysInt width = bound->width + p4->m1 + p4->m3;
   SysInt height = bound->height + p4->m0 + p4->m2;
 
-  fr_context_rectangle(cr, x, y, width, height);
-  fr_context_stroke(cr);
+  cairo_rectangle(cr, x, y, width, height);
+  cairo_stroke(cr);
 }
 
 void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound) {
@@ -45,8 +46,8 @@ void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound) {
 
   FRContext *cr = self->cr;
 
-  fr_context_rectangle(cr, bound->x, bound->y, bound->width, bound->height);
-  fr_context_fill(cr);
+  cairo_rectangle(cr, bound->x, bound->y, bound->width, bound->height);
+  cairo_fill(cr);
 }
 
 void fr_draw_get_size(FRDraw *self, SysInt *width, SysInt *height) {
@@ -106,10 +107,10 @@ void fr_draw_set_color(FRDraw *self, FRColor *color) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->cr != NULL);
 
-  fr_context_set_source_rgba(self->cr, color->r, color->g, color->b, color->a);
+  cairo_set_source_rgba(self->cr, color->r, color->g, color->b, color->a);
 }
 
-void fr_draw_layout_text(FRDraw *self, PangoLayout *layout) {
+void fr_draw_layout_layout(FRDraw *self, FRDrawLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   pango_cairo_update_layout(self->cr, layout);
@@ -167,11 +168,19 @@ void fr_draw_frame_end(FRDraw *self, FRRegion *region) {
   self->is_painting = false;
 }
 
+void fr_draw_save(FRDraw* self) {
+  cairo_save(self->cr);
+}
+
+void fr_draw_restore(FRDraw* self) {
+  cairo_restore(self->cr);
+}
+
 /* text render */
 void fr_draw_show_text(FRDraw* self, FRDrawLayout *layout, SysInt x, SysInt y, SysInt m1, SysInt m0) {
   FRContext* cr = self->cr;
 
-  fr_context_move_to(cr, x + m1, y + m0);
+  cairo_move_to(cr, x + m1, y + m0);
   pango_cairo_show_layout(cr, layout);
 }
 

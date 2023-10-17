@@ -20,12 +20,12 @@ struct _CstRenderContext {
   SysBool wrap;
   SysInt16 line_space;
 
-  SysInt position;
   SysInt child_count;
   FRSInt4 mbp;
 
   SysInt prefer_height;
   SysInt prefer_width;
+  SysInt position;
 
   // self constraint
   CstCssClosure  *width_calc;
@@ -35,6 +35,7 @@ struct _CstRenderContext {
 struct _CstRenderContextClass {
   SysObjectClass parent;
 
+  void (*layout_self_before) (CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout);
   void (*layout_self) (CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout);
   void (*layout_children) (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 };
@@ -79,6 +80,8 @@ SysInt cst_render_context_get_position(CstRenderContext *self);
 
 void cst_render_context_set_wrap(CstRenderContext *self, SysBool wrap);
 SysBool cst_render_context_get_wrap(CstRenderContext *self);
+
+SysBool cst_render_context_is_dirty(CstRenderContext *self);
 
 SYS_END_DECLS
 

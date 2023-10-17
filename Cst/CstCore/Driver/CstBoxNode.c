@@ -87,6 +87,7 @@ void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
   CstRenderNode *rnode = CST_RENDER_NODE(self);
+  CstRenderContext* rctx = cst_render_node_get_render_ctx(rnode);
 
   cst_render_node_render_enter(rnode, layout);
   if (self->children) {
@@ -99,13 +100,14 @@ void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
   cst_render_node_print(rnode);
 
   cst_render_node_render_leave(rnode, layout);
-  cst_render_node_set_layout(rnode, false);
+  cst_render_context_set_layout(rctx, false);
 }
 
 void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstRenderNode *rnode = CST_RENDER_NODE(self);
+  CstRenderContext* rctx = cst_render_node_get_render_ctx(rnode);
 
   cst_render_node_render_enter(rnode, layout);
   cst_render_node_relayout_self(rnode, layout);
@@ -116,23 +118,24 @@ void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
   }
 
   cst_render_node_render_leave(rnode, layout);
-  cst_render_node_set_layout(rnode, false);
+  cst_render_context_set_layout(rctx, false);
 }
 
 void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderNode *render_node = CST_RENDER_NODE(self);
+  CstRenderNode *rnode = CST_RENDER_NODE(self);
+  CstRenderContext* rctx = cst_render_node_get_render_ctx(rnode);
 
-  if (!cst_render_node_need_paint(render_node)) {
+  if (!cst_render_context_need_paint(rctx)) {
     return;
   }
 
-  cst_render_node_render_enter(render_node, layout);
-  cst_render_node_paint_self(render_node, layout);
-  cst_render_node_render_leave(render_node, layout);
+  cst_render_node_render_enter(rnode, layout);
+  cst_render_node_paint_self(rnode, layout);
+  cst_render_node_render_leave(rnode, layout);
 
-  cst_render_node_set_paint(render_node, false);
+  cst_render_context_set_paint(rctx, false);
 }
 
 static void box_node_repaint_box_node_r(CstBoxNode *self, CstLayout *layout) {

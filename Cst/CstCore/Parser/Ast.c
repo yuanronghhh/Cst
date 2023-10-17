@@ -773,7 +773,7 @@ static void node_parse_action(CstNodeBuilder *builder, const SysChar *watch_name
   }
 
   FRAWatchProps awatch_props = {0};
-  awatch_props.get_bound_func = (FRGetBoundFunc)cst_render_node_get_bound;
+  awatch_props.get_bound_func = (FRGetBoundFunc)cst_layout_node_get_bound;
 
   awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
   sys_clear_pointer(&bind_var, sys_free);

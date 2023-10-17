@@ -33,7 +33,8 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
   "key_up","key_down",
 };
 
-SYS_DEFINE_TYPE(CstNode, cst_node, SYS_TYPE_OBJECT);
+
+SYS_DEFINE_TYPE(CstNode, cst_node, CST_TYPE_LAYOUT_NODE);
 
 
 CstNode* cst_node_parent(CstNode *self) {
@@ -105,12 +106,11 @@ void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout)
 
 CstNode* cst_node_dclone_i(CstNode *o) {
   sys_return_val_if_fail(o != NULL, NULL);
-  SysType type = sys_type_from_instance(o);
 
   FRAWatch *nwatch;
   CstNodeMap *map;
   SysPtrArray *ptr;
-  CstNode *n = sys_object_new(type, NULL);
+  CstNode* n = CST_NODE(cst_layout_node_clone(CST_LAYOUT_NODE(o)));
 
   n->id = sys_strdup(o->id);
   ptr = n->css_groups;
@@ -141,9 +141,9 @@ static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_rende
 
   CstLayer *layer;
   CstRenderNode* n_rnode;
-  CstRenderContext *rctx = self->render_ctx;
+  SysInt position = cst_node_get_position(self);
 
-  switch (rctx->position) {
+  switch (position) {
     case CST_RENDER_NODE_BOX:
       layer = cst_render_get_box_layer(v_render);
       n_rnode = cst_box_layer_realize_node(CST_BOX_LAYER(layer), CST_BOX_NODE(v_parent), self);
@@ -156,7 +156,7 @@ static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_rende
       break;
 
     default:
-      sys_warning_N("unknow node position: %d", rctx->position);
+      sys_warning_N("unknow node position: %d", position);
       n_rnode = NULL;
       break;
   }
@@ -304,10 +304,16 @@ fail:
   }
 }
 
-void cst_node_set_position(CstNode *self, int position) {
+void cst_node_set_position(CstNode *self, SysInt position) {
   sys_return_if_fail(self != NULL);
 
-  cst_render_context_set_position(self->render_ctx, position);
+  self->position = position;
+}
+
+SysInt cst_node_get_position(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->position;
 }
 
 SysBool cst_node_set_css_r(CstNode *self, CstCssGroup *g) {
@@ -328,6 +334,33 @@ SysBool cst_node_set_css_by_id(CstNode *self, SysChar *id, CstComponent *comp) {
 }
 
 /* api */
+void cst_node_layout_content(CstNode *self) {
+  sys_return_if_fail(self != NULL);
+}
+
+void cst_node_set_margin(CstNode *self, const FRSInt4 * margin) {
+  sys_return_if_fail(self != NULL);
+
+  cst_layout_node_set_margin(CST_LAYOUT_NODE(self), margin);
+}
+
+const FRSInt4 * cst_node_get_margin(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return cst_layout_node_get_margin(CST_LAYOUT_NODE(self));
+}
+
+void cst_node_set_bound(CstNode *self, const FRRect * bound) {
+  sys_return_if_fail(self != NULL);
+
+  cst_layout_node_set_bound(CST_LAYOUT_NODE(self), bound);
+}
+
+const FRRect * cst_node_get_bound(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return cst_layout_node_get_bound(CST_LAYOUT_NODE(self));
+}
 
 const SysChar * cst_node_get_name(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -638,6 +671,7 @@ CstNode* cst_node_new(void) {
 
 static void cst_node_class_init(CstNodeClass *cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
+  CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_node_dispose;
 
@@ -665,4 +699,3 @@ static void cst_node_init(CstNode *self) {
   self->awatches = NULL;
   self->css_groups = node_new_css_groups();
 }
-

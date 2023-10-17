@@ -1,7 +1,7 @@
 #ifndef __CST_NODE_H__
 #define __CST_NODE_H__
 
-#include <CstCore/Driver/CstCommon.h>
+#include <CstCore/Driver/CstLayoutNode.h>
 
 SYS_BEGIN_DECLS
 
@@ -31,12 +31,11 @@ struct _CstNode {
 
   SysPtrArray* css_groups;
 
-  /* render_node */
-  CstRenderContext *render_ctx;
+  SysInt position;
 };
 
 struct _CstNodeClass {
-  SysObjectClass parent;
+  CstLayoutNodeClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
   CstNode * (*dclone) (CstNode *v_node);
@@ -71,7 +70,6 @@ CstNode *cst_node_next(CstNode *node);
 FRAWatch *cst_node_get_awatch(CstNode *node, SysType atype, const SysChar *bind_var);
 CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);
-void cst_node_set_position(CstNode *self, int position);
 void cst_node_set_node_maps_list(CstNode *self, SysList *list);
 void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len);
 void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout);
@@ -92,6 +90,18 @@ void cst_node_setup(void);
 void cst_node_teardown(void);
 
 CstRenderContext* cst_node_new_default_context(CstNode *self);
+
+void cst_node_set_position(CstNode *self, SysInt position);
+SysInt cst_node_get_position(CstNode *self);
+
+void cst_node_set_bound(CstNode *self, const FRRect * bound);
+const FRRect * cst_node_get_bound(CstNode *self);
+
+void cst_node_set_margin(CstNode *self, const FRSInt4 * margin);
+const FRSInt4 * cst_node_get_margin(CstNode *self);
+
+void cst_node_layout_content(CstNode *self);
+void cst_node_get_size(CstNode *self, SysInt *width, SysInt *height);
 
 SYS_END_DECLS
 

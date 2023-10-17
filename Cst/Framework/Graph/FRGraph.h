@@ -6,6 +6,12 @@
 
 SYS_BEGIN_DECLS
 
+typedef enum _FR_REGION_OVERLAP_ENUM {
+  FR_REGION_OVERLAP_IN = CAIRO_REGION_OVERLAP_IN,
+  FR_REGION_OVERLAP_OUT = CAIRO_REGION_OVERLAP_OUT,
+  FR_REGION_OVERLAP_PART = CAIRO_REGION_OVERLAP_PART
+} FR_REGION_OVERLAP_ENUM;
+
 typedef  struct  _FRRGBA           FRColor;
 typedef  struct  _FRPoint          FRPoint;
 typedef  struct  _FRInt4           FRInt4;
@@ -16,6 +22,8 @@ typedef  struct _cairo_rectangle_int FRRect;
 typedef  struct _cairo_pattern FRPattern;
 typedef  struct _cairo_surface FRSurface;
 typedef  struct _cairo FRContext;
+
+#define FRImage pixman_image_t
 
 struct _FRPoint {
   SysInt x;
@@ -43,17 +51,19 @@ struct _FRSInt4 {
   SysInt16 m3;
 };
 
-#define FRImage pixman_image_t
-
 SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FRColor *color);
 SYS_API FRColor* fr_color_rgba_new(const SysChar *rgba);
 SYS_API SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y);
 FRSInt4* fr_sint4_clone(FRSInt4* m);
 FRSInt4* fr_sint4_new(void);
 void fr_sint4_free(FRSInt4* o);
+
+#define fr_region_destroy cairo_region_destroy
+#define fr_region_create_rectangle cairo_region_create_rectangle
+#define fr_region_create cairo_region_create
+#define fr_region_union_rectangle cairo_region_union_rectangle
 #define fr_region_contains_rectangle cairo_region_contains_rectangle
 #define fr_region_intersect_rectangle cairo_region_intersect_rectangle
-
 #define fr_region_is_empty cairo_region_is_empty
 
 SYS_END_DECLS

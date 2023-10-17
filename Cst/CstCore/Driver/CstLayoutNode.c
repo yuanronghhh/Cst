@@ -1,8 +1,11 @@
+#include "CstLayoutNode.h"
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
 
+
 SYS_DEFINE_TYPE(CstLayoutNode, cst_layout_node, SYS_TYPE_OBJECT);
+
 
 CstLayoutNode* cst_layout_node_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT_NODE, NULL);
@@ -118,6 +121,18 @@ CstLayoutNode* cst_layout_node_clone_i(CstLayoutNode* oself) {
   return nself;
 }
 
+static void cst_layout_node_layout_i(CstLayoutNode* self) {
+}
+
+void cst_layout_node_layout(CstLayoutNode *self) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayoutNodeClass *cls = CST_LAYOUT_NODE_GET_CLASS(self);
+  sys_return_if_fail(cls->layout != NULL);
+
+  cls->layout(self);
+}
+
 void cst_layout_node_set_margin(CstLayoutNode *self, const FRSInt4 * margin) {
   sys_return_if_fail(self != NULL);
 
@@ -175,27 +190,58 @@ const FRRect *cst_layout_node_get_bound(CstLayoutNode* self) {
   return &self->bound;
 }
 
+void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+
+  const FRRect* bound = &self->bound;
+  FRDraw* draw = cst_layout_get_draw(layout);
+
+  fr_draw_fill_rectangle(draw, bound);
+}
+
+void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  const FRSInt4 *m4, *p4;
+  const FRRect* bound;
+  FRDraw* draw = cst_layout_get_draw(layout);
+
+  m4 = &self->margin;
+  p4 = &self->padding;
+  bound = &self->bound;
+
+  fr_draw_stroke_mp(draw, bound, m4, p4);
+
+#if 0
+  sys_debug_N("repaint layout_node: %s,%s<%d,%d,%d,%d>",
+      cst_layout_node_get_id(self),
+      cst_layout_node_get_name(self),
+      bound->x,
+      bound->y,
+      bound->width,
+      bound->height);
+#endif
+}
+
+void cst_layout_node_constraint_width(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext *pctx) {
+
+   cst_render_context_constraint_width(rctx, pctx, &self->bound.width);
+}
+
+void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext *pctx) {
+
+   cst_render_context_constraint_height(rctx, pctx, &self->bound.height);
+}
+
 /* object api */
-static void cst_layout_node_construct_i(CstLayoutNode *self, SysInt x, SysInt y, SysInt width, SysInt height) {
-  self->bound.x = x;
-  self->bound.y = y;
-  self->bound.width = width;
-  self->bound.height = height;
-}
-
-static void cst_layout_node_construct2_i(CstLayoutNode* self) {
-  cst_layout_node_construct_i(self, 0, 0, -1, -1);
-}
-
-CstLayoutNode *cst_layout_node_new_I(SysInt x, SysInt y, SysInt width, SysInt height) {
+CstLayoutNode *cst_layout_node_new_I(void) {
   CstLayoutNode * o = cst_layout_node_new();
-
-  cst_layout_node_construct_i(o, x, y, width, height);
-
   return o;
 }
 
 static void cst_layout_node_init(CstLayoutNode *self) {
+  self->bound.width = -1;
+  self->bound.height = -1;
 }
 
 static void cst_layout_node_dispose(SysObject* o) {
@@ -208,7 +254,6 @@ static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_layout_node_dispose;
-
-  cls->construct = cst_layout_node_construct2_i;
   cls->dclone = cst_layout_node_clone_i;
+  cls->layout = cst_layout_node_layout_i;
 }

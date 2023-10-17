@@ -21,18 +21,18 @@ static void cst_lcontent_context_init(CstLContentContext *o) {
 
 static void cst_lcontent_context_layout_self_i(CstRenderContext *self, CstRenderNode* rnode, CstLayout *layout) {
   SysInt w, h;
+  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode* lnode = CST_LAYOUT_NODE(node);
 
   // set self size
-  cst_render_context_get_prefer_size(self, &w, &h);
-  cst_render_node_set_size(rnode, w, h);
+  cst_layout_node_layout(lnode);
 
   CST_RENDER_CONTEXT_CLASS(cst_lcontent_context_parent_class)->layout_self(self, rnode, layout);
 }
 
-static void cst_lcontent_context_layout_children_i(CstRenderContext* self, CstRenderNode* render_node, CstLayout* layout) {
-  cst_render_node_fill_rectangle(render_node, layout);
+static void cst_lcontent_context_layout_children_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
 
-  CST_RENDER_CONTEXT_CLASS(cst_lcontent_context_parent_class)->layout_children(self, render_node, layout);
+  CST_RENDER_CONTEXT_CLASS(cst_lcontent_context_parent_class)->layout_children(self, rnode, layout);
 }
 
 static void cst_lcontent_context_dispose(SysObject* o) {

@@ -1,6 +1,7 @@
 #include <CstCore/Driver/CstBoxLayer.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 typedef struct _BoxLayerContext BoxLayerContext;
 
@@ -26,18 +27,35 @@ void cst_box_layer_set_root(CstBoxLayer *self, CstBoxNode *root) {
 }
 
 void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
-  SysInt status;
   CstLayer* self = ctx->v_layer;
   FRRegion* region = ctx->v_region;
+  CstRenderContext *rctx = cst_render_node_get_render_ctx(rnode);
+  CstNode *node = cst_render_node_get_node(rnode);
+  const FRRect *bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
 
   sys_return_if_fail(region != NULL);
   sys_return_if_fail(self != NULL);
 
-  status = cst_render_node_check_dirty(rnode, region);
-  if (status < 0) {
+  if (fr_region_is_empty(region)) {
     return;
   }
-  cst_render_node_set_paint(rnode, true);
+
+  if (cst_render_context_is_dirty(rctx)) {
+    return;
+  }
+
+  if (!cst_render_context_is_visible(rctx)) {
+    return;
+  }
+
+  SysUInt s = fr_region_contains_rectangle(region, bound);
+  if (s == FR_REGION_OVERLAP_OUT) {
+    return;
+  }
+
+  sys_assert(bound->width != -1 && "width should be set before check dirty.");
+
+  cst_render_context_set_paint(rctx, true);
   cst_layer_queue_draw_node(self, rnode);
 }
 
@@ -61,21 +79,6 @@ void cst_box_layer_render(CstLayer*o, CstLayout *layout) {
   cst_box_node_repaint_root(box_node, layout);
 }
 
-void box_node_print(CstRenderNode* node, SysPointer user_data) {
-  CstRenderNode* pnode;
-  CstBoxNode* self = CST_BOX_NODE(node);
-
-  if (self->parent) {
-    pnode = CST_RENDER_NODE(self->parent);
-
-    sys_debug_N("%s,%s,%s,%s", cst_render_node_get_name(pnode), cst_render_node_get_id(pnode), cst_render_node_get_name(node), cst_render_node_get_id(node));
-  }
-  else {
-
-    sys_debug_N(",,%s,%s", cst_render_node_get_name(node), cst_render_node_get_id(node));
-  }
-}
-
 void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
   CstBoxLayer* self = CST_BOX_LAYER(o);
 
@@ -85,6 +88,11 @@ void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
   CstBoxNode* box_node = self->tree;
 
   cst_box_node_relayout_root(box_node, layout);
+}
+
+void box_node_print(CstRenderNode* rnode, SysPointer user_data) {
+  
+  cst_render_node_print(rnode);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {

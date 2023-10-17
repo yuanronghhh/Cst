@@ -25,8 +25,9 @@ static void cst_lgrid_context_layout_self_i(CstRenderContext *self, CstRenderNod
 
 static void cst_lgrid_context_layout_children_i(CstRenderContext* self, CstRenderNode* render_node, CstLayout* layout) {
   CST_RENDER_CONTEXT_CLASS(cst_lgrid_context_parent_class)->layout_children(self, render_node, layout);
+  CstNode* node = cst_render_node_get_node(render_node);
 
-  cst_render_node_fill_rectangle(render_node, layout);
+  cst_layout_node_fill_rectangle(CST_LAYOUT_NODE(node), layout);
 }
 
 static void cst_lgrid_context_dispose(SysObject* o) {

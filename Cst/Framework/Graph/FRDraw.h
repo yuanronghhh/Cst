@@ -28,10 +28,6 @@ struct _FRDraw {
   SysBool is_painting;
 };
 
-struct _FRDrawContext {
-  PangoLayout *playout;
-};
-
 SYS_API SysType fr_draw_get_type(void);
 SYS_API FRDraw* fr_draw_new_I(FRWindow *window);
 SYS_API void fr_draw_frame_begin(FRDraw *self, FRRegion *region);
@@ -44,7 +40,12 @@ void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound);
 /* text render */
 void fr_draw_show_text(FRDraw * self, FRDrawLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);
 void fr_draw_set_color(FRDraw *self, FRColor *color);
-void fr_draw_layout_text(FRDraw * self, PangoLayout * layout);
+void fr_draw_layout_layout(FRDraw * self, FRDrawLayout * layout);
+
+/* context */
+void fr_draw_save(FRDraw* self);
+void fr_draw_restore(FRDraw* self);
+
 
 SYS_END_DECLS
 

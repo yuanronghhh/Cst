@@ -40,8 +40,8 @@ void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
 void cst_layout_begin_layout(CstLayout * self);
 void cst_layout_end_layout(CstLayout * self);
 
-void cst_layout_begin_paint(CstLayout * self);
-void cst_layout_end_paint(CstLayout * self);
+void cst_layout_begin_node(CstLayout* self);
+void cst_layout_end_node(CstLayout* self);
 
 SYS_END_DECLS
 

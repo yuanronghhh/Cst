@@ -51,20 +51,17 @@ void cst_text_set_alignment(CstText* self, SysInt align) {
   pango_layout_set_alignment(self->playout, align);
 }
 
-CstNode* cst_text_dclone_i(CstNode *node) {
+CstNode* cst_text_dclone_i(CstNode *o) {
   CstText *ntext;
   CstText *otext;
 
-  CstNode *nnode;
-
-  nnode = CST_NODE_CLASS(cst_text_parent_class)->dclone(node);
-  ntext = CST_TEXT(nnode);
-  otext = CST_TEXT(node);
+  ntext = CST_TEXT(CST_NODE_CLASS(cst_text_parent_class)->dclone(o));
+  otext = CST_TEXT(o);
 
   ntext->playout = otext->playout ? pango_layout_copy(otext->playout) : NULL;
   ntext->font_desc = otext->font_desc ? pango_font_description_copy(otext->font_desc) : NULL;
 
-  return nnode;
+  return CST_NODE(ntext);
 }
 
 static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
@@ -82,6 +79,7 @@ static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   }
 }
 
+#if 0
 static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
   CstText *self = CST_TEXT(node);
 
@@ -92,6 +90,7 @@ static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
 
   fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
+#endif
 
 static void cst_text_relayout_i(CstLayoutNode *o, CstLayout *layout) {
   CstText *self = CST_TEXT(o);
@@ -114,12 +113,11 @@ void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
   CstText *self = CST_TEXT(o);
   PangoLayout *playout = self->playout;
 
+  fr_layout_get_pixel_size(playout, width, height);
 }
 
 /* object api */
 static void cst_text_init(CstText *self) {
-  CstNode *node = CST_NODE(self);
-
   PangoFontMap *font_map = pango_cairo_font_map_get_default();
   PangoContext *pctx = pango_font_map_create_context(font_map);
 

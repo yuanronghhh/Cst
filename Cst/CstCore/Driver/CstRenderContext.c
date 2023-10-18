@@ -172,14 +172,31 @@ SysInt cst_render_context_get_direction(CstRenderContext *self) {
 }
 
 void cst_render_context_constraint(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout) {
-  self->prefer_width = pctx->prefer_width;
-  self->prefer_height = pctx->prefer_height;
+  sys_return_if_fail(self != NULL);
+
+  if (pctx) {
+
+    self->prefer_width = pctx->prefer_width;
+    self->prefer_height = pctx->prefer_height;
+  }
 }
 
 void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
+  sys_return_if_fail(cls->layout_self != NULL);
+
+  return cls->layout_self(self, rnode, layout);
 }
 
 void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
+  sys_return_if_fail(cls->layout_children != NULL);
+
+  return cls->layout_children(self, rnode, layout);
 }
 
 void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {

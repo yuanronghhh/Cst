@@ -203,7 +203,7 @@ static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, CstParser *ps) {
   SysHashTable *ht;
 
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, _sys_object_unref);
+  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
 
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
@@ -244,7 +244,7 @@ static void cst_module_dispose(SysObject* o) {
   sys_clear_pointer(&self->root_component, _sys_object_unref);
   sys_clear_pointer(&self->function_env, _sys_object_unref);
 
-  sys_list_free_full(self->awatches, _sys_object_unref);
+  sys_list_free_full(self->awatches, (SysDestroyFunc)_sys_object_unref);
 
   fr_env_set_parent(FR_ENV(self), NULL);
 

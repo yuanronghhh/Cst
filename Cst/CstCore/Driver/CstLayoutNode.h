@@ -24,15 +24,14 @@ struct _CstLayoutNode {
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
 
-  CstLayoutNode* (*dclone) (CstLayoutNode *o);
-  void (*layout) (CstLayoutNode* o, CstLayout* layout);
+  CstLayoutNode* (*dclone) (CstLayoutNode* o);
+  void (*layout) (CstLayoutNode* o, CstLayout *layout);
 };
 
 SysType cst_layout_node_get_type(void);
 CstLayoutNode* cst_layout_node_new(void);
 CstLayoutNode *cst_layout_node_new_I(void);
 
-CstLayoutNode* cst_layout_node_clone(CstLayoutNode* olayout_node);
 void cst_layout_node_set_width(CstLayoutNode* self, SysInt width);
 SysInt cst_layout_node_get_width(CstLayoutNode* self);
 void cst_layout_node_set_height(CstLayoutNode* self, SysInt width);
@@ -53,7 +52,6 @@ void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4);
 const FRRect *cst_layout_node_get_bound(CstLayoutNode* self);
 void cst_layout_node_set_bound(CstLayoutNode* self, const FRRect *bound);
 
-
 void cst_layout_node_set_margin(CstLayoutNode *self, const FRSInt4 * margin);
 const FRSInt4 * cst_layout_node_get_margin(CstLayoutNode *self);
 
@@ -70,6 +68,7 @@ void cst_layout_node_constraint_width(CstLayoutNode* self, CstRenderContext* rct
 void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext* pctx);
 
 void cst_layout_node_layout(CstLayoutNode * self, CstLayout * layout);
+CstLayoutNode* cst_layout_node_dclone(CstLayoutNode* oself);
 
 SYS_END_DECLS
 

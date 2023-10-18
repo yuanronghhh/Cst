@@ -100,7 +100,6 @@ void cst_box_node_layout_children(CstBoxNode* self, CstLayout* layout) {
   }
 }
 
-
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
 
@@ -108,10 +107,8 @@ void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
   CstBoxNode *cnode;
   CstRenderContext* rctx;
   CstRenderContext* cctx;
-  CstNode* node;
 
   rnode = CST_RENDER_NODE(self);
-  node = cst_render_node_get_node(rnode);
   rctx = cst_render_node_get_render_ctx(rnode);
 
   cst_render_node_render_enter(rnode, layout);
@@ -165,8 +162,6 @@ void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {
 
 static void box_node_repaint_box_node_r(CstBoxNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-
-  FRDraw *draw = cst_layout_get_draw(layout);
 
   cst_box_node_paint(self, layout);
 
@@ -242,7 +237,6 @@ CstRenderNode* cst_box_node_new(void) {
 }
 
 static void cst_box_node_dispose(SysObject* o) {
-  CstBoxNode *self = CST_BOX_NODE(o);
 
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }

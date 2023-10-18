@@ -22,7 +22,6 @@ CstCssClosure *cst_css_parser_parse_calc(CstCssParser* parser, SysChar *str, Cst
 
 /* object api */
 static void cst_css_parser_dispose(SysObject* o) {
-  CstCssParser *self = CST_CSS_PARSER(o);
 
   SYS_OBJECT_CLASS(cst_css_parser_parent_class)->dispose(o);
 }

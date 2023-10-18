@@ -140,7 +140,6 @@ void cst_node_builder_add_awatches(CstNodeBuilder *self, FRAWatch* map) {
 
 /* object api */
 static void cst_node_builder_dispose(SysObject* o) {
-  CstNodeBuilder *self = CST_NODE_BUILDER(o);
 
   SYS_OBJECT_CLASS(cst_node_builder_parent_class)->dispose(o);
 }

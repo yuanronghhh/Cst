@@ -47,10 +47,7 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_module != NULL);
 
-  CstComponent *v_component = NULL;
-  FRWindow *window = cst_render_get_default_window(v_render);
   CstRenderNode* body = cst_render_render_node_new_root(v_render, v_module);
-  CstLayer* box_layer = cst_render_get_box_layer(v_render);
 
   cst_render_set_layer_root(v_render, body);
   cst_module_realize(v_module, body, v_render);

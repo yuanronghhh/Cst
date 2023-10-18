@@ -38,7 +38,7 @@ struct _CstNodeClass {
   CstLayoutNodeClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstNode * (*dclone) (CstNode *v_node);
+  CstNode* (*dclone) (CstNode *o);
   CstRenderContext* (*new_default_context) (CstNode* v_node);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
 };
@@ -79,7 +79,6 @@ void cst_node_set_awatch_list(CstNode *self, SysList *list);
 CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render);
 CstRenderNode* cst_node_realize_self(CstRenderNode* v_parent, CstNode* self, CstRender *v_render);
 
-CstNode *cst_node_dclone(CstNode *v_node);
 void cst_node_bind(CstNode *self, CstComNode *com_node);
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
@@ -101,7 +100,7 @@ void cst_node_set_margin(CstNode *self, const FRSInt4 * margin);
 const FRSInt4 * cst_node_get_margin(CstNode *self);
 
 void cst_node_layout_content(CstNode *self);
-void cst_node_get_size(CstNode *self, SysInt *width, SysInt *height);
+CstNode* cst_node_dclone (CstNode *o);
 
 SYS_END_DECLS
 

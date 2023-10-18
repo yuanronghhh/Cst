@@ -173,7 +173,6 @@ CstCssClosure* cst_css_value_parse_percent(SysChar *s, CstCssFunc func) {
 
 /* object api */
 static void cst_css_value_dispose(SysObject* o) {
-  CstCssValue *self = CST_CSS_VALUE(o);
 
   SYS_OBJECT_CLASS(cst_css_value_parent_class)->dispose(o);
 }

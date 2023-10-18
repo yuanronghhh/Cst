@@ -26,7 +26,7 @@ void cst_box_layer_set_root(CstBoxLayer *self, CstBoxNode *root) {
   self->tree = root;
 }
 
-void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
+static void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
   CstLayer* self = ctx->v_layer;
   FRRegion* region = ctx->v_region;
   CstRenderContext *rctx = cst_render_node_get_render_ctx(rnode);
@@ -66,7 +66,7 @@ void cst_box_layer_check(CstLayer *o, CstLayout *layout) {
   FRRegion *region = cst_layout_get_region(layout);
   BoxLayerContext ctx = { o, region };
 
-  cst_box_node_bfs_handle(self->tree, box_layer_mark_one, &ctx);
+  cst_box_node_bfs_handle(self->tree, (CstRenderNodeFunc)box_layer_mark_one, &ctx);
 }
 
 void cst_box_layer_render(CstLayer*o, CstLayout *layout) {

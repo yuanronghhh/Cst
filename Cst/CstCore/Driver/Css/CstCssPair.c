@@ -154,7 +154,6 @@ void cst_css_pair_set_height(CstRenderNode* rnode, CstLayout *layout, SysPointer
 void cst_css_pair_set_position(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode *node = cst_render_node_get_node(rnode);
   CstRenderContext* rctx = cst_render_node_get_render_ctx(rnode);
 
   SysInt v = cst_css_value_get_v_int(self->value);
@@ -221,7 +220,6 @@ void cst_css_pair_set_font_size(CstRenderNode* rnode, CstLayout *layout, SysPoin
 void cst_css_pair_set_wrap(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
   CstRenderContext* rctx = cst_render_node_get_render_ctx(rnode);
 
   SysBool v = cst_css_value_get_v_bool(self->value);
@@ -248,13 +246,11 @@ void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt6
   const FRRect *bound;
   SysInt pwidth;
   FRSInt4 m4;
-  CstRenderNode *pnode;
   CstLayoutNode* lnode;
   CstNode* node;
 
   node = cst_render_node_get_node(rnode);
   lnode = CST_LAYOUT_NODE(node);
-  pnode = cst_render_node_get_parent(rnode);
   bound = cst_layout_node_get_bound(lnode);
 
   cst_layout_node_get_mbp(lnode, &m4);
@@ -269,13 +265,11 @@ void cst_css_pair_height_percent(CstRenderNode * rnode, CstLayout *layout, SysIn
   const FRRect* bound;
   SysInt pheight;
   FRSInt4 m4;
-  CstRenderNode* pnode;
   CstLayoutNode* lnode;
   CstNode* node;
 
   node = cst_render_node_get_node(rnode);
   lnode = CST_LAYOUT_NODE(node);
-  pnode = cst_render_node_get_parent(rnode);
   bound = cst_layout_node_get_bound(lnode);
 
   cst_layout_node_get_mbp(lnode, &m4);
@@ -293,7 +287,7 @@ static void cst_css_pair_bind_map(SysChar* name, SysInt css_type, SysInt css_sta
 void cst_css_pair_setup(void) {
   sys_assert(gcss_node_ht == NULL && "css value should setup only once.");
 
-  gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, cst_css_node_free);
+  gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)cst_css_node_free);
 
   cst_css_pair_bind_map("x"            ,  CST_CSS_PROP_X            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_x);
   cst_css_pair_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_y);

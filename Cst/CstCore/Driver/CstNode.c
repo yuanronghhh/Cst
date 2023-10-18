@@ -43,14 +43,6 @@ CstNode* cst_node_parent(CstNode *self) {
   return self->parent;
 }
 
-static void node_default_constraint_width(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
-  sys_return_if_fail(self != NULL);
-}
-
-static void node_default_constraint_height(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
-  sys_return_if_fail(self != NULL);
-}
-
 CstNode *cst_node_children(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -104,13 +96,28 @@ void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout)
   cst_css_render_groups(self->css_groups, rnode, layout);
 }
 
-CstNode* cst_node_dclone_i(CstNode *o) {
+CstNode *cst_node_dclone(CstNode *o) {
   sys_return_val_if_fail(o != NULL, NULL);
+
+  CstNodeClass *cls = CST_NODE_GET_CLASS(o);
+  sys_return_val_if_fail(cls->dclone != NULL, NULL);
+
+  return cls->dclone(o);
+}
+
+CstNode* cst_node_dclone_i(CstNode *onode) {
+  sys_return_val_if_fail(onode != NULL, NULL);
 
   FRAWatch *nwatch;
   CstNodeMap *map;
   SysPtrArray *ptr;
-  CstNode* n = CST_NODE(cst_layout_node_clone(CST_LAYOUT_NODE(o)));
+  CstNode *n;
+  CstNode *o;
+  CstLayoutNode *lnode;
+
+  lnode = CST_LAYOUT_NODE(onode);
+  n = CST_NODE(CST_LAYOUT_NODE_CLASS(cst_node_parent_class)->dclone(lnode));
+  o = CST_NODE(onode);
 
   n->id = sys_strdup(o->id);
   ptr = n->css_groups;
@@ -165,7 +172,6 @@ static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_rende
 }
 
 CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render) {
-  CstLayer *layer = NULL;
   CstRenderNode *rnode;
 
   rnode = cst_node_realize(v_module, ncomp_node, v_parent, self, v_render);
@@ -433,15 +439,6 @@ void cst_node_print_node(CstNode* node) {
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
-CstNode* cst_node_dclone(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
-  sys_return_val_if_fail(ncls->dclone != NULL, NULL);
-
-  return ncls->dclone(self);
-}
-
 void cst_node_bind(CstNode *self, CstComNode *com_node) {
   sys_return_if_fail(self != NULL);
 
@@ -566,11 +563,6 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   return CST_NODE_PROP_LAST;
 }
 
-static void cst_node_relayout_down_i(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw* draw, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
-}
-
 static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -588,17 +580,6 @@ static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_no
   }
 
   return node_realize_render_node(self, v_render, v_parent);
-}
-
-static void cst_node_repaint_i(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw* draw, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
-  // sys_assert(self->bound.x >= 0 && "node x >= 0 failed, relayout not correct ?");
-  // sys_assert(self->bound.y >= 0 && "node y >= 0 failed, relayout not correct ?");
-  // sys_assert(self->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
-  // sys_assert(self->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
-
-  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", self->id, self->bound.x, self->bound.y, self->bound.width, self->bound.height);
 }
 
 static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
@@ -671,14 +652,13 @@ CstNode* cst_node_new(void) {
 
 static void cst_node_class_init(CstNodeClass *cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_node_dispose;
 
   cls->construct = cst_node_construct_i;
-  cls->dclone = cst_node_dclone_i;
   cls->realize = cst_node_realize_i;
   cls->new_default_context = cst_node_new_default_context_i;
+  cls->dclone = cst_node_dclone_i;
 }
 
 static void cst_node_dispose(SysObject* o) {

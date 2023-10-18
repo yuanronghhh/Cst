@@ -31,7 +31,6 @@ const SysChar *cst_component_builder_get_id(CstComponentBuilder *self) {
 
 /* object api */
 static void cst_component_builder_dispose(SysObject* o) {
-  CstComponentBuilder *self = CST_COMPONENT_BUILDER(o);
 
   SYS_OBJECT_CLASS(cst_component_builder_parent_class)->dispose(o);
 }

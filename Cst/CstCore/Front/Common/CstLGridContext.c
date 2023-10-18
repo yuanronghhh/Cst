@@ -18,7 +18,7 @@ static void cst_lgrid_context_dispose(SysObject* o) {
 
 static void cst_lgrid_context_class_init(CstLGridContextClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstRenderContextClass *ncls = CST_RENDER_CONTEXT_CLASS(cls);
+  // CstRenderContextClass *ncls = CST_RENDER_CONTEXT_CLASS(cls);
 
   ocls->dispose = cst_lgrid_context_dispose;
 }

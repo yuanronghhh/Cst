@@ -23,7 +23,6 @@ static void cst_lbox_dispose(SysObject* o) {
 
 static void cst_lbox_class_init(CstLBoxClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstNodeClass *ncls = CST_NODE_CLASS(cls);
 
   ocls->dispose = cst_lbox_dispose;
 }

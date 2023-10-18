@@ -1,3 +1,4 @@
+#include "CstRenderNode.h"
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
@@ -48,6 +49,12 @@ CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self) {
   return self->render_ctx;
 }
 
+CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return CST_LAYOUT_NODE(self->node);
+}
+
 CstNode * cst_render_node_get_node(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -61,7 +68,7 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   fr_draw_save(draw);
   cst_render_node_prepare(self, layout);
   cst_node_render_css(self->node, self, layout);
-  cst_render_context_calc_width(self->render_ctx, layout, self);
+  cst_render_context_calc_size(self->render_ctx, layout, self);
 }
 
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout) {
@@ -81,20 +88,6 @@ CstRenderNode* cst_render_node_dclone_i(CstRenderNode *o) {
   n->render_ctx = cst_render_context_dclone(o->render_ctx);
 
   return n;
-}
-
-void cst_render_node_relayout_self(CstRenderNode *self, CstLayout *layout) {
-
-  cst_render_context_layout_self(self->render_ctx, self, layout);
-}
-
-void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-}
-
-void cst_render_node_layout(CstRenderNode* self, CstLayout *layout) {
-
-  cst_render_context_layout_self(self->render_ctx, self, layout);
 }
 
 void cst_render_node_print(CstRenderNode* self) {

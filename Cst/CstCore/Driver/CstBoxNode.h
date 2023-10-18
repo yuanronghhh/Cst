@@ -27,20 +27,21 @@ struct _CstBoxNodeClass {
   CstRenderNodeClass parent;
 };
 
-SYS_API SysType cst_box_node_get_type(void);
-SYS_API CstRenderNode* cst_box_node_new(void);
-SYS_API CstRenderNode *cst_box_node_new_I(CstNode *node);
+SysType cst_box_node_get_type(void);
+CstRenderNode* cst_box_node_new(void);
+CstRenderNode *cst_box_node_new_I(CstNode *node);
 
-SYS_API CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
-SYS_API void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);
-SYS_API void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child);
-SYS_API CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self);
-SYS_API CstBoxNode *cst_box_node_children(CstBoxNode *self);
-SYS_API CstBoxNode *cst_box_node_next(CstBoxNode *self);
-SYS_API void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout);
-SYS_API void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
+CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
+void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);
+void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child);
+CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self);
+CstBoxNode *cst_box_node_children(CstBoxNode *self);
+CstBoxNode *cst_box_node_next(CstBoxNode *self);
+void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout);
+void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
+void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout);
 
-SYS_API void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data);
+void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data);
 
 SYS_END_DECLS
 

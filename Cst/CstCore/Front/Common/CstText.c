@@ -1,5 +1,4 @@
 #include <CstCore/Front/Common/CstText.h>
-#include <CstCore/Front/Common/CstLContentContext.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>

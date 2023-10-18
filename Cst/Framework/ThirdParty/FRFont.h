@@ -12,6 +12,7 @@ SYS_BEGIN_DECLS
 #include <pango/pangofc-fontmap.h>
 
 typedef  struct  _PangoLayout FRDrawLayout;
+typedef  struct  _PangoFontDescription FRDrawFontDescription;
 
 #define fr_layout_update_layout pango_cairo_update_layout
 #define fr_layout_get_pixel_size pango_layout_get_pixel_size

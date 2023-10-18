@@ -44,7 +44,7 @@ void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
     return;
   }
 
-  if (!cst_render_context_is_visible(rctx)) {
+  if (!cst_render_context_get_is_visible(rctx)) {
     return;
   }
 

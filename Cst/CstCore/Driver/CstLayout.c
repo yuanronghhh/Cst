@@ -28,44 +28,6 @@ CstLayout *cst_layout_new_I(FRDraw *draw, FRRegion *region) {
   return o;
 }
 
-int cst_layout_get_state(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->state;
-}
-
-void cst_layout_set_state(CstLayout *self, int state) {
-  sys_return_if_fail(self != NULL);
-
-  self->state = state;
-}
-
-void cst_layout_layout_box(CstLayout* self, FRDraw *draw, CstRenderNode *render_node) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(render_node != NULL);
-
-  // if (!cst_render_node_need_layout(render_node)) {
-  //   return;
-  // }
-  // 
-  // cst_render_node_prepare(render_node);
-  // 
-  // if (cst_render_node_children(self)) {
-  //   cst_render_node_layout(render_node, self);
-  // }
-  // 
-  // cst_node_expand(self);
-  // 
-  // cst_node_relayout(v_module, p_layout_node, self, draw, layout);
-  // 
-  // if (self->next) {
-  //   cst_node_layout(v_module, p_layout_node, self->next, draw, layout);
-  // }
-  // 
-  // cst_node_render_leave(self, cr, layout);
-  // cst_node_set_need_relayout(self, false);
-}
-
 FRRegion *cst_layout_get_region(CstLayout* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -84,8 +46,47 @@ void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) 
   fr_draw_get_size(self->draw, width, height);
 }
 
+void cst_layout_set_mode(CstLayout *self, SysInt mode) {
+  sys_return_if_fail(self != NULL);
+
+  self->mode = mode;
+}
+
+SysInt cst_layout_get_mode(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->mode;
+}
+
+void cst_layout_set_stage(CstLayout *self, SysInt stage) {
+  sys_return_if_fail(self != NULL);
+
+  self->stage = stage;
+}
+
+SysInt cst_layout_get_stage(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->stage;
+}
+
+void cst_layout_set_state(CstLayout *self, SysInt state) {
+  sys_return_if_fail(self != NULL);
+
+  self->state = state;
+}
+
+SysInt cst_layout_get_state(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->state;
+}
+
 void cst_layout_begin_layout(CstLayout* self) {
   self->state = CST_RENDER_STATE_LAYOUT;
+  self->stage = CST_RENDER_STAGE_FIRST;
+  self->mode = CST_RENDER_MODE_OUT_TO_IN;
+
   fr_draw_frame_begin(self->draw, self->region);
 }
 

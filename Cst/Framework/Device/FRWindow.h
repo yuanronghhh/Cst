@@ -44,9 +44,6 @@ SYS_API GLFWwindow* fr_window_real_window (FRWindow* window);
 SYS_API SysInt fr_window_get_key (FRWindow *window, SysInt key);
 SYS_API const SysChar* fr_key_get_name(SysInt key, SysInt scancode);
 
-SYS_API SysObject* fr_window_get_tree_root(FRWindow *window);
-SYS_API void fr_window_set_tree_root(FRWindow *window, SysObject* root);
-
 #if SYS_OS_WIN32
   HWND fr_window_get_win32_window(FRWindow* window);
 #elif SYS_OS_UNIX

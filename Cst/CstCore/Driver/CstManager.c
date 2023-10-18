@@ -54,8 +54,6 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
 
   cst_render_set_layer_root(v_render, body);
   cst_module_realize(v_module, body, v_render);
-
-  cst_box_layer_print_tree(CST_BOX_LAYER(box_layer));
 }
 
 CstManager *cst_manager_new(void) {

@@ -8,6 +8,13 @@
 SYS_DEFINE_TYPE(CstLBody, cst_lbody, CST_TYPE_NODE);
 
 
+static void cst_lbody_layout_i(CstLayoutNode *lnode, CstLayout* layout) {
+  SysInt w, h;
+
+  cst_layout_get_buffer_size(layout, &w, &h);
+  cst_layout_node_set_size(lnode, w, h);
+}
+
 static CstRenderContext* cst_body_new_default_context_i(CstNode* node) {
 
   return cst_lbody_context_new_I();
@@ -36,11 +43,14 @@ static void cst_lbody_init(CstLBody *self) {
 static void cst_lbody_class_init(CstLBodyClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
   CstNodeClass * ncls = CST_NODE_CLASS(cls);
+  CstLayoutNodeClass* lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_lbody_dispose;
 
   ncls->construct = cst_lbody_construct;
   ncls->new_default_context = cst_body_new_default_context_i;
+
+  lcls->layout = cst_lbody_layout_i;
 }
 
 static void cst_lbody_dispose(SysObject* o) {

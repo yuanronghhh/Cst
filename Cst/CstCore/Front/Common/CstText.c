@@ -94,7 +94,7 @@ static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
   fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
 
-static void cst_text_relayout_i(CstNode *o, CstLayout *layout) {
+static void cst_text_relayout_i(CstLayoutNode *o, CstLayout *layout) {
   CstText *self = CST_TEXT(o);
   SysInt width = 0;
   SysInt height = 0;
@@ -104,9 +104,9 @@ static void cst_text_relayout_i(CstNode *o, CstLayout *layout) {
   FRDraw *draw = cst_layout_get_draw(layout);
 
   fr_layout_set_font_description (playout, font_desc);
-  fr_layout_get_pixel_size(playout, width, height);
+  fr_layout_get_pixel_size(playout, &width, &height);
   fr_draw_layout_layout(draw, playout);
-  fr_layout_get_size();
+  cst_layout_node_set_size(o, width, height);
 }
 
 void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {

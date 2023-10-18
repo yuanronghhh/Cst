@@ -20,12 +20,11 @@ static void cst_lcontent_context_init(CstLContentContext *o) {
 }
 
 static void cst_lcontent_context_layout_self_i(CstRenderContext *self, CstRenderNode* rnode, CstLayout *layout) {
-  SysInt w, h;
   CstNode* node = cst_render_node_get_node(rnode);
   CstLayoutNode* lnode = CST_LAYOUT_NODE(node);
 
   // set self size
-  cst_layout_node_layout(lnode);
+  cst_layout_node_layout(lnode, layout);
 
   CST_RENDER_CONTEXT_CLASS(cst_lcontent_context_parent_class)->layout_self(self, rnode, layout);
 }

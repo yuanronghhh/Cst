@@ -26,7 +26,7 @@ static void cst_lbox_context_layout_self_i(CstRenderContext *self, CstRenderNode
   CstNode *node = cst_render_node_get_node(rnode);
   CstLayoutNode* lnode = CST_LAYOUT_NODE(node);
 
-  cst_layout_node_layout(lnode);
+  cst_layout_node_layout(lnode, layout);
 
   cst_render_context_get_prefer_size(self, &w, &h);
   cst_layout_node_set_size(lnode, w, h);

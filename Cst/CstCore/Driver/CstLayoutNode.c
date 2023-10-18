@@ -121,16 +121,16 @@ CstLayoutNode* cst_layout_node_clone_i(CstLayoutNode* oself) {
   return nself;
 }
 
-static void cst_layout_node_layout_i(CstLayoutNode* self) {
+static void cst_layout_node_layout_i(CstLayoutNode* self, CstLayout *layout) {
 }
 
-void cst_layout_node_layout(CstLayoutNode *self) {
+void cst_layout_node_layout(CstLayoutNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstLayoutNodeClass *cls = CST_LAYOUT_NODE_GET_CLASS(self);
   sys_return_if_fail(cls->layout != NULL);
 
-  cls->layout(self);
+  cls->layout(self, layout);
 }
 
 void cst_layout_node_set_margin(CstLayoutNode *self, const FRSInt4 * margin) {

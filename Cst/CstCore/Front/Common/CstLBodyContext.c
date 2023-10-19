@@ -41,6 +41,5 @@ static void cst_lbody_context_class_init(CstLBodyContextClass* cls) {
   CstRenderContextClass *rcls = CST_RENDER_CONTEXT_CLASS(cls);
 
   ocls->dispose = cst_lbody_context_dispose;
-
   rcls->layout_self = cst_lbody_layout_self_i;
 }

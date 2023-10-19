@@ -155,6 +155,9 @@ typedef struct _CstRenderNodeClass CstRenderNodeClass;
 typedef struct _CstBoxNode CstBoxNode;
 typedef struct _CstBoxNodeClass CstBoxNodeClass;
 
+typedef struct _CstRow CstRow;
+typedef struct _CstRowClass CstRowClass;
+
 typedef struct _CstCssClosure CstCssClosure;
 typedef struct _CstCssClosureClass CstCssClosureClass;
 

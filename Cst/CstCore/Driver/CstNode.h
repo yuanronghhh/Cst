@@ -32,6 +32,8 @@ struct _CstNode {
   SysPtrArray* css_groups;
 
   SysInt position;
+
+  SysType rctx_type;
 };
 
 struct _CstNodeClass {
@@ -39,7 +41,6 @@ struct _CstNodeClass {
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
   CstNode* (*dclone) (CstNode *o);
-  CstRenderContext* (*new_default_context) (CstNode* v_node);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
 };
 
@@ -88,8 +89,6 @@ SysType cst_node_get_meta(const SysChar *name);
 void cst_node_setup(void);
 void cst_node_teardown(void);
 
-CstRenderContext* cst_node_new_default_context(CstNode *self);
-
 void cst_node_set_position(CstNode *self, SysInt position);
 SysInt cst_node_get_position(CstNode *self);
 
@@ -99,8 +98,11 @@ const FRRect * cst_node_get_bound(CstNode *self);
 void cst_node_set_margin(CstNode *self, const FRSInt4 * margin);
 const FRSInt4 * cst_node_get_margin(CstNode *self);
 
-void cst_node_layout_content(CstNode *self);
 CstNode* cst_node_dclone (CstNode *o);
+
+void cst_node_set_rctx_type(CstNode *self, SysType rctx_type);
+SysType cst_node_get_rctx_type(CstNode *self);
+CstRenderContext *cst_node_create_default_context(CstNode *self);
 
 SYS_END_DECLS
 

@@ -88,7 +88,7 @@ SysBool cst_render_context_get_is_visible(CstRenderContext *self);
 void cst_render_context_set_need_relayout(CstRenderContext *self, SysBool need_relayout);
 SysBool cst_render_context_get_need_relayout(CstRenderContext *self);
 
-void cst_render_context_constraint(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout);
+void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout);
 
 void cst_render_context_set_direction(CstRenderContext *self, SysInt direction);
 SysInt cst_render_context_get_direction(CstRenderContext *self);

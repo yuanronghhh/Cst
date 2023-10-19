@@ -4,6 +4,8 @@
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssClosure.h>
 #include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstBoxNode.h>
+
 
 SYS_DEFINE_TYPE(CstRenderContext, cst_render_context, SYS_TYPE_OBJECT);
 
@@ -171,7 +173,7 @@ SysInt cst_render_context_get_direction(CstRenderContext *self) {
   return self->direction;
 }
 
-void cst_render_context_constraint(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout) {
+void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   if (pctx) {
@@ -187,7 +189,7 @@ void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode
   CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
   sys_return_if_fail(cls->layout_self != NULL);
 
-  return cls->layout_self(self, rnode, layout);
+  cls->layout_self(self, rnode, layout);
 }
 
 void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
@@ -196,10 +198,24 @@ void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *r
   CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
   sys_return_if_fail(cls->layout_children != NULL);
 
-  return cls->layout_children(self, rnode, layout);
+  cls->layout_children(self, rnode, layout);
 }
 
 void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+  CstLayoutNode* lnode = cst_render_node_get_lnode(rnode);
+  SysInt w, h;
+
+  cst_layout_node_get_size(lnode, &w, &h);
+
+  if (w == -1) {
+
+    cst_layout_node_set_width(lnode, self->prefer_width);
+  }
+
+  if (h == -1) {
+
+    cst_layout_node_set_height(lnode, self->prefer_height);
+  }
 }
 
 void cst_render_context_layout_children_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {

@@ -340,10 +340,6 @@ SysBool cst_node_set_css_by_id(CstNode *self, SysChar *id, CstComponent *comp) {
 }
 
 /* api */
-void cst_node_layout_content(CstNode *self) {
-  sys_return_if_fail(self != NULL);
-}
-
 void cst_node_set_margin(CstNode *self, const FRSInt4 * margin) {
   sys_return_if_fail(self != NULL);
 
@@ -633,16 +629,22 @@ void cst_node_teardown(void) {
   cst_render_context_teardown();
 }
 
-CstRenderContext* cst_node_new_default_context(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
+void cst_node_set_rctx_type(CstNode *self, SysType rctx_type) {
+  sys_return_if_fail(self != NULL);
 
-  return ncls->new_default_context(self);
+  self->rctx_type = rctx_type;
 }
 
-static CstRenderContext* cst_node_new_default_context_i(CstNode* node) {
+SysType cst_node_get_rctx_type(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, 0);
 
-  return cst_lbox_context_new_I();
+  return self->rctx_type;
+}
+
+CstRenderContext *cst_node_create_default_context(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return sys_object_new(self->rctx_type, NULL);
 }
 
 /* sys object api */
@@ -657,7 +659,6 @@ static void cst_node_class_init(CstNodeClass *cls) {
 
   cls->construct = cst_node_construct_i;
   cls->realize = cst_node_realize_i;
-  cls->new_default_context = cst_node_new_default_context_i;
   cls->dclone = cst_node_dclone_i;
 }
 
@@ -678,4 +679,5 @@ static void cst_node_init(CstNode *self) {
   self->last_child = NULL;
   self->awatches = NULL;
   self->css_groups = node_new_css_groups();
+  self->rctx_type = CST_TYPE_LBOX_CONTEXT;
 }

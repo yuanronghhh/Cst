@@ -10,7 +10,6 @@ struct _BoxLayerContext {
   FRRegion* v_region;
 };
 
-
 SYS_DEFINE_TYPE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER);
 
 
@@ -86,8 +85,10 @@ void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
   sys_return_if_fail(self->tree != NULL);
 
   CstBoxNode* box_node = self->tree;
+  
+  cst_box_node_relayout_node(box_node, layout);
 
-  cst_box_node_relayout_root(box_node, layout);
+  cst_box_layer_print_tree(self);
 }
 
 void box_node_print(CstRenderNode* rnode, SysPointer user_data) {

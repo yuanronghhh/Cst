@@ -64,7 +64,7 @@ FRRegion *render_create_region(FRWindow *window) {
 void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_begin_layout(layout);
+  cst_layout_begin_layout(layout, CST_LAYER_BOX);
 
   cst_box_layer_check(self->box_layer, layout);
   cst_box_layer_layout(self->box_layer, layout);
@@ -79,14 +79,14 @@ void cst_render_render(CstRender *self) {
   FRRegion *region = render_create_region(self->window);
   CstLayout* layout = cst_layout_new_I(self->draw, region);
 
-  cst_layout_begin_layout(layout);
+  cst_layout_begin_layout(layout, CST_LAYER_BOX);
   cst_box_layer_layout(self->box_layer, layout);
   cst_layout_end_layout(layout);
 
   cst_box_layer_render(self->box_layer, layout);
 
   fr_region_destroy(region);
-  
+
   sys_object_unref(layout);
 }
 
@@ -117,7 +117,6 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 
   fr_region_destroy(region);
 }
-
 
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {

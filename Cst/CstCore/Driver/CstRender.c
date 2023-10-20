@@ -42,15 +42,6 @@ CstNode *cst_render_get_body_node(CstRender* self) {
   return self->body_node;
 }
 
-CstRenderNode* cst_render_render_node_new_root(CstRender *self, CstModule *v_module) {
-  sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(self->body_node != NULL, NULL);
-
-  CstRenderNode* bnode = cst_box_node_new_I(self->body_node);
-
-  return bnode;
-}
-
 FRRegion *render_create_region(FRWindow *window) {
   FRRegion *region;
   FRRect bound = { 0 };
@@ -158,6 +149,7 @@ static void cst_render_dispose(SysObject* o) {
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
   sys_clear_pointer(&self->draw, _sys_object_unref);
+  sys_clear_pointer(&self->body_node, _sys_object_unref);
 
   if (self->window) {
     sys_object_unref(self->window);

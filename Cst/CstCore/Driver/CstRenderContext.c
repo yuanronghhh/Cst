@@ -173,6 +173,24 @@ SysInt cst_render_context_get_direction(CstRenderContext *self) {
   return self->direction;
 }
 
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  if(!self->wrap) {
+    return false;
+  }
+
+  if(self->prefer_width < rbound->width) {
+    return true;
+  }
+
+  if(self->prefer_height < rbound->height) {
+    return true;
+  }
+
+  return false;
+}
+
 void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 

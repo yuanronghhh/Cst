@@ -94,8 +94,9 @@ FRAction *fr_action_new_I(void) {
 
 static void fr_action_dispose(SysObject* o) {
   FRAction *self = FR_ACTION(o);
-  sys_clear_pointer(&self->name, sys_free);
+
   sys_list_free_full(self->awatch_list, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->name, sys_free);
 
   SYS_OBJECT_CLASS(fr_action_parent_class)->dispose(o);
 }

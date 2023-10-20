@@ -1,13 +1,21 @@
 #include <CstCore/Driver/CstRow.h>
 
-#define ROW_LIST(o) (o->parent)
+#define PARENT(o) (&(o)->parent)
 
-CstRow *cst_row_add(CstRow *row, CstLayoutNode *lnode) {
-  sys_slist_prepend(ROW_LIST(row), lnode);
+const FRRect *cst_row_get_bound(CstRow* self) {
+  sys_return_val_if_fail(self, NULL);
+
+  return &self->bound;
 }
 
-static void cst_row_free(CstRow *o) {
-  sys_free_N(o);
+void cst_row_add(CstRow *self, CstLayoutNode *lnode) {
+  SysSList *list = PARENT(self);
+
+  sys_slist_prepend(list, lnode);
+}
+
+static void cst_row_free(CstRow *self) {
+  sys_free_N(self);
 }
 
 CstRow *cst_row_new(void) {
@@ -18,8 +26,8 @@ CstRow *cst_row_new(void) {
 CstRow *cst_row_new_I(SysInt x, SysInt y) {
   CstRow *o = cst_row_new();
 
-  o->x = x;
-  o->y = y;
+  o->bound.x = x;
+  o->bound.y = y;
 
   return o;
 }

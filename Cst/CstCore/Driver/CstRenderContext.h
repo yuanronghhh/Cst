@@ -96,6 +96,8 @@ SysInt cst_render_context_get_direction(CstRenderContext *self);
 void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound);
+
 SYS_END_DECLS
 
 #endif

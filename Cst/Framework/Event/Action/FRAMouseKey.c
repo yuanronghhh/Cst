@@ -2,11 +2,9 @@
 #include <Framework/Event/Base/FREventMouseKey.h>
 
 
-struct _FRAMouseKeyPrivate {
-  SysChar reserved;
-};
+SYS_DEFINE_TYPE(FRAMouseKey, fr_amouse_key, FR_TYPE_ACTION);
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRAMouseKey, fr_amouse_key, FR_TYPE_ACTION);
+
 
 static SysBool fr_amouse_key_check_i(FRAction *self, FREvent *e) {
 
@@ -50,8 +48,6 @@ static void fr_amouse_key_class_init(FRAMouseKeyClass* cls) {
 }
 
 static void fr_amouse_key_init(FRAMouseKey *self) {
-  self->priv = fr_amouse_key_get_private(self);
-
   fr_action_set_name(FR_ACTION(self), "mouse_key");
 }
 

@@ -507,6 +507,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   }
 
   cst_node_construct(v_node, builder);
+  sys_object_unref(builder);
 
   cst_module_count_inc(v_module);
   cst_node_append(v_parent, v_node);

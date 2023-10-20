@@ -10,13 +10,14 @@ struct _CstRow {
   SysSList parent;
 
   /* <private> */
-  SysInt x;
-  SysInt y;
+  FRRect bound;
 };
 
 CstRow *cst_row_new(void);
 CstRow *cst_row_new_I(SysInt x, SysInt y);
-CstRow *cst_row_add(CstRow *row, CstLayoutNode *lnode);
+
+const FRRect *cst_row_get_bound(CstRow* self);
+void cst_row_add(CstRow* self, CstLayoutNode* lnode);
 
 SYS_END_DECLS
 

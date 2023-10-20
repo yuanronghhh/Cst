@@ -87,18 +87,24 @@ void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstL
   CstLayoutNode* lnode;
   CstNode* node;
   CstRow* row;
+  SysSList* rows;
   SysInt direction;
+  const FRRect* rbound;
 
   direction = cst_render_context_get_direction(rctx);
   node = cst_render_node_get_node(CST_RENDER_NODE(self));
   lnode = CST_LAYOUT_NODE(node);
   row = cst_row_new_I(lnode->bound.x, lnode->bound.y);
+  rows = sys_slist_alloc();
 
   for(cnode = self->children; cnode; cnode = cnode->next) {
-    if(cst_render_context_check_wrap(rctx, row)) {
+    rbound = cst_row_get_bound(row);
+
+    if(cst_render_context_check_wrap(rctx, rbound)) {
+      sys_slist_prepend(rows, row);
     }
 
-    cst_row_add(CST_LAYOUT_NODE(cnode), direction);
+    cst_row_add(row, lnode);
   }
 }
 

@@ -1,3 +1,4 @@
+#include "FREvents.h"
 #include <Framework/Event/FREvents.h>
 #include <Framework/Event/FREventCore.h>
 
@@ -41,7 +42,7 @@ SysList* fr_events_prepend_action(FRAction *action) {
   return g_event_actions;
 }
 
-void fr_events_add_action(FRAction *action) {
+static void events_add_action(FRAction *action) {
   g_event_actions = sys_list_prepend(g_event_actions, action);
 }
 
@@ -51,10 +52,10 @@ void fr_events_setup(void) {
   g_events = sys_queue_new();
   g_event_actions = NULL;
 
-  fr_events_add_action(FR_AKEY_STATIC);
-  fr_events_add_action(FR_AMOUSE_KEY_STATIC);
-  fr_events_add_action(FR_ACURSOR_MOVE_STATIC);
-  fr_events_add_action(FR_ACTION_STATIC);
+  events_add_action(FR_AKEY_STATIC);
+  events_add_action(FR_AMOUSE_KEY_STATIC);
+  events_add_action(FR_ACURSOR_MOVE_STATIC);
+  events_add_action(FR_ACTION_STATIC);
 }
 
 void fr_events_teardown(void) {

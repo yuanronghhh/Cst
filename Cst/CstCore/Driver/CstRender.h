@@ -41,7 +41,6 @@ void cst_render_rerender(CstRender *self, FRRegion *region, CstLayout *layout);
 CstLayer *cst_render_get_box_layer(CstRender *render);
 CstLayer *cst_render_get_abs_layer(CstRender *render);
 void cst_render_set_layer_root(CstRender* self, CstRenderNode *root);
-CstRenderNode* cst_render_render_node_new_root(CstRender *self, CstModule *v_module);
 CstNode* cst_render_get_body_node(CstRender* self);
 
 SYS_END_DECLS

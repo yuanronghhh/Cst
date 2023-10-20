@@ -537,6 +537,7 @@ void cst_node_add_awatch(CstNode *self, FRAWatch *awatch) {
   sys_return_if_fail(self != NULL);
 
   self->awatches = sys_list_prepend(self->awatches, awatch);
+  sys_object_ref(awatch);
 }
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
@@ -668,6 +669,7 @@ static void cst_node_dispose(SysObject* o) {
   sys_list_free_full(self->awatches, (SysDestroyFunc)_sys_object_unref);
   sys_list_free_full(self->node_maps, (SysDestroyFunc)_sys_object_unref);
 
+  sys_clear_pointer(&self->css_groups, sys_ptr_array_unref);
   sys_clear_pointer(&self->name, sys_free);
   sys_clear_pointer(&self->id, sys_free);
 

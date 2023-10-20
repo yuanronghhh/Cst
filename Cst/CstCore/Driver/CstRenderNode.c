@@ -122,6 +122,10 @@ void cst_render_node_print(CstRenderNode* self) {
 
 /* object api */
 static void cst_render_node_dispose(SysObject* o) {
+  CstRenderNode* self = CST_RENDER_NODE(o);
+
+  sys_clear_pointer(&self->node, _sys_object_unref);
+  sys_clear_pointer(&self->render_ctx, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }

@@ -88,7 +88,7 @@ void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
   
   cst_box_node_relayout_node(box_node, layout);
 
-  cst_box_layer_print_tree(self);
+  // cst_box_layer_print_tree(self);
 }
 
 void box_node_print(CstRenderNode* rnode, SysPointer user_data) {
@@ -130,7 +130,6 @@ CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *pa
   child = cst_box_node_new_I(node);
 
   cst_box_node_append(parent, CST_BOX_NODE(child));
-  sys_object_ref(child);
 
   return child;
 }

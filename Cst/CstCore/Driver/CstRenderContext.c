@@ -200,6 +200,7 @@ void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *r
 }
 
 void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+  sys_assert(false && "render context not impolement");
 }
 
 void cst_render_context_layout_children_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {

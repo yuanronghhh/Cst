@@ -82,10 +82,23 @@ SysInt cst_layout_get_state(CstLayout *self) {
   return self->state;
 }
 
-void cst_layout_begin_layout(CstLayout* self) {
+void cst_layout_set_layer(CstLayout *self, SysInt layer) {
+  sys_return_if_fail(self != NULL);
+
+  self->layer = layer;
+}
+
+SysInt cst_layout_get_layer(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->layer;
+}
+
+void cst_layout_begin_layout(CstLayout* self, SysInt layer) {
   self->state = CST_RENDER_STATE_LAYOUT;
   self->stage = CST_RENDER_STAGE_FIRST;
   self->mode = CST_RENDER_MODE_OUT_TO_IN;
+  self->layer = layer;
 
   fr_draw_frame_begin(self->draw, self->region);
 }

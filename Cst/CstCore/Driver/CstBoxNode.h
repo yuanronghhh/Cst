@@ -42,6 +42,8 @@ void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout);
 
 void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data);
+void cst_box_node_layout_h(CstBoxNode *self, CstLayout *layout);
+void cst_box_node_layout_v(CstBoxNode *self, CstLayout *layout);
 
 SYS_END_DECLS
 

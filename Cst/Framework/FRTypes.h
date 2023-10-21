@@ -79,7 +79,6 @@ typedef  struct  _FRAKeyClass           FRAKeyClass;
 typedef  struct  _FRAKeyPrivate         FRAKeyPrivate;
 typedef  struct  _FRAMouseKey           FRAMouseKey;
 typedef  struct  _FRAMouseKeyClass      FRAMouseKeyClass;
-typedef  struct  _FRAMouseKeyPrivate    FRAMouseKeyPrivate;
 typedef  struct  _FRACursorMove         FRACursorMove;
 typedef  struct  _FRACursorMoveClass    FRACursorMoveClass;
 

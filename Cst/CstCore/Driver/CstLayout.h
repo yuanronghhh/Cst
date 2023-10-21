@@ -23,6 +23,9 @@ struct _CstLayout {
 
   /* CST_RENDER_STAGE_ENUM */
   SysInt stage;
+
+  /* CST_LAYER_ENUM */
+  SysInt layer;
   FRRegion *region;
   FRDraw *draw;
 };
@@ -41,7 +44,7 @@ FRDraw *cst_layout_get_draw(CstLayout* self);
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
 
-void cst_layout_begin_layout(CstLayout * self);
+void cst_layout_begin_layout(CstLayout* self, SysInt layer);
 void cst_layout_end_layout(CstLayout * self);
 
 void cst_layout_begin_node(CstLayout* self);
@@ -55,6 +58,9 @@ SysInt cst_layout_get_stage(CstLayout *self);
 
 void cst_layout_set_state(CstLayout *self, SysInt state);
 SysInt cst_layout_get_state(CstLayout *self);
+
+void cst_layout_set_layer(CstLayout *self, SysInt layer);
+SysInt cst_layout_get_layer(CstLayout *self);
 
 SYS_END_DECLS
 

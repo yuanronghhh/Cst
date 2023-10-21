@@ -101,6 +101,8 @@ void cst_node_builder_set_id(CstNodeBuilder *self, SysChar *v_id) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_id != NULL);
 
+  sys_assert(self->v_id == NULL);
+
   self->v_id = sys_strdup(v_id);
 }
 

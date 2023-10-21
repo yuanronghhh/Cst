@@ -17,8 +17,6 @@ struct _FRAMouseKeyClass {
 
 struct _FRAMouseKey {
   FRAction parent;
-
-  FRAMouseKeyPrivate *priv;
 };
 
 SYS_API FRAction* fr_amouse_key_get_static(void);

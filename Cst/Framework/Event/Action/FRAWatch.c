@@ -148,7 +148,7 @@ static void fr_awatch_dispose(SysObject* o) {
   }
 
   self->action_link = NULL;
-  sys_object_unref(self->action);
+  sys_clear_pointer(&self->action, _sys_object_unref);
 
   if (self->func_name) {
     sys_clear_pointer(&self->func_name, sys_free);

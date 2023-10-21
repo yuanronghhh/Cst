@@ -98,6 +98,8 @@ set(SRC
   ./Driver/CstRenderNode.c
   ./Driver/CstBoxNode.h
   ./Driver/CstBoxNode.c
+  ./Driver/CstRow.h
+  ./Driver/CstRow.c
   ./Driver/CstNodeMap.h
   ./Driver/CstNodeMap.c
   ./Driver/CstPropMap.h

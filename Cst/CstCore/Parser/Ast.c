@@ -503,11 +503,11 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
 
     v_node = CST_NODE(o);
 
-    cst_node_set_name(v_node, cus_name);
     ast_node_parse(jnode, v_component, builder);
   }
 
   cst_node_construct(v_node, builder);
+  sys_object_unref(builder);
 
   cst_module_count_inc(v_module);
   cst_node_append(v_parent, v_node);

@@ -1,6 +1,7 @@
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstRow.h>
 #include <CstCore/Front/Common/CstLBoxContext.h>
 
 
@@ -81,23 +82,36 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
   cst_box_node_set_last_child(parent, box_node);
 }
 
-void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
+void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstLayout *layout) {
+  CstBoxNode *cnode;
+  CstLayoutNode* lnode;
+  CstNode* node;
+  CstRow* row;
+  SysSList* rows;
+  SysInt direction;
+  const FRRect* rbound;
+
+  direction = cst_render_context_get_direction(rctx);
+  node = cst_render_node_get_node(CST_RENDER_NODE(self));
+  lnode = CST_LAYOUT_NODE(node);
+  row = cst_row_new_I(lnode->bound.x, lnode->bound.y);
+  rows = sys_slist_alloc();
+
+  for(cnode = self->children; cnode; cnode = cnode->next) {
+    rbound = cst_row_get_bound(row);
+
+    if(cst_render_context_check_wrap(rctx, rbound)) {
+      sys_slist_prepend(rows, row);
+    }
+
+    cst_row_add(row, lnode);
+  }
 }
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->children != NULL && self->next == NULL;
-}
-
-void cst_box_node_layout_children(CstBoxNode* self, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-  CstBoxNode *node;
-
-  for (node = self->children; node; node = node->next) {
-
-    cst_box_node_relayout_node(node, layout);
-  }
 }
 
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
@@ -125,20 +139,20 @@ void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
 
   cnode = self->children;
   if (cnode) {
-    if (cnode->next == NULL) {
+
+    if (cst_box_node_has_one_child(self)) {
       cctx = cst_render_node_get_render_ctx(CST_RENDER_NODE(cnode));
 
-      // pass prefer_width, prefer_height
-      cst_render_context_constraint(cctx, rctx, layout);
+      // set prefer_width, prefer_height
+      cst_render_context_inherit(cctx, rctx, layout);
       cst_box_node_relayout_node(cnode, layout);
+
     } else {
 
-      for (cnode = self->children; cnode; cnode = cnode->next) {
+      for (;cnode; cnode = cnode->next) {
 
         cst_box_node_relayout_node(cnode, layout);
       }
-
-      cst_render_context_layout_children(rctx, rnode, layout);
     }
   }
 
@@ -259,7 +273,7 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
   CstRenderNodeClass* rcls = CST_RENDER_NODE_CLASS(cls);
 
   ocls->dispose = cst_box_node_dispose;
-  
+
   rcls->construct = cst_box_node_construct;
   rcls->get_parent = cst_box_node_get_parent_i;
 }

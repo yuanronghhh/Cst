@@ -47,7 +47,8 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_module != NULL);
 
-  CstRenderNode* body = cst_render_render_node_new_root(v_render, v_module);
+  CstNode* node = cst_render_get_body_node(v_render);
+  CstRenderNode* body = cst_box_node_new_I(node);
 
   cst_render_set_layer_root(v_render, body);
   cst_module_realize(v_module, body, v_render);

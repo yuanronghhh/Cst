@@ -4,6 +4,8 @@
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
 
+#include <CstCore/Front/Common/CstLBoxContext.h>
+
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_NODE);
 
 CstNode* cst_text_new(void) {
@@ -118,12 +120,16 @@ void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
 
 /* object api */
 static void cst_text_init(CstText *self) {
+  CstNode *node = CST_NODE(self);
+
   PangoFontMap *font_map = pango_cairo_font_map_get_default();
   PangoContext *pctx = pango_font_map_create_context(font_map);
 
   self->playout = pango_layout_new (pctx);
-
   g_object_unref(pctx);
+
+  cst_node_set_name(node, "Text");
+  cst_node_set_rctx_type(node, CST_TYPE_LBOX_CONTEXT);
 }
 
 static void cst_text_dispose(SysObject* o) {

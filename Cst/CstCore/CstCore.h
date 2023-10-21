@@ -5,6 +5,8 @@
 
 SYS_BEGIN_DECLS
 
+#include <CstCore/Driver/Css/CstCssGroup.h>
+
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstAbsLayer.h>
 #include <CstCore/Driver/CstApplication.h>
@@ -20,6 +22,7 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstNodeMap.h>
 #include <CstCore/Driver/CstPropMap.h>
 #include <CstCore/Driver/CstPropPair.h>

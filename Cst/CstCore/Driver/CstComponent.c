@@ -134,13 +134,13 @@ CstRenderNode* cst_component_realize(CstModule *v_module, CstComponent *self, Cs
 }
 
 /* sys object api */
-void cst_component_construct(CstComponent *self, CstModule *v_module, CstComponent *v_parent) {
-  sys_return_if_fail(self != NULL);
+void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
+  sys_return_if_fail(builder != NULL);
 
   CstComponentClass *cls = CST_COMPONENT_GET_CLASS(self);
 
   sys_return_if_fail(cls->construct != NULL);
-  cls->construct(self, v_module, v_parent);
+  cls->construct(self, builder);
 }
 
 void cst_component_bind_parent(CstComponent *self, CstComponent *pself) {
@@ -149,9 +149,15 @@ void cst_component_bind_parent(CstComponent *self, CstComponent *pself) {
   fr_env_set_parent(self->style_env, pself->style_env);
 }
 
-static void cst_component_construct_i(CstComponent *self, CstModule *v_module, CstComponent *v_parent) {
-  sys_return_if_fail(v_module != NULL);
+static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *builder) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(builder != NULL);
   SysHashTable *ht;
+  CstComponent *v_parent;
+  CstModule *v_module;
+
+  v_parent = cst_component_builder_get_v_parent(builder);
+  v_module = cst_component_builder_get_v_module(builder);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_parent));

@@ -13,8 +13,9 @@ MiniMenuBase* mini_menubase_new(void) {
 static void mini_menubase_init(MiniMenuBase *self) {
 }
 
-static void mini_menubase_construct(CstComponent *comp, CstModule *v_module, CstComponent *v_inherit) {
-  CST_COMPONENT_CLASS(mini_menubase_parent_class)->construct(comp, v_module, v_inherit);
+static void mini_menubase_construct(CstComponent *o, CstComponentBuilder *builder) {
+
+  CST_COMPONENT_CLASS(mini_menubase_parent_class)->construct(o, builder);
 }
 
 static void mini_menubase_dispose(SysObject *o) {

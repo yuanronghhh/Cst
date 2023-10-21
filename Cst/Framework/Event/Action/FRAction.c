@@ -31,6 +31,7 @@ void fr_action_unbind_awatch(FRAction *self, SysList *action_link) {
   sys_return_if_fail(action_link != NULL);
 
   self->awatch_list = sys_list_delete_link(self->awatch_list, action_link);
+  sys_object_unref(action_link->data);
 }
 
 SysList* fr_action_bind_awatch(FRAction *self, FRAWatch *awatch) {
@@ -38,6 +39,7 @@ SysList* fr_action_bind_awatch(FRAction *self, FRAWatch *awatch) {
   sys_return_val_if_fail(awatch != NULL, NULL);
 
   self->awatch_list = sys_list_prepend(self->awatch_list, awatch);
+  sys_object_ref(awatch);
 
   return self->awatch_list;
 }

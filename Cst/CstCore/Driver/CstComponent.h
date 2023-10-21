@@ -2,6 +2,7 @@
 #define __CST_COMPONENT__
 
 #include <CstCore/Driver/CstNodeMap.h>
+#include <CstCore/Driver/CstComponentBuilder.h>
 
 SYS_BEGIN_DECLS
 
@@ -26,7 +27,7 @@ struct _CstComponent {
 struct _CstComponentClass {
   FREnvClass parent;
 
-  void (*construct) (CstComponent *self, CstModule *v_module, CstComponent *v_parent);
+  void (*construct) (CstComponent *self, CstComponentBuilder *builder);
 };
 
 CstComponent* cst_component_new(void);
@@ -35,7 +36,7 @@ CstPropMap * cst_component_get_props_map(CstComponent * self, const SysChar * ke
 void cst_component_set_props_map(CstComponent * self, CstPropMap * map);
 CstRenderNode* cst_component_realize(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstRender *v_render);
 CstRenderNode* cst_component_realize_full(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstComNode *ncomp_node, CstRender *v_render);
-void cst_component_construct(CstComponent * self, CstModule * v_module, CstComponent * v_parent);
+void cst_component_construct(CstComponent *self, CstComponentBuilder *builder);
 
 const SysChar* cst_component_get_id(CstComponent* self);
 void cst_component_set_id(CstComponent* self, const SysChar *id);
@@ -49,9 +50,6 @@ CST_COMPONENT_BODY_ENUM cst_component_body_get_by_name(const SysChar* name);
 CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name);
 void cst_component_set_layout_node(CstComponent *self, CstNode *node);
 CstNode * cst_component_get_layout_node(CstComponent * self);
-
-SysFunc cst_component_get_function(CstComponent *self, const SysChar *func_name);
-void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysFunc func);
 
 SYS_END_DECLS
 

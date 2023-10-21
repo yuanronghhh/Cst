@@ -14,7 +14,7 @@ void cst_row_add(CstRow *self, CstLayoutNode *lnode) {
   sys_slist_prepend(list, lnode);
 }
 
-static void cst_row_free(CstRow *self) {
+void cst_row_free(CstRow *self) {
   sys_free_N(self);
 }
 

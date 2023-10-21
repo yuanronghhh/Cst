@@ -27,7 +27,6 @@ static void cst_lbox_context_dispose(SysObject* o) {
 
 static void cst_lbox_context_class_init(CstLBoxContextClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstRenderContextClass *ncls = CST_RENDER_CONTEXT_CLASS(cls);
 
   ocls->dispose = cst_lbox_context_dispose;
 }

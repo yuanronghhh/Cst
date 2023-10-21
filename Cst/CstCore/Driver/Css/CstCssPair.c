@@ -15,6 +15,7 @@ struct _CstCssNode {
   CstCssFunc set_value;
 };
 
+#if 0
 static const SysChar* CST_CSS_NODE_NAMES[] = {
   "x", "y", "w", "h", "position",
   "margin", "border", "padding", "gap",
@@ -25,6 +26,8 @@ static const SysChar* CST_CSS_NODE_NAMES[] = {
   "border-radius",
   "invalid"
 };
+#endif
+
 static SysHashTable* gcss_node_ht = NULL;
 
 SYS_DEFINE_TYPE(CstCssPair, cst_css_pair, SYS_TYPE_OBJECT);

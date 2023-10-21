@@ -40,8 +40,8 @@ void com_node_set_value(CstComNode *self, const SysChar *key, CstPropValue *valu
   sys_hash_table_insert(self->values_ht, (SysPointer)sys_strdup(key), (SysPointer)value);
 }
 
-static void text_set_text_i(CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
-  CstText *text = CST_TEXT(v_node);
+static void text_set_text_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  CstText *text = CST_TEXT(rnode);
 
   cst_text_set_text(text, sys_value_v_string(value));
 }
@@ -62,8 +62,8 @@ static void node_set_awatch_func_i(CstNode *v_node, const SysChar *key, const Sy
   fr_awatch_set_function(awatch, (FREventFunc)sys_value_v_pointer(value));
 }
 
-static void com_node_set_value_i(CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
-  CstComNode *com_node = CST_COM_NODE(v_node);
+static void com_node_set_value_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  CstComNode *com_node = CST_COM_NODE(rnode);
 
   com_node_set_value(com_node, key, value);
 }

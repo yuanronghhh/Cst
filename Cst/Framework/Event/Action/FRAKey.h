@@ -17,8 +17,6 @@ struct _FRAKeyClass {
 
 struct _FRAKey {
   FRAction parent;
-
-  FRAKeyPrivate *priv;
 };
 
 SYS_API FRAction* fr_akey_get_static(void);

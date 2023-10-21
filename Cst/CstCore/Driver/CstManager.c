@@ -100,8 +100,8 @@ static void cst_manager_dispose(SysObject* o) {
 
   CstManager *self = CST_MANAGER(o);
 
-  sys_object_unref(self->module_env);
-  sys_object_unref(self->function_env);
+  sys_clear_pointer(&self->module_env, _sys_object_unref);
+  sys_clear_pointer(&self->function_env, _sys_object_unref);
   sys_rec_mutex_clear(&self->mlock);
 
   SYS_OBJECT_CLASS(cst_manager_parent_class)->dispose(o);

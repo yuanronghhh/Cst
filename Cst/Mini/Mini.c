@@ -1,7 +1,7 @@
 #include <Mini/Mini.h>
 
 static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, FR_TYPE_AWATCH_MOUSE_RELEASE)) {
+  if (!sys_object_is_a(o, FR_TYPE_AWATCH)) {
     return;
   }
 
@@ -10,7 +10,7 @@ static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count
 }
 
 static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, FR_TYPE_AWATCH_MOUSE_RELEASE)) {
+  if (!sys_object_is_a(o, FR_TYPE_AWATCH)) {
     return;
   }
 

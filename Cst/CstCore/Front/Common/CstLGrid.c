@@ -31,7 +31,6 @@ static void cst_lgrid_dispose(SysObject* o) {
 
 static void cst_lgrid_class_init(CstLGridClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstNodeClass* ncls = CST_NODE_CLASS(cls);
   CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_lgrid_dispose;

@@ -44,18 +44,22 @@ CstNodeBuilder *cst_node_builder_new(void);
 CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
 CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode);
 void cst_node_builder_build(CstNodeBuilder *self, CstNode *v_node);
-CstModule* cst_node_builder_get_module(CstNodeBuilder *self);
 CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self);
-CstComponent* cst_node_builder_get_component(CstNodeBuilder *self);
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self);
 
 void cst_node_builder_set_label(CstNodeBuilder *self, SysChar *v_label);
 void cst_node_builder_set_base(CstNodeBuilder *self, SysChar *v_base[], SysUInt v_len);
 void cst_node_builder_set_id(CstNodeBuilder *self, SysChar *v_id);
-void cst_node_builder_set_value(CstNodeBuilder *self, SysChar *v_value);
+void cst_node_builder_set_v_value(CstNodeBuilder *self, SysChar *v_value);
 void cst_node_builder_set_position(CstNodeBuilder *self, SysInt v_position);
 void cst_node_builder_add_node_maps(CstNodeBuilder *self, CstNodeMap* map);
 void cst_node_builder_add_awatches(CstNodeBuilder *self, FRAWatch* map);
+
+void cst_node_builder_set_v_module(CstNodeBuilder *self, CstModule* v_module);
+CstModule* cst_node_builder_get_v_module(CstNodeBuilder *self);
+
+void cst_node_builder_set_v_component(CstNodeBuilder *self, CstComponent* v_component);
+CstComponent* cst_node_builder_get_v_component(CstNodeBuilder *self);
 
 SYS_END_DECLS
 

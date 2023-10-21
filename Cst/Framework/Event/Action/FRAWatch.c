@@ -174,7 +174,6 @@ FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_n
   }
 
   FRAWatch *o = sys_object_new(type, NULL);
-
   fr_awatch_create(o, func_name, func, props);
 
   return o;

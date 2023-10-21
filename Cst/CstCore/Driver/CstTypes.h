@@ -150,8 +150,8 @@ typedef struct _CstLayoutFlexClass CstLayoutFlexClass;
 typedef struct _CstLayout CstLayout;
 typedef struct _CstLayoutClass CstLayoutClass;
 
-typedef struct _CstRenderNode CstRenderNode;
-typedef struct _CstRenderNodeClass CstRenderNodeClass;
+typedef struct _CstNode CstRenderNode;
+typedef struct _CstNodeClass CstRenderNodeClass;
 typedef struct _CstBoxNode CstBoxNode;
 typedef struct _CstBoxNodeClass CstBoxNodeClass;
 
@@ -199,7 +199,7 @@ typedef struct _CstPropMapClass CstPropMapClass;
 typedef struct _CstPropPair CstPropPair;
 typedef SysValue CstPropValue;
 
-typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
+typedef void (*CstNodeMapFunc) (CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *node, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *node, CstLayout *layout, SysPointer user_data);

@@ -18,6 +18,7 @@ CstRow *cst_row_new_I(SysInt x, SysInt y);
 
 const FRRect *cst_row_get_bound(CstRow* self);
 void cst_row_add(CstRow* self, CstLayoutNode* lnode);
+void cst_row_free(CstRow *self);
 
 SYS_END_DECLS
 

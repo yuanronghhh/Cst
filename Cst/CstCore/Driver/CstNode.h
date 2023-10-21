@@ -2,6 +2,8 @@
 #define __CST_NODE_H__
 
 #include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
+
 
 SYS_BEGIN_DECLS
 
@@ -25,15 +27,16 @@ struct _CstNode {
 
   /* Type: FRAWatch */
   SysList *awatches;
-
   /* Type: CstNodeMap */
   SysList *node_maps;
-
   SysPtrArray* css_groups;
-
   SysInt position;
 
   SysType rctx_type;
+  SysBool realized;
+
+  /* render context */
+  CstRenderContext *render_ctx;
 };
 
 struct _CstNodeClass {
@@ -42,6 +45,11 @@ struct _CstNodeClass {
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
   CstNode* (*dclone) (CstNode *o);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
+
+  /* render part */
+  void (*relayout) (CstRenderNode* self, CstLayout* layout);
+  void (*repaint) (CstRenderNode* self, CstLayout* layout);
+  CstRenderNode* (*get_parent)(CstRenderNode* self);
 };
 
 CstNode* cst_node_new(void);

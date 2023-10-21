@@ -9,11 +9,9 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
 
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
@@ -33,9 +31,7 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
   "key_up","key_down",
 };
 
-
 SYS_DEFINE_TYPE(CstNode, cst_node, CST_TYPE_LAYOUT_NODE);
-
 
 CstNode* cst_node_parent(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -435,17 +431,6 @@ void cst_node_print_node(CstNode* node) {
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
-void cst_node_bind(CstNode *self, CstComNode *com_node) {
-  sys_return_if_fail(self != NULL);
-
-  CstNodeMap *map;
-  sys_list_foreach(self->node_maps, list) {
-    map = list->data;
-
-    cst_node_map_bind(map, com_node, self);
-  }
-}
-
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(builder != NULL);
@@ -563,20 +548,32 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
 static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render) {
   sys_return_val_if_fail(self != NULL, NULL);
 
+  sys_assert(self->realized == false && "realize should not be realized twice.");
+
   FRAWatch* nwatch;
+  CstRenderNode *rnode;
+  CstNodeMap *map;
+
+  rnode = node_realize_render_node(self, v_render, v_parent);
 
   sys_list_foreach(self->awatches, item) {
     nwatch = item->data;
 
-    fr_awatch_bind(nwatch, self);
+    fr_awatch_bind(nwatch, rnode);
   }
 
   if (com_node) {
 
-    cst_node_bind(self, com_node);
+    sys_list_foreach(self->node_maps, list) {
+      map = list->data;
+
+      cst_node_map_bind(map, com_node, rnode);
+    }
   }
 
-  return node_realize_render_node(self, v_render, v_parent);
+  self->realized = true;
+
+  return rnode;
 }
 
 static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
@@ -670,6 +667,7 @@ static void cst_node_dispose(SysObject* o) {
   sys_list_free_full(self->node_maps, (SysDestroyFunc)_sys_object_unref);
 
   sys_clear_pointer(&self->css_groups, sys_ptr_array_unref);
+  sys_clear_pointer(&self->render_ctx, _sys_object_unref);
   sys_clear_pointer(&self->name, sys_free);
   sys_clear_pointer(&self->id, sys_free);
 
@@ -682,4 +680,6 @@ static void cst_node_init(CstNode *self) {
   self->awatches = NULL;
   self->css_groups = node_new_css_groups();
   self->rctx_type = CST_TYPE_LBOX_CONTEXT;
+  self->realized = false;
 }
+

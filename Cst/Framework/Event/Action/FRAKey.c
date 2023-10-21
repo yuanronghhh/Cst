@@ -2,11 +2,7 @@
 #include <Framework/Event/Base/FREventKey.h>
 
 
-struct _FRAKeyPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRAKey, fr_akey, FR_TYPE_ACTION);
+SYS_DEFINE_TYPE(FRAKey, fr_akey, FR_TYPE_ACTION);
 
 SysBool fr_akey_check_i (FRAction *self, FREvent *e) {
   if(!fr_event_is(e, FR_TYPE_EVENT_KEY)) {
@@ -56,7 +52,6 @@ FRAction *fr_akey_new_I(void) {
 }
 
 void fr_akey_init(FRAKey *self) {
-  self->priv = fr_akey_get_private(self);
 
   fr_action_set_name(FR_ACTION(self), "key");
 }

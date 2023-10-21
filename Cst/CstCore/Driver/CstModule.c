@@ -105,6 +105,7 @@ void cst_module_set_root_comp(CstModule *self, CstComponent *comp) {
 
 CstComponent *cst_module_get_root_comp(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
+
   return self->root_component;
 }
 
@@ -146,7 +147,6 @@ SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name) {
 }
 
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func) {
-
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(func_name != NULL);
   sys_return_if_fail(sys_strneq(func_name, "F_", 2));
@@ -181,6 +181,7 @@ SysList* cst_module_add_awatch(CstModule *self, SysPointer user_data, const SysC
   FRAWatch *awatch = fr_awatch_new_bind(user_data, watch_name, func_name, func, props);
 
   self->awatches = sys_list_prepend(self->awatches, awatch);
+  sys_object_ref(awatch);
 
   return self->awatches;
 }
@@ -190,7 +191,6 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
   sys_return_if_fail(awatch_link != NULL);
 
   self->awatches = sys_list_delete_link(self->awatches, awatch_link);
-
   sys_object_unref(awatch_link->data);
 }
 

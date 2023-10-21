@@ -106,6 +106,7 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   CstLayout* layout = cst_layout_new_I(self->draw, region);
   cst_render_rerender(self, region, layout);
 
+  sys_object_unref(layout);
   fr_region_destroy(region);
 }
 
@@ -128,6 +129,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   CstNodeBuilder* builder = cst_node_builder_new();
   cst_node_construct(self->body_node, builder);
+  sys_object_unref(builder);
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

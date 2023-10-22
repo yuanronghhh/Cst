@@ -5,7 +5,7 @@
 
 SYS_BEGIN_DECLS
 
-#include <CstCore/Driver/Css/CstCssGroup.h>
+#include <CstCore/Driver/Css/CstCssCore.h>
 
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/CstAbsLayer.h>

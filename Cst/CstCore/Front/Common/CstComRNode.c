@@ -10,7 +10,6 @@ CstNode* cst_com_rnode_new(void) {
 /* sys object api */
 static void cst_com_rnode_class_init(CstComRNodeClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstNodeClass *ncls = CST_NODE_CLASS(cls);
 
   ocls->dispose = cst_com_rnode_dispose;
 }

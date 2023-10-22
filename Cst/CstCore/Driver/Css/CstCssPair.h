@@ -15,7 +15,6 @@ struct _CstCssPair {
   SysObject parent;
 
   /* < private > */
-
   CstCssNode *css_node;
 
   /* <private> */
@@ -39,11 +38,6 @@ void cst_css_pair_height_percent(CstRenderNode * render_node, CstLayout * layout
 
 SYS_API void cst_css_pair_setup(void);
 SYS_API void cst_css_pair_teardown(void);
-
-const SysChar* cst_css_node_name(CstCssNode* o);
-SysBool cst_css_node_check(CstCssNode* self, SysInt state);
-CstCssNode* cst_css_node_lookup(const SysChar* name);
-CST_CSS_PROP_ENUM cst_css_node_get_css_ptype(const SysChar * name);
 
 
 SYS_END_DECLS

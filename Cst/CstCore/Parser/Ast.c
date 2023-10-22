@@ -1,17 +1,20 @@
 #include <CstCore/Parser/Ast.h>
-#include <CstCore/Driver/CstComponent.h>
-#include <CstCore/Driver/CstComponentBuilder.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
-#include <CstCore/Driver/CstPropPair.h>
 #include <CstCore/Front/CstFrontCore.h>
-#include <CstCore/Driver/CstModule.h>
-#include <CstCore/Driver/CstManager.h>
+
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/Css/CstCssPair.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/Css/CstCssParser.h>
+#include <CstCore/Driver/Css/CstCssNode.h>
+
 #include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstComponentBuilder.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
+#include <CstCore/Driver/CstPropPair.h>
+#include <CstCore/Driver/CstModule.h>
+#include <CstCore/Driver/CstManager.h>
 
 
 typedef struct _AstModulePass AstModulePass;
@@ -404,6 +407,7 @@ static SysBool component_style_node_func(JNode *jnode, CstComponent *self) {
 
   CstCssGroup *g = ast_css_group_new_with_jpair(env, pair, true);
   if (g == NULL) {
+
     sys_abort_N("parse component css failed: %s, %s", id, pair->key);
   }
   cst_component_set_css(self, g);
@@ -959,7 +963,8 @@ CstCssPair *ast_css_pair_parse(JNode *jnode) {
   }
 
   value = cst_css_value_new();
-  if (ast_css_value_parse(ast_jnode_jnode(jpair->value), key, value)) {
+  if (!ast_css_value_parse(ast_jnode_jnode(jpair->value), key, value)) {
+
     return NULL;
   }
 
@@ -1017,7 +1022,7 @@ CstCssGroup* ast_css_group_new_with_jpair(CstCssEnv *env, JPair *pair, SysBool k
 
     CstCssPair *cpair = ast_css_pair_parse(jv);
     if (cpair == NULL) {
-      sys_warning_N("Failed to load css pair: %s", np->key);
+      sys_warning_N("Failed to load css: %s", np->key);
       continue;
     }
 
@@ -1131,20 +1136,19 @@ SysBool ast_css_parse_string(SysChar *s, SysChar *key, CstCssValue *value) {
 
     cst_css_value_set_v_closure(value, c);
     r = true;
-  } else {
-    if (sys_str_startswith(s, "#")) {
-
-      r = ast_css_value_color_parse(s, value);
-    }
   }
 
+  if (sys_str_startswith(s, "#")) {
+
+    r = ast_css_value_color_parse(s, value);
+  }
 
   return r;
 }
 
-SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
-  sys_return_val_if_fail(value != NULL, SYS_FAILED);
-  sys_return_val_if_fail(jnode != NULL, SYS_FAILED);
+SysBool ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
+  sys_return_val_if_fail(value != NULL, false);
+  sys_return_val_if_fail(jnode != NULL, false);
 
   FRSInt4 *v_m4;
 
@@ -1155,7 +1159,9 @@ SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
     case AstJSource:
     case AstJString:
       if (jnode->v.v_string != NULL) {
-        ast_css_parse_string(jnode->v.v_string, key, value);
+        if(!ast_css_parse_string(jnode->v.v_string, key, value)) {
+          cst_css_value_set_v_string(value, jnode->v.v_string);
+        }
       }
 
       break;
@@ -1206,22 +1212,22 @@ SysInt ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
       break;
   }
 
-  return SYS_SUCCESS;
+  return true;
 }
 
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue *value) {
-  sys_return_val_if_fail(s != NULL, SYS_FAILED);
+  sys_return_val_if_fail(s != NULL, false);
 
   FRColor *color = sys_new0_N(FRColor, 1);
 
   if (!fr_color_rgba_parse(s, color)) {
     sys_warning_N("Faild to parse %s.", s);
-    return SYS_FAILED;
+    return false;
   }
 
   cst_css_value_set_v_color(value, color);
 
-  return SYS_SUCCESS;
+  return true;
 }
 
 /* CodeGen */

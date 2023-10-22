@@ -74,6 +74,8 @@ set(SRC
   ./Driver/Css/CstCssGroup.h
   ./Driver/Css/CstCssPair.c
   ./Driver/Css/CstCssPair.h
+  ./Driver/Css/CstCssNode.c
+  ./Driver/Css/CstCssNode.h
   ./Driver/Css/CstCssClosure.c
   ./Driver/Css/CstCssClosure.h
   ./Driver/Css/CstCssEnv.c

@@ -26,7 +26,26 @@ struct _CstCssValue {
   CstCssValueV v;
 };
 
+static const SysChar *CST_CSS_VALUE_NAMES[] = {
+  "bool",
+  "null",
+  "double",
+  "int",
+  "string",
+  "pointer",
+  "m4",
+  "color",
+  "closure",
+};
+
+
 SYS_DEFINE_TYPE(CstCssValue, cst_css_value, SYS_TYPE_OBJECT);
+
+
+const SysChar *cst_css_value_get_by_type(SysInt tp) {
+
+  return fr_get_name_by_type(CST_CSS_VALUE_NAMES, sizeof(CST_CSS_VALUE_NAMES), tp);
+}
 
 SysBool cst_css_value_get_v_bool(CstCssValue *self) {
   sys_return_val_if_fail(self != NULL, false);
@@ -127,6 +146,9 @@ void cst_css_value_set_v_closure(CstCssValue* self, CstCssClosure* v) {
 }
 
 SysBool cst_css_value_is_d_type(CstCssValue* self, SysInt tp) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(self->d_type != 0, false);
+
   return self->d_type == tp;
 }
 
@@ -179,10 +201,10 @@ static void cst_css_value_dispose(SysObject* o) {
     case CST_CSS_VALUE_INT:
       break;
     case CST_CSS_VALUE_STRING:
-      sys_free_N(self->v.v_string);
+      sys_clear_pointer(&self->v.v_string, sys_free);
       break;
     case CST_CSS_VALUE_COLOR:
-      sys_free_N(self->v.v_color);
+      sys_clear_pointer(&self->v.v_color, sys_free);
       break;
     case CST_CSS_VALUE_M4:
       sys_clear_pointer(&self->v.v_m4, fr_sint4_free);
@@ -203,6 +225,7 @@ SysObject* cst_css_value_dclone_i(SysObject *o) {
   CstCssValue *nself = CST_CSS_VALUE(n);
   CstCssValue *oself = CST_CSS_VALUE(o);
 
+  nself->d_type = oself->d_type;
   switch (oself->d_type) {
     case CST_CSS_VALUE_BOOL:
       nself->v.v_bool = oself->v.v_bool;
@@ -217,7 +240,7 @@ SysObject* cst_css_value_dclone_i(SysObject *o) {
       nself->v.v_int = oself->v.v_int;
       break;
     case CST_CSS_VALUE_STRING:
-      nself->v.v_string = oself->v.v_string;
+      nself->v.v_string = sys_strdup(oself->v.v_string);
       break;
     case CST_CSS_VALUE_COLOR:
       nself->v.v_color = fr_color_clone(oself->v.v_color);
@@ -232,6 +255,7 @@ SysObject* cst_css_value_dclone_i(SysObject *o) {
       nself->v.v_closure = (CstCssClosure *)sys_object_dclone(oself->v.v_closure);
       break;
     default:
+      sys_warning_N("can not recorgnize css value type: %d", oself->d_type);
       break;
   }
 

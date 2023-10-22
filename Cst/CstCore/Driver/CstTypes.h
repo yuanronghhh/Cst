@@ -182,6 +182,7 @@ typedef struct _CstNode CstNode;
 typedef struct _CstNodeClass CstNodeClass;
 
 typedef struct _CstCssNode CstCssNode;
+typedef struct _CstCssNodeClass CstCssNodeClass;
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;
 

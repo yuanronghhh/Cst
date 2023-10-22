@@ -111,8 +111,8 @@ SysObject* cst_node_dclone_i(SysObject *o) {
 
   sys_assert(nself->name != NULL);
 
-  for(SysUInt i = 0; i < nself->css_groups->len; i++) {
-    CstCssGroup *g = (CstCssGroup *)sys_object_dclone(nself->css_groups->pdata[i]);
+  for(SysUInt i = 0; i < oself->css_groups->len; i++) {
+    CstCssGroup *g = (CstCssGroup *)sys_object_dclone(oself->css_groups->pdata[i]);
 
     sys_ptr_array_add(nself->css_groups, g);
   }

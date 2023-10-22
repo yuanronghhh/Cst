@@ -77,10 +77,26 @@ CST_CSS_PROP_ENUM cst_css_node_get_css_ptype(const SysChar *name) {
   return node->css_ptype;
 }
 
+SysObject *cst_css_pair_dclone_i(SysObject *o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+
+  SysObject *n = SYS_OBJECT_CLASS(cst_css_pair_parent_class)->dclone(o);
+
+  CstCssPair *nself = CST_CSS_PAIR(n);
+  CstCssPair *oself = CST_CSS_PAIR(o);
+
+  nself->css_node = oself->css_node;
+  nself->value = (CstCssValue *)sys_object_dclone(oself->value);
+
+  sys_object_ref(oself->css_node);
+
+  return n;
+}
+
 CstCssPair *cst_css_pair_dclone(CstCssPair *o) {
   sys_return_val_if_fail(o != NULL, NULL);
 
-  CstCssValue *nvalue = cst_css_value_dclone(o->value);
+  CstCssValue *nvalue = (CstCssValue *)sys_object_dclone(o->value);
   CstCssPair *npair = cst_css_pair_new_I(o->css_node, nvalue);
 
   return npair;
@@ -363,6 +379,7 @@ static void cst_css_pair_class_init(CstCssPairClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_css_pair_dispose;
+  ocls->dclone = cst_css_pair_dclone_i;
 }
 
 static void cst_css_pair_init(CstCssPair *self) {

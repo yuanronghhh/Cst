@@ -33,23 +33,13 @@ struct _CstNode {
   SysInt position;
 
   SysType rctx_type;
-  SysBool realized;
-
-  /* render context */
-  CstRenderContext *render_ctx;
 };
 
 struct _CstNodeClass {
   CstLayoutNodeClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstNode* (*dclone) (CstNode *o);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
-
-  /* render part */
-  void (*relayout) (CstRenderNode* self, CstLayout* layout);
-  void (*repaint) (CstRenderNode* self, CstLayout* layout);
-  CstRenderNode* (*get_parent)(CstRenderNode* self);
 };
 
 CstNode* cst_node_new(void);
@@ -105,8 +95,6 @@ const FRRect * cst_node_get_bound(CstNode *self);
 
 void cst_node_set_margin(CstNode *self, const FRSInt4 * margin);
 const FRSInt4 * cst_node_get_margin(CstNode *self);
-
-CstNode* cst_node_dclone (CstNode *o);
 
 void cst_node_set_rctx_type(CstNode *self, SysType rctx_type);
 SysType cst_node_get_rctx_type(CstNode *self);

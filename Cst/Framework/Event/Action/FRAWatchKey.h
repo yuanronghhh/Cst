@@ -17,7 +17,8 @@ struct _FRAWatchKeyClass {
 struct _FRAWatchKey {
   FRAWatch parent;
 
-  FRAWatchKeyPrivate *priv;
+  /* <private> */
+  SysInt key;
 };
 
 SYS_API SysType fr_awatch_key_get_type(void);

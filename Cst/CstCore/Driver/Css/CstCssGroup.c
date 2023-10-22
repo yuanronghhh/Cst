@@ -11,14 +11,18 @@ SysPtrArray *css_group_base_new(void) {
   return base;
 }
 
-CstCssGroup *cst_css_group_clone(CstCssGroup *oself) {
-  sys_return_val_if_fail(oself != NULL, false);
+SysObject *cst_css_group_dclone_i(SysObject *o) {
+  sys_return_val_if_fail(o != NULL, false);
 
-  CstCssGroup *nself = cst_css_group_new_I(oself->id);
+  SysObject *n = SYS_OBJECT_CLASS(cst_css_group_parent_class)->dclone(o);
+
+  CstCssGroup *nself = CST_CSS_GROUP(n);
+  CstCssGroup *oself = CST_CSS_GROUP(o);
+
   SysPtrArray *ptr = oself->pairs;
 
   for(SysUInt i = 0; i < ptr->len; i++) {
-    CstCssPair *pair = cst_css_pair_dclone(ptr->pdata[i]);
+    CstCssPair *pair = (CstCssPair *)sys_object_dclone(ptr->pdata[i]);
     sys_ptr_array_add(nself->pairs, pair);
   }
 
@@ -27,13 +31,13 @@ CstCssGroup *cst_css_group_clone(CstCssGroup *oself) {
     nself->base = css_group_base_new();
 
     for (SysUInt i = 0; i < ptr->len; i++) {
-      CstCssGroup *base = cst_css_group_clone(ptr->pdata[i]);
+      CstCssGroup *base = (CstCssGroup *)sys_object_dclone(ptr->pdata[i]);
 
       sys_ptr_array_add(nself->base, base);
     }
   }
 
-  return nself;
+  return n;
 }
 
 static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
@@ -189,6 +193,7 @@ static void cst_css_group_class_init(CstCssGroupClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_css_group_dispose;
+  ocls->dclone = cst_css_group_dclone_i;
 }
 
 void cst_css_group_init(CstCssGroup *self) {

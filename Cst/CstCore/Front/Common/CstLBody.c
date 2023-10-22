@@ -16,6 +16,14 @@ static void cst_lbody_layout_i(CstLayoutNode *lnode, CstLayout* layout) {
   cst_layout_node_set_size(lnode, w, h);
 }
 
+static SysObject* cst_lbody_dclone_i(SysObject *o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+
+  SysObject *n = SYS_OBJECT_CLASS(cst_lbody_parent_class)->dclone(o);
+
+  return n;
+}
+
 CstNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
 }
@@ -39,10 +47,11 @@ static void cst_lbody_init(CstLBody *self) {
 
 static void cst_lbody_class_init(CstLBodyClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstNodeClass * ncls = CST_NODE_CLASS(cls);
+  CstNodeClass *ncls = CST_NODE_CLASS(cls);
   CstLayoutNodeClass* lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_lbody_dispose;
+  ocls->dclone = cst_lbody_dclone_i;
 
   ncls->construct = cst_lbody_construct;
   lcls->layout = cst_lbody_layout_i;

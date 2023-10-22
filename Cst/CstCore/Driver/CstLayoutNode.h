@@ -24,7 +24,6 @@ struct _CstLayoutNode {
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
 
-  CstLayoutNode* (*dclone) (CstLayoutNode* o);
   void (*layout) (CstLayoutNode* o, CstLayout *layout);
 };
 
@@ -68,7 +67,6 @@ void cst_layout_node_constraint_width(CstLayoutNode* self, CstRenderContext* rct
 void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext* pctx);
 
 void cst_layout_node_layout(CstLayoutNode * self, CstLayout * layout);
-CstLayoutNode* cst_layout_node_dclone(CstLayoutNode* oself);
 
 SYS_END_DECLS
 

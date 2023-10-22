@@ -1,8 +1,8 @@
 #include "TestApp.h"
 
-static void app_types_setup(CstApplication *app) {
-  cst_application_set_meta(app, "app-button", APP_TYPE_BUTTON);
-  cst_application_set_meta(app, "app-component", APP_TYPE_COMPONENT);
+static void app_types_setup() {
+  cst_node_set_meta("app-button", APP_TYPE_BUTTON);
+  cst_node_set_meta("app-component", APP_TYPE_COMPONENT);
 }
 
 static void test_app_basic(void) {
@@ -13,7 +13,7 @@ static void test_app_basic(void) {
   app = cst_application_new_I("TestAPP");
   TEST_ASSERT_NOT_NULL(app);
 
-  app_types_setup(app);
+  app_types_setup();
 
   status = cst_application_run(app, entry);
   sys_object_unref(app);

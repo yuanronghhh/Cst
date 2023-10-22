@@ -27,8 +27,8 @@ set(C_API_SRC
   ./Front/Common/CstLBody.h
   ./Front/Common/CstText.c
   ./Front/Common/CstText.h
-  ./Front/Common/CstComNode.h
-  ./Front/Common/CstComNode.c
+  ./Front/Common/CstComRNode.h
+  ./Front/Common/CstComRNode.c
 
   ./Front/Common/CstLGridContext.c
   ./Front/Common/CstLGridContext.h

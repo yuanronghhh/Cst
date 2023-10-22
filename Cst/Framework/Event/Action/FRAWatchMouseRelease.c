@@ -42,13 +42,13 @@ static SysBool fr_awatch_mouse_release_check_i(FRAWatch *o, FREvent *e) {
   return true;
 }
 
-static FRAWatch* fr_awatch_mouse_release_dclone_i(FRAWatch* owatch) {
-  FRAWatch* nwatch = FR_AWATCH_CLASS(fr_awatch_mouse_release_parent_class)->dclone(owatch);
+static SysObject* fr_awatch_mouse_release_dclone_i(SysObject* o) {
+  SysObject* nwatch = SYS_OBJECT_CLASS(fr_awatch_mouse_release_parent_class)->dclone(o);
 
-  FRAWatchMouseRelease *n = FR_AWATCH_MOUSE_RELEASE(nwatch);
-  FRAWatchMouseRelease *o = FR_AWATCH_MOUSE_RELEASE(owatch);
+  FRAWatchMouseRelease *nself = FR_AWATCH_MOUSE_RELEASE(nwatch);
+  FRAWatchMouseRelease *oself = FR_AWATCH_MOUSE_RELEASE(o);
 
-  n->get_bound_func = o->get_bound_func;
+  nself->get_bound_func = oself->get_bound_func;
 
   return nwatch;
 }
@@ -79,9 +79,9 @@ static void fr_awatch_mouse_release_class_init(FRAWatchMouseReleaseClass* cls) {
   FRAWatchClass *wcls = FR_AWATCH_CLASS(cls);
 
   wcls->create = fr_awatch_mouse_release_create_i;
-  wcls->dclone = fr_awatch_mouse_release_dclone_i;
   wcls->check = fr_awatch_mouse_release_check_i;
 
+  ocls->dclone = fr_awatch_mouse_release_dclone_i;
   ocls->dispose = fr_awatch_mouse_release_dispose;
 }
 

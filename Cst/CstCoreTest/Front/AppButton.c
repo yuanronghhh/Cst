@@ -4,11 +4,7 @@
 
 #include "AppButton.h"
 
-struct _AppButtonPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(AppButton, app_button, CST_TYPE_COMPONENT);
+SYS_DEFINE_TYPE(AppButton, app_button, CST_TYPE_COMPONENT);
 
 FR_FUNC_DEFINE_EVENT(app_btn_clicked) {
   FREventKey *ekey = FR_EVENT_KEY(e);
@@ -30,17 +26,18 @@ AppButton* app_button_new(void) {
   return sys_object_new(APP_TYPE_BUTTON, NULL);
 }
 
-static void app_button_construct(CstComponentBuilder *builder) {
-  sys_return_if_fail(v_module != NULL);
+static void app_button_construct(CstComponent *self, CstComponentBuilder *builder) {
+  sys_return_if_fail(builder != NULL);
 
-  CST_COMPONENT_CLASS(app_button_parent_class)->construct(self, v_module, v_parent);
+  CstModule *v_module = cst_component_builder_get_v_module(builder);
 
-  cst_component_set_function(self, FR_FUNC_EVENT(app_btn_clicked));
-  cst_component_set_function(self, FR_FUNC_EVENT(app_btn_press));
+  CST_COMPONENT_CLASS(app_button_parent_class)->construct(self, builder);
+
+  cst_module_set_function(v_module, FR_FUNC_EVENT(app_btn_clicked));
+  cst_module_set_function(v_module, FR_FUNC_EVENT(app_btn_press));
 }
 
 static void app_button_init(AppButton *self) {
-  self->priv = app_button_get_private(self);
 }
 
 static void app_button_class_init(AppButtonClass *cls) {

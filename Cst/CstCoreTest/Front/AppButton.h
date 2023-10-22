@@ -17,12 +17,9 @@ SYS_BEGIN_DECLS
 
 typedef struct _AppButton AppButton;
 typedef struct _AppButtonClass AppButtonClass;
-typedef struct _AppButtonPrivate AppButtonPrivate;
-
 
 struct _AppButton {
   CstComponent parent;
-  AppButtonPrivate *priv;
 };
 
 struct _AppButtonClass {

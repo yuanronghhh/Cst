@@ -92,48 +92,41 @@ void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout)
   cst_css_render_groups(self->css_groups, rnode, layout);
 }
 
-CstNode *cst_node_dclone(CstNode *o) {
+SysObject* cst_node_dclone_i(SysObject *o) {
   sys_return_val_if_fail(o != NULL, NULL);
-
-  CstNodeClass *cls = CST_NODE_GET_CLASS(o);
-  sys_return_val_if_fail(cls->dclone != NULL, NULL);
-
-  return cls->dclone(o);
-}
-
-CstNode* cst_node_dclone_i(CstNode *onode) {
-  sys_return_val_if_fail(onode != NULL, NULL);
 
   FRAWatch *nwatch;
   CstNodeMap *map;
-  SysPtrArray *ptr;
-  CstNode *n;
-  CstNode *o;
-  CstLayoutNode *lnode;
+  CstNode *nself;
+  CstNode *oself;
+  SysObject* n;
 
-  lnode = CST_LAYOUT_NODE(onode);
-  n = CST_NODE(CST_LAYOUT_NODE_CLASS(cst_node_parent_class)->dclone(lnode));
-  o = CST_NODE(onode);
+  n = SYS_OBJECT_CLASS(cst_node_parent_class)->dclone(o);
 
-  n->id = sys_strdup(o->id);
-  ptr = n->css_groups;
+  oself = CST_NODE(o);
+  nself = CST_NODE(n);
 
-  for(SysUInt i = 0; i < ptr->len; i++) {
-    CstCssGroup *g = cst_css_group_clone(ptr->pdata[i]);
+  nself->id = sys_strdup(oself->id);
+  nself->position = oself->position;
 
-    sys_ptr_array_add(n->css_groups, g);
+  sys_assert(nself->name != NULL);
+
+  for(SysUInt i = 0; i < nself->css_groups->len; i++) {
+    CstCssGroup *g = (CstCssGroup *)sys_object_dclone(nself->css_groups->pdata[i]);
+
+    sys_ptr_array_add(nself->css_groups, g);
   }
 
-  sys_list_foreach(o->awatches, item) {
-    nwatch = fr_awatch_clone(item->data);
+  sys_list_foreach(oself->awatches, item) {
+    nwatch = (FRAWatch *)sys_object_dclone(item->data);
 
-    n->awatches = sys_list_prepend(n->awatches, nwatch);
+    nself->awatches = sys_list_prepend(nself->awatches, nwatch);
   }
 
-  sys_list_foreach(o->node_maps, item) {
-    map = cst_node_map_clone(item->data);
+  sys_list_foreach(oself->node_maps, item) {
+    map = (CstNodeMap *)sys_object_dclone(item->data);
 
-    n->node_maps = sys_list_prepend(n->node_maps, map);
+    nself->node_maps = sys_list_prepend(nself->node_maps, map);
   }
 
   return n;
@@ -548,30 +541,28 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
 static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  sys_assert(self->realized == false && "realize should not be realized twice.");
-
   FRAWatch* nwatch;
   CstRenderNode *rnode;
+  CstNode *node;
   CstNodeMap *map;
 
   rnode = node_realize_render_node(self, v_render, v_parent);
+  node = cst_render_node_get_node(rnode);
 
-  sys_list_foreach(self->awatches, item) {
+  sys_list_foreach(node->awatches, item) {
     nwatch = item->data;
 
-    fr_awatch_bind(nwatch, rnode);
+    fr_awatch_bind(nwatch, node);
   }
 
   if (com_node) {
 
-    sys_list_foreach(self->node_maps, list) {
+    sys_list_foreach(node->node_maps, list) {
       map = list->data;
 
-      cst_node_map_bind(map, com_node, rnode);
+      cst_node_map_bind(map, com_node, node);
     }
   }
-
-  self->realized = true;
 
   return rnode;
 }
@@ -654,20 +645,20 @@ static void cst_node_class_init(CstNodeClass *cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_node_dispose;
+  ocls->dclone = cst_node_dclone_i;
 
   cls->construct = cst_node_construct_i;
   cls->realize = cst_node_realize_i;
-  cls->dclone = cst_node_dclone_i;
+
 }
 
 static void cst_node_dispose(SysObject* o) {
   CstNode *self = CST_NODE(o);
 
+  sys_clear_pointer(&self->css_groups, sys_ptr_array_unref);
   sys_list_free_full(self->awatches, (SysDestroyFunc)_sys_object_unref);
   sys_list_free_full(self->node_maps, (SysDestroyFunc)_sys_object_unref);
 
-  sys_clear_pointer(&self->css_groups, sys_ptr_array_unref);
-  sys_clear_pointer(&self->render_ctx, _sys_object_unref);
   sys_clear_pointer(&self->name, sys_free);
   sys_clear_pointer(&self->id, sys_free);
 
@@ -680,6 +671,5 @@ static void cst_node_init(CstNode *self) {
   self->awatches = NULL;
   self->css_groups = node_new_css_groups();
   self->rctx_type = CST_TYPE_LBOX_CONTEXT;
-  self->realized = false;
 }
 

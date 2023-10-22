@@ -94,31 +94,36 @@ FRAWatch *fr_awatch_new(void) {
   return sys_object_new(FR_TYPE_AWATCH, NULL);
 }
 
-FRAWatch *fr_awatch_clone(FRAWatch *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+static SysObject *fr_awatch_dclone_i(SysObject *o) {
+  sys_return_val_if_fail(o != NULL, NULL);
 
-  FRAWatchClass *cls = FR_AWATCH_GET_CLASS(self);
-
-  return cls->dclone(self);
-}
-
-static FRAWatch *fr_awatch_dclone_i(FRAWatch *oself) {
-  sys_return_val_if_fail(oself != NULL, NULL);
-  SysType type = sys_type_from_instance(oself);
-
-  FRAWatch *nself = sys_object_new(type, NULL);
+  SysObject *n = SYS_OBJECT_CLASS(fr_awatch_parent_class)->dclone(o);
+  FRAWatch *oself = FR_AWATCH(o);
+  FRAWatch *nself = FR_AWATCH(n);
 
   nself->func = oself->func;
   nself->func_name = sys_strdup(oself->func_name);
   nself->user_data = oself->user_data;
   nself->action_link = NULL;
-  nself->action = fr_action_ref(oself->action);
+  nself->action = oself->action;
+  sys_object_ref(oself->action);
 
   // clone only for component now, this check maybe remove later.
   sys_assert(oself->user_data == NULL && "awatch bind user_data should be null when clone");
   sys_assert(oself->action_link == NULL && "awatch bind action_link should be null when clone");
 
-  return nself;
+  return n;
+}
+
+void fr_awatch_unbind(FRAWatch *self) {
+  sys_return_if_fail(self != NULL);
+
+  if(self->action_link == NULL) {
+    sys_warning_N("action watch not bind, so no need to unbind: %s", self->func_name);
+    return;
+  }
+
+  fr_action_unbind_awatch(self->action, self->action_link);
 }
 
 void fr_awatch_bind(FRAWatch *self, SysPointer user_data) {
@@ -143,8 +148,9 @@ void fr_awatch_create(FRAWatch* self, const SysChar *func_name, FREventFunc func
 /* object api */
 static void fr_awatch_dispose(SysObject* o) {
   FRAWatch *self = FR_AWATCH(o);
+
   if (self->action_link) {
-    fr_action_unbind_awatch(self->action, self->action_link);
+    fr_awatch_unbind(self);
   }
 
   self->action_link = NULL;
@@ -170,6 +176,7 @@ FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_n
 
   SysType type = fr_awatch_get_type_by_name(watch_name);
   if (type == 0) {
+    sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
     return NULL;
   }
 
@@ -179,29 +186,12 @@ FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_n
   return o;
 }
 
-FRAWatch *fr_awatch_new_bind(SysPointer user_data, const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  sys_return_val_if_fail(watch_name != NULL, NULL);
-  sys_return_val_if_fail(func_name != NULL, NULL);
-  sys_return_val_if_fail(func != NULL, NULL);
-  sys_return_val_if_fail(props != NULL, NULL);
-
-  FRAWatch *awatch = fr_awatch_new_by_name(watch_name, func_name, func, props);
-  if (awatch == NULL) {
-    sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
-    return NULL;
-  }
-
-  fr_awatch_bind(awatch, user_data);
-
-  return awatch;
-}
-
 static void fr_awatch_class_init(FRAWatchClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_awatch_dispose;
+  ocls->dclone = fr_awatch_dclone_i;
 
-  cls->dclone = fr_awatch_dclone_i;
   cls->create = fr_awatch_create_i;
   cls->check = fr_awatch_check_i;
   cls->dispatch = fr_awatch_dispatch_i;

@@ -1,17 +1,39 @@
 #ifndef __CST_RENDER_NODE__
 #define __CST_RENDER_NODE__
 
-#include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstLayoutNode.h>
 
 SYS_BEGIN_DECLS
 
-#define CST_TYPE_RENDER_NODE CST_TYPE_NODE
-#define CST_RENDER_NODE(o) CST_NODE(o)
-#define CST_RENDER_NODE_CLASS(o) CST_NODE_CLASS(o)
-#define CST_RENDER_NODE_GET_CLASS(o) CST_NODE_GET_CLASS(o)
-#define CST_RENDER_NODE_NODE(o) CST_NODE(o)
+#define CST_TYPE_RENDER_NODE (cst_render_node_get_type())
+#define CST_RENDER_NODE(o) ((CstRenderNode* )sys_object_cast_check(o, CST_TYPE_RENDER_NODE))
+#define CST_RENDER_NODE_CLASS(o) ((CstRenderNodeClass *)sys_class_cast_check(o, CST_TYPE_RENDER_NODE))
+#define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
+#define CST_RENDER_NODE_NODE(o) ((o)->node)
 
-#define cst_render_node_get_type() cst_node_get_type()
+struct _CstRenderNode {
+  SysObject parent;
+  /* < private > */
+
+  /* ref node */
+  CstNode *node;
+
+  /* render context */
+  CstRenderContext *render_ctx;
+};
+
+struct _CstRenderNodeClass {
+  SysObjectClass parent;
+
+  void (*construct) (CstRenderNode *self, CstNode* node);
+  void (*relayout) (CstRenderNode* self, CstLayout* layout);
+  void (*repaint) (CstRenderNode* self, CstLayout* layout);
+  CstRenderNode* (*get_parent)(CstRenderNode* self);
+  CstRenderContext* (*get_default_ctx)(CstRenderNode *self);
+};
+
+SysType cst_render_node_get_type(void);
+CstRenderNode *cst_render_node_new(void);
 CstRenderNode *cst_render_node_new_I(CstNode *node);
 
 CST_RENDER_NODE_ENUM cst_render_node_type_by_name(const SysChar* name);

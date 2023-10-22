@@ -17,7 +17,11 @@ struct _FRAWatchRefreshClass {
 struct _FRAWatchRefresh {
   FRAWatch parent;
 
-  FRAWatchRefreshPrivate *priv;
+  /* <private> */
+  SysInt64 last_clock;
+  SysDouble rate_time;
+  SysBool is_refreshing;
+  SysPointer app_data;
 };
 
 SYS_API SysType fr_awatch_refresh_get_type(void);

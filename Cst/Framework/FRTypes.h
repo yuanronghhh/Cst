@@ -90,17 +90,14 @@ typedef  struct  _FRAWatchAnyClass           FRAWatchAnyClass;
 typedef  struct  _FRAWatchAnyPrivate         FRAWatchAnyPrivate;
 typedef  struct  _FRAWatchRefresh                FRAWatchRefresh;
 typedef  struct  _FRAWatchRefreshClass           FRAWatchRefreshClass;
-typedef  struct  _FRAWatchRefreshPrivate         FRAWatchRefreshPrivate;
 typedef  struct  _FRAWatchKey                FRAWatchKey;
 typedef  struct  _FRAWatchKeyClass           FRAWatchKeyClass;
 typedef  struct  _FRAWatchKeyPrivate         FRAWatchKeyPrivate;
 typedef  struct  _FRAWatchKeyPress                FRAWatchKeyPress;
 typedef  struct  _FRAWatchKeyPressClass           FRAWatchKeyPressClass;
-typedef  struct  _FRAWatchKeyPressPrivate         FRAWatchKeyPressPrivate;
 
 typedef  struct  _FRAWatchMousePress         FRAWatchMousePress;
 typedef  struct  _FRAWatchMousePressClass    FRAWatchMousePressClass;
-typedef  struct  _FRAWatchMousePressPrivate  FRAWatchMousePressPrivate;
 typedef  struct  _FRAWatchMouseRelease         FRAWatchMouseRelease;
 typedef  struct  _FRAWatchMouseReleaseClass    FRAWatchMouseReleaseClass;
 typedef  struct  _FRAWatchCursorMove         FRAWatchCursorMove;

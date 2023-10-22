@@ -118,21 +118,23 @@ SysBool cst_render_context_get_wrap(CstRenderContext *self) {
   return self->wrap;
 }
 
-CstRenderContext* cst_render_context_dclone(CstRenderContext* o) {
+SysObject* cst_render_context_dclone_i(SysObject* o) {
   sys_return_val_if_fail(o != NULL, NULL);
-  SysType type = sys_type_from_instance(o);
-  CstRenderContext* n = sys_object_new(type, NULL);
+  SysObject* n = SYS_OBJECT_CLASS(cst_render_context_parent_class)->dclone(o);
 
-  n->need_relayout = o->need_relayout;
-  n->need_repaint = o->need_repaint;
-  n->is_visible = o->is_visible;
-  n->wrap = o->wrap;
-  n->line_space = o->line_space;
-  n->position = o->position;
-  n->child_count = o->child_count;
-  n->mbp = o->mbp;
-  n->prefer_height = o->prefer_height;
-  n->prefer_width = o->prefer_width;
+  CstRenderContext *nself = CST_RENDER_CONTEXT(n);
+  CstRenderContext *oself = CST_RENDER_CONTEXT(o);
+
+  nself->need_relayout = oself->need_relayout;
+  nself->need_repaint = oself->need_repaint;
+  nself->is_visible = oself->is_visible;
+  nself->wrap = oself->wrap;
+  nself->line_space = oself->line_space;
+  nself->position = oself->position;
+  nself->child_count = oself->child_count;
+  nself->mbp = oself->mbp;
+  nself->prefer_height = oself->prefer_height;
+  nself->prefer_width = oself->prefer_width;
 
   return n;
 }

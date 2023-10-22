@@ -178,10 +178,9 @@ SysList* cst_module_add_awatch(CstModule *self, SysPointer user_data, const SysC
   sys_return_val_if_fail(func != NULL, NULL);
   sys_return_val_if_fail(props != NULL, NULL);
 
-  FRAWatch *awatch = fr_awatch_new_bind(user_data, watch_name, func_name, func, props);
-
+  FRAWatch *awatch = fr_awatch_new_by_name(watch_name, func_name, func, props);
   self->awatches = sys_list_prepend(self->awatches, awatch);
-  sys_object_ref(awatch);
+  fr_awatch_bind(awatch, user_data);
 
   return self->awatches;
 }

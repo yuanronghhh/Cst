@@ -463,7 +463,6 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   CstNode *v_pnode;
   SysType type;
   const SysChar *cus_name;
-  SysChar *tname;
   CstNodeBuilder *v_node_builder;
 
   JPair *pair = jnode->v.v_pair;
@@ -485,14 +484,8 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
 
   CstComponent *child_comp = cst_module_get_comp(v_module, cus_name);
   if (child_comp != NULL) {
-    cus_name = cst_component_get_id(child_comp);
-
     v_node = cst_com_node_new_with_component(child_comp);
     ast_com_node_parse(jnode, v_node, v_node_builder);
-
-    tname = sys_strdup_printf("<%s>", pair->key);
-    cst_node_set_name(v_node, tname);
-    sys_free_N(tname);
   } else {
 
     type = cst_node_get_meta(cus_name);
@@ -640,10 +633,9 @@ static void ast_component_body_parse(Component *ast, CstComponent *o, CstCompone
   v_module = cst_component_builder_get_v_module(v_comp_builder);
   sys_return_if_fail(v_module != NULL);
 
-  layout = cst_node_new();
+  layout = cst_com_rnode_new();
   v_node_builder = cst_node_builder_new_I(v_module, o, NULL);
 
-  cst_node_set_name(layout, "<layout-node>");
   cst_node_construct(layout, v_node_builder);
 
   pass.v_component = o;

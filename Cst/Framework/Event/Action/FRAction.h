@@ -34,7 +34,6 @@ SYS_API FRAction* fr_action_get_static(void);
 SYS_API void fr_action_dispatch(FRAction *self, FREvent *e);
 SYS_API SysBool fr_action_check(FRAction *self, FREvent *e);
 SYS_API SysList* fr_action_bind_awatch(FRAction *self, FRAWatch* awatch);
-SYS_API FRAction * fr_action_ref(FRAction * self);
 SYS_API void fr_action_unbind_awatch(FRAction *self, SysList *action_link);
 SYS_API const SysChar *fr_action_get_name(FRAction *self);
 SYS_API void fr_action_set_name(FRAction *self, const SysChar *name);

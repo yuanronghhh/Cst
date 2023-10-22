@@ -32,7 +32,6 @@ SYS_API SysType cst_css_pair_get_type(void);
 SYS_API CstCssPair* cst_css_pair_new_I(CstCssNode* node, CstCssValue* value);
 SYS_API CstCssPair* cst_css_pair_new_by_key(const SysChar* key);
 SYS_API CstCssPair *cst_css_pair_new(void);
-SYS_API CstCssPair *cst_css_pair_dclone(CstCssPair *o);
 SYS_API void cst_css_pair_calc(CstCssPair *pair, CstRenderNode *render_node, CstLayout *layout);
 
 void cst_css_pair_width_percent(CstRenderNode * render_node, CstLayout * layout, SysInt64 d);

@@ -9,6 +9,9 @@ SYS_BEGIN_DECLS
 typedef struct _CstComNode CstComNode;
 typedef struct _CstComNodeClass CstComNodeClass;
 
+typedef struct _CstComRNode CstComRNode;
+typedef struct _CstComRNodeClass CstComRNodeClass;
+
 typedef struct _CstText CstText;
 typedef struct _CstTextClass CstTextClass;
 

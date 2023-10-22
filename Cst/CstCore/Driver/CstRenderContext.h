@@ -46,8 +46,6 @@ SysType cst_render_context_get_type(void);
 CstRenderContext *cst_render_context_new(void);
 CstRenderContext *cst_render_context_new_I(void);
 
-CstRenderContext* cst_render_context_dclone(CstRenderContext *o);
-
 void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4);
 const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self);
 

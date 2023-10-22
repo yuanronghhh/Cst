@@ -1,20 +1,30 @@
 #include <Mini/Mini.h>
 
-static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, FR_TYPE_AWATCH)) {
+#define CHECK_TYPE CST_TYPE_TEXT
+
+static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
+  if (!sys_object_is_a(o, CHECK_TYPE)) {
     return;
   }
 
-  sys_debug_N("%p\t%d", o, ref_count);
+  sys_debug_N("%p\t%s\t%d", o, name, ref_count);
+}
+
+static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
+  if (!sys_object_is_a(o, CHECK_TYPE)) {
+    return;
+  }
+
+  sys_debug_N("%p\t%s\t%d", o, name, ref_count);
   sys_assert(ref_count > 0);
 }
 
 static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
-  if (!sys_object_is_a(o, FR_TYPE_AWATCH)) {
+  if (!sys_object_is_a(o, CHECK_TYPE)) {
     return;
   }
 
-  sys_debug_N("%p\t%d", o, ref_count);
+  sys_debug_N("%p\t%s\t%d", o, name, ref_count);
   sys_assert(ref_count > 0);
 }
 
@@ -26,6 +36,7 @@ int main(int argc, char* argv[]) {
 
   sys_object_set_ref_hook(object_ref_debug);
   sys_object_set_unref_hook(object_unref_debug);
+  sys_object_set_new_hook(object_new_debug);
 
   const SysChar *main_path = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
 

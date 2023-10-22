@@ -53,17 +53,19 @@ void cst_text_set_alignment(CstText* self, SysInt align) {
   pango_layout_set_alignment(self->playout, align);
 }
 
-CstNode* cst_text_dclone_i(CstNode *o) {
+SysObject* cst_text_dclone_i(SysObject *o) {
   CstText *ntext;
   CstText *otext;
 
-  ntext = CST_TEXT(CST_NODE_CLASS(cst_text_parent_class)->dclone(o));
+  SysObject *n = SYS_OBJECT_CLASS(cst_text_parent_class)->dclone(o);
+
+  ntext = CST_TEXT(n);
   otext = CST_TEXT(o);
 
   ntext->playout = otext->playout ? pango_layout_copy(otext->playout) : NULL;
   ntext->font_desc = otext->font_desc ? pango_font_description_copy(otext->font_desc) : NULL;
 
-  return CST_NODE(ntext);
+  return n;
 }
 
 static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
@@ -152,8 +154,8 @@ static void cst_text_class_init(CstTextClass* cls) {
   CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_text_dispose;
+  ocls->dclone = cst_text_dclone_i;
 
-  ncls->dclone = cst_text_dclone_i;
   ncls->construct = cst_text_construct_i;
 
   lcls->layout = cst_text_relayout_i;

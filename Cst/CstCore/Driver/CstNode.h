@@ -2,6 +2,8 @@
 #define __CST_NODE_H__
 
 #include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
+
 
 SYS_BEGIN_DECLS
 
@@ -25,21 +27,19 @@ struct _CstNode {
 
   /* Type: FRAWatch */
   SysList *awatches;
-
   /* Type: CstNodeMap */
   SysList *node_maps;
-
   SysPtrArray* css_groups;
-
+  /* Type: CST_LAYER_ENUM */
   SysInt position;
+
+  SysType rctx_type;
 };
 
 struct _CstNodeClass {
   CstLayoutNodeClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstNode * (*dclone) (CstNode *v_node);
-  CstRenderContext* (*new_default_context) (CstNode* v_node);
   CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
 };
 
@@ -79,7 +79,6 @@ void cst_node_set_awatch_list(CstNode *self, SysList *list);
 CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render);
 CstRenderNode* cst_node_realize_self(CstRenderNode* v_parent, CstNode* self, CstRender *v_render);
 
-CstNode *cst_node_dclone(CstNode *v_node);
 void cst_node_bind(CstNode *self, CstComNode *com_node);
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
@@ -88,8 +87,6 @@ SysType cst_node_get_meta(const SysChar *name);
 
 void cst_node_setup(void);
 void cst_node_teardown(void);
-
-CstRenderContext* cst_node_new_default_context(CstNode *self);
 
 void cst_node_set_position(CstNode *self, SysInt position);
 SysInt cst_node_get_position(CstNode *self);
@@ -100,8 +97,9 @@ const FRRect * cst_node_get_bound(CstNode *self);
 void cst_node_set_margin(CstNode *self, const FRSInt4 * margin);
 const FRSInt4 * cst_node_get_margin(CstNode *self);
 
-void cst_node_layout_content(CstNode *self);
-void cst_node_get_size(CstNode *self, SysInt *width, SysInt *height);
+void cst_node_set_rctx_type(CstNode *self, SysType rctx_type);
+SysType cst_node_get_rctx_type(CstNode *self);
+CstRenderContext *cst_node_create_default_context(CstNode *self);
 
 SYS_END_DECLS
 

@@ -53,6 +53,17 @@ FRColor *fr_color_rgba_new(const SysChar *rgba) {
   return color;
 }
 
+FRColor *fr_color_clone(FRColor *oself) {
+  FRColor *nself = sys_new_N(FRColor, 1);
+
+  nself->r = oself->r;
+  nself->g = oself->g;
+  nself->b = oself->b;
+  nself->a = oself->a;
+
+  return nself;
+}
+
 SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y) {
   return (x >= rect->x && y >= rect->y && x <= rect->x + rect->width && y <= rect->y + rect->height);
 }

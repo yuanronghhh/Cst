@@ -65,7 +65,13 @@ void cst_node_builder_build(CstNodeBuilder *self, CstNode *v_node) {
   cst_node_builder_build_props(self, v_node);
 }
 
-CstModule* cst_node_builder_get_module(CstNodeBuilder *self) {
+void cst_node_builder_set_v_module(CstNodeBuilder *self, CstModule* v_module) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_module = v_module;
+}
+
+CstModule* cst_node_builder_get_v_module(CstNodeBuilder *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v_module;
@@ -77,7 +83,13 @@ CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self) {
   return self->v_pnode;
 }
 
-CstComponent* cst_node_builder_get_component(CstNodeBuilder *self) {
+void cst_node_builder_set_v_component(CstNodeBuilder *self, CstComponent* v_component) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_component = v_component;
+}
+
+CstComponent* cst_node_builder_get_v_component(CstNodeBuilder *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v_component;
@@ -101,10 +113,12 @@ void cst_node_builder_set_id(CstNodeBuilder *self, SysChar *v_id) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_id != NULL);
 
+  sys_assert(self->v_id == NULL);
+
   self->v_id = sys_strdup(v_id);
 }
 
-void cst_node_builder_set_value(CstNodeBuilder *self, SysChar *v_value) {
+void cst_node_builder_set_v_value(CstNodeBuilder *self, SysChar *v_value) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_value != NULL);
 
@@ -141,6 +155,18 @@ void cst_node_builder_add_awatches(CstNodeBuilder *self, FRAWatch* map) {
 /* object api */
 static void cst_node_builder_dispose(SysObject* o) {
   CstNodeBuilder *self = CST_NODE_BUILDER(o);
+
+  if(self->v_id) {
+    sys_clear_pointer(&self->v_id, sys_free);
+  }
+
+  if(self->v_value) {
+    sys_clear_pointer(&self->v_value, sys_free);
+  }
+
+  if(self->v_label) {
+    sys_clear_pointer(&self->v_label, sys_free);
+  }
 
   SYS_OBJECT_CLASS(cst_node_builder_parent_class)->dispose(o);
 }

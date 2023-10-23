@@ -12,12 +12,19 @@ void cst_css_closure_calc(CstCssClosure* self, CstLayout *layout, CstRenderNode 
   self->func(render_node, layout, self->data);
 }
 
-CstCssClosure* cst_css_closure_clone(CstCssClosure *c) {
-  sys_return_val_if_fail(c != NULL, NULL);
+static SysObject* cst_css_closure_dclone_i(SysObject *o) {
+  sys_return_val_if_fail(o != NULL, NULL);
 
-  CstCssClosure *nc = cst_css_closure_new_I(c->data, c->func, c->free);
+  SysObject *n = SYS_OBJECT_CLASS(cst_css_closure_parent_class)->dclone(o);
 
-  return nc;
+  CstCssClosure *nself = CST_CSS_CLOSURE(n);
+  CstCssClosure *oself = CST_CSS_CLOSURE(o);
+
+  nself->data = oself->data;
+  nself->func = oself->func;
+  nself->free = oself->free;
+
+  return n;
 }
 
 /* object api */
@@ -55,6 +62,7 @@ static void cst_css_closure_class_init(CstCssClosureClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_css_closure_dispose;
+  ocls->dclone = cst_css_closure_dclone_i;
 }
 
 static void cst_css_closure_init(CstCssClosure *self) {

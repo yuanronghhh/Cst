@@ -18,7 +18,10 @@ FR_FUNC_DEFINE_EVENT(mini_quit_key) {
 }
 
 FR_FUNC_DEFINE_EVENT(mini_menu_press) {
-  sys_debug_N("%s", "called");
+  CstNode *node = CST_NODE(user_data);
+
+  sys_debug_N("%s", cst_node_get_id(node));
+
   return 0;
 }
 
@@ -26,13 +29,15 @@ MiniComponent* mini_component_new(void) {
   return sys_object_new(MINI_TYPE_COMPONENT, NULL);
 }
 
-static void mini_component_construct(CstComponent *comp, CstModule *v_module, CstComponent *v_parent) {
-  CST_COMPONENT_CLASS(mini_component_parent_class)->construct(comp, v_module, v_parent);
+static void mini_component_construct(CstComponent *o, CstComponentBuilder *builder) {
+  CST_COMPONENT_CLASS(mini_component_parent_class)->construct(o, builder);
+
+  CstModule *v_module = cst_component_builder_get_v_module(builder);
 
   FRAWatchProps props = { 0 };
   props.key = FR_KEY_Q;
 
-  cst_module_add_awatch(v_module, comp, "key", "mini_quit_key", mini_quit_key, &props);
+  cst_module_add_awatch(v_module, o, "key", "mini_quit_key", mini_quit_key, &props);
   cst_module_set_function(v_module, FR_FUNC_EVENT(mini_menu_press));
   cst_module_set_function(v_module, FR_FUNC_EVENT(mini_quit_key));
 }

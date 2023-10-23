@@ -96,18 +96,11 @@ void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4) {
   m4->m3 = self->margin.m3 + self->border.m3 + self->padding.m3;
 }
 
-CstLayoutNode* cst_layout_node_clone(CstLayoutNode* oself) {
-  sys_return_val_if_fail(oself != NULL, NULL);
+static SysObject* cst_layout_node_dclone_i(SysObject* o) {
+  SysObject *n = SYS_OBJECT_CLASS(cst_layout_node_parent_class)->dclone(o);
 
-  CstLayoutNodeClass *cls = CST_LAYOUT_NODE_GET_CLASS(oself);
-  sys_return_val_if_fail(cls->dclone != NULL, NULL);
-
-  return cls->dclone(oself);
-}
-
-CstLayoutNode* cst_layout_node_clone_i(CstLayoutNode* oself) {
-  SysType type = sys_type_from_instance(oself);
-  CstLayoutNode *nself = sys_object_new(type, NULL);
+  CstLayoutNode *nself = CST_LAYOUT_NODE(n);
+  CstLayoutNode *oself = CST_LAYOUT_NODE(o);
 
   nself->bound.x = oself->bound.x;
   nself->bound.y = oself->bound.y;
@@ -118,7 +111,7 @@ CstLayoutNode* cst_layout_node_clone_i(CstLayoutNode* oself) {
   nself->border = oself->border;
   nself->padding = oself->padding;
 
-  return nself;
+  return n;
 }
 
 static void cst_layout_node_layout_i(CstLayoutNode* self, CstLayout *layout) {
@@ -254,6 +247,7 @@ static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_layout_node_dispose;
-  cls->dclone = cst_layout_node_clone_i;
+  ocls->dclone = cst_layout_node_dclone_i;
+
   cls->layout = cst_layout_node_layout_i;
 }

@@ -1,8 +1,11 @@
 #include <CstCore/Driver/CstRenderContext.h>
+#include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssClosure.h>
-#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstBoxNode.h>
+
 
 SYS_DEFINE_TYPE(CstRenderContext, cst_render_context, SYS_TYPE_OBJECT);
 
@@ -25,18 +28,6 @@ const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return &self->mbp;
-}
-
-void cst_render_context_set_position(CstRenderContext *self, SysInt position) {
-  sys_return_if_fail(self != NULL);
-
-  self->position = position;
-}
-
-SysInt cst_render_context_get_position(CstRenderContext *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->position;
 }
 
 void cst_render_context_set_width_closure(CstRenderContext* self, CstCssClosure* c) {
@@ -115,110 +106,158 @@ SysBool cst_render_context_get_wrap(CstRenderContext *self) {
   return self->wrap;
 }
 
-void cst_render_context_layout_self(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout) {
+SysObject* cst_render_context_dclone_i(SysObject* o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+  SysObject* n = SYS_OBJECT_CLASS(cst_render_context_parent_class)->dclone(o);
+
+  CstRenderContext *nself = CST_RENDER_CONTEXT(n);
+  CstRenderContext *oself = CST_RENDER_CONTEXT(o);
+
+  nself->need_relayout = oself->need_relayout;
+  nself->need_repaint = oself->need_repaint;
+  nself->is_visible = oself->is_visible;
+  nself->wrap = oself->wrap;
+  nself->line_space = oself->line_space;
+  nself->child_count = oself->child_count;
+  nself->mbp = oself->mbp;
+  nself->prefer_height = oself->prefer_height;
+  nself->prefer_width = oself->prefer_width;
+
+  return n;
+}
+
+void cst_render_context_set_is_visible(CstRenderContext *self, SysBool is_visible) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderContextClass *cls = CST_RENDER_CONTEXT_GET_CLASS(self);
+  self->is_visible = is_visible;
+}
+
+SysBool cst_render_context_get_is_visible(CstRenderContext *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->is_visible;
+}
+
+void cst_render_context_set_need_relayout(CstRenderContext *self, SysBool need_relayout) {
+  sys_return_if_fail(self != NULL);
+
+  self->need_relayout = need_relayout;
+}
+
+SysBool cst_render_context_get_need_relayout(CstRenderContext *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->need_relayout;
+}
+
+void cst_render_context_set_direction(CstRenderContext *self, SysInt direction) {
+  sys_return_if_fail(self != NULL);
+
+  self->direction = direction;
+}
+
+SysInt cst_render_context_get_direction(CstRenderContext *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->direction;
+}
+
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  if(!self->wrap) {
+    return false;
+  }
+
+  if(self->prefer_width < rbound->width) {
+    return true;
+  }
+
+  if(self->prefer_height < rbound->height) {
+    return true;
+  }
+
+  return false;
+}
+
+void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  if (pctx) {
+
+    self->prefer_width = pctx->prefer_width;
+    self->prefer_height = pctx->prefer_height;
+  }
+}
+
+void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
   sys_return_if_fail(cls->layout_self != NULL);
 
   cls->layout_self(self, rnode, layout);
 }
 
-void cst_render_context_layout_children(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout) {
+void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderContextClass *cls = CST_RENDER_CONTEXT_GET_CLASS(self);
+  CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
   sys_return_if_fail(cls->layout_children != NULL);
 
   cls->layout_children(self, rnode, layout);
 }
 
-CstRenderContext* cst_render_context_dclone(CstRenderContext *o) {
-  sys_return_val_if_fail(o != NULL, NULL);
-  SysType type = sys_type_from_instance(o);
-  CstRenderContext *n = sys_object_new(type, NULL);
-
-  n->need_relayout = o->need_relayout;
-  n->need_repaint = o->need_repaint;
-  n->is_visible = o->is_visible;
-  n->wrap = o->wrap;
-  n->line_space = o->line_space;
-  n->position = o->position;
-  n->child_count = o->child_count;
-  n->mbp = o->mbp;
-  n->prefer_height = o->prefer_height;
-  n->prefer_width = o->prefer_width;
-
-  return n;
-}
-
-void cst_render_context_layout_self_i(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstRenderContext* pctx;
-  CstRenderNode* pnode;
-  CstNode* node;
-  CstLayoutNode* lnode;
+void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+  CstLayoutNode* lnode = cst_render_node_get_lnode(rnode);
   SysInt w, h;
-  const FRRect* bound;
-  FRSInt4* mbp;
 
-  mbp = &self->mbp;
-  node = cst_render_node_get_node(rnode);
-  lnode = CST_LAYOUT_NODE(node);
-  bound = cst_layout_node_get_bound(lnode);
-  pnode = cst_render_node_get_parent(rnode);
+  cst_layout_node_get_size(lnode, &w, &h);
 
-  w = bound->width + mbp->m1 + mbp->m3;
-  h = bound->height + mbp->m2 + mbp->m0;
+  if (w == -1) {
 
-  if (pnode) {
-    pctx = cst_render_node_get_render_ctx(pnode);
+    cst_layout_node_set_width(lnode, self->prefer_width);
+  }
 
-    cst_layout_node_constraint_width(lnode, self, pctx);
-    cst_layout_node_constraint_height(lnode, self, pctx);
+  if (h == -1) {
+
+    cst_layout_node_set_height(lnode, self->prefer_height);
   }
 }
 
-void cst_render_context_layout_children_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
+void cst_render_context_layout_children_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
 }
 
 /* constraint */
-void cst_render_context_constraint_width(CstRenderContext *self, CstRenderContext *pctx, SysInt *width) {
+void cst_render_context_constraint_width(CstRenderContext* self, CstRenderContext* pctx, SysInt* width) {
 
   *width = pctx->prefer_width - self->mbp.m3 - self->mbp.m1;
   sys_assert(*width >= 0);
 }
 
-void cst_render_context_constraint_height(CstRenderContext *self, CstRenderContext *pctx, SysInt *height) {
+void cst_render_context_constraint_height(CstRenderContext* self, CstRenderContext* pctx, SysInt* height) {
 
   *height = pctx->prefer_height - self->mbp.m0 - self->mbp.m2;
   sys_assert(*height >= 0);
 }
 
-SysBool cst_render_context_is_dirty(CstRenderContext *self) {
+SysBool cst_render_context_is_dirty(CstRenderContext* self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->need_relayout || self->need_repaint;
 }
 
 /* paint */
-SysBool cst_render_context_need_paint(CstRenderContext *self) {
+SysBool cst_render_context_need_paint(CstRenderContext* self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->need_repaint;
 }
 
-void cst_render_context_set_paint(CstRenderContext *self, SysBool bvalue) {
+void cst_render_context_set_paint(CstRenderContext* self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
 
   self->need_repaint = bvalue;
-}
-
-SysBool cst_render_context_is_visible(CstRenderContext* self) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  return self->is_visible;
 }
 
 void cst_render_context_setup(void) {
@@ -232,40 +271,10 @@ void cst_render_context_teardown(void) {
   sys_hash_table_unref(grctx_ht);
 }
 
-void constraint_width(CstRenderNode *rnode, CstLayout *layout, SysPointer user_data) {
-  CstRenderContext *rctx = user_data;
-  CstRenderContext *pctx;
-  CstRenderNode *pnode;
-
-  pnode = cst_render_node_get_parent(rnode);
-
-  if (pnode) {
-    pctx = cst_render_node_get_render_ctx(pnode);
-
-    rctx->prefer_width = pctx->prefer_width;
-  }
+void constraint_width(CstRenderNode* rnode, CstLayout* layout, SysPointer user_data) {
 }
 
-void constraint_height(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
-  CstRenderContext *rctx;
-  CstRenderContext *pctx;
-  CstRenderNode* pnode;
-  CstNode *node;
-  CstLayoutNode* lnode;
-
-  rctx = user_data;
-  node = cst_render_node_get_node(rnode);
-  lnode = CST_LAYOUT_NODE(node);
-  pnode = cst_render_node_get_parent(rnode);
-
-  if (pnode) {
-    pctx = cst_render_node_get_render_ctx(pnode);
-
-    pctx->prefer_height = rctx->prefer_height;
-
-    cst_layout_node_set_height(lnode, rctx->prefer_height);
-    cst_layout_node_constraint_height(lnode, rctx, pctx);
-  }
+void constraint_height(CstRenderNode* rnode, CstLayout* layout, SysPointer user_data) {
 }
 
 /* object api */
@@ -280,6 +289,8 @@ static void cst_render_context_init(CstRenderContext *self) {
   self->height_calc = cst_css_closure_new_I(self, constraint_height, NULL);
   self->is_visible = true;
   self->wrap = false;
+  self->need_relayout = true;
+  self->need_repaint = true;
 }
 
 static void cst_render_context_dispose(SysObject* o) {

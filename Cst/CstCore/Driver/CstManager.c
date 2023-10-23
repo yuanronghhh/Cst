@@ -47,15 +47,11 @@ void cst_manager_realize(CstManager *self, CstModule* v_module, CstRender *v_ren
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_module != NULL);
 
-  CstComponent *v_component = NULL;
-  FRWindow *window = cst_render_get_default_window(v_render);
-  CstRenderNode* body = cst_render_render_node_new_root(v_render, v_module);
-  CstLayer* box_layer = cst_render_get_box_layer(v_render);
+  CstNode* node = cst_render_get_body_node(v_render);
+  CstRenderNode* body = cst_box_node_new_I(node);
 
   cst_render_set_layer_root(v_render, body);
   cst_module_realize(v_module, body, v_render);
-
-  cst_box_layer_print_tree(CST_BOX_LAYER(box_layer));
 }
 
 CstManager *cst_manager_new(void) {
@@ -104,8 +100,8 @@ static void cst_manager_dispose(SysObject* o) {
 
   CstManager *self = CST_MANAGER(o);
 
-  sys_object_unref(self->module_env);
-  sys_object_unref(self->function_env);
+  sys_clear_pointer(&self->module_env, _sys_object_unref);
+  sys_clear_pointer(&self->function_env, _sys_object_unref);
   sys_rec_mutex_clear(&self->mlock);
 
   SYS_OBJECT_CLASS(cst_manager_parent_class)->dispose(o);

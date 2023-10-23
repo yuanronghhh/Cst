@@ -1,7 +1,8 @@
 #include <CstCore/Driver/CstNodeMap.h>
 #include <CstCore/Front/CstFrontCore.h>
-#include <CstCore/Driver/CstPropPair.h>
 #include <CstCore/Front/Common/CstComNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstPropPair.h>
 
 
 SYS_DEFINE_TYPE(CstNodeMap, cst_node_map, SYS_TYPE_OBJECT);
@@ -29,33 +30,35 @@ CstNodeMap* cst_node_map_new_I(CstPropMap *prop_map, SysInt prop_type, const Sys
   return o;
 }
 
-CstNodeMap* cst_node_map_clone(CstNodeMap* o) {
+SysObject* cst_node_map_dclone_i(SysObject* o) {
   sys_return_val_if_fail(o != NULL, NULL);
 
-  SysType type = sys_type_from_instance(o);
-  CstNodeMap *n = sys_object_new(type, NULL);
+  SysObject *n = SYS_OBJECT_CLASS(cst_node_map_parent_class)->dclone(o);
 
-  n->prop_map = o->prop_map;
-  sys_object_ref(n->prop_map);
+  CstNodeMap *oself = CST_NODE_MAP(o);
+  CstNodeMap *nself = CST_NODE_MAP(n);
 
-  n->node_type = o->node_type;
-  n->prop_type = o->prop_type;
-  n->prop_name = sys_strdup(o->prop_name);
+  nself->prop_map = oself->prop_map;
+  sys_object_ref(nself->prop_map);
 
-  n->func = o->func;
+  nself->node_type = oself->node_type;
+  nself->prop_type = oself->prop_type;
+  nself->prop_name = sys_strdup(oself->prop_name);
 
-  sys_assert(o->value == NULL);
-  n->value = o->value;
+  nself->func = oself->func;
+
+  sys_assert(oself->value == NULL);
+  nself->value = oself->value;
 
   return n;
 }
 
-void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstNode *v_node) {
+void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
 
   const SysChar *bind_var = cst_prop_map_key(self->prop_map);
   SysInt data_type = cst_prop_map_prop_data_type(self->prop_map);
-  SysType node_type = sys_type_from_instance(v_node);
+  CstNode *node = cst_render_node_get_node(rnode);
 
   CstPropValue *pvalue = cst_com_node_get_value(com_node, bind_var);
   if (pvalue == NULL) {
@@ -64,30 +67,30 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstNode *v_node) 
     return;
   }
 
-  self->node_type = node_type;
+  self->node_type = sys_type_from_instance(node);
   self->value = pvalue;
   sys_value_ref(pvalue);
 
-  self->func = cst_com_node_get_func(node_type, self->prop_type, data_type);
+  self->func = cst_com_node_get_func(self->node_type, self->prop_type, data_type);
   if (self->func) {
-    self->func(v_node, self->prop_name, bind_var, self->value);
+    self->func(node, self->prop_name, bind_var, self->value);
   }
 }
 
-void cst_node_map_calc(CstNodeMap *self, CstNode *v_node) {
+void cst_node_map_calc(CstNodeMap *self, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_node != NULL);
+  sys_return_if_fail(rnode != NULL);
 
   const SysChar *key = cst_prop_map_key(self->prop_map);
-
-  SysType type = sys_type_from_instance(v_node);
+  CstNode *node = cst_render_node_get_node(rnode);
+  SysType type = sys_type_from_instance(rnode);
 
   if(self->node_type != type) {
     sys_warning_N("Not same node type: \"%s\"", key);
     return;
   }
 
-  self->func(v_node, self->prop_name, key, self->value);
+  self->func(node, self->prop_name, key, self->value);
 }
 
 const SysChar * cst_node_map_get_prop_name(CstNodeMap *self) {
@@ -119,4 +122,5 @@ static void cst_node_map_class_init(CstNodeMapClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_node_map_dispose;
+  ocls->dclone = cst_node_map_dclone_i;
 }

@@ -26,7 +26,6 @@ struct _CstCssGroupClass {
 
 SYS_API SysType cst_css_group_get_type(void);
 SYS_API CstCssGroup *cst_css_group_new(void);
-SYS_API CstCssGroup *cst_css_group_clone(CstCssGroup *o);
 SYS_API CstCssGroup *cst_css_group_new_I(const SysChar *id);
 
 SYS_API SysPtrArray* cst_css_group_get_base(CstCssGroup *g);

@@ -17,14 +17,11 @@ struct _CstCssValueClass {
 
   void (*construct) (CstCssValue *self, SysInt state_flag);
   CstCssValue* (*parse) (CstCssParser *parser);
-  CstCssValue *(*dclone)(CstCssValue *o);
 };
 
 
 SysType cst_css_value_get_type(void);
 CstCssValue *cst_css_value_new(void);
-
-CstCssValue *cst_css_value_dclone(CstCssValue *o);
 
 CstCssClosure* cst_css_value_parse_percent(SysChar* s, CstCssFunc func);
 

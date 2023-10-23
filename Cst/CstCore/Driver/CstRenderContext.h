@@ -16,6 +16,9 @@ struct _CstRenderContext {
   /* < private > */
   SysBool need_relayout;
   SysBool need_repaint;
+
+  /* CST_DIRECTION_ENUM */
+  SysInt direction;
   SysBool is_visible;
   SysBool wrap;
   SysInt16 line_space;
@@ -25,7 +28,6 @@ struct _CstRenderContext {
 
   SysInt prefer_height;
   SysInt prefer_width;
-  SysInt position;
 
   // self constraint
   CstCssClosure  *width_calc;
@@ -35,18 +37,13 @@ struct _CstRenderContext {
 struct _CstRenderContextClass {
   SysObjectClass parent;
 
-  void (*layout_self_before) (CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout);
-  void (*layout_self) (CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout);
+  void (*layout_self) (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
   void (*layout_children) (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 };
 
 SysType cst_render_context_get_type(void);
 CstRenderContext *cst_render_context_new(void);
 CstRenderContext *cst_render_context_new_I(void);
-
-void cst_render_context_layout_self(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout);
-void cst_render_context_layout_children(CstRenderContext* self, CstRenderNode *rnode, CstLayout* layout);
-CstRenderContext* cst_render_context_dclone(CstRenderContext *o);
 
 void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4);
 const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self);
@@ -60,28 +57,40 @@ void cst_render_context_get_prefer_size(CstRenderContext* self, SysInt* width, S
 SysBool cst_render_context_need_layout(CstRenderContext* self);
 void cst_render_context_set_layout(CstRenderContext *self, SysBool bvalue);
 
-void cst_render_context_calc_width(CstRenderContext * self, CstLayout * layout, CstRenderNode * rnode);
-void cst_render_context_calc_height(CstRenderContext * self, CstLayout * layout, CstRenderNode * rnode);
-void cst_render_context_calc_size(CstRenderContext * self, CstLayout * layout, CstRenderNode * rnode);
+void cst_render_context_calc_width(CstRenderContext * self, CstLayout * layout, CstRenderNode * lnode);
+void cst_render_context_calc_height(CstRenderContext * self, CstLayout * layout, CstRenderNode * lnode);
+void cst_render_context_calc_size(CstRenderContext * self, CstLayout * layout, CstRenderNode * lnode);
 
 void cst_render_context_constraint_height(CstRenderContext *self, CstRenderContext *pctx, SysInt *height);
 void cst_render_context_constraint_width(CstRenderContext *self, CstRenderContext *pctx, SysInt *width);
 
 /* paint */
 SysBool cst_render_context_need_paint(CstRenderContext *self);
-SysBool cst_render_context_is_visible(CstRenderContext* self);
 void cst_render_context_set_paint(CstRenderContext *self, SysBool bvalue);
 
 void cst_render_context_setup(void);
 void cst_render_context_teardown(void);
 
-void cst_render_context_set_position(CstRenderContext *self, SysInt position);
-SysInt cst_render_context_get_position(CstRenderContext *self);
-
 void cst_render_context_set_wrap(CstRenderContext *self, SysBool wrap);
 SysBool cst_render_context_get_wrap(CstRenderContext *self);
 
 SysBool cst_render_context_is_dirty(CstRenderContext *self);
+
+void cst_render_context_set_is_visible(CstRenderContext *self, SysBool is_visible);
+SysBool cst_render_context_get_is_visible(CstRenderContext *self);
+
+void cst_render_context_set_need_relayout(CstRenderContext *self, SysBool need_relayout);
+SysBool cst_render_context_get_need_relayout(CstRenderContext *self);
+
+void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, CstLayout *layout);
+
+void cst_render_context_set_direction(CstRenderContext *self, SysInt direction);
+SysInt cst_render_context_get_direction(CstRenderContext *self);
+
+void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
+void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
+
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound);
 
 SYS_END_DECLS
 

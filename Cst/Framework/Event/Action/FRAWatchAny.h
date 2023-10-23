@@ -17,7 +17,8 @@ struct _FRAWatchAnyClass {
 struct _FRAWatchAny {
   FRAWatch parent;
 
-  FRAWatchAnyPrivate *priv;
+  /* <private> */
+  SysType etype;
 };
 
 SYS_API SysType fr_awatch_any_get_type(void);

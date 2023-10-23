@@ -114,19 +114,6 @@ const SysChar* fr_key_get_name(SysInt key, SysInt scancode) {
   return glfwGetKeyName(key, scancode);
 }
 
-void fr_window_set_tree_root(FRWindow *self, SysObject *root) {
-  FRWindowPrivate* priv = self->priv;
-
-  priv->tree_root = root;
-  sys_object_ref(root);
-}
-
-SysObject* fr_window_get_tree_root(FRWindow *self) {
-  FRWindowPrivate* priv = self->priv;
-
-  return priv->tree_root;
-}
-
 /* event callbacks */
 static void fr_window_key_callback(GLFWwindow* gwindow, SysInt key, SysInt scancode, SysInt action, SysInt mods) {
   FRWindow *self = fr_glfw_get_window(gwindow);
@@ -388,7 +375,6 @@ static void fr_window_dispose(SysObject* o) {
   SYS_LEAK_IGNORE_END;
 
   sys_clear_pointer(&priv->display, _sys_object_unref);
-  sys_clear_pointer(&priv->tree_root, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_window_parent_class)->dispose(o);
 }

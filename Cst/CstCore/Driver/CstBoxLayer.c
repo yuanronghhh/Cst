@@ -10,7 +10,6 @@ struct _BoxLayerContext {
   FRRegion* v_region;
 };
 
-
 SYS_DEFINE_TYPE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER);
 
 
@@ -26,7 +25,7 @@ void cst_box_layer_set_root(CstBoxLayer *self, CstBoxNode *root) {
   self->tree = root;
 }
 
-void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
+static void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
   CstLayer* self = ctx->v_layer;
   FRRegion* region = ctx->v_region;
   CstRenderContext *rctx = cst_render_node_get_render_ctx(rnode);
@@ -44,7 +43,7 @@ void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
     return;
   }
 
-  if (!cst_render_context_is_visible(rctx)) {
+  if (!cst_render_context_get_is_visible(rctx)) {
     return;
   }
 
@@ -66,7 +65,7 @@ void cst_box_layer_check(CstLayer *o, CstLayout *layout) {
   FRRegion *region = cst_layout_get_region(layout);
   BoxLayerContext ctx = { o, region };
 
-  cst_box_node_bfs_handle(self->tree, box_layer_mark_one, &ctx);
+  cst_box_node_bfs_handle(self->tree, (CstRenderNodeFunc)box_layer_mark_one, &ctx);
 }
 
 void cst_box_layer_render(CstLayer*o, CstLayout *layout) {
@@ -87,11 +86,11 @@ void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
 
   CstBoxNode* box_node = self->tree;
 
-  cst_box_node_relayout_root(box_node, layout);
+  cst_box_node_relayout_node(box_node, layout);
 }
 
 void box_node_print(CstRenderNode* rnode, SysPointer user_data) {
-  
+
   cst_render_node_print(rnode);
 }
 
@@ -129,7 +128,6 @@ CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *pa
   child = cst_box_node_new_I(node);
 
   cst_box_node_append(parent, CST_BOX_NODE(child));
-  sys_object_ref(child);
 
   return child;
 }

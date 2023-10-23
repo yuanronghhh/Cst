@@ -11,29 +11,32 @@ SysPtrArray *css_group_base_new(void) {
   return base;
 }
 
-CstCssGroup *cst_css_group_clone(CstCssGroup *oself) {
-  sys_return_val_if_fail(oself != NULL, false);
+SysObject *cst_css_group_dclone_i(SysObject *o) {
+  sys_return_val_if_fail(o != NULL, false);
 
-  CstCssGroup *nself = cst_css_group_new_I(oself->id);
-  SysPtrArray *ptr = oself->pairs;
+  SysObject *n = SYS_OBJECT_CLASS(cst_css_group_parent_class)->dclone(o);
 
-  for(SysUInt i = 0; i < ptr->len; i++) {
-    CstCssPair *pair = cst_css_pair_dclone(ptr->pdata[i]);
+  CstCssGroup *nself = CST_CSS_GROUP(n);
+  CstCssGroup *oself = CST_CSS_GROUP(o);
+
+  nself->id = sys_strdup(oself->id);
+
+  for(SysUInt i = 0; i < oself->pairs->len; i++) {
+    CstCssPair *pair = (CstCssPair *)sys_object_dclone(oself->pairs->pdata[i]);
     sys_ptr_array_add(nself->pairs, pair);
   }
 
-  ptr = oself->base;
-  if (ptr != NULL) {
+  if (oself->base != NULL) {
     nself->base = css_group_base_new();
 
-    for (SysUInt i = 0; i < ptr->len; i++) {
-      CstCssGroup *base = cst_css_group_clone(ptr->pdata[i]);
+    for (SysUInt i = 0; i < oself->base->len; i++) {
+      CstCssGroup *base = (CstCssGroup *)sys_object_dclone(oself->base->pdata[i]);
 
       sys_ptr_array_add(nself->base, base);
     }
   }
 
-  return nself;
+  return n;
 }
 
 static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
@@ -152,7 +155,6 @@ SysPtrArray *cst_css_group_get_base(CstCssGroup *self) {
 
 /* object api */
 static void cst_css_group_construct(CstCssGroup* self, const SysChar *id) {
-  self->pairs = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
   self->base = NULL;
   self->id = sys_strdup(id);
 }
@@ -180,7 +182,7 @@ static void cst_css_group_dispose(SysObject* o) {
   }
 
   sys_clear_pointer(&self->pairs, sys_ptr_array_unref);
-  sys_free_N(self->id);
+  sys_clear_pointer(&self->id, sys_free);
 
   SYS_OBJECT_CLASS(cst_css_group_parent_class)->dispose(o);
 }
@@ -189,8 +191,11 @@ static void cst_css_group_class_init(CstCssGroupClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_css_group_dispose;
+  ocls->dclone = cst_css_group_dclone_i;
 }
 
 void cst_css_group_init(CstCssGroup *self) {
+
+  self->pairs = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 }
 

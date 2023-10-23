@@ -11,6 +11,7 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
 #define CST_RENDER_NODE_NODE(o) ((o)->node)
 
+
 struct _CstRenderNode {
   SysObject parent;
   /* < private > */
@@ -28,22 +29,15 @@ struct _CstRenderNodeClass {
   void (*construct) (CstRenderNode *self, CstNode* node);
   void (*relayout) (CstRenderNode* self, CstLayout* layout);
   void (*repaint) (CstRenderNode* self, CstLayout* layout);
-  CstRenderNode* (*get_parent)(CstRenderNode* self);
-  CstRenderContext* (*get_default_ctx)(CstRenderNode *self);
+  CstRenderNode* (*get_parent) (CstRenderNode* self);
 };
 
 SysType cst_render_node_get_type(void);
-CstLayoutNode *cst_render_node_new(void);
-CstLayoutNode *cst_render_node_new_I(CstNode *node);
+CstRenderNode *cst_render_node_new(void);
+CstRenderNode *cst_render_node_new_I(CstNode *node);
 
 CST_RENDER_NODE_ENUM cst_render_node_type_by_name(const SysChar* name);
-
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self);
-
-void cst_render_node_relayout_self(CstRenderNode *self, CstLayout *layout);
-void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout);
-
-void cst_render_node_layout(CstRenderNode* self, CstLayout *layout);
 void cst_render_node_print(CstRenderNode * self);
 
 
@@ -54,8 +48,10 @@ void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_set_render_ctx(CstRenderNode *self, CstRenderContext * render_ctx);
 CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self);
 
+CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self);
 void cst_render_node_prepare(CstRenderNode * self, CstLayout * layout);
 CstNode * cst_render_node_get_node(CstRenderNode *self);
+SysType cst_render_node_get_node_type(CstRenderNode *self);
 
 SYS_END_DECLS
 

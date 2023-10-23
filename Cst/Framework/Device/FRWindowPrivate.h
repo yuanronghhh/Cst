@@ -8,7 +8,6 @@ SYS_BEGIN_DECLS
 struct _FRWindowPrivate {
   GLFWwindow *gwindow;
   SysPointer user_data;
-  SysObject *tree_root;
   FRDisplay *display;
 
   SysChar *title;

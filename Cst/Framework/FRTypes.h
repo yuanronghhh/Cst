@@ -76,10 +76,8 @@ typedef  struct  _FRAction              FRAction;
 typedef  struct  _FRActionClass         FRActionClass;
 typedef  struct  _FRAKey                FRAKey;
 typedef  struct  _FRAKeyClass           FRAKeyClass;
-typedef  struct  _FRAKeyPrivate         FRAKeyPrivate;
 typedef  struct  _FRAMouseKey           FRAMouseKey;
 typedef  struct  _FRAMouseKeyClass      FRAMouseKeyClass;
-typedef  struct  _FRAMouseKeyPrivate    FRAMouseKeyPrivate;
 typedef  struct  _FRACursorMove         FRACursorMove;
 typedef  struct  _FRACursorMoveClass    FRACursorMoveClass;
 
@@ -91,17 +89,14 @@ typedef  struct  _FRAWatchAnyClass           FRAWatchAnyClass;
 typedef  struct  _FRAWatchAnyPrivate         FRAWatchAnyPrivate;
 typedef  struct  _FRAWatchRefresh                FRAWatchRefresh;
 typedef  struct  _FRAWatchRefreshClass           FRAWatchRefreshClass;
-typedef  struct  _FRAWatchRefreshPrivate         FRAWatchRefreshPrivate;
 typedef  struct  _FRAWatchKey                FRAWatchKey;
 typedef  struct  _FRAWatchKeyClass           FRAWatchKeyClass;
 typedef  struct  _FRAWatchKeyPrivate         FRAWatchKeyPrivate;
 typedef  struct  _FRAWatchKeyPress                FRAWatchKeyPress;
 typedef  struct  _FRAWatchKeyPressClass           FRAWatchKeyPressClass;
-typedef  struct  _FRAWatchKeyPressPrivate         FRAWatchKeyPressPrivate;
 
 typedef  struct  _FRAWatchMousePress         FRAWatchMousePress;
 typedef  struct  _FRAWatchMousePressClass    FRAWatchMousePressClass;
-typedef  struct  _FRAWatchMousePressPrivate  FRAWatchMousePressPrivate;
 typedef  struct  _FRAWatchMouseRelease         FRAWatchMouseRelease;
 typedef  struct  _FRAWatchMouseReleaseClass    FRAWatchMouseReleaseClass;
 typedef  struct  _FRAWatchCursorMove         FRAWatchCursorMove;

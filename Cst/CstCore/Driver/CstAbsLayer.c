@@ -3,12 +3,7 @@
 
 SYS_DEFINE_TYPE(CstAbsLayer, cst_abs_layer, CST_TYPE_LAYER);
 
-static CstAbsLayer *g_abs_layer = NULL;
-
 void cst_abs_layer_check_i(CstLayer *self, FRDraw *draw, FRRegion *region) {
-}
-
-static void cst_abs_layer_render_i(CstLayer *layer, FRDraw *draw, CstLayout *layout) {
 }
 
 /* object api */

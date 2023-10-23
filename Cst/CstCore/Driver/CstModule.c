@@ -105,6 +105,7 @@ void cst_module_set_root_comp(CstModule *self, CstComponent *comp) {
 
 CstComponent *cst_module_get_root_comp(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
+
   return self->root_component;
 }
 
@@ -146,7 +147,6 @@ SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name) {
 }
 
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func) {
-
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(func_name != NULL);
   sys_return_if_fail(sys_strneq(func_name, "F_", 2));
@@ -178,9 +178,9 @@ SysList* cst_module_add_awatch(CstModule *self, SysPointer user_data, const SysC
   sys_return_val_if_fail(func != NULL, NULL);
   sys_return_val_if_fail(props != NULL, NULL);
 
-  FRAWatch *awatch = fr_awatch_new_bind(user_data, watch_name, func_name, func, props);
-
+  FRAWatch *awatch = fr_awatch_new_by_name(watch_name, func_name, func, props);
   self->awatches = sys_list_prepend(self->awatches, awatch);
+  fr_awatch_bind(awatch, user_data);
 
   return self->awatches;
 }
@@ -190,7 +190,6 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
   sys_return_if_fail(awatch_link != NULL);
 
   self->awatches = sys_list_delete_link(self->awatches, awatch_link);
-
   sys_object_unref(awatch_link->data);
 }
 
@@ -203,7 +202,7 @@ static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, CstParser *ps) {
   SysHashTable *ht;
 
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, _sys_object_unref);
+  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
 
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
@@ -244,7 +243,7 @@ static void cst_module_dispose(SysObject* o) {
   sys_clear_pointer(&self->root_component, _sys_object_unref);
   sys_clear_pointer(&self->function_env, _sys_object_unref);
 
-  sys_list_free_full(self->awatches, _sys_object_unref);
+  sys_list_free_full(self->awatches, (SysDestroyFunc)_sys_object_unref);
 
   fr_env_set_parent(FR_ENV(self), NULL);
 

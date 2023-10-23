@@ -29,8 +29,6 @@ SYS_API CstCssClosure *cst_css_closure_new(void);
 /* CstCssClosure */
 SYS_API void cst_css_closure_calc(CstCssClosure * self, CstLayout * layout, CstRenderNode * render_node);
 SYS_API CstCssClosure* cst_css_closure_new_I(SysPointer data, CstCssFunc calc, SysDestroyFunc free);
-CstCssClosure * cst_css_closure_clone(CstCssClosure * c);
-
 
 SYS_END_DECLS
 

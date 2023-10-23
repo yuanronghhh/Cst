@@ -20,12 +20,6 @@ SysBool fr_action_check_i(FRAction *self, FREvent *e) {
   return true;
 }
 
-FRAction *fr_action_ref(FRAction *self) {
-  sys_object_ref(self);
-
-  return self;
-}
-
 void fr_action_unbind_awatch(FRAction *self, SysList *action_link) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(action_link != NULL);
@@ -94,8 +88,9 @@ FRAction *fr_action_new_I(void) {
 
 static void fr_action_dispose(SysObject* o) {
   FRAction *self = FR_ACTION(o);
-  sys_clear_pointer(&self->name, sys_free);
+
   sys_list_free_full(self->awatch_list, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->name, sys_free);
 
   SYS_OBJECT_CLASS(fr_action_parent_class)->dispose(o);
 }

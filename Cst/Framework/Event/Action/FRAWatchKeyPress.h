@@ -17,7 +17,8 @@ struct _FRAWatchKeyPressClass {
 struct _FRAWatchKeyPress {
   FRAWatch parent;
 
-  FRAWatchKeyPressPrivate *priv;
+  /* <private> */
+  SysInt key;
 };
 
 SYS_API SysType fr_awatch_key_press_get_type(void);

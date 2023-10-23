@@ -15,7 +15,6 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   CstManager *manager;
   CstNode *root;
   CstRender *v_render;
-  CstLayer *box_layer;
 
   v_render = cst_render_new_I(USE_OFFSREEN_RENDER);
   manager = cst_manager_new_I();
@@ -28,7 +27,6 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   cst_manager_realize(manager, v_module, v_render);
   cst_render_render(v_render);
 
-  box_layer = cst_render_get_box_layer(v_render);
   root = cst_render_get_body_node(v_render);
 
   func(root);

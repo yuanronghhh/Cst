@@ -44,11 +44,6 @@ typedef enum _CST_DIRECTION_ENUM {
   CST_DIRECTION_HORIZONTAL,
 } CST_DIRECTION_ENUM;
 
-typedef enum _CST_DIMENTION_ENUM {
-  CST_DIMENTION_WIDTH,
-  CST_DIMENTION_HEIGHT,
-} CST_DIMENTION_ENUM;
-
 typedef enum _CST_LAYER_ENUM {
   CST_LAYER_BOX = 1 << 0,
   CST_LAYER_STATIC = 1 << 1,
@@ -95,6 +90,16 @@ typedef enum _CST_RENDER_STATE_ENUM {
   CST_RENDER_STATE_REPAINT = 1 << 3,
 } CST_RENDER_STATE_ENUM;
 
+typedef enum _CST_RENDER_STAGE_ENUM {
+  CST_RENDER_STAGE_FIRST = 1 << 0,
+  CST_RENDER_STAGE_SECOND = 1 << 1,
+} CST_RENDER_STAGE_ENUM;
+
+typedef enum _CST_RENDER_MODE_ENUM {
+  CST_RENDER_MODE_OUT_TO_IN = 1 << 0,
+  CST_RENDER_MODE_IN_TO_OUT = 1 << 1,
+} CST_RENDER_MODE_ENUM;
+
 typedef enum _CST_DIRTY_STATE_ENUM {
   CST_DIRTY_RELAYOUT = 1 << 0,
   CST_DIRTY_REREPAINT = 1 << 1,
@@ -107,7 +112,6 @@ typedef enum _CST_RENDER_NODE_ENUM {
   CST_RENDER_NODE_ABS = 1 << 1,
   CST_RENDER_NODE_MASK = ~0x03,
 } CST_RENDER_NODE_ENUM;
-
 
 typedef SYS_VALUE_ENUM CST_PROP_VALUE_ENUM;
 typedef enum _FR_ACTION_ENUM CST_ACTION_ENUM;
@@ -151,6 +155,9 @@ typedef struct _CstRenderNodeClass CstRenderNodeClass;
 typedef struct _CstBoxNode CstBoxNode;
 typedef struct _CstBoxNodeClass CstBoxNodeClass;
 
+typedef struct _CstRow CstRow;
+typedef struct _CstRowClass CstRowClass;
+
 typedef struct _CstCssClosure CstCssClosure;
 typedef struct _CstCssClosureClass CstCssClosureClass;
 
@@ -175,6 +182,7 @@ typedef struct _CstNode CstNode;
 typedef struct _CstNodeClass CstNodeClass;
 
 typedef struct _CstCssNode CstCssNode;
+typedef struct _CstCssNodeClass CstCssNodeClass;
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;
 
@@ -192,7 +200,7 @@ typedef struct _CstPropMapClass CstPropMapClass;
 typedef struct _CstPropPair CstPropPair;
 typedef SysValue CstPropValue;
 
-typedef void (*CstNodeMapFunc) (CstNode *v_node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
+typedef void (*CstNodeMapFunc) (CstNode *node, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *node, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *node, CstLayout *layout, SysPointer user_data);

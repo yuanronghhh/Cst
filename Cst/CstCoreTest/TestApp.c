@@ -1,6 +1,6 @@
 #include "TestApp.h"
 
-static void app_types_setup(void) {
+static void app_types_setup() {
   cst_node_set_meta("app-button", APP_TYPE_BUTTON);
   cst_node_set_meta("app-component", APP_TYPE_COMPONENT);
 }

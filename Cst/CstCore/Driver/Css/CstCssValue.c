@@ -26,13 +26,25 @@ struct _CstCssValue {
   CstCssValueV v;
 };
 
+static const SysChar *CST_CSS_VALUE_NAMES[] = {
+  "bool",
+  "null",
+  "double",
+  "int",
+  "string",
+  "pointer",
+  "m4",
+  "color",
+  "closure",
+};
+
+
 SYS_DEFINE_TYPE(CstCssValue, cst_css_value, SYS_TYPE_OBJECT);
 
-CstCssValue *cst_css_value_dclone(CstCssValue *self) {
-  CstCssValueClass *cls = CST_CSS_VALUE_GET_CLASS(self);
 
-  sys_return_val_if_fail(cls->dclone != NULL, NULL);
-  return cls->dclone(self);
+const SysChar *cst_css_value_get_by_type(SysInt tp) {
+
+  return fr_get_name_by_type(CST_CSS_VALUE_NAMES, sizeof(CST_CSS_VALUE_NAMES), tp);
 }
 
 SysBool cst_css_value_get_v_bool(CstCssValue *self) {
@@ -85,6 +97,8 @@ SysPointer cst_css_value_get_v_pointer(CstCssValue *self) {
 void cst_css_value_set_v_m4(CstCssValue* self, FRSInt4* m4) {
   sys_return_if_fail(self != NULL);
 
+  sys_assert(self->v.v_m4 == NULL);
+
   self->d_type = CST_CSS_VALUE_M4;
   self->v.v_m4 = m4;
 }
@@ -111,6 +125,8 @@ SysDouble cst_css_value_get_v_double(CstCssValue *self) {
 void cst_css_value_set_v_color(CstCssValue* self, FRColor* v) {
   sys_return_if_fail(self != NULL);
 
+  sys_assert(self->v.v_color == NULL);
+
   self->d_type = CST_CSS_VALUE_COLOR;
   self->v.v_color = v;
 }
@@ -130,6 +146,9 @@ void cst_css_value_set_v_closure(CstCssValue* self, CstCssClosure* v) {
 }
 
 SysBool cst_css_value_is_d_type(CstCssValue* self, SysInt tp) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(self->d_type != 0, false);
+
   return self->d_type == tp;
 }
 
@@ -175,7 +194,72 @@ CstCssClosure* cst_css_value_parse_percent(SysChar *s, CstCssFunc func) {
 static void cst_css_value_dispose(SysObject* o) {
   CstCssValue *self = CST_CSS_VALUE(o);
 
+  switch (self->d_type) {
+    case CST_CSS_VALUE_BOOL:
+    case CST_CSS_VALUE_NULL:
+    case CST_CSS_VALUE_DOUBLE:
+    case CST_CSS_VALUE_INT:
+      break;
+    case CST_CSS_VALUE_STRING:
+      sys_clear_pointer(&self->v.v_string, sys_free);
+      break;
+    case CST_CSS_VALUE_COLOR:
+      sys_clear_pointer(&self->v.v_color, sys_free);
+      break;
+    case CST_CSS_VALUE_M4:
+      sys_clear_pointer(&self->v.v_m4, fr_sint4_free);
+      break;
+    case CST_CSS_VALUE_POINTER:
+      break;
+    case CST_CSS_VALUE_CLOSURE:
+      sys_clear_pointer(&self->v.v_closure, _sys_object_unref);
+      break;
+  }
+
   SYS_OBJECT_CLASS(cst_css_value_parent_class)->dispose(o);
+}
+
+SysObject* cst_css_value_dclone_i(SysObject *o) {
+  SysObject *n = SYS_OBJECT_CLASS(cst_css_value_parent_class)->dclone(o);
+
+  CstCssValue *nself = CST_CSS_VALUE(n);
+  CstCssValue *oself = CST_CSS_VALUE(o);
+
+  nself->d_type = oself->d_type;
+  switch (oself->d_type) {
+    case CST_CSS_VALUE_BOOL:
+      nself->v.v_bool = oself->v.v_bool;
+      break;
+    case CST_CSS_VALUE_NULL:
+      nself->v.v_pointer = oself->v.v_pointer;
+      break;
+    case CST_CSS_VALUE_DOUBLE:
+      nself->v.v_double = oself->v.v_double;
+      break;
+    case CST_CSS_VALUE_INT:
+      nself->v.v_int = oself->v.v_int;
+      break;
+    case CST_CSS_VALUE_STRING:
+      nself->v.v_string = sys_strdup(oself->v.v_string);
+      break;
+    case CST_CSS_VALUE_COLOR:
+      nself->v.v_color = fr_color_clone(oself->v.v_color);
+      break;
+    case CST_CSS_VALUE_M4:
+      nself->v.v_m4 = fr_sint4_clone(oself->v.v_m4);
+      break;
+    case CST_CSS_VALUE_POINTER:
+      nself->v.v_pointer = oself->v.v_pointer;
+      break;
+    case CST_CSS_VALUE_CLOSURE:
+      nself->v.v_closure = (CstCssClosure *)sys_object_dclone(oself->v.v_closure);
+      break;
+    default:
+      sys_warning_N("can not recorgnize css value type: %d", oself->d_type);
+      break;
+  }
+
+  return n;
 }
 
 CstCssValue *cst_css_value_new(void) {
@@ -186,6 +270,7 @@ static void cst_css_value_class_init(CstCssValueClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_css_value_dispose;
+  ocls->dclone = cst_css_value_dclone_i;
 }
 
 static void cst_css_value_init(CstCssValue *self) {

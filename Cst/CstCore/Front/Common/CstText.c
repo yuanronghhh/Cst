@@ -1,9 +1,10 @@
 #include <CstCore/Front/Common/CstText.h>
-#include <CstCore/Front/Common/CstLContentContext.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
+
+#include <CstCore/Front/Common/CstLBoxContext.h>
 
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_NODE);
 
@@ -52,20 +53,19 @@ void cst_text_set_alignment(CstText* self, SysInt align) {
   pango_layout_set_alignment(self->playout, align);
 }
 
-CstNode* cst_text_dclone_i(CstNode *node) {
+SysObject* cst_text_dclone_i(SysObject *o) {
   CstText *ntext;
   CstText *otext;
 
-  CstNode *nnode;
+  SysObject *n = SYS_OBJECT_CLASS(cst_text_parent_class)->dclone(o);
 
-  nnode = CST_NODE_CLASS(cst_text_parent_class)->dclone(node);
-  ntext = CST_TEXT(nnode);
-  otext = CST_TEXT(node);
+  ntext = CST_TEXT(n);
+  otext = CST_TEXT(o);
 
   ntext->playout = otext->playout ? pango_layout_copy(otext->playout) : NULL;
   ntext->font_desc = otext->font_desc ? pango_font_description_copy(otext->font_desc) : NULL;
 
-  return nnode;
+  return n;
 }
 
 static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
@@ -83,6 +83,7 @@ static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   }
 }
 
+#if 0
 static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
   CstText *self = CST_TEXT(node);
 
@@ -93,6 +94,7 @@ static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
 
   fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
+#endif
 
 static void cst_text_relayout_i(CstLayoutNode *o, CstLayout *layout) {
   CstText *self = CST_TEXT(o);
@@ -115,6 +117,7 @@ void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
   CstText *self = CST_TEXT(o);
   PangoLayout *playout = self->playout;
 
+  fr_layout_get_pixel_size(playout, width, height);
 }
 
 /* object api */
@@ -125,8 +128,10 @@ static void cst_text_init(CstText *self) {
   PangoContext *pctx = pango_font_map_create_context(font_map);
 
   self->playout = pango_layout_new (pctx);
-
   g_object_unref(pctx);
+
+  cst_node_set_name(node, "Text");
+  cst_node_set_rctx_type(node, CST_TYPE_LBOX_CONTEXT);
 }
 
 static void cst_text_dispose(SysObject* o) {
@@ -149,8 +154,8 @@ static void cst_text_class_init(CstTextClass* cls) {
   CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_text_dispose;
+  ocls->dclone = cst_text_dclone_i;
 
-  ncls->dclone = cst_text_dclone_i;
   ncls->construct = cst_text_construct_i;
 
   lcls->layout = cst_text_relayout_i;

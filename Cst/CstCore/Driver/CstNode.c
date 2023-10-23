@@ -9,11 +9,9 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
 
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
@@ -33,22 +31,12 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
   "key_up","key_down",
 };
 
-
 SYS_DEFINE_TYPE(CstNode, cst_node, CST_TYPE_LAYOUT_NODE);
-
 
 CstNode* cst_node_parent(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->parent;
-}
-
-static void node_default_constraint_width(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
-  sys_return_if_fail(self != NULL);
-}
-
-static void node_default_constraint_height(CstNode *v_parent, CstNode *self, FRContext *cr, SysPointer data) {
-  sys_return_if_fail(self != NULL);
 }
 
 CstNode *cst_node_children(CstNode *self) {
@@ -104,33 +92,41 @@ void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout)
   cst_css_render_groups(self->css_groups, rnode, layout);
 }
 
-CstNode* cst_node_dclone_i(CstNode *o) {
+SysObject* cst_node_dclone_i(SysObject *o) {
   sys_return_val_if_fail(o != NULL, NULL);
 
   FRAWatch *nwatch;
   CstNodeMap *map;
-  SysPtrArray *ptr;
-  CstNode* n = CST_NODE(cst_layout_node_clone(CST_LAYOUT_NODE(o)));
+  CstNode *nself;
+  CstNode *oself;
+  SysObject* n;
 
-  n->id = sys_strdup(o->id);
-  ptr = n->css_groups;
+  n = SYS_OBJECT_CLASS(cst_node_parent_class)->dclone(o);
 
-  for(SysUInt i = 0; i < ptr->len; i++) {
-    CstCssGroup *g = cst_css_group_clone(ptr->pdata[i]);
+  oself = CST_NODE(o);
+  nself = CST_NODE(n);
 
-    sys_ptr_array_add(n->css_groups, g);
+  nself->id = sys_strdup(oself->id);
+  nself->position = oself->position;
+
+  sys_assert(nself->name != NULL);
+
+  for(SysUInt i = 0; i < oself->css_groups->len; i++) {
+    CstCssGroup *g = (CstCssGroup *)sys_object_dclone(oself->css_groups->pdata[i]);
+
+    sys_ptr_array_add(nself->css_groups, g);
   }
 
-  sys_list_foreach(o->awatches, item) {
-    nwatch = fr_awatch_clone(item->data);
+  sys_list_foreach(oself->awatches, item) {
+    nwatch = (FRAWatch *)sys_object_dclone(item->data);
 
-    n->awatches = sys_list_prepend(n->awatches, nwatch);
+    nself->awatches = sys_list_prepend(nself->awatches, nwatch);
   }
 
-  sys_list_foreach(o->node_maps, item) {
-    map = cst_node_map_clone(item->data);
+  sys_list_foreach(oself->node_maps, item) {
+    map = (CstNodeMap *)sys_object_dclone(item->data);
 
-    n->node_maps = sys_list_prepend(n->node_maps, map);
+    nself->node_maps = sys_list_prepend(nself->node_maps, map);
   }
 
   return n;
@@ -165,7 +161,6 @@ static CstRenderNode* node_realize_render_node(CstNode *self, CstRender *v_rende
 }
 
 CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render) {
-  CstLayer *layer = NULL;
   CstRenderNode *rnode;
 
   rnode = cst_node_realize(v_module, ncomp_node, v_parent, self, v_render);
@@ -334,10 +329,6 @@ SysBool cst_node_set_css_by_id(CstNode *self, SysChar *id, CstComponent *comp) {
 }
 
 /* api */
-void cst_node_layout_content(CstNode *self) {
-  sys_return_if_fail(self != NULL);
-}
-
 void cst_node_set_margin(CstNode *self, const FRSInt4 * margin) {
   sys_return_if_fail(self != NULL);
 
@@ -433,26 +424,6 @@ void cst_node_print_node(CstNode* node) {
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
-CstNode* cst_node_dclone(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
-  sys_return_val_if_fail(ncls->dclone != NULL, NULL);
-
-  return ncls->dclone(self);
-}
-
-void cst_node_bind(CstNode *self, CstComNode *com_node) {
-  sys_return_if_fail(self != NULL);
-
-  CstNodeMap *map;
-  sys_list_foreach(self->node_maps, list) {
-    map = list->data;
-
-    cst_node_map_bind(map, com_node, self);
-  }
-}
-
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(builder != NULL);
@@ -544,6 +515,7 @@ void cst_node_add_awatch(CstNode *self, FRAWatch *awatch) {
   sys_return_if_fail(self != NULL);
 
   self->awatches = sys_list_prepend(self->awatches, awatch);
+  sys_object_ref(awatch);
 }
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
@@ -566,39 +538,33 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   return CST_NODE_PROP_LAST;
 }
 
-static void cst_node_relayout_down_i(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw* draw, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
-}
-
 static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   FRAWatch* nwatch;
+  CstRenderNode *rnode;
+  CstNode *node;
+  CstNodeMap *map;
 
-  sys_list_foreach(self->awatches, item) {
+  rnode = node_realize_render_node(self, v_render, v_parent);
+  node = cst_render_node_get_node(rnode);
+
+  sys_list_foreach(node->awatches, item) {
     nwatch = item->data;
 
-    fr_awatch_bind(nwatch, self);
+    fr_awatch_bind(nwatch, rnode);
   }
 
   if (com_node) {
 
-    cst_node_bind(self, com_node);
+    sys_list_foreach(node->node_maps, list) {
+      map = list->data;
+
+      cst_node_map_bind(map, com_node, rnode);
+    }
   }
 
-  return node_realize_render_node(self, v_render, v_parent);
-}
-
-static void cst_node_repaint_i(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw* draw, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
-  // sys_assert(self->bound.x >= 0 && "node x >= 0 failed, relayout not correct ?");
-  // sys_assert(self->bound.y >= 0 && "node y >= 0 failed, relayout not correct ?");
-  // sys_assert(self->bound.width >= 0 && "node width >= 0 faild, relayout not correct ?");
-  // sys_assert(self->bound.height >= 0 && "node height >= 0 failed, relayout not correct ?");
-
-  // sys_debug_N("repaint node: %s<%d,%d,%d,%d>", self->id, self->bound.x, self->bound.y, self->bound.width, self->bound.height);
+  return rnode;
 }
 
 static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
@@ -652,16 +618,23 @@ void cst_node_teardown(void) {
   cst_render_context_teardown();
 }
 
-CstRenderContext* cst_node_new_default_context(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
+void cst_node_set_rctx_type(CstNode *self, SysType rctx_type) {
+  sys_return_if_fail(self != NULL);
 
-  return ncls->new_default_context(self);
+  self->rctx_type = rctx_type;
 }
 
-static CstRenderContext* cst_node_new_default_context_i(CstNode* node) {
+SysType cst_node_get_rctx_type(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, 0);
 
-  return cst_lbox_context_new_I();
+  return self->rctx_type;
+}
+
+CstRenderContext *cst_node_create_default_context(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self->rctx_type != 0, NULL);
+
+  return sys_object_new(self->rctx_type, NULL);
 }
 
 /* sys object api */
@@ -671,19 +644,19 @@ CstNode* cst_node_new(void) {
 
 static void cst_node_class_init(CstNodeClass *cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_node_dispose;
+  ocls->dclone = cst_node_dclone_i;
 
   cls->construct = cst_node_construct_i;
-  cls->dclone = cst_node_dclone_i;
   cls->realize = cst_node_realize_i;
-  cls->new_default_context = cst_node_new_default_context_i;
+
 }
 
 static void cst_node_dispose(SysObject* o) {
   CstNode *self = CST_NODE(o);
 
+  sys_clear_pointer(&self->css_groups, sys_ptr_array_unref);
   sys_list_free_full(self->awatches, (SysDestroyFunc)_sys_object_unref);
   sys_list_free_full(self->node_maps, (SysDestroyFunc)_sys_object_unref);
 
@@ -698,4 +671,6 @@ static void cst_node_init(CstNode *self) {
   self->last_child = NULL;
   self->awatches = NULL;
   self->css_groups = node_new_css_groups();
+  self->rctx_type = CST_TYPE_LBOX_CONTEXT;
 }
+

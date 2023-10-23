@@ -51,12 +51,13 @@ struct _FRSInt4 {
   SysInt16 m3;
 };
 
+SYS_API FRColor *fr_color_clone(FRColor *o);
 SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FRColor *color);
 SYS_API FRColor* fr_color_rgba_new(const SysChar *rgba);
 SYS_API SysBool fr_rect_in_range(const FRRect *rect, SysInt x, SysInt y);
-FRSInt4* fr_sint4_clone(FRSInt4* m);
-FRSInt4* fr_sint4_new(void);
-void fr_sint4_free(FRSInt4* o);
+SYS_API FRSInt4* fr_sint4_clone(FRSInt4* m);
+SYS_API FRSInt4* fr_sint4_new(void);
+SYS_API void fr_sint4_free(FRSInt4* o);
 
 #define fr_region_destroy cairo_region_destroy
 #define fr_region_create_rectangle cairo_region_create_rectangle

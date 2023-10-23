@@ -9,6 +9,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Event/Action/FRAWatchRefresh.h>
 #include <Framework/Event/Action/FRAWatchCursorMove.h>
 #include <Framework/Event/Action/FRAWatchMousePress.h>
+#include <Framework/Event/Action/FRAWatchMouseRelease.h>
 #include <Framework/Event/Action/FRAWatchKey.h>
 #include <Framework/Event/Action/FRAWatchKeyPress.h>
 #include <Framework/Event/Action/FRAWatch.h>

@@ -45,8 +45,8 @@ void com_node_set_value(CstComNode *self, const SysChar *key, CstPropValue *valu
   sys_hash_table_insert(self->values_ht, (SysPointer)sys_strdup(key), (SysPointer)value);
 }
 
-static void text_set_text_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
-  CstText *text = CST_TEXT(rnode);
+static void text_set_text_i(CstNode *node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  CstText *text = CST_TEXT(node);
 
   cst_text_set_text(text, sys_value_v_string(value));
 }

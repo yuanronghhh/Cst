@@ -632,7 +632,7 @@ SysType cst_node_get_rctx_type(CstNode *self) {
 
 CstRenderContext *cst_node_create_default_context(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(self->rctx_type != NULL, NULL);
+  sys_return_val_if_fail(self->rctx_type != 0, NULL);
 
   return sys_object_new(self->rctx_type, NULL);
 }

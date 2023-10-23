@@ -137,7 +137,7 @@ static void cst_render_node_dispose(SysObject* o) {
 }
 
 static void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
-  self->node = node;
+  self->node = (CstNode *)sys_object_dclone(node);
   self->render_ctx = cst_node_create_default_context(node);
 
   sys_object_ref(node);

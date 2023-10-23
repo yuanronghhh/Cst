@@ -22,6 +22,7 @@ struct _CstComponent {
   /* ComProps: CstPropMap */
   FREnv *prop_maps_env;
   CstNode *layout_node;
+  SysInt comp_type;
 };
 
 struct _CstComponentClass {

@@ -76,7 +76,6 @@ typedef  struct  _FRAction              FRAction;
 typedef  struct  _FRActionClass         FRActionClass;
 typedef  struct  _FRAKey                FRAKey;
 typedef  struct  _FRAKeyClass           FRAKeyClass;
-typedef  struct  _FRAKeyPrivate         FRAKeyPrivate;
 typedef  struct  _FRAMouseKey           FRAMouseKey;
 typedef  struct  _FRAMouseKeyClass      FRAMouseKeyClass;
 typedef  struct  _FRACursorMove         FRACursorMove;

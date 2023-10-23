@@ -87,14 +87,8 @@ check-linux:
 cst-test-build:
 	@make PROJ_NAME="CstCoreTest" build-${PLATFORM}
 
-libvma:
-	@make PROJ_NAME="libVMA" build
-
 cst-test-debug: cst-test-build
 	@make PROJ_NAME="CstCoreTest" debug-${PLATFORM}
-
-cst-lines-debug: cst-test-build
-	@gvim --remote-send ':Debug /home/greyhound/Git/Cst/build/Cst/vkvg/tests/lines<cr>'
 
 cst-test: cst-test-build
 	@make PROJ_NAME="CstCoreTest" run-${PLATFORM}
@@ -134,21 +128,5 @@ mini: mini-build
 
 mini-check: mini-build
 	@make PROJ_NAME="Mini" check-${PLATFORM}
-
-# -------------------- demo start --------------------
-cst-demo-build:
-	@make PROJ_NAME="CstDemo" build-${PLATFORM}
-
-cst-demo-debug: cst-demo-build
-	@make PROJ_NAME="CstDemo" PROJ_NAME_FILE=${BUILD_DIR}/CstDemo/CstDemo debug-${PLATFORM}
-
-cst-demo: cst-demo-build
-	@make PROJ_NAME="CstDemo" run-${PLATFORM}
-
-cst-demo-check: cst-demo-build
-	@make PROJ_NAME="CstDemo" check-${PLATFORM}
-
-gobject-build:
-	python3 gobject-gen -f -p -c CstPackage -o "./Cst/CstCore/"
 
 .PHONY: build run debug clean build-all build-tags

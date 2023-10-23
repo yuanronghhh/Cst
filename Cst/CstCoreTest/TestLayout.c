@@ -15,12 +15,12 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   CstManager *manager;
   CstNode *root;
   CstRender *v_render;
-  CstBoxLayer *box_layer;
+  CstLayer *box_layer;
 
   v_render = cst_render_new_I(USE_OFFSREEN_RENDER);
   manager = cst_manager_new_I();
 
-  cst_manager_set_meta(manager, "layout-component", LAYOUT_TYPE_COMPONENT);
+  cst_node_set_meta("layout-component", LAYOUT_TYPE_COMPONENT);
 
   v_module = cst_manager_load_module(manager, NULL, entry);
   TEST_ASSERT_NOT_NULL(v_module);
@@ -30,7 +30,6 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
 
   box_layer = cst_render_get_box_layer(v_render);
   root = cst_render_get_body_node(v_render);
-  root = cst_box_layer_get_root(box_layer);
 
   func(root);
 

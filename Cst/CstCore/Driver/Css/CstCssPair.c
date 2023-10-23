@@ -100,12 +100,12 @@ void cst_css_pair_set_height(CstRenderNode* rnode, CstLayout *layout, SysPointer
 void cst_css_pair_set_position(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstRenderContext* rctx = cst_render_node_get_render_ctx(rnode);
+  CstNode *node = cst_render_node_get_node(rnode);
 
   SysInt v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
 
-  cst_render_context_set_position(rctx, v);
+  cst_node_set_position(node, v);
 }
 
 void cst_css_pair_set_margin(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {

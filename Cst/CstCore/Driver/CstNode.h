@@ -30,6 +30,7 @@ struct _CstNode {
   /* Type: CstNodeMap */
   SysList *node_maps;
   SysPtrArray* css_groups;
+  /* Type: CST_LAYER_ENUM */
   SysInt position;
 
   SysType rctx_type;

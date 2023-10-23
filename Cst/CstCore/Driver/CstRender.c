@@ -78,6 +78,7 @@ void cst_render_render(CstRender *self) {
 
   fr_region_destroy(region);
 
+
   sys_object_unref(layout);
 }
 

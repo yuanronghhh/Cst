@@ -85,14 +85,12 @@ void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
   sys_return_if_fail(self->tree != NULL);
 
   CstBoxNode* box_node = self->tree;
-  
-  cst_box_node_relayout_node(box_node, layout);
 
-  // cst_box_layer_print_tree(self);
+  cst_box_node_relayout_node(box_node, layout);
 }
 
 void box_node_print(CstRenderNode* rnode, SysPointer user_data) {
-  
+
   cst_render_node_print(rnode);
 }
 

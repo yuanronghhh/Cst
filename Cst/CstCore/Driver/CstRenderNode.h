@@ -11,6 +11,7 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
 #define CST_RENDER_NODE_NODE(o) ((o)->node)
 
+
 struct _CstRenderNode {
   SysObject parent;
   /* < private > */
@@ -28,8 +29,7 @@ struct _CstRenderNodeClass {
   void (*construct) (CstRenderNode *self, CstNode* node);
   void (*relayout) (CstRenderNode* self, CstLayout* layout);
   void (*repaint) (CstRenderNode* self, CstLayout* layout);
-  CstRenderNode* (*get_parent)(CstRenderNode* self);
-  CstRenderContext* (*get_default_ctx)(CstRenderNode *self);
+  CstRenderNode* (*get_parent) (CstRenderNode* self);
 };
 
 SysType cst_render_node_get_type(void);

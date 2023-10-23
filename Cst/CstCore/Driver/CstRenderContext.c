@@ -30,18 +30,6 @@ const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self) {
   return &self->mbp;
 }
 
-void cst_render_context_set_position(CstRenderContext *self, SysInt position) {
-  sys_return_if_fail(self != NULL);
-
-  self->position = position;
-}
-
-SysInt cst_render_context_get_position(CstRenderContext *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->position;
-}
-
 void cst_render_context_set_width_closure(CstRenderContext* self, CstCssClosure* c) {
   sys_return_if_fail(self != NULL);
 
@@ -130,7 +118,6 @@ SysObject* cst_render_context_dclone_i(SysObject* o) {
   nself->is_visible = oself->is_visible;
   nself->wrap = oself->wrap;
   nself->line_space = oself->line_space;
-  nself->position = oself->position;
   nself->child_count = oself->child_count;
   nself->mbp = oself->mbp;
   nself->prefer_height = oself->prefer_height;

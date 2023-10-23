@@ -28,7 +28,6 @@ struct _CstRenderContext {
 
   SysInt prefer_height;
   SysInt prefer_width;
-  SysInt position;
 
   // self constraint
   CstCssClosure  *width_calc;
@@ -71,9 +70,6 @@ void cst_render_context_set_paint(CstRenderContext *self, SysBool bvalue);
 
 void cst_render_context_setup(void);
 void cst_render_context_teardown(void);
-
-void cst_render_context_set_position(CstRenderContext *self, SysInt position);
-SysInt cst_render_context_get_position(CstRenderContext *self);
 
 void cst_render_context_set_wrap(CstRenderContext *self, SysBool wrap);
 SysBool cst_render_context_get_wrap(CstRenderContext *self);

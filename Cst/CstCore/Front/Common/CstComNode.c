@@ -45,8 +45,8 @@ void com_node_set_value(CstComNode *self, const SysChar *key, CstPropValue *valu
   sys_hash_table_insert(self->values_ht, (SysPointer)sys_strdup(key), (SysPointer)value);
 }
 
-static void text_set_text_i(CstNode *node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
-  CstText *text = CST_TEXT(node);
+static void text_set_text_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  CstText *text = CST_TEXT(rnode);
 
   cst_text_set_text(text, sys_value_v_string(value));
 }
@@ -107,7 +107,7 @@ static CstRenderNode* cst_com_node_realize_i(CstModule *v_module, CstComNode *nc
   sys_return_val_if_fail(v_node != NULL, NULL);
 
   CstComNode *self = CST_COM_NODE(v_node);
-  CstRenderNode *rnode = cst_component_realize(v_module, self->component, v_parent, v_render);
+  CstRenderNode *rnode = cst_component_realize_full(v_module, self->component, v_parent, self, v_render);
 
   return rnode;
 }

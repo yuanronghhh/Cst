@@ -552,7 +552,7 @@ static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_no
   sys_list_foreach(node->awatches, item) {
     nwatch = item->data;
 
-    fr_awatch_bind(nwatch, node);
+    fr_awatch_bind(nwatch, rnode);
   }
 
   if (com_node) {
@@ -560,7 +560,7 @@ static CstRenderNode* cst_node_realize_i(CstModule* v_module, CstComNode* com_no
     sys_list_foreach(node->node_maps, list) {
       map = list->data;
 
-      cst_node_map_bind(map, com_node, node);
+      cst_node_map_bind(map, com_node, rnode);
     }
   }
 
@@ -632,6 +632,7 @@ SysType cst_node_get_rctx_type(CstNode *self) {
 
 CstRenderContext *cst_node_create_default_context(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self->rctx_type != NULL, NULL);
 
   return sys_object_new(self->rctx_type, NULL);
 }

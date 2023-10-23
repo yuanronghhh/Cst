@@ -46,6 +46,8 @@ void cst_css_node_set_value(CstCssNode *self, CstRenderNode *rnode, CstLayout *l
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(rnode != NULL);
 
+  CstNode *node = cst_render_node_get_node(rnode);
+  sys_debug_N("%s,%s", cst_node_get_name(node), self->name);
   self->set_value(rnode, layout, user_data);
 }
 

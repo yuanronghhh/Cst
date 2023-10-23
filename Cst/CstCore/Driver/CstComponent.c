@@ -124,7 +124,7 @@ void cst_component_set_props_map(CstComponent *self, CstPropMap *map) {
 CstRenderNode* cst_component_realize_full(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstComNode *ncomp_node, CstRender *v_render) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_node_realize_r(v_module, NULL, v_parent, self->layout_node, v_render);
+  return cst_node_realize_r(v_module, ncomp_node, v_parent, self->layout_node, v_render);
 }
 
 CstRenderNode* cst_component_realize(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstRender *v_render) {

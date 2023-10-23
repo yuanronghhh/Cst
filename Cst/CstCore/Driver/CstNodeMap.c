@@ -53,11 +53,12 @@ SysObject* cst_node_map_dclone_i(SysObject* o) {
   return n;
 }
 
-void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstNode *node) {
+void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
 
   const SysChar *bind_var = cst_prop_map_key(self->prop_map);
   SysInt data_type = cst_prop_map_prop_data_type(self->prop_map);
+  CstNode *node = cst_render_node_get_node();
 
   CstPropValue *pvalue = cst_com_node_get_value(com_node, bind_var);
   if (pvalue == NULL) {
@@ -72,23 +73,24 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstNode *node) {
 
   self->func = cst_com_node_get_func(self->node_type, self->prop_type, data_type);
   if (self->func) {
-    self->func(node, self->prop_name, bind_var, self->value);
+    self->func(rnode, self->prop_name, bind_var, self->value);
   }
 }
 
-void cst_node_map_calc(CstNodeMap *self, CstNode *node) {
+void cst_node_map_calc(CstNodeMap *self, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(node != NULL);
+  sys_return_if_fail(rnode != NULL);
 
   const SysChar *key = cst_prop_map_key(self->prop_map);
-  SysType type = sys_type_from_instance(node);
+  CstNode *node = cst_render_node_get_node(rnode);
+  SysType type = sys_type_from_instance(rnode);
 
   if(self->node_type != type) {
     sys_warning_N("Not same node type: \"%s\"", key);
     return;
   }
 
-  self->func(node, self->prop_name, key, self->value);
+  self->func(rnode, self->prop_name, key, self->value);
 }
 
 const SysChar * cst_node_map_get_prop_name(CstNodeMap *self) {

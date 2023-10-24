@@ -13,18 +13,30 @@ SYS_BEGIN_DECLS
 
 
 struct _CstRenderNode {
-  SysObject parent;
+  CstLayoutNode parent;
   /* < private > */
 
   /* ref node */
   CstNode *node;
+
+  /* FRAWatch */
+  SysList *awatch_list;
+
+  /* CstNodeMap */
+  SysList *nodemap_list;
+
+  /* CstCssGroup */
+  SysPtrArray* v_css_list;
+
+  /* Type: CST_NODE_POSITION_ENUM */
+  CstLayer *layer;
 
   /* render context */
   CstRenderContext *render_ctx;
 };
 
 struct _CstRenderNodeClass {
-  SysObjectClass parent;
+  CstLayoutNodeClass parent;
 
   void (*construct) (CstRenderNode *self, CstNode* node);
   void (*relayout) (CstRenderNode* self, CstLayout* layout);
@@ -36,10 +48,14 @@ SysType cst_render_node_get_type(void);
 CstRenderNode *cst_render_node_new(void);
 CstRenderNode *cst_render_node_new_I(CstNode *node);
 
-CST_RENDER_NODE_ENUM cst_render_node_type_by_name(const SysChar* name);
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self);
 void cst_render_node_print(CstRenderNode * self);
 
+void cst_render_node_set_meta(const SysChar* name, SysType stype);
+SysType cst_render_node_get_meta(const SysChar* name);
+
+void cst_render_node_setup(void);
+void cst_render_node_teardown(void);
 
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);
@@ -52,6 +68,26 @@ CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self);
 void cst_render_node_prepare(CstRenderNode * self, CstLayout * layout);
 CstNode * cst_render_node_get_node(CstRenderNode *self);
 SysType cst_render_node_get_node_type(CstRenderNode *self);
+
+void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer);
+
+void cst_render_node_ref_awatch(CstRenderNode *self, FRAWatch *o);
+SysList * cst_render_node_get_awatch_list(CstRenderNode *self);
+
+void cst_render_node_ref_nodemap(CstRenderNode *self, CstNodeMap *o);
+SysList * cst_render_node_get_nodemap_list(CstRenderNode *self);
+
+void cst_render_node_add_v_css(CstRenderNode *self, CstCssGroup* g);
+SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self);
+
+void cst_render_node_set_layer(CstRenderNode *self, CstLayer * layer);
+CstLayer * cst_render_node_get_layer(CstRenderNode *self);
+
+void cst_render_node_set_name(CstRenderNode *self, const SysChar* name);
+const SysChar* cst_render_node_get_name(CstRenderNode *self);
+
+void cst_render_node_set_id(CstRenderNode *self, const SysChar* id);
+const SysChar* cst_render_node_get_id(CstRenderNode *self);
 
 SYS_END_DECLS
 

@@ -1,0 +1,20 @@
+import MenuBar from "./MiniMenuBar.cst";
+
+
+Component<id: "page-component", type: "page">: {
+  Style: {
+    page-menu: {
+      width: 200,
+      wrap: true
+    }
+  },
+
+  Layout: {
+    LBox<id: "page-menu", "@press": "mini_menu_press">: {
+      MenuBar<value: "文件(F)", >: null
+    },
+    LGrid<id:"page-body">: {
+    }
+  }
+}
+

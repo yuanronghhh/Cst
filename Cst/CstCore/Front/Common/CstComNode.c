@@ -1,5 +1,6 @@
 #include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Front/CstFrontCore.h>
 
 
@@ -45,20 +46,21 @@ void com_node_set_value(CstComNode *self, const SysChar *key, CstPropValue *valu
   sys_hash_table_insert(self->values_ht, (SysPointer)sys_strdup(key), (SysPointer)value);
 }
 
-static void text_set_text_i(CstNode *node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
-  CstText *text = CST_TEXT(node);
+static void text_set_text_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  CstText *text = CST_TEXT(rnode);
 
   cst_text_set_text(text, sys_value_v_string(value));
 }
 
-static void node_set_awatch_func_i(CstNode *node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+static void node_set_awatch_func_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
   SysType tp = fr_awatch_get_type_by_name(key);
+  SysList* list = cst_render_node_get_awatch_list(rnode);
+  FRAWatch *awatch = fr_awatch_list_get_awatch(list, tp, bind_var);
 
-  FRAWatch *awatch = cst_node_get_awatch(node, tp, bind_var);
   if (awatch == NULL) {
     sys_warning_N("Not found awatch in node: %s, %s, %s", 
-      cst_node_get_name(node),
-      cst_node_get_id(node),
+      cst_render_node_get_name(rnode),
+      cst_render_node_get_id(rnode),
       key);
 
     return;
@@ -67,7 +69,8 @@ static void node_set_awatch_func_i(CstNode *node, const SysChar *key, const SysC
   fr_awatch_set_function(awatch, (FREventFunc)sys_value_v_pointer(value));
 }
 
-static void com_node_set_value_i(CstNode *node, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+static void com_node_set_value_i(CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value) {
+  CstNode* node = cst_render_node_get_node(rnode);
   CstComNode *com_node = CST_COM_NODE(node);
 
   com_node_set_value(com_node, key, value);
@@ -101,15 +104,11 @@ void cst_com_node_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_node, builder);
 }
 
-static CstRenderNode* cst_com_node_realize_i(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *v_node, CstRender *v_render) {
-  sys_return_val_if_fail(v_module != NULL, NULL);
-  sys_return_val_if_fail(v_parent != NULL, NULL);
-  sys_return_val_if_fail(v_node != NULL, NULL);
+static CstRenderNode* cst_com_node_realize_i(CstNode* o, CstRenderNode* prnode, CstLayout* layout) {
+  CstComNode *self = CST_COM_NODE(o);
+  CstRenderNode* rnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, prnode, layout);
 
-  CstComNode *self = CST_COM_NODE(v_node);
-  CstRenderNode *rnode = cst_component_realize_full(v_module, self->component, v_parent, self, v_render);
-
-  return rnode;
+  return cst_component_realize(self->component, rnode, layout);
 }
 
 static void cst_com_node_class_init(CstComNodeClass* cls) {

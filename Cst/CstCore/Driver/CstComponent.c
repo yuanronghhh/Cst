@@ -1,3 +1,4 @@
+#include "CstComponent.h"
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Driver/CstModule.h>
@@ -121,18 +122,11 @@ void cst_component_set_props_map(CstComponent *self, CstPropMap *map) {
   fr_env_set(self->prop_maps_env, cst_prop_map_key(map), (SysPointer)map);
 }
 
-CstRenderNode* cst_component_realize_full(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstComNode *ncomp_node, CstRender *v_render) {
+CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode* prnode, CstLayout* layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_node_realize_r(v_module, ncomp_node, v_parent, self->layout_node, v_render);
+  return cst_node_realize_r(self->layout_node, prnode, layout);
 }
-
-CstRenderNode* cst_component_realize(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstRender *v_render) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return cst_component_realize_full(v_module, self, v_parent, NULL, v_render);
-}
-
 /* sys object api */
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
   sys_return_if_fail(builder != NULL);
@@ -153,23 +147,20 @@ static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *b
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(builder != NULL);
   SysHashTable *ht;
-  CstComponent *v_parent;
+  CstComponent *pcomp;
   CstModule *v_module;
 
-  v_parent = cst_component_builder_get_v_parent(builder);
+  pcomp = cst_component_builder_get_v_parent(builder);
   v_module = cst_component_builder_get_v_module(builder);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
-  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_parent));
+  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(pcomp));
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   self->prop_maps_env = fr_env_new_I(ht, NULL);
 
   self->style_env = cst_css_env_new_I(NULL);
   self->v_module = v_module;
-
-  if (v_parent) {
-  }
 
   self->layout_node = NULL;
 }

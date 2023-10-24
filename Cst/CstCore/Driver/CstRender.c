@@ -1,6 +1,7 @@
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Front/Common/CstLBody.h>
@@ -30,16 +31,10 @@ CstLayer *cst_render_get_abs_layer(CstRender *self) {
   return self->abs_layer;
 }
 
-void cst_render_set_layer_root(CstRender* self, CstRenderNode *root) {
-  sys_return_if_fail(self != NULL);
-
-  cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(root));
-}
-
 CstNode *cst_render_get_body_node(CstRender* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->body_node;
+  return self->root_node;
 }
 
 FRRegion *render_create_region(FRWindow *window) {
@@ -55,11 +50,14 @@ FRRegion *render_create_region(FRWindow *window) {
 void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  cst_layout_begin_layout(layout, CST_LAYER_BOX);
+  CstLayer *layer;
 
-  cst_box_layer_check(self->box_layer, layout);
-  cst_box_layer_layout(self->box_layer, layout);
-  cst_box_layer_render(self->box_layer, layout);
+  layer = self->box_layer;
+  cst_layout_begin_layout(layout, layer);
+
+  cst_box_layer_check(layer, layout);
+  cst_box_layer_layout(layer, layout);
+  cst_box_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);
 }
@@ -67,14 +65,17 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
 void cst_render_render(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
+  CstLayer *layer;
   FRRegion *region = render_create_region(self->window);
   CstLayout* layout = cst_layout_new_I(self->draw, region);
 
-  cst_layout_begin_layout(layout, CST_LAYER_BOX);
-  cst_box_layer_layout(self->box_layer, layout);
+  layer = self->box_layer;
+
+  cst_layout_begin_layout(layout, layer);
+  cst_box_layer_layout(layer, layout);
   cst_layout_end_layout(layout);
 
-  cst_box_layer_render(self->box_layer, layout);
+  cst_box_layer_render(layer, layout);
 
   fr_region_destroy(region);
 
@@ -111,6 +112,43 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   fr_region_destroy(region);
 }
 
+CstLayer *cst_render_get_layer_by_position(CstRender *self, SysInt position) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  switch(position) {
+    case CST_NODE_POSITION_BOX:
+      return self->box_layer;
+    case CST_NODE_POSITION_ABS:
+      return self->abs_layer;
+    case CST_NODE_POSITION_STATIC:
+    case CST_NODE_POSITION_PASS:
+    default:
+      sys_warning_N("layer not implement: %d", position);
+      break;
+  }
+
+  return NULL;
+}
+
+void cst_render_realize(CstRender *self) {
+  sys_return_if_fail(self != NULL);
+
+  CstNode* node;
+  CstRenderNode* body;
+  const FRRect* bound;
+  FRRegion* region;
+  CstLayout* layout;
+
+  node = self->root_node;
+  bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
+  region = fr_region_create_rectangle(bound);
+
+  layout = cst_layout_new_I(self->draw, region);
+  body = cst_node_realize(node, NULL, layout);
+
+  cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
+}
+
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
@@ -125,12 +163,8 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
-  self->body_node = cst_lbody_new();
+  self->root_node = cst_node_new();
   self->draw = fr_draw_new_I(self->window);
-
-  CstNodeBuilder* builder = cst_node_builder_new();
-  cst_node_construct(self->body_node, builder);
-  sys_object_unref(builder);
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {
@@ -152,7 +186,7 @@ static void cst_render_dispose(SysObject* o) {
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
   sys_clear_pointer(&self->draw, _sys_object_unref);
-  sys_clear_pointer(&self->body_node, _sys_object_unref);
+  sys_clear_pointer(&self->root_node, _sys_object_unref);
 
   if (self->window) {
     sys_object_unref(self->window);

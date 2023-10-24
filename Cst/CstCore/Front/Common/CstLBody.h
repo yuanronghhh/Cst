@@ -1,7 +1,7 @@
 #ifndef __CST_LBODY_H__
 #define __CST_LBODY_H__
 
-#include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 
 SYS_BEGIN_DECLS
 
@@ -12,15 +12,15 @@ SYS_BEGIN_DECLS
 
 
 struct _CstLBody {
-  CstNode parent;
+  CstRenderNode parent;
 };
 
 struct _CstLBodyClass {
-  CstNodeClass parent;
+  CstRenderNodeClass parent;
 };
 
 SysType cst_lbody_get_type(void);
-CstNode* cst_lbody_new(void);
+CstRenderNode* cst_lbody_new(void);
 
 SYS_END_DECLS
 

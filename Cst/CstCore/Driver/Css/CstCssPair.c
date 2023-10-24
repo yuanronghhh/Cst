@@ -3,6 +3,7 @@
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/Css/CstCssClosure.h>
 #include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCssNode.h>
@@ -100,12 +101,18 @@ void cst_css_pair_set_height(CstRenderNode* rnode, CstLayout *layout, SysPointer
 void cst_css_pair_set_position(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode *node = cst_render_node_get_node(rnode);
 
-  SysInt v = cst_css_value_get_v_int(self->value);
+  CstLayer *tolayer;
+  CstRender *v_render;
+  SysInt v;
+
+  v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
 
-  cst_node_set_position(node, v);
+  v_render = cst_layout_get_render(layout);
+  tolayer = cst_render_get_layer_by_position(v_render, v);
+
+  cst_render_node_change_to_layer(rnode, tolayer);
 }
 
 void cst_css_pair_set_margin(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {

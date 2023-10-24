@@ -7,23 +7,8 @@
 #include <CstCore/Driver/CstComponent.h>
 
 
-#define MODULE_LOCK
-#define MODULE_UNLOCK
-
-struct _CstModulePrivate {
-  CstManager *manager;
-
-  SysChar* path;
-  SysInt count;
-  FREnv *function_env;
-  SysList *awatches;
-
-  SysBool loaded;
-  CstComponent *root_component;
-  AstNode* ast_node;
-};
-
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
+
 
 SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const SysChar *path) {
   sys_return_val_if_fail(path != NULL, false);
@@ -72,15 +57,6 @@ SysBool cst_module_is_loaded(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->loaded;
-}
-
-SysBool cst_module_realize(CstModule *self, CstRenderNode *v_parent, CstRender *v_render) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  CstComponent *comp = self->root_component;
-  cst_component_realize(self, comp, v_parent, v_render);
-
-  return true;
 }
 
 CstModule* cst_module_new(void) {
@@ -193,6 +169,26 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
   sys_object_unref(awatch_link->data);
 }
 
+SysChar *cst_module_new_uid(CstModule *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  SysChar *nid = NULL;
+  SysUInt mid;
+  SysUInt ccount = 0;
+
+  if (self) {
+    mid = cst_module_get_hashcode(self);
+    ccount = cst_module_count(self);
+
+  } else {
+
+    mid = sys_str_hash((SysPointer)"root-node");
+  }
+
+  nid = sys_strdup_printf("id.%u.%u", mid, ccount);
+
+  return nid;
+}
 /* object api */
 static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 

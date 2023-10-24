@@ -137,6 +137,24 @@ void fr_awatch_bind(FRAWatch *self, SysPointer user_data) {
   self->user_data = user_data;
 }
 
+FRAWatch *fr_awatch_list_get_awatch(SysList *list, SysType atype, const SysChar *bind_var) {
+  sys_return_val_if_fail(list != NULL, NULL);
+
+  FRAWatch *w;
+
+  sys_list_foreach(list, item) {
+    w = item->data;
+
+    if (w->func_name == NULL) { continue; }
+
+    if (sys_object_is_a(w, atype) && sys_str_equal(bind_var, w->func_name)) {
+      return w;
+    }
+  }
+
+  return NULL;
+}
+
 void fr_awatch_create(FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
   sys_return_if_fail(self != NULL);
 

@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 #define CST_NODE_GET_CLASS(o) sys_instance_get_class(o, CstNodeClass)
 
 struct _CstNode {
-  CstLayoutNode unowned;
+  SysObject unowned;
 
   CstNode   *next;
   CstNode   *prev;
@@ -25,22 +25,14 @@ struct _CstNode {
   SysChar     *name;
   SysChar     *id;
 
-  /* Type: FRAWatch */
-  SysList *awatches;
-  /* Type: CstNodeMap */
-  SysList *node_maps;
-  SysPtrArray* css_groups;
-  /* Type: CST_LAYER_ENUM */
-  SysInt position;
-
-  SysType rctx_type;
+  CstNodeBuilder *builder;
 };
 
 struct _CstNodeClass {
-  CstLayoutNodeClass parent;
+  SysObjectClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstRenderNode* (*realize) (CstModule* v_module, CstComNode* com_node, CstRenderNode* v_parent, CstNode* self, CstRender* v_render);
+  CstRenderNode* (*realize) (CstNode* self, CstRenderNode* prnode, CstLayout *layout);
 };
 
 CstNode* cst_node_new(void);
@@ -63,43 +55,19 @@ const SysChar *cst_node_get_name(CstNode *node);
 void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
-CstRenderNode* cst_node_realize(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render);
-CstNode *cst_node_children(CstNode *node);
-CstNode *cst_node_prev(CstNode *node);
-CstNode *cst_node_next(CstNode *node);
-FRAWatch *cst_node_get_awatch(CstNode *node, SysType atype, const SysChar *bind_var);
+CST_NODE_POSITION_ENUM cst_node_position_by_name(const SysChar* name);
+
+CstRenderNode* cst_node_realize(CstNode* self, CstRenderNode* prnode, CstLayout *layout);
 CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);
-void cst_node_set_node_maps_list(CstNode *self, SysList *list);
-void cst_node_set_css_props(CstNode *self, CstComponent* comp, const SysChar* v_base[], SysInt v_base_len);
-void cst_node_render_css(CstNode *self, CstRenderNode *rnode, CstLayout *layout);
-void cst_node_add_awatch(CstNode *node, FRAWatch *awatch);
-void cst_node_set_awatch_list(CstNode *self, SysList *list);
 
-CstRenderNode* cst_node_realize_r(CstModule *v_module, CstComNode *ncomp_node, CstRenderNode *v_parent, CstNode *self, CstRender *v_render);
-CstRenderNode* cst_node_realize_self(CstRenderNode* v_parent, CstNode* self, CstRender *v_render);
+CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *prnode, CstLayout *layout);
+CstRenderNode* cst_node_realize_self(CstRenderNode* prnode, CstNode* self, CstLayout *layout);
 
-void cst_node_bind(CstNode *self, CstComNode *com_node);
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
-void cst_node_set_meta(const SysChar *name, SysType stype);
-SysType cst_node_get_meta(const SysChar *name);
-
-void cst_node_setup(void);
-void cst_node_teardown(void);
-
-void cst_node_set_position(CstNode *self, SysInt position);
-SysInt cst_node_get_position(CstNode *self);
-
-void cst_node_set_bound(CstNode *self, const FRRect * bound);
-const FRRect * cst_node_get_bound(CstNode *self);
-
-void cst_node_set_margin(CstNode *self, const FRSInt4 * margin);
-const FRSInt4 * cst_node_get_margin(CstNode *self);
-
-void cst_node_set_rctx_type(CstNode *self, SysType rctx_type);
-SysType cst_node_get_rctx_type(CstNode *self);
-CstRenderContext *cst_node_create_default_context(CstNode *self);
+void cst_node_set_node_builder(CstNode *self, CstNodeBuilder * builder);
+CstNodeBuilder * cst_node_get_node_builder(CstNode *self);
 
 SYS_END_DECLS
 

@@ -69,24 +69,24 @@ SysBool cst_css_group_set_by_id(SysPtrArray *ptr, CstCssEnv *env, const SysChar 
   return cst_css_group_set_r(ptr, self);
 }
 
-SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *self) {
+SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *ng) {
   sys_return_val_if_fail(ptr != NULL, false);
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(self->id != NULL, false);
+  sys_return_val_if_fail(ng != NULL, false);
+  sys_return_val_if_fail(ng->id != NULL, false);
 
-  if (cst_css_exists(ptr, self)) {
+  if (cst_css_exists(ptr, ng)) {
     return false;
   }
 
-  sys_object_ref(self);
-  sys_ptr_array_add(ptr, self);
+  sys_object_ref(ng);
+  sys_ptr_array_add(ptr, ng);
 
-  if (self->base == NULL || self->base->len == 0) {
+  if (ng->base == NULL || ng->base->len == 0) {
     return true;
   }
 
-  for (int i = 0; i < (int)self->base->len; i++) {
-    CstCssGroup* cg = self->base->pdata[i];
+  for (int i = 0; i < (int)ng->base->len; i++) {
+    CstCssGroup* cg = ng->base->pdata[i];
 
     sys_assert(cg->id != NULL && "CstCssGroup id should not be null, maybe destroyed ?");
 
@@ -120,7 +120,20 @@ void cst_css_group_add_pair(CstCssGroup *self, CstCssPair *pair) {
   sys_ptr_array_add(self->pairs, pair);
 }
 
-void cst_css_render_groups(SysPtrArray *gs, CstRenderNode *render_node, CstLayout *layout) {
+const SysChar* cst_css_group_get_id(CstCssGroup *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->id;
+}
+
+SysPtrArray *cst_css_group_get_base(CstCssGroup *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->base;
+}
+
+/* cst_css_group_list */
+void cst_css_group_list_render(SysPtrArray *gs, CstRenderNode *render_node, CstLayout *layout) {
   sys_return_if_fail(render_node != NULL);
   sys_return_if_fail(gs != NULL);
 
@@ -141,16 +154,21 @@ void cst_css_render_groups(SysPtrArray *gs, CstRenderNode *render_node, CstLayou
   }
 }
 
-const SysChar* cst_css_group_get_id(CstCssGroup *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+SysBool cst_css_group_list_exists(SysPtrArray *css_list, CstCssGroup *g) {
+  sys_return_val_if_fail(css_list != NULL, false);
 
-  return self->id;
-}
+  if (css_list->len == 0) { return false; }
 
-SysPtrArray *cst_css_group_get_base(CstCssGroup *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  for (SysInt i = 0; i < (SysInt)css_list->len; i++) {
+    CstCssGroup * cg = css_list->pdata[i];
 
-  return self->base;
+    if (cg == g) {
+
+      return true;
+    }
+  }
+
+  return false;
 }
 
 /* object api */

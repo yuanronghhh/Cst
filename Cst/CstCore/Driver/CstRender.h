@@ -22,7 +22,7 @@ struct _CstRender {
   FRDisplay *display;
   FRWindow *window;
 
-  CstNode* body_node;
+  CstNode* root_node;
   FRDraw* draw;
 
   CstLayer *box_layer;
@@ -40,8 +40,9 @@ void cst_render_rerender(CstRender *self, FRRegion *region, CstLayout *layout);
 
 CstLayer *cst_render_get_box_layer(CstRender *render);
 CstLayer *cst_render_get_abs_layer(CstRender *render);
-void cst_render_set_layer_root(CstRender* self, CstRenderNode *root);
 CstNode* cst_render_get_body_node(CstRender* self);
+CstLayer *cst_render_get_layer_by_position(CstRender *self, SysInt position);
+void cst_render_realize(CstRender *self);
 
 SYS_END_DECLS
 

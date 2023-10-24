@@ -1,7 +1,7 @@
 #ifndef __CST_TEXT_H__
 #define __CST_TEXT_H__
 
-#include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 
 SYS_BEGIN_DECLS
 
@@ -12,7 +12,7 @@ SYS_BEGIN_DECLS
 
 
 struct _CstText {
-  CstNode parent;
+  CstRenderNode parent;
 
   /* <private> */
   FRDrawLayout *playout;
@@ -20,7 +20,7 @@ struct _CstText {
 };
 
 struct _CstTextClass {
-  CstNodeClass parent;
+  CstRenderNodeClass parent;
 };
 
 SysType cst_text_get_type(void);

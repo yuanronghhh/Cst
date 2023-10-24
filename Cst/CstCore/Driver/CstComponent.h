@@ -35,8 +35,6 @@ CstComponent* cst_component_new(void);
 SysType cst_component_get_type(void);
 CstPropMap * cst_component_get_props_map(CstComponent * self, const SysChar * key);
 void cst_component_set_props_map(CstComponent * self, CstPropMap * map);
-CstRenderNode* cst_component_realize(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstRender *v_render);
-CstRenderNode* cst_component_realize_full(CstModule *v_module, CstComponent *self, CstRenderNode *v_parent, CstComNode *ncomp_node, CstRender *v_render);
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder);
 
 const SysChar* cst_component_get_id(CstComponent* self);
@@ -51,6 +49,8 @@ CST_COMPONENT_BODY_ENUM cst_component_body_get_by_name(const SysChar* name);
 CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name);
 void cst_component_set_layout_node(CstComponent *self, CstNode *node);
 CstNode * cst_component_get_layout_node(CstComponent * self);
+
+CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode* prnode, CstLayout* layout);
 
 SYS_END_DECLS
 

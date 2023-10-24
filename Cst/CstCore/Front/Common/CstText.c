@@ -6,7 +6,7 @@
 
 #include <CstCore/Front/Common/CstLBoxContext.h>
 
-SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_NODE);
+SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_RENDER_NODE);
 
 CstNode* cst_text_new(void) {
   return sys_object_new(CST_TYPE_TEXT, NULL);
@@ -68,15 +68,15 @@ SysObject* cst_text_dclone_i(SysObject *o) {
   return n;
 }
 
-static void cst_text_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
-  sys_return_if_fail(v_node != NULL);
+static void cst_text_construct_i(CstRenderNode *o, CstNode *node) {
+  sys_return_if_fail(o != NULL);
 
   const SysChar *value;
-  CstText* self = CST_TEXT(v_node);
+  CstText* self = CST_TEXT(o);
 
-  CST_NODE_CLASS(cst_text_parent_class)->construct(v_node, builder);
+  CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node);
 
-  value = cst_node_builder_get_value(builder);
+  value = cst_node_builder_get_value(node);
   if (value) {
 
     cst_text_set_text(self, value);
@@ -129,9 +129,6 @@ static void cst_text_init(CstText *self) {
 
   self->playout = pango_layout_new (pctx);
   g_object_unref(pctx);
-
-  cst_node_set_name(node, "Text");
-  cst_node_set_rctx_type(node, CST_TYPE_LBOX_CONTEXT);
 }
 
 static void cst_text_dispose(SysObject* o) {
@@ -150,13 +147,12 @@ static void cst_text_dispose(SysObject* o) {
 
 static void cst_text_class_init(CstTextClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstNodeClass *ncls = CST_NODE_CLASS(cls);
+  CstRenderNodeClass *ncls = CST_RENDER_NODE_CLASS(cls);
   CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_text_dispose;
   ocls->dclone = cst_text_dclone_i;
 
   ncls->construct = cst_text_construct_i;
-
   lcls->layout = cst_text_relayout_i;
 }

@@ -69,6 +69,7 @@ SYS_API FRAction *fr_awatch_get_action(FRAWatch *awatch);
 SYS_API void fr_awatch_bind(FRAWatch *self, SysPointer user_data);
 SYS_API void fr_awatch_unbind(FRAWatch *self);
 SYS_API SysPointer fr_awatch_get_data(FRAWatch *self);
+SYS_API FRAWatch *fr_awatch_list_get_awatch(SysList *list, SysType atype, const SysChar *bind_var);
 
 SYS_API void fr_awatch_setup(void);
 SYS_API void fr_awatch_teardown(void);

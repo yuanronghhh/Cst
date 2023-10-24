@@ -46,30 +46,6 @@ void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) 
   fr_draw_get_size(self->draw, width, height);
 }
 
-void cst_layout_set_mode(CstLayout *self, SysInt mode) {
-  sys_return_if_fail(self != NULL);
-
-  self->mode = mode;
-}
-
-SysInt cst_layout_get_mode(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->mode;
-}
-
-void cst_layout_set_stage(CstLayout *self, SysInt stage) {
-  sys_return_if_fail(self != NULL);
-
-  self->stage = stage;
-}
-
-SysInt cst_layout_get_stage(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->stage;
-}
-
 void cst_layout_set_state(CstLayout *self, SysInt state) {
   sys_return_if_fail(self != NULL);
 
@@ -82,19 +58,43 @@ SysInt cst_layout_get_state(CstLayout *self) {
   return self->state;
 }
 
-void cst_layout_set_layer(CstLayout *self, SysInt layer) {
+void cst_layout_set_layer(CstLayout *self, CstLayer * layer) {
   sys_return_if_fail(self != NULL);
 
   self->layer = layer;
 }
 
-SysInt cst_layout_get_layer(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, -1);
+CstLayer * cst_layout_get_layer(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
   return self->layer;
 }
 
-void cst_layout_begin_layout(CstLayout* self, SysInt layer) {
+void cst_layout_set_render(CstLayout *self, CstRender * render) {
+  sys_return_if_fail(self != NULL);
+
+  self->render = render;
+}
+
+CstRender * cst_layout_get_render(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->render;
+}
+
+void cst_layout_set_v_module(CstLayout *self, CstModule * v_module) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_module = v_module;
+}
+
+CstModule * cst_layout_get_v_module(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_module;
+}
+
+void cst_layout_begin_layout(CstLayout* self, CstLayer *layer) {
   self->state = CST_RENDER_STATE_LAYOUT;
   self->stage = CST_RENDER_STAGE_FIRST;
   self->mode = CST_RENDER_MODE_OUT_TO_IN;

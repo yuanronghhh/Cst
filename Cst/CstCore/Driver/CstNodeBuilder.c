@@ -1,69 +1,125 @@
+#include "CstNodeBuilder.h"
 #include <CstCore/Driver/CstNodeBuilder.h>
+#include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/Css/CstCssGroup.h>
+
+#include <Framework/Event/Action/FRAWatch.h>
 
 
 SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
 
 
-static SysChar *node_builder_new_id(CstNode* node, CstModule *v_module) {
-  SysChar *nid = NULL;
-  SysUInt mid;
-  SysUInt ccount = 0;
+static SysPtrArray *node_builder_new_css_list(void) {
+  SysPtrArray *ptr = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 
-  if (v_module) {
-    mid = cst_module_get_hashcode(v_module);
-    ccount = cst_module_count(v_module);
-
-  } else {
-    mid = sys_str_hash((SysPointer)"root-node");
-  }
-
-  nid = sys_strdup_printf("id.%u.%u", mid, ccount);
-
-  return nid;
+  return ptr;
 }
 
-void cst_node_builder_build_props(CstNodeBuilder *self, CstNode *v_node) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_node != NULL);
+SysBool cst_node_builder_parse_base(CstNodeBuilder *self, const SysChar *v_base[], SysUInt len) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  SysChar** v_base = self->v_base;
-  SysInt v_base_len = self->v_base_len;
+  CstCssGroup *ng;
+  const SysChar *pname;
+  CstComponent *component;
+  SysPtrArray *v_css_list;
+
+  if(len == 0) { return true; }
+
+  component = self->v_component;
+  if(component == NULL) { return true; }
+
+  v_css_list = node_builder_new_css_list();
+  for (SysUInt i = 0; i < len; i++) {
+    pname = v_base[i];
+    if (pname == NULL) { break; }
+
+    ng = cst_component_get_css_r(component, pname);
+    if (ng == NULL) {
+
+      sys_warning_N("css \"%s\" in component \"%s\" not found", pname, cst_component_get_id(component));
+      continue;
+    }
+
+    cst_css_group_set_r(v_css_list, ng);
+  }
+
+  self->v_css_list = v_css_list;
+
+  return true;
+}
+
+void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
   SysChar *id;
+
+  CstModule *v_module = self->v_module;
+  sys_return_if_fail(v_module != NULL);
 
   if (self->v_id) {
 
-    cst_node_set_id(v_node, self->v_id);
+    cst_node_set_id(node, self->v_id);
   } else {
 
-    id = node_builder_new_id(v_node, self->v_module);
-    cst_node_set_id(v_node, id);
+    id = cst_module_new_uid(v_module);
+
+    cst_node_set_id(node, id);
     sys_free_N(id);
   }
+}
 
-  cst_node_set_node_maps_list(v_node, self->v_node_maps);
-  cst_node_set_awatch_list(v_node, self->v_awatches);
+CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstRenderNode *prnode, CstLayout *layout) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  // LBody has no parent component.
-  cst_node_set_css_props(v_node, self->v_component, (const SysChar**)v_base, v_base_len);
+  CstRenderNode* rnode;
+  CstLayer *layer;
+
+  CstRender *render = cst_layout_get_render(layout);
+  sys_return_val_if_fail(render != NULL, NULL);
 
   switch (self->v_position) {
-    case CST_LAYER_BOX:
-    case CST_LAYER_ABS:
+    case CST_NODE_POSITION_BOX:
+      layer = cst_render_get_box_layer(render);
+      rnode = cst_box_layer_realize_node(CST_BOX_LAYER(layer), CST_BOX_NODE(prnode), node);
       break;
+
+    case CST_NODE_POSITION_ABS:
+      layer = cst_render_get_abs_layer(render);
+      rnode = NULL;
+      break;
+
     default:
-      sys_abort_N("node builder position must be set: %s,%s", cst_node_get_name(v_node), cst_node_get_id(v_node));
+      sys_warning_N("unknow node position: %d", self->v_position);
+      rnode = NULL;
       break;
   }
 
-  cst_node_set_position(v_node, self->v_position);
+  cst_render_node_set_layer(rnode, layer);
+
+  sys_list_foreach(self->v_awatch_list, item) {
+    FRAWatch *o =  FR_AWATCH(item->data);
+    fr_awatch_bind(o, rnode);
+    cst_render_node_ref_awatch(rnode, o);
+  }
+
+  sys_list_foreach(self->v_nodemap_list, item) {
+    CstNodeMap *o = CST_NODE_MAP(item->data);
+    cst_render_node_ref_nodemap(rnode, o);
+  }
+
+  for (SysUInt i = 0; i < self->v_css_list->len; i++) {
+    CstCssGroup* o = self->v_css_list->pdata[i];
+    CstCssGroup *n = (CstCssGroup *)sys_object_dclone(o);
+
+    cst_render_node_add_v_css(rnode, n);
+  }
+
+  return rnode;
 }
 
-void cst_node_builder_build(CstNodeBuilder *self, CstNode *v_node) {
-
-  cst_node_builder_build_props(self, v_node);
-}
 
 void cst_node_builder_set_v_module(CstNodeBuilder *self, CstModule* v_module) {
   sys_return_if_fail(self != NULL);
@@ -101,15 +157,7 @@ const SysChar* cst_node_builder_get_value(CstNodeBuilder *self) {
   return self->v_value;
 }
 
-void cst_node_builder_set_base(CstNodeBuilder *self, SysChar *v_base[], SysUInt v_len) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_base != NULL);
-
-  self->v_base = v_base;
-  self->v_base_len = v_len;
-}
-
-void cst_node_builder_set_id(CstNodeBuilder *self, SysChar *v_id) {
+void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_id != NULL);
 
@@ -118,38 +166,235 @@ void cst_node_builder_set_id(CstNodeBuilder *self, SysChar *v_id) {
   self->v_id = sys_strdup(v_id);
 }
 
-void cst_node_builder_set_v_value(CstNodeBuilder *self, SysChar *v_value) {
+void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_value != NULL);
+
+  sys_assert(self->v_value == NULL);
 
   self->v_value = sys_strdup(v_value);
 }
 
-void cst_node_builder_set_position(CstNodeBuilder *self, SysInt v_position) {
-  sys_return_if_fail(self != NULL);
+SysBool cst_node_builder_set_position(CstNodeBuilder *self, SysInt v_position) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(v_position > 0, false);
 
   self->v_position = v_position;
+
+  return true;
 }
 
-void cst_node_builder_set_label(CstNodeBuilder *self, SysChar *v_label) {
+void cst_node_builder_set_label(CstNodeBuilder *self, const SysChar *v_label) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_label != NULL);
+
+  sys_assert(self->v_label == NULL);
 
   self->v_label = sys_strdup(v_label);
 }
 
-void cst_node_builder_add_node_maps(CstNodeBuilder *self, CstNodeMap* map) {
+void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(map != NULL);
 
-  self->v_node_maps = sys_list_prepend(self->v_node_maps, map);
+  self->v_nodemap_list = sys_list_prepend(self->v_nodemap_list, map);
 }
 
-void cst_node_builder_add_awatches(CstNodeBuilder *self, FRAWatch* map) {
+SysList * cst_node_builder_get_nodemap_list(CstNodeBuilder *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_nodemap_list;
+}
+
+SysChar* cst_node_builder_extract_index(const SysChar* str, SysInt slen) {
+  SysChar* sp;
+  SysChar* nsp;
+
+  if (slen < 4) {
+    return NULL;
+  }
+
+  if (*str != '{' || *(str + 1) != '{') {
+    return NULL;
+  }
+
+  if (*(str + slen - 1) != '}' || *(str + slen - 2) != '}') {
+    return NULL;
+  }
+
+  nsp = sys_new0_N(SysChar, slen - 3);
+  sp = nsp;
+
+  str += 2;
+  while (*str) {
+    if (*str == '|' || *str == '}') {
+      break;
+    }
+
+    if (*str == ' ') {
+      str++;
+      continue;
+    }
+
+    *sp++ = *str++;
+  }
+  *sp = '\0';
+
+  return nsp;
+}
+
+SysBool cst_node_builder_awatch_name(CstNodeBuilder *self, const SysChar *name, const SysChar *func_name) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  SysType type = fr_awatch_get_type_by_name(name);
+  if (type == 0) {
+    sys_warning_N("Not found watch: %s,%s", name, func_name);
+    return false;
+  }
+
+  return true;
+}
+
+void cst_node_builder_add_awatch(CstNodeBuilder *self, FRAWatch* map) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(map != NULL);
 
-  self->v_awatches = sys_list_prepend(self->v_awatches, map);
+  self->v_awatch_list = sys_list_prepend(self->v_awatch_list, map);
+}
+
+SysList * cst_node_builder_get_awatch_list(CstNodeBuilder *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_awatch_list;
+}
+
+/* parse */
+SysBool cst_node_builder_parse_position_name(CstNodeBuilder *self, const SysChar *pstr) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(pstr != NULL, false);
+
+  SysInt position = cst_node_position_by_name(pstr);
+  if(position == -1) {
+    sys_warning_N("node builder position not correct: %s", pstr);
+    return false;
+  }
+
+  return cst_node_builder_set_position(self, position);
+}
+
+SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *expr_str) {
+  sys_return_val_if_fail(expr_str != NULL, false);
+  sys_return_val_if_fail(self != NULL, false);
+
+  CstPropMap *pmap = NULL;
+  CstNodeMap *map;
+  SysChar *index_name;
+  SysInt len = (SysInt)sys_strlen(expr_str, 100);
+
+  CstComponent *v_component = self->v_component;
+  sys_return_val_if_fail(v_component != NULL, false);
+
+  index_name = cst_node_builder_extract_index(expr_str, len);
+  if (index_name == NULL) {
+    return false;
+  }
+
+  pmap = cst_component_get_props_map(v_component, index_name);
+  sys_free_N(index_name);
+
+  if (pmap == NULL) {
+    return false;
+  }
+
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE, "value");
+
+  cst_node_builder_add_nodemap(self, map);
+  cst_node_builder_set_v_value(self, expr_str);
+
+  return true;
+}
+
+static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name, SysChar **bind_var) {
+  sys_return_val_if_fail(func_name != NULL, false);
+  sys_return_val_if_fail(self->v_component != NULL, false);
+
+  CstPropMap *pmap = NULL;
+  CstNodeMap *map;
+  SysChar *index_name;
+  SysInt len;
+
+  CstComponent *v_component = self->v_component;
+
+  len = (SysInt)sys_strlen(func_name, 100);
+  index_name = cst_node_builder_extract_index(func_name, len);
+  if (index_name == NULL) {
+    return false;
+  }
+  *bind_var = index_name;
+
+  pmap = cst_component_get_props_map(v_component, index_name);
+  if (pmap == NULL) {
+    sys_error_N("Not found props in component: %s, %s", cst_component_get_id(v_component), index_name);
+    *bind_var = NULL;
+    sys_free_N(index_name);
+    return false;
+  }
+
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION, watch_name);
+  cst_node_builder_add_nodemap(self, map);
+
+  return true;
+}
+
+SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name) {
+  sys_return_val_if_fail(func_name != NULL, false);
+  sys_return_val_if_fail(watch_name != NULL, false);
+
+  SysChar *fname;
+  FRAWatch *awatch;
+  FREventFunc watch_func = NULL;
+  SysChar *bind_var = NULL;
+
+  CstModule *v_module = self->v_module;
+  sys_return_val_if_fail(v_module != NULL, false);
+
+  CstComponent *v_component = self->v_component;
+  sys_return_val_if_fail(v_component != NULL, false);
+
+  if(*func_name == '{') {
+    if(!node_builder_parse_action_bind(self, watch_name, func_name, &bind_var)) {
+      return false;
+    }
+
+  } else {
+
+    fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
+    watch_func = (FREventFunc)cst_module_get_function(v_module, fname);
+    sys_free_N(fname);
+
+    if (watch_func == NULL) {
+      sys_warning_N("Not found function: \"%s\" in \"%s\" component",
+        func_name, cst_component_get_id(v_component));
+      return false;
+    }
+
+    bind_var = sys_strdup(func_name);
+  }
+
+  FRAWatchProps awatch_props = {0};
+  awatch_props.get_bound_func = (FRGetBoundFunc)cst_layout_node_get_bound;
+
+  awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
+  sys_clear_pointer(&bind_var, sys_free);
+
+  if (awatch == NULL) {
+    sys_warning_N("Not found action: \"%s\" in \"%s\" component",
+      watch_name, cst_component_get_id(v_component));
+  }
+
+  cst_node_builder_add_awatch(self, awatch);
+
+  return true;
 }
 
 /* object api */
@@ -179,7 +424,7 @@ void cst_node_builder_construct(CstNodeBuilder *o, CstModule* v_module, CstCompo
   o->v_module = v_module;
   o->v_component = v_component;
   o->v_pnode = v_pnode;
-  o->v_position = CST_LAYER_BOX;
+  o->v_position = CST_NODE_POSITION_BOX;
 }
 
 CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {

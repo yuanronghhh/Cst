@@ -1,7 +1,7 @@
 #ifndef __CST_LGRID_H__
 #define __CST_LGRID_H__
 
-#include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 
 SYS_BEGIN_DECLS
 
@@ -11,17 +11,17 @@ SYS_BEGIN_DECLS
 #define CST_LGRID(o) ((CstLGrid* )sys_object_cast_check(o, CST_TYPE_LGRID))
 
 struct _CstLGrid {
-  CstNode parent;
+  CstRenderNode parent;
 };
 
 struct _CstLGridClass {
-  CstNodeClass parent;
+  CstRenderNodeClass parent;
 };
 
 
 SysType cst_lgrid_get_type(void);
-CstNode* cst_lgrid_new(void);
-CstNode* cst_lgrid_new_I(void);
+CstRenderNode* cst_lgrid_new(void);
+CstRenderNode* cst_lgrid_new_I(void);
 
 SYS_END_DECLS
 

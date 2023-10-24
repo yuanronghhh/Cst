@@ -36,7 +36,6 @@ SYS_API SysPointer cst_manager_get_function(CstManager* manager, const SysChar *
 SYS_API CstModule* cst_manager_load_module(CstManager* manager, CstModule* parent, const SysChar* path);
 
 void cst_manager_gencode(CstManager *manager, CstModule* mod);
-void cst_manager_realize(CstManager * self, CstModule * v_module, CstRender * v_render);
 
 SYS_END_DECLS
 

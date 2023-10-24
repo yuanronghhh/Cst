@@ -6,7 +6,7 @@
 #include <CstCore/Front/Common/CstLBodyContext.h>
 
 
-SYS_DEFINE_TYPE(CstLBody, cst_lbody, CST_TYPE_NODE);
+SYS_DEFINE_TYPE(CstLBody, cst_lbody, CST_TYPE_RENDER_NODE);
 
 
 static void cst_lbody_layout_i(CstLayoutNode *lnode, CstLayout* layout) {
@@ -33,21 +33,17 @@ void cst_lbody_construct(CstNode *v_node, CstNodeBuilder *builder) {
   sys_return_if_fail(builder != NULL);
 
   cst_node_builder_set_id(builder, "id.body.0");
-  cst_node_builder_set_position(builder, CST_LAYER_BOX);
+  cst_node_builder_set_position(builder, CST_NODE_POSITION_BOX);
 
-  CST_NODE_CLASS(cst_lbody_parent_class)->construct(v_node, builder);
+  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(v_node, builder);
 }
 
 static void cst_lbody_init(CstLBody *self) {
-  CstNode *node = CST_NODE(self);
-
-  cst_node_set_name(node, "LBody");
-  cst_node_set_rctx_type(node, CST_TYPE_LBODY_CONTEXT);
 }
 
 static void cst_lbody_class_init(CstLBodyClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstNodeClass *ncls = CST_NODE_CLASS(cls);
+  CstRenderNodeClass *ncls = CST_RENDER_NODE_CLASS(cls);
   CstLayoutNodeClass* lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_lbody_dispose;

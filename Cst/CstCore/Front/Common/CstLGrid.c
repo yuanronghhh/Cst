@@ -2,27 +2,23 @@
 #include <CstCore/Front/Common/CstLGridContext.h>
 
 
-SYS_DEFINE_TYPE(CstLGrid, cst_lgrid, CST_TYPE_NODE);
+SYS_DEFINE_TYPE(CstLGrid, cst_lgrid, CST_TYPE_RENDER_NODE);
 
 
 void cst_lgrid_layout_i (CstLayoutNode* o, CstLayout *layout) {
 }
 
-CstNode* cst_lgrid_new(void) {
+CstRenderNode* cst_lgrid_new(void) {
   return sys_object_new(CST_TYPE_LGRID, NULL);
 }
 
-CstNode* cst_lgrid_new_I(void) {
-  CstNode* o = cst_lgrid_new();
+CstRenderNode* cst_lgrid_new_I(void) {
+  CstRenderNode* o = cst_lgrid_new();
 
   return o;
 }
 
 static void cst_lgrid_init(CstLGrid *self) {
-  CstNode *node = CST_NODE(self);
-
-  cst_node_set_name(node, "LGrid");
-  cst_node_set_rctx_type(node, CST_TYPE_LGRID_CONTEXT);
 }
 
 static void cst_lgrid_dispose(SysObject* o) {

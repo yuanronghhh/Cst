@@ -73,7 +73,7 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rn
 
   self->func = cst_com_node_get_func(self->node_type, self->prop_type, data_type);
   if (self->func) {
-    self->func(node, self->prop_name, bind_var, self->value);
+    self->func(rnode, self->prop_name, bind_var, self->value);
   }
 }
 
@@ -82,7 +82,6 @@ void cst_node_map_calc(CstNodeMap *self, CstRenderNode *rnode) {
   sys_return_if_fail(rnode != NULL);
 
   const SysChar *key = cst_prop_map_key(self->prop_map);
-  CstNode *node = cst_render_node_get_node(rnode);
   SysType type = sys_type_from_instance(rnode);
 
   if(self->node_type != type) {
@@ -90,7 +89,7 @@ void cst_node_map_calc(CstNodeMap *self, CstRenderNode *rnode) {
     return;
   }
 
-  self->func(node, self->prop_name, key, self->value);
+  self->func(rnode, self->prop_name, key, self->value);
 }
 
 const SysChar * cst_node_map_get_prop_name(CstNodeMap *self) {

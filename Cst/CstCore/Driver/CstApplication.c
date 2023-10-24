@@ -49,7 +49,7 @@ static void cst_application_active(CstApplication* self) {
   props.etype = FR_TYPE_EVENT;
   cst_module_add_awatch(v_module, (SysPointer)self, "window_refresh", "app_window_resize_test", app_window_resize_test, &props);
 
-  cst_manager_realize(v_manager, v_module, v_render);
+  cst_render_realize(v_render);
   cst_render_render(v_render);
 }
 
@@ -70,7 +70,7 @@ void cst_application_env_setup(void) {
   fr_window_setup();
   fr_canvas_setup();
   cst_css_setup();
-  cst_node_setup();
+  cst_render_node_setup();
   fr_events_setup();
 
 #if CST_USE_MONO
@@ -88,7 +88,7 @@ void cst_application_env_teardown(void) {
     return;
   }
 
-  cst_node_teardown();
+  cst_render_node_teardown();
   cst_css_teardown();
   fr_events_teardown();
   fr_canvas_teardown();

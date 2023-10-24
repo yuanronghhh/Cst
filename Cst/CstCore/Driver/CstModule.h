@@ -26,7 +26,6 @@ struct _CstModule {
 
   SysBool loaded;
   CstComponent* root_component;
-  // AstNode* ast_node;
   CstParser* parser;
 };
 
@@ -42,7 +41,6 @@ SYS_API SysInt cst_module_count_inc(CstModule* self);
 SYS_API SysInt cst_module_get_hashcode(CstModule* self);
 
 const SysChar *cst_module_get_path(CstModule* self);
-SysBool cst_module_realize(CstModule * self, CstRenderNode * v_parent, CstRender * v_render);
 SYS_API SysBool cst_module_is_loaded(CstModule *self);
 
 SYS_API CstManager *cst_module_get_manager(CstModule *self);
@@ -59,6 +57,7 @@ void cst_module_remove_awatch(CstModule * self, SysList * awatch_link);
 void cst_module_set_root_comp(CstModule *self, CstComponent *comp);
 CstComponent *cst_module_get_root_comp(CstModule *self);
 
+SysChar *cst_module_new_uid(CstModule *self);
 SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const SysChar *path);
 
 SYS_END_DECLS

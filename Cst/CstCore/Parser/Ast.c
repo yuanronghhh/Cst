@@ -492,7 +492,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
     ast_com_node_parse(jnode, v_node, v_node_builder);
   } else {
 
-    type = cst_node_get_meta(cus_name);
+    type = cst_render_node_get_meta(cus_name);
     if (type == 0) {
       sys_error_N("Not found node or component \"%s\".", cus_name);
       return false;
@@ -722,83 +722,6 @@ void ast_gstyle_parse(GStyle *gstyle, CstCssEnv *gcss_env, const SysChar *path) 
 }
 
 /* Node Ast */
-static void node_parse_action_bind(CstNodeBuilder *builder, const SysChar *watch_name, const SysChar *func_name, SysChar **bind_var) {
-  sys_return_if_fail(func_name != NULL);
-
-  CstPropMap *pmap = NULL;
-  CstNodeMap *map;
-  SysChar *index_name;
-  SysInt len;
-
-  CstComponent *v_component = cst_node_builder_get_v_component(builder);
-  sys_return_if_fail(v_component != NULL);
-
-  len = (SysInt)sys_strlen(func_name, 100);
-  index_name = ast_jnode_extract_index(func_name, len);
-  if (index_name == NULL) {
-    return;
-  }
-  *bind_var = index_name;
-
-  pmap = cst_component_get_props_map(v_component, index_name);
-  if (pmap == NULL) {
-    sys_error_N("Not found props in component: %s, %s", cst_component_get_id(v_component), index_name);
-    *bind_var = NULL;
-    sys_free_N(index_name);
-    return;
-  }
-
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION, watch_name);
-  cst_node_builder_add_node_maps(builder, map);
-}
-
-static void node_parse_action(CstNodeBuilder *builder, const SysChar *watch_name, const SysChar *func_name) {
-  sys_return_if_fail(func_name != NULL);
-  sys_return_if_fail(watch_name != NULL);
-
-  SysChar *fname;
-  FREventFunc watch_func = NULL;
-  FRAWatch *awatch;
-  SysChar *bind_var = NULL;
-
-  CstModule *v_module = cst_node_builder_get_v_module(builder);
-  sys_return_if_fail(v_module != NULL);
-
-  CstComponent *v_component = cst_node_builder_get_v_component(builder);
-  sys_return_if_fail(v_component != NULL);
-
-  if(*func_name == '{') {
-    node_parse_action_bind(builder, watch_name, func_name, &bind_var);
-
-  } else {
-
-    fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
-    watch_func = (FREventFunc)cst_module_get_function(v_module, fname);
-    sys_free_N(fname);
-
-    if (watch_func == NULL) {
-      sys_warning_N("Not found function: \"%s\" in \"%s\" component",
-        func_name, cst_component_get_id(v_component));
-      return;
-    }
-
-    bind_var = sys_strdup(func_name);
-  }
-
-  FRAWatchProps awatch_props = {0};
-  awatch_props.get_bound_func = (FRGetBoundFunc)cst_layout_node_get_bound;
-
-  awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
-  sys_clear_pointer(&bind_var, sys_free);
-
-  if (awatch == NULL) {
-    sys_warning_N("Not found action: \"%s\" in \"%s\" component",
-      watch_name, cst_component_get_id(v_component));
-  }
-
-  cst_node_builder_add_awatches(builder, awatch);
-}
-
 static SysBool node_parse_value_bind(CstNodeBuilder *builder, const SysChar *expr_str) {
   sys_return_val_if_fail(expr_str != NULL, false);
 
@@ -811,7 +734,7 @@ static SysBool node_parse_value_bind(CstNodeBuilder *builder, const SysChar *exp
   sys_return_val_if_fail(v_component != NULL, false);
 
   // TODO: parse expr
-  index_name = ast_jnode_extract_index(expr_str, len);
+  index_name = cst_node_builder_extract_index(expr_str, len);
   if (index_name == NULL) {
     return false;
   }
@@ -824,7 +747,7 @@ static SysBool node_parse_value_bind(CstNodeBuilder *builder, const SysChar *exp
   }
 
   map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE, "value");
-  cst_node_builder_add_node_maps(builder, map);
+  cst_node_builder_add_nodemap(builder, map);
 
   return true;
 }
@@ -836,7 +759,6 @@ static SysBool node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
   JNode *nnode;
   JNode *tnode;
   SysChar **v_base;
-  SysInt position;
   CST_NODE_PROP_ENUM prop;
 
   CstNodeBuilder *builder = pass->v_node_builder;
@@ -887,31 +809,36 @@ static SysBool node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
          v_base[i] = tnode->v.v_string;
       }
 
-      cst_node_builder_set_base(builder, v_base, nnode->v.v_array->len);
+      if(!cst_node_builder_parse_base(builder, v_base, nnode->v.v_array->len)) {
+        return false;
+      }
       break;
     case CST_NODE_PROP_VALUE:
       if (nnode->type != AstJString) {
         return false;
       }
 
-      node_parse_value_bind(builder, (const SysChar *)nnode->v.v_string);
-      cst_node_builder_set_v_value(builder, nnode->v.v_string);
+      if(cst_node_builder_parse_value_bind(builder, (const SysChar *)nnode->v.v_string)) {
+        return false;
+      }
       break;
-    case CST_NODE_PROP_ABSOLUTE:
-      if (nnode->type != AstJInt) {
+    case CST_NODE_PROP_POSITION:
+      if (nnode->type != AstJString) {
         return false;
       }
 
-      position = cst_render_node_type_by_name(nnode->v.v_string);
-      cst_node_builder_set_position(builder, position);
+      if(!cst_node_builder_parse_position_name(builder, nnode->v.v_string)) {
+        return false;
+      }
       break;
     case CST_NODE_PROP_ACTION:
       if (nnode->type != AstJString) {
         return false;
       }
 
-      node_parse_action(builder, pair->key + 1, nnode->v.v_string);
-
+      if(!cst_node_builder_parse_action(builder, pair->key + 1, nnode->v.v_string)) {
+        return false;
+      }
       break;
     case CST_NODE_PROP_LABEL:
       if (nnode->type != AstJString) {
@@ -1050,7 +977,7 @@ static SysBool ast_module_parse_component(Component *comp_ast, CstModule *v_modu
     return false;
   }
 
-  SysType type = cst_node_get_meta(comp_id);
+  SysType type = cst_render_node_get_meta(comp_id);
   if (type == 0) {
     sys_error_N("Not found %s in component, maybe not init types ?", comp_id);
     return false;
@@ -1280,44 +1207,6 @@ JNode* ast_jpair_value(JNode* jnode) {
   sys_return_val_if_fail(jnode->type == AstJPair, NULL);
 
   return jnode->v.v_pair->value;
-}
-
-/* JNode */
-SysChar* ast_jnode_extract_index(const SysChar* str, SysInt slen) {
-  SysChar* sp;
-  SysChar* nsp;
-
-  if (slen < 4) {
-    return NULL;
-  }
-
-  if (*str != '{' || *(str + 1) != '{') {
-    return NULL;
-  }
-
-  if (*(str + slen - 1) != '}' || *(str + slen - 2) != '}') {
-    return NULL;
-  }
-
-  nsp = sys_new0_N(SysChar, slen - 3);
-  sp = nsp;
-
-  str += 2;
-  while (*str) {
-    if (*str == '|' || *str == '}') {
-      break;
-    }
-
-    if (*str == ' ') {
-      str++;
-      continue;
-    }
-
-    *sp++ = *str++;
-  }
-  *sp = '\0';
-
-  return nsp;
 }
 
 JNode* ast_jnode_index(JNode* o, const SysChar* index_str) {

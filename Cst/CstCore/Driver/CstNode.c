@@ -1,6 +1,7 @@
 #include <CstCore/Driver/CstNode.h>
-#include <CstCore/Driver/CstComponent.h>
+
 #include <CstCore/Front/Common/CstComNode.h>
+#include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstLayout.h>
@@ -25,7 +26,6 @@ CST_NODE_POSITION_ENUM cst_node_position_by_name(const SysChar* name) {
   return fr_get_type_by_name(CST_NODE_POSITION_NAMES, ARRAY_SIZE(CST_NODE_POSITION_NAMES), name);
 }
 
-
 CstNode* cst_node_parent(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -44,13 +44,13 @@ CstNode *cst_node_prev(CstNode *self) {
   return self->prev;
 }
 
-void cst_node_set_node_builder(CstNode *self, CstNodeBuilder * builder) {
+void cst_node_set_builder(CstNode *self, CstNodeBuilder * builder) {
   sys_return_if_fail(self != NULL);
 
   self->builder = builder;
 }
 
-CstNodeBuilder * cst_node_get_node_builder(CstNode *self) {
+CstNodeBuilder * cst_node_get_builder(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->builder;
@@ -83,11 +83,13 @@ SysObject* cst_node_dclone_i(SysObject *o) {
 CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *prnode, CstLayout *layout) {
   CstRenderNode *rnode;
   CstModule *v_module;
+  SysInt count;
 
   rnode = cst_node_realize(self, prnode, layout);
   v_module = cst_layout_get_v_module(layout);
 
-  cst_module_count_inc(v_module);
+  count = cst_module_get_count(v_module);
+  cst_module_set_count(v_module, ++count);
 
   if (rnode == NULL) {
 
@@ -339,6 +341,7 @@ static void cst_node_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->name, sys_free);
   sys_clear_pointer(&self->id, sys_free);
+  sys_clear_pointer(&self->builder, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);
 }

@@ -28,9 +28,9 @@ CstNode* cst_com_node_new(void);
 CstNode* cst_com_node_new_with_component(CstComponent * comp);
 CstComponent* cst_com_node_get_component(CstComNode * self);
 
-CstPropValue* cst_com_node_get_value(CstComNode * self, const SysChar * key);
-void com_node_set_value(CstComNode * self, const SysChar * key, CstPropValue * value);
 CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type);
+CstNodeMap* cst_com_node_get_prop_pair(CstComNode * self, const SysChar *key);
+void com_node_set_node_map(CstComNode* self, CstNodeMap *pair);
 
 SYS_END_DECLS
 

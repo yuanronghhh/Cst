@@ -84,10 +84,16 @@ void fr_awatch_set_func_name(FRAWatch *self, const SysChar *func_name) {
   self->func_name = sys_strdup(func_name);
 }
 
-void fr_awatch_set_function(FRAWatch *self, FREventFunc func) {
+void fr_awatch_set_func(FRAWatch *self, FREventFunc func) {
   sys_return_if_fail(self != NULL);
 
   self->func = func;
+}
+
+FREventFunc fr_awatch_get_func(FRAWatch *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->func;
 }
 
 FRAWatch *fr_awatch_new(void) {
@@ -187,21 +193,6 @@ static void fr_awatch_create_i(FRAWatch* self, const SysChar *func_name, FREvent
   self->func_name = func_name != NULL ? sys_strdup(func_name) : NULL;
 
   sys_object_ref(self->action);
-}
-
-FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  sys_return_val_if_fail(props != NULL, NULL);
-
-  SysType type = fr_awatch_get_type_by_name(watch_name);
-  if (type == 0) {
-    sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
-    return NULL;
-  }
-
-  FRAWatch *o = sys_object_new(type, NULL);
-  fr_awatch_create(o, func_name, func, props);
-
-  return o;
 }
 
 static void fr_awatch_class_init(FRAWatchClass* cls) {

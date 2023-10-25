@@ -35,15 +35,13 @@ SYS_API CstModule* cst_module_new(void);
 SysBool cst_module_load(CstModule *self);
 SYS_API CstModule* cst_module_new_I(CstManager *manager, CstModule *pmodule, const SysChar *path);
 
-SYS_API SysInt cst_module_count(CstModule* self);
-SYS_API SysInt cst_module_count_dec(CstModule* self);
-SYS_API SysInt cst_module_count_inc(CstModule* self);
-SYS_API SysInt cst_module_get_hashcode(CstModule* self);
+SysInt cst_module_get_hashcode(CstModule* self);
 
 const SysChar *cst_module_get_path(CstModule* self);
-SYS_API SysBool cst_module_is_loaded(CstModule *self);
+SysBool cst_module_is_loaded(CstModule *self);
 
-SYS_API CstManager *cst_module_get_manager(CstModule *self);
+CstManager *cst_module_get_manager(CstModule *self);
+FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
 
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);
@@ -59,6 +57,9 @@ CstComponent *cst_module_get_root_comp(CstModule *self);
 
 SysChar *cst_module_new_uid(CstModule *self);
 SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const SysChar *path);
+
+void cst_module_set_count(CstModule *self, SysInt count);
+SysInt cst_module_get_count(CstModule *self);
 
 SYS_END_DECLS
 

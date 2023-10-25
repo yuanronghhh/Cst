@@ -107,10 +107,8 @@ set(SRC
   ./Driver/CstRow.c
   ./Driver/CstNodeMap.h
   ./Driver/CstNodeMap.c
-  ./Driver/CstPropMap.h
-  ./Driver/CstPropMap.c
-  ./Driver/CstPropPair.h
-  ./Driver/CstPropPair.c
+  ./Driver/CstValueMap.h
+  ./Driver/CstValueMap.c
 
   ./Driver/CstComponentBuilder.c
   ./Driver/CstComponentBuilder.h

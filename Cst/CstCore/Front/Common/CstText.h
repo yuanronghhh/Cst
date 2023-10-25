@@ -24,7 +24,7 @@ struct _CstTextClass {
 };
 
 SysType cst_text_get_type(void);
-CstNode* cst_text_new(void);
+CstRenderNode* cst_text_new(void);
 const SysChar* cst_text_get_text(CstText* self);
 void cst_text_set_font_desc(CstText *self, const SysChar * font_desc);
 void cst_text_set_text(CstText* self, const SysChar *text);

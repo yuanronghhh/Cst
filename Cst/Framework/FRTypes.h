@@ -82,6 +82,10 @@ typedef  struct  _FRACursorMove         FRACursorMove;
 typedef  struct  _FRACursorMoveClass    FRACursorMoveClass;
 
 typedef  struct  _FRAWatchProps              FRAWatchProps;
+
+typedef  struct  _FRAWatchBuilder                   FRAWatchBuilder;
+typedef  struct  _FRAWatchBuilderClass              FRAWatchBuilderClass;
+
 typedef  struct  _FRAWatch                   FRAWatch;
 typedef  struct  _FRAWatchClass              FRAWatchClass;
 typedef  struct  _FRAWatchAny                FRAWatchAny;
@@ -122,6 +126,9 @@ typedef  struct  _FREventCursorMoveClass    FREventCursorMoveClass;
 
 typedef  struct  _FREnv           FREnv;
 typedef  struct  _FREnvClass      FREnvClass;
+
+typedef  struct  _FRPair           FRPair;
+typedef  struct  _FRPairClass      FRPairClass;
 
 typedef  struct  _FRMain           FRMain;
 typedef  struct  _FRMainClass      FRMainClass;

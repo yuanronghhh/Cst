@@ -1,14 +1,15 @@
 #include <CstCore/Front/Common/CstText.h>
+
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
-
+#include <CstCore/Driver/CstNode.h>
 #include <CstCore/Front/Common/CstLBoxContext.h>
 
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_RENDER_NODE);
 
-CstNode* cst_text_new(void) {
+CstRenderNode* cst_text_new(void) {
   return sys_object_new(CST_TYPE_TEXT, NULL);
 }
 
@@ -71,26 +72,21 @@ SysObject* cst_text_dclone_i(SysObject *o) {
 static void cst_text_construct_i(CstRenderNode *o, CstNode *node) {
   sys_return_if_fail(o != NULL);
 
-  const SysChar *value;
-  CstText* self = CST_TEXT(o);
+  CstNodeBuilder *builder = cst_node_get_builder(node);
 
   CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node);
 
-  value = cst_node_builder_get_value(node);
-  if (value) {
-
-    cst_text_set_text(self, value);
-  }
+  cst_node_builder_build_text(builder, o);
 }
 
 #if 0
-static void cst_text_repaint_i(CstNode *node, CstLayout *layout) {
-  CstText *self = CST_TEXT(node);
+static void cst_text_repaint_i(CstRenderNode *rnode, CstLayout *layout) {
+  CstText *self = CST_TEXT(rnode);
 
   FRDrawLayout *playout = self->playout;
   FRDraw *draw = cst_layout_get_draw(layout);
-  const FRRect *bound = cst_node_get_bound(node);
-  const FRSInt4 *m4 = cst_node_get_margin(node);
+  const FRRect *bound = cst_node_get_bound(rnode);
+  const FRSInt4 *m4 = cst_node_get_margin(rnode);
 
   fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
@@ -111,7 +107,7 @@ static void cst_text_relayout_i(CstLayoutNode *o, CstLayout *layout) {
   cst_layout_node_set_size(o, width, height);
 }
 
-void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
+void cst_text_get_size_i(CstRenderNode *o, SysInt *width, SysInt *height) {
   sys_return_if_fail(o != NULL);
 
   CstText *self = CST_TEXT(o);
@@ -122,8 +118,6 @@ void cst_text_get_size_i(CstNode *o, SysInt *width, SysInt *height) {
 
 /* object api */
 static void cst_text_init(CstText *self) {
-  CstNode *node = CST_NODE(self);
-
   PangoFontMap *font_map = pango_cairo_font_map_get_default();
   PangoContext *pctx = pango_font_map_create_context(font_map);
 

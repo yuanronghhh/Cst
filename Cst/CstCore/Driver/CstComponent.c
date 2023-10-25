@@ -1,4 +1,3 @@
-#include "CstComponent.h"
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Driver/CstModule.h>
@@ -110,16 +109,16 @@ void cst_component_set_function(CstComponent *self, const SysChar *func_name, Sy
   cst_module_set_function(self->v_module, func_name, func);
 }
 
-CstPropMap *cst_component_get_props_map(CstComponent *self, const SysChar *key) {
+CstValueMap *cst_component_get_value_map(CstComponent *self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return fr_env_get_r(self->prop_maps_env, key);
 }
 
-void cst_component_set_props_map(CstComponent *self, CstPropMap *map) {
+void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   sys_return_if_fail(self != NULL);
 
-  fr_env_set(self->prop_maps_env, cst_prop_map_key(map), (SysPointer)map);
+  fr_env_set(self->prop_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
 CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode* prnode, CstLayout* layout) {
@@ -148,21 +147,31 @@ static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *b
   sys_return_if_fail(builder != NULL);
   SysHashTable *ht;
   CstComponent *pcomp;
-  CstModule *v_module;
 
   pcomp = cst_component_builder_get_v_parent(builder);
-  v_module = cst_component_builder_get_v_module(builder);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(pcomp));
+
+  cst_component_builder_build_component(builder, self);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   self->prop_maps_env = fr_env_new_I(ht, NULL);
 
   self->style_env = cst_css_env_new_I(NULL);
-  self->v_module = v_module;
-
   self->layout_node = NULL;
+}
+
+void cst_component_set_v_module(CstComponent *self, CstModule * v_module) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_module = v_module;
+}
+
+CstModule * cst_component_get_v_module(CstComponent *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_module;
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {

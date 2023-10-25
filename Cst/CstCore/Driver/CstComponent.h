@@ -19,7 +19,7 @@ struct _CstComponent {
   SysChar *id;
   /* ComStyle : CstCssGroup */
   FREnv *style_env;
-  /* ComProps: CstPropMap */
+  /* ComProps: CstValueMap */
   FREnv *prop_maps_env;
   CstNode *layout_node;
   SysInt comp_type;
@@ -33,8 +33,8 @@ struct _CstComponentClass {
 
 CstComponent* cst_component_new(void);
 SysType cst_component_get_type(void);
-CstPropMap * cst_component_get_props_map(CstComponent * self, const SysChar * key);
-void cst_component_set_props_map(CstComponent * self, CstPropMap * map);
+CstValueMap * cst_component_get_value_map(CstComponent * self, const SysChar * key);
+void cst_component_set_value_map(CstComponent * self, CstValueMap * map);
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder);
 
 const SysChar* cst_component_get_id(CstComponent* self);
@@ -51,6 +51,9 @@ void cst_component_set_layout_node(CstComponent *self, CstNode *node);
 CstNode * cst_component_get_layout_node(CstComponent * self);
 
 CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode* prnode, CstLayout* layout);
+
+void cst_component_set_v_module(CstComponent *self, CstModule * v_module);
+CstModule * cst_component_get_v_module(CstComponent *self);
 
 SYS_END_DECLS
 

@@ -85,28 +85,22 @@ CstComponent *cst_module_get_root_comp(CstModule *self) {
   return self->root_component;
 }
 
-SysInt cst_module_count(CstModule* self) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  return self->count;
-}
-
-SysInt cst_module_count_dec(CstModule* self) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  return --self->count;
-}
-
-SysInt cst_module_count_inc(CstModule* self) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  return ++self->count;
-}
-
 SysInt cst_module_get_hashcode(CstModule* self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return sys_str_hash((SysPointer)cst_module_get_path(self));
+}
+
+void cst_module_set_count(CstModule *self, SysInt count) {
+  sys_return_if_fail(self != NULL);
+
+  self->count = count;
+}
+
+SysInt cst_module_get_count(CstModule *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->count;
 }
 
 const SysChar* cst_module_get_path(CstModule* self) {
@@ -178,7 +172,7 @@ SysChar *cst_module_new_uid(CstModule *self) {
 
   if (self) {
     mid = cst_module_get_hashcode(self);
-    ccount = cst_module_count(self);
+    ccount = cst_module_get_count(self);
 
   } else {
 
@@ -189,6 +183,20 @@ SysChar *cst_module_new_uid(CstModule *self) {
 
   return nid;
 }
+
+FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name) {
+  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(func_name != NULL, NULL);
+  SysChar *new_func_name;
+  FREventFunc func;
+
+  new_func_name = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
+  func = (FREventFunc)cst_module_get_function(self, new_func_name);
+  sys_free_N(new_func_name);
+
+  return func;
+}
+
 /* object api */
 static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 

@@ -57,6 +57,16 @@ CstModule * cst_component_builder_get_v_module(CstComponentBuilder *self) {
   return self->v_module;
 }
 
+void cst_component_builder_build_component(CstComponentBuilder *self, CstComponent *o) {
+  sys_return_if_fail(self != NULL);
+
+  CstModule *v_module = self->v_module;
+  sys_return_if_fail(v_module != NULL);
+
+  cst_component_set_v_module(o, self->v_module);
+  cst_component_set_id(o, self->v_id);
+}
+
 /* object api */
 static void cst_component_builder_dispose(SysObject* o) {
   CstComponentBuilder *self = CST_COMPONENT_BUILDER(o);

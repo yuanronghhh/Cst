@@ -1,4 +1,6 @@
 #include <CstCore/Front/Common/CstComNodeBuilder.h>
+
+#include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <Framework/Event/Action/FRAWatch.h>
 
@@ -15,6 +17,12 @@ SysBool cst_com_node_builder_parse_action(CstComNodeBuilder *self, const SysChar
   return true;
 }
 
+SysBool cst_com_node_builder_build_com_node(CstComNodeBuilder* self, CstNode *node) {
+  CstComNode* com_node = CST_COM_NODE(node);
+
+  com_node_set_node_map(com_node, self->value);
+}
+
 /* object api */
 static void cst_com_node_builder_dispose(SysObject* o) {
   CstComNodeBuilder *self = CST_COM_NODE_BUILDER(o);
@@ -22,13 +30,13 @@ static void cst_com_node_builder_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_com_node_builder_parent_class)->dispose(o);
 }
 
-CstComNodeBuilder *cst_com_node_builder_new(void) {
+CstNodeBuilder *cst_com_node_builder_new(void) {
   return sys_object_new(CST_TYPE_NODE_BUILDER, NULL);
 }
 
 void cst_com_node_builder_construct_i(CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {
-  CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->construct(o, v_module, v_component, v_pnode);
 
+  CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->construct(o, v_module, v_component, v_pnode);
 }
 
 CstNodeBuilder* cst_com_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {

@@ -14,17 +14,6 @@ SYS_DEFINE_TYPE(CstCssNode, cst_css_node, SYS_TYPE_OBJECT);
 
 
 /* css node */
-CST_CSS_PROP_ENUM cst_css_node_get_css_ptype(const SysChar *name) {
-  CstCssNode *node = sys_hash_table_lookup(gcss_node_ht, (const SysPointer)name);
-  if (node == NULL) {
-
-    return -1;
-  }
-
-  return node->css_ptype;
-}
-
-
 const SysChar* cst_css_node_name(CstCssNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -62,6 +51,18 @@ void cst_css_node_bind_map(SysChar* name, SysInt css_type, SysInt css_state, Cst
   CstCssNode* node = cst_css_node_new_I(name, css_type, css_state, set_value);
 
   sys_hash_table_insert(gcss_node_ht, (SysPointer)node->name, (SysPointer)node);
+}
+
+void cst_css_node_set_css_ptype(CstCssNode *self, SysInt css_ptype) {
+  sys_return_if_fail(self != NULL);
+
+  self->css_ptype = css_ptype;
+}
+
+SysInt cst_css_node_get_css_ptype(CstCssNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->css_ptype;
 }
 
 void cst_css_node_setup(void) {

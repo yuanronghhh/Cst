@@ -9,7 +9,7 @@
 
 
 void mini_types_setup(void) {
-  cst_node_set_meta("mini-menubase", MINI_TYPE_MENUBASE);
-  cst_node_set_meta("mini-menubar", MINI_TYPE_MENUBAR);
-  cst_node_set_meta("mini-component", MINI_TYPE_COMPONENT);
+  cst_render_node_set_meta("mini-menubase", MINI_TYPE_MENUBASE);
+  cst_render_node_set_meta("mini-menubar", MINI_TYPE_MENUBAR);
+  cst_render_node_set_meta("mini-component", MINI_TYPE_COMPONENT);
 }

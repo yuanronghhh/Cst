@@ -48,7 +48,8 @@ struct _FRAWatch {
 struct _FRAWatchClass {
   SysObjectClass parent;
 
-  void  (*create)(FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props);
+  void  (*construct) (FRAWatch* self, FRAWatchBuilder *builder);
+  void  (*create) (FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props);
   SysBool (*check) (FRAWatch *self, FREvent *e);
   void (*dispatch) (FRAWatch *self, FREvent *e);
 };
@@ -56,12 +57,8 @@ struct _FRAWatchClass {
 SYS_API FRAWatch* fr_awatch_new(void);
 SYS_API SysType fr_awatch_get_type(void);
 
-SYS_API const SysChar * fr_awatch_get_func_name(FRAWatch * self);
-SYS_API void fr_awatch_set_func_name(FRAWatch * self, const SysChar *func_name);
-SYS_API void fr_awatch_set_function(FRAWatch * self, FREventFunc func);
 SYS_API SysType fr_awatch_get_type_by_name(const SysChar * name);
 SYS_API void fr_awatch_dispatch(FRAWatch *self, FREvent *e);
-SYS_API FRAWatch *fr_awatch_new_by_name(const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props);
 SYS_API SysBool fr_awatch_check(FRAWatch *self, FREvent *e);
 
 SYS_API void fr_awatch_set_action(FRAWatch *self, FRAction *action);
@@ -73,6 +70,9 @@ SYS_API FRAWatch *fr_awatch_list_get_awatch(SysList *list, SysType atype, const 
 
 SYS_API void fr_awatch_setup(void);
 SYS_API void fr_awatch_teardown(void);
+
+void fr_awatch_set_func(FRAWatch *self, FREventFunc func);
+FREventFunc fr_awatch_get_func(FRAWatch *self);
 
 SYS_END_DECLS
 

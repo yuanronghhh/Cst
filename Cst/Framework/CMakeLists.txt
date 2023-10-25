@@ -62,6 +62,8 @@ set(SRC
 
   ./Event/Action/FRAWatch.c
   ./Event/Action/FRAWatch.h
+  ./Event/Action/FRAWatchBuilder.c
+  ./Event/Action/FRAWatchBuilder.h
   ./Event/Action/FRAWatchKey.c
   ./Event/Action/FRAWatchKey.h
   ./Event/Action/FRAWatchAny.c
@@ -106,6 +108,8 @@ set(SRC
   ./DataType/FRWorker.h
   ./DataType/FRPQueue.h
   ./DataType/FRPQueue.c
+  ./DataType/FRPair.h
+  ./DataType/FRPair.c
   ./DataType/FREnv.c
   ./DataType/FREnv.h
 

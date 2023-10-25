@@ -1,4 +1,4 @@
-#include "CstNodeBuilder.h"
+#include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstModule.h>
@@ -54,6 +54,7 @@ SysBool cst_node_builder_parse_base(CstNodeBuilder *self, const SysChar *v_base[
 }
 
 void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
+  sys_return_if_fail(self != NULL);
   SysChar *id;
 
   CstModule *v_module = self->v_module;
@@ -120,6 +121,14 @@ CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode 
   return rnode;
 }
 
+void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode) {
+  CstText* text = CST_TEXT(rnode);
+
+  if (self->v_value) {
+
+    cst_text_set_text(text, self->v_value);
+  }
+}
 
 void cst_node_builder_set_v_module(CstNodeBuilder *self, CstModule* v_module) {
   sys_return_if_fail(self != NULL);
@@ -282,11 +291,11 @@ SysBool cst_node_builder_parse_position_name(CstNodeBuilder *self, const SysChar
   return cst_node_builder_set_position(self, position);
 }
 
-SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *expr_str) {
+SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str) {
   sys_return_val_if_fail(expr_str != NULL, false);
   sys_return_val_if_fail(self != NULL, false);
 
-  CstPropMap *pmap = NULL;
+  CstValueMap *vmap = NULL;
   CstNodeMap *map;
   SysChar *index_name;
   SysInt len = (SysInt)sys_strlen(expr_str, 100);
@@ -299,14 +308,14 @@ SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *e
     return false;
   }
 
-  pmap = cst_component_get_props_map(v_component, index_name);
+  vmap = cst_component_get_value_map(v_component, index_name);
   sys_free_N(index_name);
 
-  if (pmap == NULL) {
+  if (vmap == NULL) {
     return false;
   }
 
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE, "value");
+  map = cst_node_map_new_I(vmap, CST_NODE_PROP_VALUE, key, NULL);
 
   cst_node_builder_add_nodemap(self, map);
   cst_node_builder_set_v_value(self, expr_str);
@@ -318,7 +327,7 @@ static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysCha
   sys_return_val_if_fail(func_name != NULL, false);
   sys_return_val_if_fail(self->v_component != NULL, false);
 
-  CstPropMap *pmap = NULL;
+  CstValueMap *pmap = NULL;
   CstNodeMap *map;
   SysChar *index_name;
   SysInt len;
@@ -332,7 +341,7 @@ static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysCha
   }
   *bind_var = index_name;
 
-  pmap = cst_component_get_props_map(v_component, index_name);
+  pmap = cst_component_get_value_map(v_component, index_name);
   if (pmap == NULL) {
     sys_error_N("Not found props in component: %s, %s", cst_component_get_id(v_component), index_name);
     *bind_var = NULL;
@@ -340,7 +349,7 @@ static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysCha
     return false;
   }
 
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION, watch_name);
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION, watch_name, NULL);
   cst_node_builder_add_nodemap(self, map);
 
   return true;
@@ -381,15 +390,20 @@ SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch
     bind_var = sys_strdup(func_name);
   }
 
-  FRAWatchProps awatch_props = {0};
-  awatch_props.get_bound_func = (FRGetBoundFunc)cst_layout_node_get_bound;
-
-  awatch = fr_awatch_new_by_name(watch_name, bind_var, watch_func, &awatch_props);
+  SysType type = fr_awatch_get_type_by_name(bind_var);
   sys_clear_pointer(&bind_var, sys_free);
 
+  if (type == 0) {
+    sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
+    return NULL;
+  }
+
+  awatch = sys_object_new(type, NULL);
+  fr_awatch_create(awatch, func_name, watch_func, awatch_props);
+
   if (awatch == NULL) {
-    sys_warning_N("Not found action: \"%s\" in \"%s\" component",
-      watch_name, cst_component_get_id(v_component));
+
+    sys_warning_N("Not found action: \"%s\" in \"%s\" component", watch_name, cst_component_get_id(v_component));
   }
 
   cst_node_builder_add_awatch(self, awatch);

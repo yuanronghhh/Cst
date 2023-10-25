@@ -1,6 +1,7 @@
 #include <CstCore/Parser/Ast.h>
-#include <CstCore/Front/CstFrontCore.h>
 
+#include <CstCore/Front/CstFrontCore.h>
+#include <CstCore/Front/Common/CstComNodeBuilder.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/Css/CstCssPair.h>
@@ -12,7 +13,6 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstComponentBuilder.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
-#include <CstCore/Driver/CstPropPair.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstManager.h>
 
@@ -312,6 +312,44 @@ static SYS_INLINE SysBool ast_is_gstyle(AstNode *node, SysPointer user_data) {
   return true;
 }
 
+SysValue *ast_node_to_value(CstModule *v_module, const SysChar *key, JNode *nnode) {
+  sys_return_val_if_fail(key != NULL, NULL);
+
+  FREventFunc func;
+  SysValue *v;
+
+  v = sys_value_new();
+
+  if(*key == '@') {
+    func = cst_module_get_event_function(v_module, nnode->v.v_string);
+    if (func == NULL) {
+      sys_warning_N("Not found function: \"%s\" in \"%s\" module", nnode->v.v_string, cst_module_get_path(v_module));
+      sys_value_free(v);
+      return NULL;
+    }
+
+    sys_value_set_v_pointer(v, func);
+    return v;
+  }
+
+  switch (nnode->type) {
+    case AstJString:
+      sys_value_set_v_string(v, node->v.v_string);
+      break;
+    case AstJInt:
+      sys_value_set_v_int(v, node->v.v_int);
+      break;
+    case AstJDouble:
+      sys_value_set_v_double(v, node->v.v_double);
+      break;
+    default:
+      sys_warning_N("not support value type: %s", jnode->type);
+      break;
+  }
+
+  return v;
+}
+
 /* CstComNode */
 static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
   sys_return_val_if_fail(jnode != NULL, false);
@@ -321,7 +359,10 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
   CstComNode *v_com_node;
   FREventFunc watch_func;
   SysChar *func_name;
-  CstPropValue *svalue;
+  CstNodeMap *map;
+  CstValueMap *prop_map;
+  SysValue *svalue;
+  SysInt ptype;
 
   CstNode * v_node = pass->v_com_node;
   sys_return_val_if_fail(v_node != NULL, false);
@@ -346,30 +387,19 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
     return false;
   }
 
-  if(*pair->key == '@') {
-    if(nnode->type != AstJString) {
-      return false;
-    }
-
-    func_name = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, (nnode->v.v_string));
-    watch_func = (FREventFunc)cst_module_get_function(v_module, func_name);
-    sys_free_N(func_name);
-
-    if (watch_func == NULL) {
-      sys_warning_N("Not found function: \"%s\" in \"%s\" component",
-          (nnode->v.v_string), cst_component_get_id(pcomponent));
-
-      return false;
-    }
-
-    svalue = sys_value_new_pointer((SysPointer)watch_func);
-
-  } else {
-
-    svalue = ast_jnode_new_value(nnode);
+  ptype = cst_node_prop_get_by_name(pair->key);
+  if(ptype == -1) {
+    return false;
   }
 
-  com_node_set_value(v_com_node, pair->key, svalue);
+  svalue = ast_node_to_value(v_module, pair->key, nnode);
+  prop_map = cst_value_map_new_I(pair->key, sys_value_get_data_type(svalue));
+
+  map = cst_node_map_new_I(prop_map, CST_NODE_PROP_ACTION, svalue);
+  sys_object_unref(prop_map);
+
+  map = cst_node_map_new_I(prop_map, );
+  com_node_set_node_map(v_com_node, map);
 
   return true;
 }
@@ -415,18 +445,25 @@ static SysBool component_style_node_func(JNode *jnode, CstComponent *self) {
   return true;
 }
 
-CstPropValue* ast_jnode_new_value(JNode *jnode) {
-  CstPropValue* o = NULL;
+SYS_VALUE_ENUM ast_jnode_to_value_type(const SysChar *key, JNodeType tp) {
+  sys_return_val_if_fail(key != NULL, -1);
 
-  switch (jnode->type) {
+  if(*key == '@') {
+    return SYS_FUNCTION;
+  }
+
+  switch (tp) {
     case AstJString:
-      o = sys_value_new_string(jnode->v.v_string);
-      break;
+      return SYS_STRING;
+    case AstJObject:
+      return SYS_OBJECT;
+    case AstJInt:
+      return SYS_INT;
     default:
       break;
   }
 
-  return o;
+  return -1;
 }
 
 static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pass) {
@@ -435,7 +472,7 @@ static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pa
   sys_return_val_if_fail(pass != NULL, false);
 
   JNode *nnode;
-  CstPropMap *prop_map;
+  CstValueMap *prop_map;
   SysInt ptype;
 
   CstComponent *component = pass->v_component;
@@ -448,8 +485,8 @@ static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pa
   }
 
 
-  ptype = cst_prop_map_parse_type(pair->key, nnode->v.v_string);
-  prop_map = cst_prop_map_new_I(pair->key, ptype);
+  ptype = cst_value_map_parse_type(nnode->v.v_string);
+  prop_map = cst_value_map_new_I(pair->key, ptype);
 
   cst_component_set_props_map(component, prop_map);
 
@@ -461,13 +498,12 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   sys_return_val_if_fail(pass != NULL, false);
   sys_return_val_if_fail(ast_jnode_is_type(jnode, AstJPair), false);
 
-  SysObject *o;
   JNode *njnode;
   CstNode *v_node;
   CstNode *v_pnode;
   SysType type;
   const SysChar *cus_name;
-  CstNodeBuilder *v_node_builder;
+  CstNodeBuilder *v_builder;
 
   JPair *pair = jnode->v.v_pair;
   sys_return_val_if_fail(pair != NULL, false);
@@ -484,12 +520,11 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   cus_name = pair->key;
   v_pnode = pass->v_pnode;
 
-  v_node_builder = cst_node_builder_new_I(v_module, v_component, v_pnode);
-
   CstComponent *child_comp = cst_module_get_comp(v_module, cus_name);
   if (child_comp != NULL) {
+    v_builder = cst_com_node_builder_new_I(v_module, v_component, v_pnode);
     v_node = cst_com_node_new_with_component(child_comp);
-    ast_com_node_parse(jnode, v_node, v_node_builder);
+    ast_com_node_parse(jnode, v_node, v_builder);
   } else {
 
     type = cst_render_node_get_meta(cus_name);
@@ -498,18 +533,13 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
       return false;
     }
 
-    o = sys_object_new(type, NULL);
-    if (o == NULL) {
-      return false;
-    }
-
-    v_node = CST_NODE(o);
-
-    ast_node_parse(jnode, v_node_builder);
+    v_builder = cst_node_builder_new_I(v_module, v_component, v_pnode);
+    v_node = cst_node_new();
+    ast_node_parse(jnode, v_builder);
   }
 
-  cst_node_construct(v_node, v_node_builder);
-  sys_object_unref(v_node_builder);
+  cst_node_set_name(v_node, cus_name);
+  cst_node_construct(v_node, v_builder);
 
   cst_module_count_inc(v_module);
   cst_node_append(v_pnode, v_node);
@@ -678,8 +708,7 @@ void ast_import_parse(CstParser *ps, AstNode *node) {
 }
 
 /* GStyle Ast */
-GStyle *ast_root_get_gstyle(AstNode *root)
- {
+GStyle *ast_root_get_gstyle(AstNode *root) {
   sys_return_val_if_fail(root != NULL, NULL);
   sys_return_val_if_fail(root->type == AstRoot, NULL);
 
@@ -725,7 +754,7 @@ void ast_gstyle_parse(GStyle *gstyle, CstCssEnv *gcss_env, const SysChar *path) 
 static SysBool node_parse_value_bind(CstNodeBuilder *builder, const SysChar *expr_str) {
   sys_return_val_if_fail(expr_str != NULL, false);
 
-  CstPropMap *pmap = NULL;
+  CstValueMap *pmap = NULL;
   CstNodeMap *map;
   SysChar *index_name;
   SysInt len = (SysInt)sys_strlen(expr_str, 100);
@@ -890,7 +919,7 @@ CstCssPair *ast_css_pair_parse(JNode *jnode) {
   }
 
   value = cst_css_value_new();
-  if (!ast_css_value_parse(ast_jnode_jnode(jpair->value), key, value)) {
+  if (!ast_css_value_parse(ast_jnode_jnode(jpair->value), node, value)) {
 
     return NULL;
   }
@@ -989,7 +1018,6 @@ static SysBool ast_module_parse_component(Component *comp_ast, CstModule *v_modu
     return false;
   }
 
-  cst_component_set_id(comp, comp_id);
   cst_component_construct(comp, builder);
   ast_component_body_parse(comp_ast, comp, builder);
   cst_module_set_root_comp(v_module, comp);
@@ -1043,12 +1071,11 @@ void ast_module_parse(AstNode *root, CstModule *self) {
 }
 
 /* CstCssValue */
-SysBool ast_css_parse_string(SysChar *s, SysChar *key, CstCssValue *value) {
+SysBool ast_css_parse_string(SysChar *s, CstCssNode *node, CstCssValue *value) {
   SysBool r = false;
   CstCssClosure *c = NULL;
-  CST_CSS_PROP_ENUM prop = cst_css_node_get_css_ptype(key);
 
-  switch (prop) {
+  switch (cst_css_node_get_css_ptype(node)) {
     case CST_CSS_PROP_W:
       c = cst_css_value_parse_percent(s, (CstCssFunc)cst_css_pair_width_percent);
       break;
@@ -1062,7 +1089,7 @@ SysBool ast_css_parse_string(SysChar *s, SysChar *key, CstCssValue *value) {
   if (c != NULL) {
 
     cst_css_value_set_v_closure(value, c);
-    r = true;
+    return true;
   }
 
   if (sys_str_startswith(s, "#")) {
@@ -1073,7 +1100,7 @@ SysBool ast_css_parse_string(SysChar *s, SysChar *key, CstCssValue *value) {
   return r;
 }
 
-SysBool ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
+SysBool ast_css_value_parse(JNode *jnode, CstCssNode *css_node, CstCssValue *value) {
   sys_return_val_if_fail(value != NULL, false);
   sys_return_val_if_fail(jnode != NULL, false);
 
@@ -1086,7 +1113,7 @@ SysBool ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
     case AstJSource:
     case AstJString:
       if (jnode->v.v_string != NULL) {
-        if(!ast_css_parse_string(jnode->v.v_string, key, value)) {
+        if(!ast_css_parse_string(jnode->v.v_string, css_node, value)) {
           cst_css_value_set_v_string(value, jnode->v.v_string);
         }
       }
@@ -1135,7 +1162,7 @@ SysBool ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value) {
       break;
     default:
 
-      sys_warning_N("Failed to parse css value with key: %s", key);
+      sys_warning_N("Failed to parse css value with key: %s", );
       break;
   }
 

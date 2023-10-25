@@ -1,7 +1,7 @@
 #ifndef __CST_NODE_MAP__
 #define __CST_NODE_MAP__
 
-#include <CstCore/Driver/CstPropMap.h>
+#include <CstCore/Driver/CstValueMap.h>
 
 
 SYS_BEGIN_DECLS
@@ -12,16 +12,17 @@ SYS_BEGIN_DECLS
 #define CST_NODE_MAP_GET_CLASS(o) sys_instance_get_class(o, CstNodeMapClass)
 
 struct _CstNodeMap {
-  SysObject parent;
+  FRPair parent;
 
   /* <private> */
-  CstPropMap* prop_map;
+  CstValueMap* value_map;
+
+  /* CST_NODE_PROP_ENUM */
+  SysInt prop_type;
+
+  /* CstRenderNode  */
   SysType node_type;
 
-  /* CST_TYPE_NODE_PROP */
-  SysInt prop_type;
-  SysChar* prop_name;
-  SysValue* value;
   CstNodeMapFunc func;
 };
 
@@ -31,10 +32,8 @@ struct _CstNodeMapClass {
 
 SysType cst_node_map_get_type(void);
 CstNodeMap* cst_node_map_new(void);
-CstNodeMap * cst_node_map_new_I(CstPropMap * prop_map, SysInt prop_type, const SysChar * prop_name);
+CstNodeMap* cst_node_map_new_I(CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysPointer value);
 void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rnode);
-void cst_node_map_calc(CstNodeMap * self, CstRenderNode * node);
-const SysChar * cst_node_map_get_prop_name(CstNodeMap * self);
 
 SYS_END_DECLS
 

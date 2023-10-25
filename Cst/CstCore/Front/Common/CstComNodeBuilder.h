@@ -15,6 +15,7 @@ struct _CstComNodeBuilder {
   CstNodeBuilder parent;
 
   /* <private> */
+  CstNodeMap* value;
 };
 
 struct _CstComNodeBuilderClass {

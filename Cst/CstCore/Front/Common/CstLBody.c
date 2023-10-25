@@ -1,8 +1,9 @@
 #include <CstCore/Front/Common/CstLBody.h>
+
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstLayout.h>
-
+#include <CstCore/Driver/CstNode.h>
 #include <CstCore/Front/Common/CstLBodyContext.h>
 
 
@@ -24,18 +25,20 @@ static SysObject* cst_lbody_dclone_i(SysObject *o) {
   return n;
 }
 
-CstNode* cst_lbody_new(void) {
+CstRenderNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
 }
 
-void cst_lbody_construct(CstNode *v_node, CstNodeBuilder *builder) {
-  sys_return_if_fail(v_node != NULL);
+void cst_lbody_construct(CstRenderNode *rnode, CstNode *node) {
+  sys_return_if_fail(rnode != NULL);
+
+  CstNodeBuilder *builder = cst_node_get_builder(node);
   sys_return_if_fail(builder != NULL);
 
   cst_node_builder_set_id(builder, "id.body.0");
   cst_node_builder_set_position(builder, CST_NODE_POSITION_BOX);
 
-  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(v_node, builder);
+  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(rnode, node);
 }
 
 static void cst_lbody_init(CstLBody *self) {

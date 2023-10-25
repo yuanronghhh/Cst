@@ -67,13 +67,14 @@ SysList * cst_node_builder_get_nodemap_list(CstNodeBuilder *self);
 
 SysChar* cst_node_builder_extract_index(const SysChar* str, SysInt slen);
 
-SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *builder, const SysChar *expr_str);
+SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str);
 SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name);
 SysBool cst_node_builder_parse_position_name(CstNodeBuilder *self, const SysChar *pstr);
 
 CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstRenderNode *prnode, CstLayout *layout);
 SysBool cst_node_builder_parse_base(CstNodeBuilder* self, const SysChar* v_base[], SysUInt len);
-void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node);
+void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *o);
+void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode);
 
 SYS_END_DECLS
 

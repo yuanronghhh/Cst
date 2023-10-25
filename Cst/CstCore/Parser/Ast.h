@@ -65,11 +65,10 @@ void ast_module_parse(AstNode * root, CstModule * self);
 SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *v_comp_bd);
 void ast_import_parse(CstParser * ps, AstNode * node);
 
-SysBool ast_css_value_parse(JNode *jnode, SysChar *key, CstCssValue *value);
+SysBool ast_css_value_parse(JNode *jnode, CstCssNode *node, CstCssValue *value);
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue * value);
-SysValue * ast_jnode_new_value(JNode * jnode);
+SysValue *ast_node_to_value(CstModule *v_module, const SysChar *key, JNode *nnode);
 
-SysChar * ast_jnode_extract_index(const SysChar * index_str, SysInt len);
 JNode * ast_jnode_index(JNode * o, const SysChar * index_str);
 JNode * ast_jnode_clone_r(JNode * jnode);
 SysBool ast_print_jnode(JNode *node, SysPointer user_data);

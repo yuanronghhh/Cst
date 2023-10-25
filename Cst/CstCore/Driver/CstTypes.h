@@ -107,9 +107,6 @@ typedef enum _CST_NODE_POSITION_ENUM {
   CST_NODE_POSITION_MASK = (1 << 4) - 1
 } CST_NODE_POSITION_ENUM;
 
-typedef SYS_VALUE_ENUM CST_PROP_VALUE_ENUM;
-typedef enum _FR_ACTION_ENUM CST_ACTION_ENUM;
-
 typedef struct _CstContext CstContext;
 
 typedef struct _CstApplication CstApplication;
@@ -191,13 +188,10 @@ typedef struct _CstCssEnvClass CstCssEnvClass;
 typedef struct _CstNodeMap CstNodeMap;
 typedef struct _CstNodeMapClass CstNodeMapClass;
 
-typedef struct _CstPropMap CstPropMap;
-typedef struct _CstPropMapClass CstPropMapClass;
+typedef struct _CstValueMap CstValueMap;
+typedef struct _CstValueMapClass CstValueMapClass;
 
-typedef struct _CstPropPair CstPropPair;
-typedef SysValue CstPropValue;
-
-typedef void (*CstNodeMapFunc) (CstRenderNode *rnode, const SysChar *key, const SysChar *bind_var, CstPropValue *value);
+typedef void (*CstNodeMapFunc) (CstRenderNode *rnode, CstNodeMap *map);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *rnode, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *rnode, CstLayout *layout, SysPointer user_data);

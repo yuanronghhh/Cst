@@ -66,8 +66,8 @@ CstRenderNode* cst_node_realize_self(CstRenderNode* prnode, CstNode* self, CstLa
 
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
-void cst_node_set_node_builder(CstNode *self, CstNodeBuilder * builder);
-CstNodeBuilder * cst_node_get_node_builder(CstNode *self);
+void cst_node_set_builder(CstNode *self, CstNodeBuilder * builder);
+CstNodeBuilder * cst_node_get_builder(CstNode *self);
 
 SYS_END_DECLS
 

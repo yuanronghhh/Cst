@@ -30,9 +30,9 @@ struct _CstLayout {
 
   FRRegion *region;
 
-  FRDraw *draw;
+  CstRender* render;
 
-  CstRender *render;
+  FRDraw *draw;
 
   CstModule *v_module;
 };
@@ -43,11 +43,10 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(FRDraw *cr, FRRegion *region);
+CstLayout *cst_layout_new_I(CstRender *render, FRRegion *region);
 
 SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FRRegion *cst_layout_get_region(CstLayout* self);
-FRDraw *cst_layout_get_draw(CstLayout* self);
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
 
@@ -68,6 +67,9 @@ CstRender * cst_layout_get_render(CstLayout *self);
 
 void cst_layout_set_v_module(CstLayout *self, CstModule * v_module);
 CstModule * cst_layout_get_v_module(CstLayout *self);
+
+void cst_layout_set_draw(CstLayout *self, FRDraw * draw);
+FRDraw * cst_layout_get_draw(CstLayout *self);
 
 SYS_END_DECLS
 

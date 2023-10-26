@@ -1,3 +1,4 @@
+#include "CstNode.h"
 #include <CstCore/Driver/CstNode.h>
 
 #include <CstCore/Front/Common/CstComNode.h>
@@ -322,6 +323,14 @@ static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
 /* sys object api */
 CstNode* cst_node_new(void) {
   return sys_object_new(CST_TYPE_NODE, NULL);
+}
+
+CstNode* cst_node_new_I(CstNodeBuilder *builder) {
+  CstNode* o = cst_node_new();
+
+  o->builder = builder;
+
+  return o;
 }
 
 static void cst_node_class_init(CstNodeClass *cls) {

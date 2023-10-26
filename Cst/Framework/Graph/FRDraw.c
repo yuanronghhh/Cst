@@ -50,12 +50,6 @@ void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound) {
   cairo_fill(cr);
 }
 
-void fr_draw_get_size(FRDraw *self, SysInt *width, SysInt *height) {
-  sys_return_if_fail(self != NULL);
-
-  fr_window_get_framebuffer_size(self->window, width, height);
-}
-
 FRContext* fr_draw_create_cr(FRDraw* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -188,6 +182,7 @@ void fr_draw_show_text(FRDraw* self, FRDrawLayout *layout, SysInt x, SysInt y, S
 static void fr_draw_construct(FRDraw *self, FRWindow *window) {
   self->window = window;
   self->window_surface = NULL;
+  sys_object_ref(window);
 }
 
 FRDraw* fr_draw_new(void) {

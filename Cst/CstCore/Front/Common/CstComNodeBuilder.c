@@ -31,7 +31,7 @@ static void cst_com_node_builder_dispose(SysObject* o) {
 }
 
 CstNodeBuilder *cst_com_node_builder_new(void) {
-  return sys_object_new(CST_TYPE_NODE_BUILDER, NULL);
+  return sys_object_new(CST_TYPE_COM_NODE_BUILDER, NULL);
 }
 
 void cst_com_node_builder_construct_i(CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {

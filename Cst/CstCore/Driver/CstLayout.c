@@ -1,17 +1,25 @@
 #include <CstCore/Driver/CstLayout.h>
+
 #include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstRender.h>
 
 
 SYS_DEFINE_TYPE(CstLayout, cst_layout, SYS_TYPE_OBJECT);
 
 CstLayout* cst_layout_new(void) {
+
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, FRDraw *draw, FRRegion *region) {
+static void cst_layout_construct(CstLayout* self, CstRender *render, FRRegion *region) {
+  FRWindow *window;
+
   self->state = 0;
   self->region = region;
-  self->draw = draw;
+  self->render = render;
+
+  window = cst_render_get_default_window(render);
+  self->draw = fr_draw_new_I(window);
 }
 
 SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
@@ -20,10 +28,10 @@ SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   return self->state & state;
 }
 
-CstLayout *cst_layout_new_I(FRDraw *draw, FRRegion *region) {
+CstLayout *cst_layout_new_I(CstRender *render, FRRegion *region) {
   CstLayout *o = cst_layout_new();
 
-  cst_layout_construct(o, draw, region);
+  cst_layout_construct(o, render, region);
 
   return o;
 }
@@ -34,7 +42,13 @@ FRRegion *cst_layout_get_region(CstLayout* self) {
   return self->region;
 }
 
-FRDraw *cst_layout_get_draw(CstLayout* self) {
+void cst_layout_set_draw(CstLayout *self, FRDraw * draw) {
+  sys_return_if_fail(self != NULL);
+
+  self->draw = draw;
+}
+
+FRDraw * cst_layout_get_draw(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->draw;
@@ -42,8 +56,9 @@ FRDraw *cst_layout_get_draw(CstLayout* self) {
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
+  FRWindow *window = cst_render_get_default_window(self->render);
 
-  fr_draw_get_size(self->draw, width, height);
+  fr_window_get_framebuffer_size(window, width, height);
 }
 
 void cst_layout_set_state(CstLayout *self, SysInt state) {

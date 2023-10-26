@@ -1,5 +1,6 @@
-#include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
+
+#include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstNode.h>
@@ -7,14 +8,13 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
-
 #include <Framework/Event/Action/FRAWatch.h>
 
 
 SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
 
 
-static SysPtrArray *node_builder_new_css_list(void) {
+SysPtrArray *cst_node_builder_new_css_list(void) {
   SysPtrArray *ptr = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 
   return ptr;
@@ -33,7 +33,7 @@ SysBool cst_node_builder_parse_base(CstNodeBuilder *self, const SysChar *v_base[
   component = self->v_component;
   if(component == NULL) { return true; }
 
-  v_css_list = node_builder_new_css_list();
+  v_css_list = cst_node_builder_new_css_list();
   for (SysUInt i = 0; i < len; i++) {
     pname = v_base[i];
     if (pname == NULL) { break; }
@@ -111,11 +111,13 @@ CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode 
     cst_render_node_ref_nodemap(rnode, o);
   }
 
-  for (SysUInt i = 0; i < self->v_css_list->len; i++) {
-    CstCssGroup* o = self->v_css_list->pdata[i];
-    CstCssGroup *n = (CstCssGroup *)sys_object_dclone(o);
+  if (self->v_css_list != NULL && self->v_css_list->len > 0) {
+    for (SysUInt i = 0; i < self->v_css_list->len; i++) {
+      CstCssGroup* o = self->v_css_list->pdata[i];
+      CstCssGroup *n = (CstCssGroup *)sys_object_dclone(o);
 
-    cst_render_node_add_v_css(rnode, n);
+      cst_render_node_add_v_css(rnode, n);
+    }
   }
 
   return rnode;

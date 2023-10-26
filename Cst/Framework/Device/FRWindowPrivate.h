@@ -5,15 +5,6 @@
 
 SYS_BEGIN_DECLS
 
-struct _FRWindowPrivate {
-  GLFWwindow *gwindow;
-  SysPointer user_data;
-  FRDisplay *display;
-
-  SysChar *title;
-  FRWindow *share;
-};
-
 SYS_END_DECLS
 
 #endif

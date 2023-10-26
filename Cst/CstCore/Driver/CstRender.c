@@ -1,4 +1,5 @@
 #include <CstCore/Driver/CstRender.h>
+
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
@@ -67,7 +68,7 @@ void cst_render_render(CstRender *self) {
 
   CstLayer *layer;
   FRRegion *region = render_create_region(self->window);
-  CstLayout* layout = cst_layout_new_I(self->draw, region);
+  CstLayout* layout = cst_layout_new_I(self, region);
 
   layer = self->box_layer;
 
@@ -105,7 +106,7 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 
   region = fr_region_create_rectangle(&bound);
 
-  CstLayout* layout = cst_layout_new_I(self->draw, region);
+  CstLayout* layout = cst_layout_new_I(self, region);
   cst_render_rerender(self, region, layout);
 
   sys_object_unref(layout);
@@ -133,24 +134,22 @@ CstLayer *cst_render_get_layer_by_position(CstRender *self, SysInt position) {
 void cst_render_realize(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
-  CstNode* node;
   CstRenderNode* body;
-  const FRRect* bound;
   FRRegion* region;
   CstLayout* layout;
+  FRRect bound = { 0 };
 
-  node = self->root_node;
-  bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
-  region = fr_region_create_rectangle(bound);
+  fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
+  region = fr_region_create_rectangle(&bound);
+  layout = cst_layout_new_I(self, region);
 
-  layout = cst_layout_new_I(self->draw, region);
-  body = cst_node_realize(node, NULL, layout);
-
+  body = cst_node_realize(self->root_node, NULL, layout);
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }
 
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
+  CstNodeBuilder* builder;
 
   if (is_offscreen) {
 
@@ -163,8 +162,12 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
-  self->root_node = cst_node_new();
-  self->draw = fr_draw_new_I(self->window);
+
+  builder = cst_node_builder_new_I(NULL, NULL, NULL);
+  cst_node_builder_set_id(builder, "body");
+  self->root_node = cst_node_new_I(builder);
+
+  cst_node_set_name(self->root_node, "body");
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {
@@ -185,7 +188,6 @@ static void cst_render_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
-  sys_clear_pointer(&self->draw, _sys_object_unref);
   sys_clear_pointer(&self->root_node, _sys_object_unref);
 
   if (self->window) {

@@ -36,6 +36,7 @@ struct _CstNodeClass {
 };
 
 CstNode* cst_node_new(void);
+CstNode* cst_node_new_I(CstNodeBuilder* builder);
 SysType cst_node_get_type(void);
 
 CstNode* cst_node_parent(CstNode *node);

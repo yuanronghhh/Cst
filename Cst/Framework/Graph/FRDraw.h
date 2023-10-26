@@ -24,7 +24,7 @@ struct _FRDraw {
   FRContext *cr;
   FRSurface *window_surface;
   FRSurface * paint_surface;
-  FRWindow *window;
+  FRWindow* window;
   SysBool is_painting;
 };
 
@@ -33,7 +33,6 @@ SYS_API FRDraw* fr_draw_new_I(FRWindow *window);
 SYS_API void fr_draw_frame_begin(FRDraw *self, FRRegion *region);
 SYS_API void fr_draw_frame_end(FRDraw *self, FRRegion *region);
 SYS_API SysBool fr_draw_frame_need_draw(FRDraw *self);
-SYS_API void fr_draw_get_size(FRDraw * self, SysInt * width, SysInt * height);
 void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, const FRSInt4* p4);
 void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound);
 

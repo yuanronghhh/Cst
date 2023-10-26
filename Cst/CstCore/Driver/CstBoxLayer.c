@@ -123,11 +123,12 @@ CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *pa
 
   CstRenderNode* child;
 
-  parent = parent ? parent : box_layer->tree;
-
   child = cst_box_node_new_I(node);
 
-  cst_box_node_append(parent, CST_BOX_NODE(child));
+  if (parent) {
+    
+    cst_box_node_append(parent, CST_BOX_NODE(child));
+  }
 
   return child;
 }

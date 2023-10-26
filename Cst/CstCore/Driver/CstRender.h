@@ -23,7 +23,6 @@ struct _CstRender {
   FRWindow *window;
 
   CstNode* root_node;
-  FRDraw* draw;
 
   CstLayer *box_layer;
   CstLayer *abs_layer;

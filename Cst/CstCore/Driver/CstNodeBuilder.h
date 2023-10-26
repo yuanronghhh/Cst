@@ -53,6 +53,8 @@ void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id);
 void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);
 SysBool cst_node_builder_set_position(CstNodeBuilder *self, SysInt v_position);
 
+SysPtrArray *cst_node_builder_new_css_list(void);
+
 void cst_node_builder_set_v_module(CstNodeBuilder *self, CstModule* v_module);
 CstModule* cst_node_builder_get_v_module(CstNodeBuilder *self);
 

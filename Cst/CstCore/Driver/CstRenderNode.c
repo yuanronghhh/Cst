@@ -1,8 +1,10 @@
 #include <CstCore/Driver/CstRenderNode.h>
+
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
@@ -55,7 +57,7 @@ CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self) {
 CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return CST_LAYOUT_NODE(self->node);
+  return CST_LAYOUT_NODE(self);
 }
 
 CstNode * cst_render_node_get_node(CstRenderNode *self) {
@@ -288,7 +290,7 @@ static void cst_render_node_dispose(SysObject* o) {
 
 static void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
   self->node = node;
-  self->render_ctx = NULL;
+  self->render_ctx = cst_node_new_render_context(node);
 
   sys_object_ref(node);
 }
@@ -313,5 +315,5 @@ static void cst_render_node_class_init(CstRenderNodeClass* cls) {
 }
 
 static void cst_render_node_init(CstRenderNode *self) {
+  self->v_css_list = cst_node_builder_new_css_list();
 }
-

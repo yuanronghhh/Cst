@@ -16,7 +16,14 @@ struct _FRWindowClass {
 
 struct _FRWindow {
   SysObject parent;
-  FRWindowPrivate *priv;
+
+  /* <private> */
+  GLFWwindow* gwindow;
+  SysPointer user_data;
+  FRDisplay* display;
+
+  SysChar* title;
+  FRWindow* share;
 };
 
 SYS_API void fr_window_setup(void);

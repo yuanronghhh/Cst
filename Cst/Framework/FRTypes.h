@@ -70,7 +70,6 @@ typedef  struct  _FRDrawClass         FRDrawClass;
 
 typedef  struct  _FRWindow           FRWindow;
 typedef  struct  _FRWindowClass      FRWindowClass;
-typedef  struct  _FRWindowPrivate    FRWindowPrivate;
 
 typedef  struct  _FRAction              FRAction;
 typedef  struct  _FRActionClass         FRActionClass;

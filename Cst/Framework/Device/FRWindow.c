@@ -1,4 +1,5 @@
-#include <Framework/Device/FRWindowPrivate.h>
+#include <Framework/Device/FRWindow.h>
+
 #include <Framework/Device/FRDisplay.h>
 #include <Framework/Event/FREventCore.h>
 
@@ -9,7 +10,7 @@
 static void fr_window_event_setup(FRWindow *self);
 static void fr_window_event_teardown(FRWindow *self);
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRWindow, fr_window, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(FRWindow, fr_window, SYS_TYPE_OBJECT);
 
 static GLFWwindow* fr_window_create_window_i(SysInt width, SysInt height, const SysChar *title, GLFWwindow *gshare) {
   GLFWwindow *gwindow;
@@ -23,9 +24,8 @@ static GLFWwindow* fr_window_create_window_i(SysInt width, SysInt height, const 
 FRDisplay *fr_window_get_display(FRWindow *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  return priv->display;
+  return self->display;
 }
 
 FR_WINDOW_BACKEND_ENUM fr_window_backend(FRWindow *self) {
@@ -37,9 +37,8 @@ FR_WINDOW_BACKEND_ENUM fr_window_backend(FRWindow *self) {
 GLFWwindow *fr_window_real_window(FRWindow *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  return priv->gwindow;
+  return self->gwindow;
 }
 
 FRWindow *fr_window_top_new(FRDisplay *display) {
@@ -61,41 +60,36 @@ FRMonitor* fr_get_primary_monitor(void) {
 void fr_window_get_framebuffer_size(FRWindow *self, SysInt *width, SysInt * height) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  glfwGetFramebufferSize(priv->gwindow, width, height);
+  glfwGetFramebufferSize(self->gwindow, width, height);
 }
 
 void fr_window_set_size(FRWindow *self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  glfwSetWindowSize(priv->gwindow, width, height);
+  glfwSetWindowSize(self->gwindow, width, height);
 }
 
 void fr_window_set_title(FRWindow *self, SysChar *title) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  glfwSetWindowTitle(priv->gwindow, title);
+  glfwSetWindowTitle(self->gwindow, title);
 }
 
 void fr_window_set_opacity(FRWindow *self, double opacity) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  glfwSetWindowOpacity(priv->gwindow, (float)opacity);
+  glfwSetWindowOpacity(self->gwindow, (float)opacity);
 }
 
 void fr_window_get_size(FRWindow *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  glfwGetWindowSize(priv->gwindow, width, height);
+  glfwGetWindowSize(self->gwindow, width, height);
 }
 
 static void fr_window_error_callback(SysInt error_code, const char* description) {
@@ -105,9 +99,8 @@ static void fr_window_error_callback(SysInt error_code, const char* description)
 SysInt fr_window_get_key(FRWindow *self, SysInt key) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  FRWindowPrivate* priv = self->priv;
 
-  return glfwGetKey(priv->gwindow, key);
+  return glfwGetKey(self->gwindow, key);
 }
 
 const SysChar* fr_key_get_name(SysInt key, SysInt scancode) {
@@ -195,8 +188,7 @@ static void fr_window_refresh_callback(GLFWwindow* gwindow) {
 static void fr_window_event_teardown(FRWindow *self) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
-  GLFWwindow *gwindow = priv->gwindow;
+  GLFWwindow *gwindow = self->gwindow;
 
   glfwSetErrorCallback(NULL);
   glfwSetWindowFocusCallback(gwindow, NULL);
@@ -216,8 +208,7 @@ static void fr_window_event_teardown(FRWindow *self) {
 static void fr_window_event_setup(FRWindow *self) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
-  GLFWwindow *gwindow = priv->gwindow;
+  GLFWwindow *gwindow = self->gwindow;
 
   glfwSetErrorCallback(fr_window_error_callback);
   glfwSetWindowFocusCallback(gwindow, fr_window_focus_callback);
@@ -238,17 +229,15 @@ static void fr_window_event_setup(FRWindow *self) {
 SysPointer fr_window_get_data(FRWindow * self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  return priv->user_data;
+  return self->user_data;
 }
 
 void fr_window_set_data(FRWindow *self, SysPointer data) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
-  priv->user_data = data;
+  self->user_data = data;
 }
 
 void fr_wait_events(void) {
@@ -272,10 +261,9 @@ void fr_poll_events(void) {
 void fr_window_swap_buffers(FRWindow *self) {
   sys_return_if_fail(self != NULL);
 
-  FRWindowPrivate* priv = self->priv;
 
   SYS_LEAK_IGNORE_BEGIN;
-    glfwSwapBuffers(priv->gwindow);
+    glfwSwapBuffers(self->gwindow);
   SYS_LEAK_IGNORE_END;
 }
 
@@ -315,7 +303,7 @@ void fr_window_setup(void) {
 
 #if defined(VK_VERSION_1_0)
 void fr_window_create_vk_surface(FRWindow *self, VkInstance instance, VkSurfaceKHR *surfacekhr) {
-  if (glfwCreateWindowSurface(instance, priv->gwindow, NULL, surfacekhr) != VK_SUCCESS) {
+  if (glfwCreateWindowSurface(instance, self->gwindow, NULL, surfacekhr) != VK_SUCCESS) {
     sys_error_N("%s", SYS_("failed to create vulkan surface"));
   }
 }
@@ -323,7 +311,6 @@ void fr_window_create_vk_surface(FRWindow *self, VkInstance instance, VkSurfaceK
 
 /* object api */
 static void fr_window_construct(FRWindow *self, FRDisplay *display, FRWindow *share) {
-  FRWindowPrivate* priv = self->priv;
 
   GLFWwindow *gwindow = NULL;
   GLFWwindow *gshare;
@@ -332,19 +319,19 @@ static void fr_window_construct(FRWindow *self, FRDisplay *display, FRWindow *sh
   name = sys_exe_path();
 
   if (share != NULL) {
-    gshare = share->priv->gwindow;
+    gshare = share->gwindow;
 
   } else {
     gshare = NULL;
   }
 
-  priv->display = display;
+  self->display = display;
   sys_object_ref(display);
 
-  priv->share = share;
+  self->share = share;
   gwindow = fr_window_create_window_i(800, 600, name, gshare);
 
-  priv->gwindow = gwindow;
+  self->gwindow = gwindow;
   fr_glfw_set_window(gwindow, self);
   fr_window_event_setup(self);
 }
@@ -365,16 +352,15 @@ FRWindow *fr_window_new_I(FRDisplay *display, FRWindow *share) {
 
 static void fr_window_dispose(SysObject* o) {
   FRWindow *self = FR_WINDOW(o);
-  FRWindowPrivate* priv = self->priv;
 
-  fr_glfw_set_window(priv->gwindow, NULL);
+  fr_glfw_set_window(self->gwindow, NULL);
   fr_window_event_teardown(self);
 
   SYS_LEAK_IGNORE_BEGIN;
-  glfwDestroyWindow(priv->gwindow);
+  glfwDestroyWindow(self->gwindow);
   SYS_LEAK_IGNORE_END;
 
-  sys_clear_pointer(&priv->display, _sys_object_unref);
+  sys_clear_pointer(&self->display, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_window_parent_class)->dispose(o);
 }
@@ -386,5 +372,4 @@ static void fr_window_class_init(FRWindowClass* cls) {
 }
 
 void fr_window_init(FRWindow *self) {
-  self->priv = fr_window_get_private(self);
 }

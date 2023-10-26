@@ -16,16 +16,11 @@ CstNode* cst_com_node_new(void) {
 CstNode* cst_com_node_new_with_component(CstComponent *comp) {
   sys_return_val_if_fail(comp != NULL, NULL);
 
-  SysChar *tname;
   CstNode *nnode = cst_com_node_new();
   CstComNode *self = CST_COM_NODE(nnode);
 
   self->component = comp;
   sys_object_ref(comp);
-
-  tname = sys_strdup_printf("<%s>", cst_component_get_id(comp));
-  cst_node_set_name(nnode, tname);
-  sys_free_N(tname);
 
   return nnode;
 }

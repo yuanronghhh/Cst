@@ -25,6 +25,7 @@ struct _CstComNodeBuilderClass {
 SysType cst_com_node_builder_get_type(void);
 CstNodeBuilder* cst_com_node_builder_new(void);
 CstNodeBuilder* cst_com_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
+void cst_com_node_builder_build_com_node(CstComNodeBuilder* self, CstNode *node);
 
 SYS_END_DECLS
 

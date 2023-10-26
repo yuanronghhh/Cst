@@ -31,6 +31,18 @@ FRAWatch *fr_awatch_key_press_new(void) {
   return sys_object_new(FR_TYPE_AWATCH_KEY_PRESS, NULL);
 }
 
+void fr_awatch_key_press_set_key(FRAWatchKeyPress *self, SysInt key) {
+  sys_return_if_fail(self != NULL);
+
+  self->key = key;
+}
+
+SysInt fr_awatch_key_press_get_key(FRAWatchKeyPress *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->key;
+}
+
 SysObject *fr_awatch_key_press_clone_i(SysObject *o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysObject *n = SYS_OBJECT_CLASS(fr_awatch_key_press_parent_class)->dclone(o);
@@ -49,12 +61,12 @@ static void fr_awatch_key_press_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(fr_awatch_key_press_parent_class)->dispose(o);
 }
 
-void fr_awatch_key_press_create_i(FRAWatch* o, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  FR_AWATCH_CLASS(fr_awatch_key_press_parent_class)->create(o, func_name, func, props);
+void fr_awatch_key_press_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
+  FR_AWATCH_CLASS(fr_awatch_key_press_parent_class)->construct(o, builder);
 
   FRAWatchKeyPress* self = FR_AWATCH_KEY_PRESS(o);
 
-  self->key = props->key;
+  fr_awatch_builder_build_awatch_key_press(builder, self);
 }
 
 static void fr_awatch_key_press_class_init(FRAWatchKeyPressClass* cls) {
@@ -64,7 +76,7 @@ static void fr_awatch_key_press_class_init(FRAWatchKeyPressClass* cls) {
   ocls->dispose = fr_awatch_key_press_dispose;
   ocls->dclone = fr_awatch_key_press_clone_i;
 
-  wcls->create = fr_awatch_key_press_create_i;
+  wcls->construct = fr_awatch_key_press_construct_i;
   wcls->check = fr_awatch_key_press_check_i;
 }
 

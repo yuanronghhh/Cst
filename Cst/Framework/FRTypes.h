@@ -81,8 +81,6 @@ typedef  struct  _FRAMouseKeyClass      FRAMouseKeyClass;
 typedef  struct  _FRACursorMove         FRACursorMove;
 typedef  struct  _FRACursorMoveClass    FRACursorMoveClass;
 
-typedef  struct  _FRAWatchProps              FRAWatchProps;
-
 typedef  struct  _FRAWatchBuilder                   FRAWatchBuilder;
 typedef  struct  _FRAWatchBuilderClass              FRAWatchBuilderClass;
 
@@ -149,6 +147,8 @@ typedef  struct  _FRMonoContext   FRMonoContext;
 
 typedef SysBool (*FREventCheckFunc) (FREvent *e, SysPointer user_data);
 typedef SysInt (*FREventFunc) (FREvent *e, SysPointer user_data);
+typedef const FRRect* (*FRGetBoundFunc) (SysPointer user_data);
+
 
 SYS_END_DECLS
 

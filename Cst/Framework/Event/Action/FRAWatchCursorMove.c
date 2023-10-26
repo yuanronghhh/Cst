@@ -1,4 +1,5 @@
 #include <Framework/Event/Action/FRAWatchCursorMove.h>
+
 #include <Framework/Event/Base/FREventMouseKey.h>
 #include <Framework/Event/Action/FRACursorMove.h>
 
@@ -22,11 +23,11 @@ static SysBool fr_awatch_cursor_move_check_i(FRAWatch *o, FREvent *e) {
     return false;
   }
 
-  if(self->get_bound_func) {
+  if(self->bound_func) {
     mv = FR_ACURSOR_MOVE(FR_ACURSOR_MOVE_STATIC);
     SysPointer user_data = fr_awatch_get_data(o);
 
-    bound = self->get_bound_func(user_data);
+    bound = self->bound_func(user_data);
     if(!fr_acursor_move_get_position(mv, &x, &y)) {
       return false;
     }
@@ -39,16 +40,26 @@ static SysBool fr_awatch_cursor_move_check_i(FRAWatch *o, FREvent *e) {
   return true;
 }
 
-/* object api */
-static void fr_awatch_cursor_move_create_i(FRAWatch* o, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
+void fr_awatch_cursor_move_set_bound_func(FRAWatchCursorMove *self, FRGetBoundFunc bound_func) {
+  sys_return_if_fail(self != NULL);
 
-  FR_AWATCH_CLASS(fr_awatch_cursor_move_parent_class)->create(o, func_name, func, props);
+  self->bound_func = bound_func;
+}
+
+FRGetBoundFunc fr_awatch_cursor_move_get_bound_func(FRAWatchCursorMove *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->bound_func;
+}
+
+/* object api */
+static void fr_awatch_cursor_move_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
+
+  FR_AWATCH_CLASS(fr_awatch_cursor_move_parent_class)->construct(o, builder);
 
   FRAWatchCursorMove *self = FR_AWATCH_CURSOR_MOVE(o);
 
-  if(props->get_bound_func) {
-    self->get_bound_func = props->get_bound_func;
-  }
+  fr_awatch_builder_build_awatch_cursor_move(builder, self);
 }
 
 FRAWatchCursorMove* fr_awatch_cursor_move_new(void) {
@@ -64,7 +75,7 @@ static void fr_awatch_cursor_move_class_init(FRAWatchCursorMoveClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FRAWatchClass *wcls = FR_AWATCH_CLASS(cls);
 
-  wcls->create = fr_awatch_cursor_move_create_i;
+  wcls->construct = fr_awatch_cursor_move_construct_i;
   wcls->check = fr_awatch_cursor_move_check_i;
 
   ocls->dispose = fr_awatch_cursor_move_dispose;

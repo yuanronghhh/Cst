@@ -18,11 +18,14 @@ struct _FRAWatchMousePress {
   FRAWatch parent;
 
   /* <private> */
-  FRGetBoundFunc get_bound_func;
+  FRGetBoundFunc bound_func;
 };
 
 SYS_API FRAWatchMousePress* fr_awatch_mouse_press_new(void);
 SYS_API SysType fr_awatch_mouse_press_get_type(void);
+
+void fr_awatch_mouse_press_set_bound_func(FRAWatchMousePress *self, FRGetBoundFunc bound_func);
+FRGetBoundFunc fr_awatch_mouse_press_get_bound_func(FRAWatchMousePress *self);
 
 SYS_END_DECLS
 

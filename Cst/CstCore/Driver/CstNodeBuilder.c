@@ -349,7 +349,7 @@ static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysCha
     return false;
   }
 
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_ACTION, watch_name, NULL);
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_BIND, watch_name, NULL);
   cst_node_builder_add_nodemap(self, map);
 
   return true;
@@ -360,9 +360,10 @@ SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch
   sys_return_val_if_fail(watch_name != NULL, false);
 
   SysChar *fname;
-  FRAWatch *awatch;
+  FRAWatch *awatch = NULL;
   FREventFunc watch_func = NULL;
   SysChar *bind_var = NULL;
+  FRAWatchBuilder* builder;
 
   CstModule *v_module = self->v_module;
   sys_return_val_if_fail(v_module != NULL, false);
@@ -390,25 +391,39 @@ SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch
     bind_var = sys_strdup(func_name);
   }
 
-  SysType type = fr_awatch_get_type_by_name(bind_var);
+  SysType type = fr_awatch_get_type_by_name(watch_name);
   sys_clear_pointer(&bind_var, sys_free);
 
   if (type == 0) {
     sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
-    return NULL;
+    goto fail;
   }
 
   awatch = sys_object_new(type, NULL);
-  fr_awatch_create(awatch, func_name, watch_func, awatch_props);
+
+  builder = fr_awatch_builder_new_I(func_name, watch_func);
+  fr_awatch_construct(awatch, builder);
+  sys_object_unref(builder);
 
   if (awatch == NULL) {
 
     sys_warning_N("Not found action: \"%s\" in \"%s\" component", watch_name, cst_component_get_id(v_component));
+    goto fail;
   }
 
   cst_node_builder_add_awatch(self, awatch);
 
   return true;
+
+fail:
+  if(awatch != NULL) {
+    sys_clear_pointer(&awatch, _sys_object_unref);
+  }
+
+  if(bind_var != NULL) {
+    sys_free_N(bind_var);
+  }
+  return false;
 }
 
 /* object api */

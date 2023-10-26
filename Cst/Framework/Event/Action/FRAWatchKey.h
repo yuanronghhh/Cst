@@ -22,7 +22,11 @@ struct _FRAWatchKey {
 };
 
 SYS_API SysType fr_awatch_key_get_type(void);
-SYS_API FRAWatch * fr_awatch_key_new_I(SysPointer user_data, SysInt scancode, FREventFunc func);
+SYS_API FRAWatch * fr_awatch_key_new(void);
+SYS_API FRAWatch *fr_awatch_key_new_I(SysInt key, const SysChar *func_name, FREventFunc func);
+
+void fr_awatch_key_set_key(FRAWatchKey *self, SysInt key);
+SysInt fr_awatch_key_get_key(FRAWatchKey *self);
 
 SYS_END_DECLS
 

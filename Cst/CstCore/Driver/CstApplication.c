@@ -44,10 +44,10 @@ static void cst_application_active(CstApplication* self) {
   CstModule* v_module = self->main_module;
   CstManager *v_manager = self->manager;
   CstRender *v_render = self->render;
-  FRAWatchProps props = { 0 };
 
-  props.etype = FR_TYPE_EVENT;
-  cst_module_add_awatch(v_module, (SysPointer)self, "window_refresh", "app_window_resize_test", app_window_resize_test, &props);
+  FRAWatch *awatch = fr_awatch_any_new_I(FR_TYPE_EVENT, "app_window_resize_test", app_window_resize_test);
+  fr_awatch_bind(awatch, (SysPointer)self);
+  cst_module_add_awatch(v_module, awatch);
 
   cst_render_realize(v_render);
   cst_render_render(v_render);

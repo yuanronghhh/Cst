@@ -141,17 +141,24 @@ CstComponent* cst_module_get_comp(CstModule *self, const SysChar *comp_name) {
   return fr_env_get_r(FR_ENV(self), (SysPointer)comp_name);
 }
 
-SysList* cst_module_add_awatch(CstModule *self, SysPointer user_data, const SysChar *watch_name, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
+void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, const SysChar *func_name, FREventFunc func) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(event_name != NULL);
+  sys_return_if_fail(func_name != NULL);
+  sys_return_if_fail(func != NULL);
+
+  FRAWatchBuilder *builder = fr_awatch_builder_new_I(func_name, func);
+  FRAWatch *awatch = fr_awatch_new_by_name(event_name);
+  fr_awatch_construct(awatch, builder);
+  sys_object_unref(builder);
+
+  cst_module_add_awatch(self, awatch);
+}
+
+SysList* cst_module_add_awatch(CstModule * self, FRAWatch *awatch) {
   sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(watch_name != NULL, NULL);
-  sys_return_val_if_fail(func_name != NULL, NULL);
-  sys_return_val_if_fail(func != NULL, NULL);
-  sys_return_val_if_fail(props != NULL, NULL);
 
-  FRAWatch *awatch = fr_awatch_new_by_name(watch_name, func_name, func, props);
   self->awatches = sys_list_prepend(self->awatches, awatch);
-  fr_awatch_bind(awatch, user_data);
-
   return self->awatches;
 }
 

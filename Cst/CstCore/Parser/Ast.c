@@ -334,16 +334,16 @@ SysValue *ast_node_to_value(CstModule *v_module, const SysChar *key, JNode *nnod
 
   switch (nnode->type) {
     case AstJString:
-      sys_value_set_v_string(v, node->v.v_string);
+      sys_value_set_v_string(v, nnode->v.v_string);
       break;
     case AstJInt:
-      sys_value_set_v_int(v, node->v.v_int);
+      sys_value_set_v_int(v, nnode->v.v_int);
       break;
     case AstJDouble:
-      sys_value_set_v_double(v, node->v.v_double);
+      sys_value_set_v_double(v, nnode->v.v_double);
       break;
     default:
-      sys_warning_N("not support value type: %s", jnode->type);
+      sys_warning_N("not support value type: %s", nnode->type);
       break;
   }
 
@@ -357,8 +357,6 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
 
   JNode *nnode;
   CstComNode *v_com_node;
-  FREventFunc watch_func;
-  SysChar *func_name;
   CstNodeMap *map;
   CstValueMap *prop_map;
   SysValue *svalue;
@@ -389,16 +387,17 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
 
   ptype = cst_node_prop_get_by_name(pair->key);
   if(ptype == -1) {
+
+    sys_warning_N("failed to parse node property: %s", pair->key);
     return false;
   }
 
   svalue = ast_node_to_value(v_module, pair->key, nnode);
   prop_map = cst_value_map_new_I(pair->key, sys_value_get_data_type(svalue));
 
-  map = cst_node_map_new_I(prop_map, CST_NODE_PROP_ACTION, svalue);
+  map = cst_node_map_new_I(prop_map, CST_NODE_PROP_ACTION, pair->key, svalue);
   sys_object_unref(prop_map);
 
-  map = cst_node_map_new_I(prop_map, );
   com_node_set_node_map(v_com_node, map);
 
   return true;
@@ -445,27 +444,6 @@ static SysBool component_style_node_func(JNode *jnode, CstComponent *self) {
   return true;
 }
 
-SYS_VALUE_ENUM ast_jnode_to_value_type(const SysChar *key, JNodeType tp) {
-  sys_return_val_if_fail(key != NULL, -1);
-
-  if(*key == '@') {
-    return SYS_FUNCTION;
-  }
-
-  switch (tp) {
-    case AstJString:
-      return SYS_STRING;
-    case AstJObject:
-      return SYS_OBJECT;
-    case AstJInt:
-      return SYS_INT;
-    default:
-      break;
-  }
-
-  return -1;
-}
-
 static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pass) {
   sys_return_val_if_fail(jnode != NULL, false);
   sys_return_val_if_fail(jnode->type == AstJPair, false);
@@ -488,7 +466,7 @@ static SysBool ast_component_parse_props_func(JNode *jnode, AstComponentPass *pa
   ptype = cst_value_map_parse_type(nnode->v.v_string);
   prop_map = cst_value_map_new_I(pair->key, ptype);
 
-  cst_component_set_props_map(component, prop_map);
+  cst_component_set_value_map(component, prop_map);
 
   return true;
 }
@@ -502,6 +480,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   CstNode *v_node;
   CstNode *v_pnode;
   SysType type;
+  SysInt count;
   const SysChar *cus_name;
   CstNodeBuilder *v_builder;
 
@@ -541,7 +520,9 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
   cst_node_set_name(v_node, cus_name);
   cst_node_construct(v_node, v_builder);
 
-  cst_module_count_inc(v_module);
+  count = cst_module_get_count(v_module);
+  cst_module_set_count(v_module, ++count);
+
   cst_node_append(v_pnode, v_node);
 
   njnode = ast_jnode_jnode(pair->value);
@@ -768,14 +749,14 @@ static SysBool node_parse_value_bind(CstNodeBuilder *builder, const SysChar *exp
     return false;
   }
 
-  pmap = cst_component_get_props_map(v_component, index_name);
+  pmap = cst_component_get_value_map(v_component, index_name);
   sys_free_N(index_name);
 
   if (pmap == NULL) {
     return false;
   }
 
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE, "value");
+  map = cst_node_map_new_I(pmap, CST_NODE_PROP_VALUE, "value", NULL);
   cst_node_builder_add_nodemap(builder, map);
 
   return true;
@@ -847,7 +828,7 @@ static SysBool node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
         return false;
       }
 
-      if(cst_node_builder_parse_value_bind(builder, (const SysChar *)nnode->v.v_string)) {
+      if(cst_node_builder_parse_value_bind(builder, pair->key, (const SysChar *)nnode->v.v_string)) {
         return false;
       }
       break;

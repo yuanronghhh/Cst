@@ -48,7 +48,7 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rn
   data_type = cst_value_map_prop_data_type(self->value_map);
   node = cst_render_node_get_node(rnode);
 
-  map = cst_com_node_get_prop_pair(com_node, bind_var);
+  map = cst_com_node_get_node_map(com_node, bind_var);
   if (map == NULL) {
     sys_warning_N("Not found key \"%s\" in component node \"%s\"", 
       bind_var, cst_node_get_name(CST_NODE(com_node)));
@@ -63,6 +63,10 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rn
   if (self->func) {
     self->func(rnode, map);
   }
+}
+
+void cst_node_map_variable_handle(CstNodeMap* self, const SysChar *variable) {
+  sys_return_if_fail(self != NULL);
 }
 
 /* object api */

@@ -24,11 +24,11 @@ static SysBool fr_awatch_mouse_release_check_i(FRAWatch *o, FREvent *e) {
     return false;
   }
 
-  if(self->get_bound_func) {
+  if(self->bound_func) {
     acursor = FR_ACURSOR_MOVE(FR_ACURSOR_MOVE_STATIC);
 
     SysPointer user_data = fr_awatch_get_data(o);
-    bound = self->get_bound_func(user_data);
+    bound = self->bound_func(user_data);
 
     if(!fr_acursor_move_get_position(acursor, &x, &y)) {
       return false;
@@ -48,21 +48,31 @@ static SysObject* fr_awatch_mouse_release_dclone_i(SysObject* o) {
   FRAWatchMouseRelease *nself = FR_AWATCH_MOUSE_RELEASE(nwatch);
   FRAWatchMouseRelease *oself = FR_AWATCH_MOUSE_RELEASE(o);
 
-  nself->get_bound_func = oself->get_bound_func;
+  nself->bound_func = oself->bound_func;
 
   return nwatch;
 }
 
-static void fr_awatch_mouse_release_create_i(FRAWatch* o, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  FR_AWATCH_CLASS(fr_awatch_mouse_release_parent_class)->create(o, func_name, func, props);
+static void fr_awatch_mouse_release_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
+  FR_AWATCH_CLASS(fr_awatch_mouse_release_parent_class)->construct(o, builder);
 
   FRAWatchMouseRelease *self = FR_AWATCH_MOUSE_RELEASE(o);
 
-  if(props->get_bound_func) {
-
-    self->get_bound_func = props->get_bound_func;
-  }
+  fr_awatch_builder_build_awatch_mouse_release(builder, self);
 }
+
+void fr_awatch_mouse_release_set_bound_func(FRAWatchMouseRelease *self, FRGetBoundFunc bound_func) {
+  sys_return_if_fail(self != NULL);
+
+  self->bound_func = bound_func;
+}
+
+FRGetBoundFunc fr_awatch_mouse_release_get_bound_func(FRAWatchMouseRelease *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->bound_func;
+}
+
 
 /* object api */
 FRAWatchMouseRelease* fr_awatch_mouse_release_new(void) {
@@ -78,7 +88,7 @@ static void fr_awatch_mouse_release_class_init(FRAWatchMouseReleaseClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FRAWatchClass *wcls = FR_AWATCH_CLASS(cls);
 
-  wcls->create = fr_awatch_mouse_release_create_i;
+  wcls->construct = fr_awatch_mouse_release_construct_i;
   wcls->check = fr_awatch_mouse_release_check_i;
 
   ocls->dclone = fr_awatch_mouse_release_dclone_i;

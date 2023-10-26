@@ -1,5 +1,4 @@
 #include <Framework/Event/Action/FRAWatch.h>
-#include <Framework/Event/Action/FRAction.h>
 
 // watch list
 #include <Framework/Event/Action/FRAWatchMousePress.h>
@@ -40,6 +39,17 @@ SysType fr_awatch_get_type_by_name(const SysChar *name) {
   return (SysType)sys_hash_table_lookup(g_awatch_nodes, (SysPointer)name);
 }
 
+FRAWatch* fr_awatch_new_by_name(const SysChar *name) {
+  SysType tp = fr_awatch_get_type_by_name(name);
+  if(tp == 0) {
+    return NULL;
+  }
+
+  FRAWatch *o = (FRAWatch *)sys_object_new(tp, NULL);
+
+  return o;
+}
+
 void fr_awatch_dispatch(FRAWatch *self, FREvent *e) {
   sys_return_if_fail(self != NULL);
 
@@ -68,20 +78,20 @@ static void fr_awatch_dispatch_i(FRAWatch *self, FREvent *e) {
   self->func(e, self->user_data);
 }
 
-const SysChar *fr_awatch_get_func_name(FRAWatch *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->func_name;
-}
-
-void fr_awatch_set_func_name(FRAWatch *self, const SysChar *func_name) {
+void fr_awatch_set_func_name(FRAWatch *self, const SysChar * func_name) {
   sys_return_if_fail(self != NULL);
 
-  if (self->func_name) {
+  if(self->func_name) {
     sys_clear_pointer(&self->func_name, sys_free);
   }
 
   self->func_name = sys_strdup(func_name);
+}
+
+const SysChar *fr_awatch_get_func_name(FRAWatch *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->func_name;
 }
 
 void fr_awatch_set_func(FRAWatch *self, FREventFunc func) {
@@ -161,12 +171,24 @@ FRAWatch *fr_awatch_list_get_awatch(SysList *list, SysType atype, const SysChar 
   return NULL;
 }
 
-void fr_awatch_create(FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
+void fr_awatch_construct(FRAWatch* self, FRAWatchBuilder *builder) {
   sys_return_if_fail(self != NULL);
 
   FRAWatchClass *cls = FR_AWATCH_GET_CLASS(self);
 
-  cls->create(self, func_name, func, props);
+  cls->construct(self, builder);
+}
+
+void fr_awatch_set_user_data(FRAWatch *self, SysPointer user_data) {
+  sys_return_if_fail(self != NULL);
+
+  self->user_data = user_data;
+}
+
+SysPointer fr_awatch_get_user_data(FRAWatch *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->user_data;
 }
 
 /* object api */
@@ -187,12 +209,10 @@ static void fr_awatch_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(fr_awatch_parent_class)->dispose(o);
 }
 
-static void fr_awatch_create_i(FRAWatch* self, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  self->user_data = NULL;
-  self->func = func;
-  self->func_name = func_name != NULL ? sys_strdup(func_name) : NULL;
-
+static void fr_awatch_construct_i(FRAWatch* self, FRAWatchBuilder *builder) {
   sys_object_ref(self->action);
+
+  fr_awatch_builder_build_awatch(builder, self);
 }
 
 static void fr_awatch_class_init(FRAWatchClass* cls) {
@@ -201,7 +221,7 @@ static void fr_awatch_class_init(FRAWatchClass* cls) {
   ocls->dispose = fr_awatch_dispose;
   ocls->dclone = fr_awatch_dclone_i;
 
-  cls->create = fr_awatch_create_i;
+  cls->construct = fr_awatch_construct_i;
   cls->check = fr_awatch_check_i;
   cls->dispatch = fr_awatch_dispatch_i;
 }

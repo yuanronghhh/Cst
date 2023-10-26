@@ -22,6 +22,10 @@ struct _FRAWatchKeyPress {
 };
 
 SYS_API SysType fr_awatch_key_press_get_type(void);
+SYS_API FRAWatch *fr_awatch_key_press_new(void);
+
+void fr_awatch_key_press_set_key(FRAWatchKeyPress *self, SysInt key);
+SysInt fr_awatch_key_press_get_key(FRAWatchKeyPress *self);
 
 SYS_END_DECLS
 

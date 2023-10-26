@@ -64,10 +64,10 @@ static void fr_awatch_refresh_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(fr_awatch_refresh_parent_class)->dispose(o);
 }
 
-void fr_awatch_refresh_create_i(FRAWatch* o, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
+void fr_awatch_refresh_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
   FRAWatchRefresh *self = FR_AWATCH_REFRESH(o);
 
-  FR_AWATCH_CLASS(fr_awatch_refresh_parent_class)->create(o, func_name, func, props);
+  FR_AWATCH_CLASS(fr_awatch_refresh_parent_class)->construct(o, builder);
 
   self->rate_time = (1 / 70.0) * 1e3;
 }
@@ -79,7 +79,7 @@ static void fr_awatch_refresh_class_init(FRAWatchRefreshClass* cls) {
   ocls->dispose = fr_awatch_refresh_dispose;
   ocls->dclone = fr_awatch_refresh_clone_i;
 
-  wcls->create = fr_awatch_refresh_create_i;
+  wcls->construct = fr_awatch_refresh_construct_i;
   wcls->check = fr_awatch_refresh_check_i;
   wcls->dispatch = fr_awatch_refresh_dispatch_i;
 }

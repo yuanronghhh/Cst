@@ -17,7 +17,7 @@ SysBool cst_com_node_builder_parse_action(CstComNodeBuilder *self, const SysChar
   return true;
 }
 
-SysBool cst_com_node_builder_build_com_node(CstComNodeBuilder* self, CstNode *node) {
+void cst_com_node_builder_build_com_node(CstComNodeBuilder* self, CstNode *node) {
   CstComNode* com_node = CST_COM_NODE(node);
 
   com_node_set_node_map(com_node, self->value);

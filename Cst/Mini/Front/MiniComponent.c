@@ -31,13 +31,15 @@ MiniComponent* mini_component_new(void) {
 
 static void mini_component_construct(CstComponent *o, CstComponentBuilder *builder) {
   CST_COMPONENT_CLASS(mini_component_parent_class)->construct(o, builder);
+  CstModule *v_module;
+  FRAWatch *awatch;
 
-  CstModule *v_module = cst_component_builder_get_v_module(builder);
+  v_module = cst_component_builder_get_v_module(builder);
 
-  FRAWatchProps props = { 0 };
-  props.key = FR_KEY_Q;
+  awatch = fr_awatch_key_new_I(FR_KEY_Q, "mini_quit_key", mini_quit_key);
+  fr_awatch_bind(awatch, (SysPointer)o);
 
-  cst_module_add_awatch(v_module, o, "key", "mini_quit_key", mini_quit_key, &props);
+  cst_module_add_awatch(v_module, awatch);
   cst_module_set_function(v_module, FR_FUNC_EVENT(mini_menu_press));
   cst_module_set_function(v_module, FR_FUNC_EVENT(mini_quit_key));
 }

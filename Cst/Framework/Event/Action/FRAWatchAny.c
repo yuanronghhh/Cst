@@ -1,4 +1,5 @@
 #include <Framework/Event/Action/FRAWatchAny.h>
+
 #include <Framework/Event/Action/FRAction.h>
 #include <Framework/Event/Base/FREvent.h>
 
@@ -34,12 +35,36 @@ static void fr_awatch_any_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(fr_awatch_any_parent_class)->dispose(o);
 }
 
-void fr_awatch_any_create_i(FRAWatch* o, const SysChar *func_name, FREventFunc func, FRAWatchProps *props) {
-  FR_AWATCH_CLASS(fr_awatch_any_parent_class)->create(o, func_name, func, props);
+
+void fr_awatch_any_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
+  FR_AWATCH_CLASS(fr_awatch_any_parent_class)->construct(o, builder);
 
   FRAWatchAny* self = FR_AWATCH_ANY(o);
 
-  self->etype = props->etype;
+  fr_awatch_builder_build_awatch_any(builder, self);
+}
+
+FRAWatch *fr_awatch_any_new_I(SysType etype, const SysChar *func_name, FREventFunc func) {
+  FRAWatch *o = fr_awatch_any_new();
+
+  FRAWatchBuilder *builder = fr_awatch_builder_new_I(func_name, func);
+  fr_awatch_builder_set_etype(builder, etype);
+  fr_awatch_any_construct_i(o, builder);
+  sys_object_unref(builder);
+
+  return o;
+}
+
+void fr_awatch_any_set_etype(FRAWatchAny *self, SysType etype) {
+  sys_return_if_fail(self != NULL);
+
+  self->etype = etype;
+}
+
+SysType fr_awatch_any_get_etype(FRAWatchAny *self) {
+  sys_return_val_if_fail(self != NULL, 0);
+
+  return self->etype;
 }
 
 static void fr_awatch_any_class_init(FRAWatchAnyClass* cls) {
@@ -49,7 +74,7 @@ static void fr_awatch_any_class_init(FRAWatchAnyClass* cls) {
   ocls->dispose = fr_awatch_any_dispose;
   ocls->dclone = fr_awatch_any_clone_i;
 
-  wcls->create = fr_awatch_any_create_i;
+  wcls->construct = fr_awatch_any_construct_i;
   wcls->check = fr_awatch_any_check_i;
 }
 

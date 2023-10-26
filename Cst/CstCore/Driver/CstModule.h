@@ -49,7 +49,8 @@ SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);
 void cst_module_set_comp(CstModule * self, const SysChar * key, CstComponent * comp);
 CstComponent* cst_module_get_comp(CstModule * self, const SysChar * comp_name);
 
-SysList* cst_module_add_awatch(CstModule * self, SysPointer user_data, const SysChar * watch_name, const SysChar * func_name, FREventFunc func, FRAWatchProps * props);
+void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, const SysChar *func_name, FREventFunc func);
+SysList* cst_module_add_awatch(CstModule * self, FRAWatch *awatch);
 void cst_module_remove_awatch(CstModule * self, SysList * awatch_link);
 
 void cst_module_set_root_comp(CstModule *self, CstComponent *comp);

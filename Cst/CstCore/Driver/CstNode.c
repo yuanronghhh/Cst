@@ -14,7 +14,6 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
   "key_up","key_down",
 };
 
-
 static const SysChar* CST_NODE_POSITION_NAMES[] = {
   "box", "absolute"
 };
@@ -298,7 +297,7 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
     }
   }
 
-  return CST_NODE_PROP_LAST;
+  return -1;
 }
 
 static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode* prnode, CstLayout *layout) {

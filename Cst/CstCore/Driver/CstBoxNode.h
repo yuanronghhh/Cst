@@ -29,7 +29,7 @@ struct _CstBoxNodeClass {
 
 SysType cst_box_node_get_type(void);
 CstRenderNode* cst_box_node_new(void);
-CstRenderNode *cst_box_node_new_I(CstNode *node);
+CstRenderNode *cst_box_node_new_I(CstNode *node, CstRenderContext *rctx);
 
 CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
 void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);

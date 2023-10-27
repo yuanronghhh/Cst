@@ -1,9 +1,10 @@
 #include <CstCore/Front/Common/CstLBoxContext.h>
+
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
 
 
-SYS_DEFINE_TYPE(CstLBoxContext, cst_lbox_context, CST_TYPE_LAYOUT_CONTEXT);
+SYS_DEFINE_TYPE(CstLBoxContext, cst_lbox_context, CST_TYPE_RENDER_CONTEXT);
 
 
 /* sys object api */

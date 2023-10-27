@@ -5,9 +5,9 @@
 
 SYS_BEGIN_DECLS
 
-#define CST_TYPE_LAYOUT_CONTEXT (cst_render_context_get_type())
-#define CST_RENDER_CONTEXT(o) ((CstRenderContext* )sys_object_cast_check(o, CST_TYPE_LAYOUT_CONTEXT))
-#define CST_RENDER_CONTEXT_CLASS(o) ((CstRenderContextClass *)sys_class_cast_check(o, CST_TYPE_LAYOUT_CONTEXT))
+#define CST_TYPE_RENDER_CONTEXT (cst_render_context_get_type())
+#define CST_RENDER_CONTEXT(o) ((CstRenderContext* )sys_object_cast_check(o, CST_TYPE_RENDER_CONTEXT))
+#define CST_RENDER_CONTEXT_CLASS(o) ((CstRenderContextClass *)sys_class_cast_check(o, CST_TYPE_RENDER_CONTEXT))
 #define CST_RENDER_CONTEXT_GET_CLASS(o) sys_instance_get_class(o, CstRenderContextClass)
 
 struct _CstRenderContext {

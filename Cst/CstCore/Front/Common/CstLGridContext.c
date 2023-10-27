@@ -1,8 +1,9 @@
 #include <CstCore/Front/Common/CstLGridContext.h>
+
 #include <CstCore/Driver/CstRenderNode.h>
 
 
-SYS_DEFINE_TYPE(CstLGridContext, cst_lgrid_context, CST_TYPE_LAYOUT_CONTEXT);
+SYS_DEFINE_TYPE(CstLGridContext, cst_lgrid_context, CST_TYPE_RENDER_CONTEXT);
 
 /* sys object api */
 CstRenderContext* cst_lgrid_context_new(void) {

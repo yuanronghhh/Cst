@@ -3,7 +3,7 @@
 #include <CstCore/Driver/CstLayout.h>
 
 
-SYS_DEFINE_TYPE(CstLBodyContext, cst_lbody_context, CST_TYPE_LAYOUT_CONTEXT);
+SYS_DEFINE_TYPE(CstLBodyContext, cst_lbody_context, CST_TYPE_RENDER_CONTEXT);
 
 
 static void cst_lbody_layout_self_i (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {

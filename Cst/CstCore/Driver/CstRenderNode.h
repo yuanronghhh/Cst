@@ -38,7 +38,7 @@ struct _CstRenderNode {
 struct _CstRenderNodeClass {
   CstLayoutNodeClass parent;
 
-  void (*construct) (CstRenderNode *self, CstNode* node);
+  void (*construct) (CstRenderNode *self, CstNode* node, CstRenderContext *rctx);
   void (*relayout) (CstRenderNode* self, CstLayout* layout);
   void (*repaint) (CstRenderNode* self, CstLayout* layout);
   CstRenderNode* (*get_parent) (CstRenderNode* self);
@@ -46,7 +46,7 @@ struct _CstRenderNodeClass {
 
 SysType cst_render_node_get_type(void);
 CstRenderNode *cst_render_node_new(void);
-CstRenderNode *cst_render_node_new_I(CstNode *node);
+CstRenderNode *cst_render_node_new_I(CstNode *node, CstRenderContext *rctx);
 
 CstRenderNode* cst_render_node_get_parent(CstRenderNode* self);
 void cst_render_node_print(CstRenderNode * self);

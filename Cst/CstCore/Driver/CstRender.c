@@ -63,7 +63,7 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   cst_layout_end_layout(layout);
 }
 
-void cst_render_render(CstRender *self) {
+void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstLayer *layer;
@@ -131,7 +131,7 @@ CstLayer *cst_render_get_layer_by_position(CstRender *self, SysInt position) {
   return NULL;
 }
 
-void cst_render_realize(CstRender *self) {
+void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstRenderNode* body;
@@ -143,7 +143,7 @@ void cst_render_realize(CstRender *self) {
   region = fr_region_create_rectangle(&bound);
   layout = cst_layout_new_I(self, region);
 
-  body = cst_node_realize(self->root_node, NULL, layout);
+  body = cst_node_realize_r(self->root_node, NULL, layout);
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }
 

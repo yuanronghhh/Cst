@@ -288,9 +288,9 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-static void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
+static void cst_render_node_construct(CstRenderNode* self, CstNode *node, CstRenderContext *rctx) {
   self->node = node;
-  self->render_ctx = cst_node_new_render_context(node);
+  self->render_ctx = rctx;
 
   sys_object_ref(node);
 }
@@ -299,10 +299,10 @@ CstRenderNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstNode *node) {
+CstRenderNode *cst_render_node_new_I(CstNode *node, CstRenderContext *rctx) {
   CstRenderNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, node);
+  cst_render_node_construct(o, node, rctx);
 
   return o;
 }

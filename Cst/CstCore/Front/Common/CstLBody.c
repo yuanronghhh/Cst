@@ -29,7 +29,7 @@ CstRenderNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
 }
 
-void cst_lbody_construct(CstRenderNode *rnode, CstNode *node) {
+void cst_lbody_construct(CstRenderNode *rnode, CstNode *node, CstRenderContext *rctx) {
   sys_return_if_fail(rnode != NULL);
 
   CstNodeBuilder *builder = cst_node_get_builder(node);
@@ -38,7 +38,7 @@ void cst_lbody_construct(CstRenderNode *rnode, CstNode *node) {
   cst_node_builder_set_id(builder, "id.body.0");
   cst_node_builder_set_position(builder, CST_NODE_POSITION_BOX);
 
-  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(rnode, node);
+  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(rnode, node, rctx);
 }
 
 static void cst_lbody_init(CstLBody *self) {

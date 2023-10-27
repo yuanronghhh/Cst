@@ -69,12 +69,12 @@ SysObject* cst_text_dclone_i(SysObject *o) {
   return n;
 }
 
-static void cst_text_construct_i(CstRenderNode *o, CstNode *node) {
+static void cst_text_construct_i(CstRenderNode *o, CstNode *node, CstRenderContext *rctx) {
   sys_return_if_fail(o != NULL);
 
   CstNodeBuilder *builder = cst_node_get_builder(node);
 
-  CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node);
+  CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node, rctx);
 
   cst_node_builder_build_text(builder, o);
 }

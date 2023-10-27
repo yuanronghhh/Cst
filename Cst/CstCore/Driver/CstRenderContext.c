@@ -12,7 +12,7 @@ SYS_DEFINE_TYPE(CstRenderContext, cst_render_context, SYS_TYPE_OBJECT);
 static SysHashTable* grctx_ht = NULL;
 
 CstRenderContext* cst_render_context_new(void) {
-  return sys_object_new(CST_TYPE_LAYOUT_CONTEXT, NULL);
+  return sys_object_new(CST_TYPE_RENDER_CONTEXT, NULL);
 }
 
 void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4) {

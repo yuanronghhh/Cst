@@ -1,4 +1,6 @@
 #include <CstCore/Driver/CstBoxLayer.h>
+
+#include <CstCore/Front/Common/CstLBoxContext.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstRenderContext.h>
@@ -122,11 +124,12 @@ CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *pa
   sys_return_val_if_fail(node != NULL, NULL);
 
   CstRenderNode* child;
+  CstRenderContext *rctx = cst_lbox_context_new_I();
 
-  child = cst_box_node_new_I(node);
+  child = cst_box_node_new_I(node, rctx);
 
   if (parent) {
-    
+
     cst_box_node_append(parent, CST_BOX_NODE(child));
   }
 

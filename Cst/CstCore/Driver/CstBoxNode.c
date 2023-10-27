@@ -253,14 +253,14 @@ static void cst_box_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }
 
-static void cst_box_node_construct(CstRenderNode* o, CstNode *node) {
-  CST_RENDER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node);
+static void cst_box_node_construct(CstRenderNode* o, CstNode *node, CstRenderContext *rctx) {
+  CST_RENDER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node, rctx);
 }
 
-CstRenderNode *cst_box_node_new_I(CstNode *node) {
+CstRenderNode *cst_box_node_new_I(CstNode *node, CstRenderContext *rctx) {
   CstRenderNode *o = cst_box_node_new();
 
-  cst_box_node_construct(o, node);
+  cst_box_node_construct(o, node, rctx);
 
   return o;
 }

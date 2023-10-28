@@ -1,4 +1,3 @@
-#include "CstNode.h"
 #include <CstCore/Driver/CstNode.h>
 
 #include <CstCore/Front/Common/CstComNode.h>
@@ -81,6 +80,8 @@ SysObject* cst_node_dclone_i(SysObject *o) {
 }
 
 CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *prnode, CstLayout *layout) {
+  sys_return_val_if_fail(o != NULL, NULL);
+
   CstRenderNode *rnode;
   CstModule *v_module;
   SysInt count;
@@ -116,6 +117,13 @@ CstRenderNode* cst_node_realize_self(CstRenderNode* prnode, CstNode* self, CstLa
   CstNodeBuilder *builder = self->builder;
 
   return cst_node_builder_build_render_node(builder, self, prnode, layout);
+}
+
+CstRenderContext * cst_node_new_default_rctx(CstNode *self) {
+  sys_return_val_if_fail(o != NULL, NULL);
+  SysType tp = self->v_default_rctx;
+
+  return sys_object_new(tp, NULL);
 }
 
 /* css */
@@ -318,6 +326,8 @@ static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
   sys_assert(id == NULL && "node build should noly once !");
 
   cst_node_builder_build_node(builder, self);
+
+  self->builder = builder;
 }
 
 /* sys object api */

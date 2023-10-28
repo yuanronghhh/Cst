@@ -50,7 +50,7 @@ static void cst_application_active(CstApplication* self) {
   cst_module_add_awatch(v_module, awatch);
 
   cst_render_realize(v_render, v_module);
-  cst_render_render(v_render);
+  cst_render_render(v_render, v_module);
 }
 
 void cst_application_mono_setup(const SysChar *managed_path) {

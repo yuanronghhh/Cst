@@ -25,6 +25,7 @@ struct _CstNode {
   SysChar     *name;
   SysChar     *id;
 
+  SysType v_default_rctx;
   CstNodeBuilder *builder;
 };
 
@@ -69,6 +70,8 @@ void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
 void cst_node_set_builder(CstNode *self, CstNodeBuilder * builder);
 CstNodeBuilder * cst_node_get_builder(CstNode *self);
+
+CstRenderContext * cst_node_new_default_rctx(CstNode *self);
 
 SYS_END_DECLS
 

@@ -27,6 +27,7 @@ struct _CstNodeBuilder {
 
   const SysChar* v_id;
   const SysChar *v_tag;
+  SysType v_rctx;
 
   SysInt v_position;
   SysChar *v_value;

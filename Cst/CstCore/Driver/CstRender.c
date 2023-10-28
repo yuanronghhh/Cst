@@ -143,6 +143,8 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
   region = fr_region_create_rectangle(&bound);
   layout = cst_layout_new_I(self, region);
 
+  cst_layout_set_v_module(layout, v_module);
+
   body = cst_node_realize_r(self->root_node, NULL, layout);
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }

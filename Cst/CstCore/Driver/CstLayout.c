@@ -97,18 +97,6 @@ CstRender * cst_layout_get_render(CstLayout *self) {
   return self->render;
 }
 
-void cst_layout_set_v_module(CstLayout *self, CstModule * v_module) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_module = v_module;
-}
-
-CstModule * cst_layout_get_v_module(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_module;
-}
-
 void cst_layout_begin_layout(CstLayout* self, CstLayer *layer) {
   self->state = CST_RENDER_STATE_LAYOUT;
   self->stage = CST_RENDER_STAGE_FIRST;

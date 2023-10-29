@@ -69,12 +69,12 @@ SysObject* cst_text_dclone_i(SysObject *o) {
   return n;
 }
 
-static void cst_text_construct_i(CstRenderNode *o, CstNode *node, CstRenderContext *rctx) {
+static void cst_text_construct_i(CstRenderNode *o, CstNode *node) {
   sys_return_if_fail(o != NULL);
 
   CstNodeBuilder *builder = cst_node_get_builder(node);
 
-  CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node, rctx);
+  CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node);
 
   cst_node_builder_build_text(builder, o);
 }
@@ -118,10 +118,19 @@ void cst_text_get_size_i(CstRenderNode *o, SysInt *width, SysInt *height) {
 
 /* object api */
 static void cst_text_init(CstText *self) {
-  PangoFontMap *font_map = pango_cairo_font_map_get_default();
-  PangoContext *pctx = pango_font_map_create_context(font_map);
+  CstRenderNode *rnode;
+  CstRenderContext *rctx;
+  PangoFontMap *font_map;
+  PangoContext *pctx;
 
+  rnode = CST_RENDER_NODE(self);
+  rctx = cst_lbox_context_new_I();
+  font_map= pango_cairo_font_map_get_default();
+  pctx = pango_font_map_create_context(font_map);
   self->playout = pango_layout_new (pctx);
+
+  cst_render_node_set_render_ctx(rnode, rctx);
+
   g_object_unref(pctx);
 }
 

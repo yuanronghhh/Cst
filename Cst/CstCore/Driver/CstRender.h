@@ -40,8 +40,7 @@ void cst_render_rerender(CstRender *self, FRRegion *region, CstLayout *layout);
 CstLayer *cst_render_get_box_layer(CstRender *render);
 CstLayer *cst_render_get_abs_layer(CstRender *render);
 CstNode* cst_render_get_body_node(CstRender* self);
-CstLayer *cst_render_get_layer_by_position(CstRender *self, SysInt position);
-void cst_render_realize(CstRender* self, CstModule* v_module);
+CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type);
 void cst_render_render(CstRender* self, CstModule* v_module);
 
 SYS_END_DECLS

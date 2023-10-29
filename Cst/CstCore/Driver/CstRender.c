@@ -5,6 +5,7 @@
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstModule.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Driver/CstRenderContext.h>
 
@@ -63,6 +64,21 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   cst_layout_end_layout(layout);
 }
 
+void cst_render_realize(CstRender *self, CstModule *v_module, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerNode* body;
+  FRRegion* region;
+  FRRect bound = { 0 };
+
+  fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
+  region = fr_region_create_rectangle(&bound);
+
+  body = cst_node_realize(self->root_node, NULL, v_module, layout);
+  cst_module_realize(v_module, body, layout);
+  cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
+}
+
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
@@ -71,6 +87,8 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   CstLayout* layout = cst_layout_new_I(self, region);
 
   layer = self->box_layer;
+
+  cst_render_realize(self, v_module, layout);
 
   cst_layout_begin_layout(layout, layer);
   cst_box_layer_layout(layer, layout);
@@ -113,45 +131,37 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   fr_region_destroy(region);
 }
 
-CstLayer *cst_render_get_layer_by_position(CstRender *self, SysInt position) {
+CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  switch(position) {
-    case CST_NODE_POSITION_BOX:
+  switch(layer_type) {
+    case CST_NODE_LAYER_BOX:
       return self->box_layer;
-    case CST_NODE_POSITION_ABS:
+    case CST_NODE_LAYER_ABS:
       return self->abs_layer;
-    case CST_NODE_POSITION_STATIC:
-    case CST_NODE_POSITION_PASS:
+    case CST_NODE_LAYER_PASS:
     default:
-      sys_warning_N("layer not implement: %d", position);
+      sys_warning_N("layer not implement: %d", layer_type);
       break;
   }
 
   return NULL;
 }
 
-void cst_render_realize(CstRender *self, CstModule *v_module) {
-  sys_return_if_fail(self != NULL);
+/* object api */
+CstNode *render_new_body(void) {
+  CstNodeBuilder* builder;
+  CstNode *node;
 
-  CstRenderNode* body;
-  FRRegion* region;
-  CstLayout* layout;
-  FRRect bound = { 0 };
+  builder = cst_node_builder_new_I(NULL, NULL, NULL);
+  node = cst_node_new_I(builder);
 
-  fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
-  region = fr_region_create_rectangle(&bound);
-  layout = cst_layout_new_I(self, region);
-
-  cst_layout_set_v_module(layout, v_module);
-
-  body = cst_node_realize_r(self->root_node, NULL, layout);
-  cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
+  cst_node_set_rnode_type(node, CST_TYPE_LBODY);
+  cst_node_set_name(node, "body");
+  return node;
 }
 
-/* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
-  CstNodeBuilder* builder;
 
   if (is_offscreen) {
 
@@ -164,12 +174,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
-
-  builder = cst_node_builder_new_I(NULL, NULL, NULL);
-  cst_node_builder_set_id(builder, "body");
-  self->root_node = cst_node_new_I(builder);
-
-  cst_node_set_name(self->root_node, "body");
+  self->root_node = render_new_body();
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

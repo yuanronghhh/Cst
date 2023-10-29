@@ -29,19 +29,18 @@ CstRenderNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
 }
 
-void cst_lbody_construct(CstRenderNode *rnode, CstNode *node, CstRenderContext *rctx) {
-  sys_return_if_fail(rnode != NULL);
+void cst_lbody_construct(CstRenderNode *o, CstNode *node) {
+  sys_return_if_fail(o != NULL);
+  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(o, node);
 
-  CstNodeBuilder *builder = cst_node_get_builder(node);
-  sys_return_if_fail(builder != NULL);
-
-  cst_node_builder_set_id(builder, "id.body.0");
-  cst_node_builder_set_position(builder, CST_NODE_POSITION_BOX);
-
-  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(rnode, node, rctx);
+  cst_render_node_set_id(o, "id.body.0");
 }
 
 static void cst_lbody_init(CstLBody *self) {
+  CstRenderContext *rctx = cst_lbody_context_new_I();
+  CstRenderNode *rnode = CST_RENDER_NODE(self);
+
+  cst_render_node_set_render_ctx(rnode, rctx);
 }
 
 static void cst_lbody_class_init(CstLBodyClass* cls) {
@@ -51,7 +50,6 @@ static void cst_lbody_class_init(CstLBodyClass* cls) {
 
   ocls->dispose = cst_lbody_dispose;
   ocls->dclone = cst_lbody_dclone_i;
-
   ncls->construct = cst_lbody_construct;
   lcls->layout = cst_lbody_layout_i;
 }

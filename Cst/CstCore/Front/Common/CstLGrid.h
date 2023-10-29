@@ -21,7 +21,7 @@ struct _CstLGridClass {
 
 SysType cst_lgrid_get_type(void);
 CstRenderNode* cst_lgrid_new(void);
-CstRenderNode* cst_lgrid_new_I(void);
+CstRenderNode* cst_lgrid_new_I(CstNode *node);
 
 SYS_END_DECLS
 

@@ -1,14 +1,16 @@
 #include <CstCore/Driver/CstBoxLayer.h>
 
 #include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Driver/CstLayerNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstRenderContext.h>
 
-typedef struct _BoxLayerContext BoxLayerContext;
+typedef struct _BoxLayerPass BoxLayerPass;
 
-struct _BoxLayerContext {
+struct _BoxLayerPass {
   CstLayer* v_layer;
   FRRegion* v_region;
 };
@@ -22,18 +24,25 @@ CstBoxNode *cst_box_layer_get_root(CstBoxLayer *self) {
   return self->tree;
 }
 
-void cst_box_layer_set_root(CstBoxLayer *self, CstBoxNode *root) {
+void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root) {
   sys_return_if_fail(self != NULL);
 
   self->tree = root;
 }
 
-static void box_layer_mark_one(CstRenderNode* rnode, BoxLayerContext *ctx) {
-  CstLayer* self = ctx->v_layer;
-  FRRegion* region = ctx->v_region;
-  CstRenderContext *rctx = cst_render_node_get_render_ctx(rnode);
-  CstNode *node = cst_render_node_get_node(rnode);
-  const FRRect *bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
+static void box_layer_mark_one(CstRenderNode* rnode, BoxLayerPass *ctx) {
+  CstRenderContext *rctx;
+  CstNode *node;
+  CstLayer* self;
+  FRRegion* region;
+  const FRRect *bound;
+
+  self = ctx->v_layer;
+  region = ctx->v_region;
+  rctx = cst_render_node_get_render_ctx(rnode);
+
+  node = cst_render_node_get_node(rnode);
+  bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
 
   sys_return_if_fail(region != NULL);
   sys_return_if_fail(self != NULL);
@@ -66,9 +75,9 @@ void cst_box_layer_check(CstLayer *o, CstLayout *layout) {
   sys_return_if_fail(self->tree != NULL);
 
   FRRegion *region = cst_layout_get_region(layout);
-  BoxLayerContext ctx = { o, region };
+  BoxLayerPass ctx = { o, region };
 
-  cst_box_node_bfs_handle(self->tree, (CstRenderNodeFunc)box_layer_mark_one, &ctx);
+  cst_box_node_bfs_handle(self->tree, (CstLayerNodeFunc)box_layer_mark_one, &ctx);
 }
 
 void cst_box_layer_render(CstLayer*o, CstLayout *layout) {
@@ -92,16 +101,11 @@ void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
   cst_box_node_relayout_node(box_node, layout);
 }
 
-void box_node_print(CstRenderNode* rnode, SysPointer user_data) {
-
-  cst_render_node_print(rnode);
-}
-
 void cst_box_layer_print_tree(CstBoxLayer *self) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->tree != NULL);
 
-  cst_box_node_bfs_handle(self->tree, box_node_print, NULL);
+  cst_box_node_bfs_handle(self->tree, (CstLayerNodeFunc)cst_box_node_print, NULL);
 }
 
 void cst_box_node_unlink_node_r(CstBoxNode *self) {
@@ -120,18 +124,13 @@ void cst_box_node_unlink_node_r(CstBoxNode *self) {
   sys_object_unref(o);
 }
 
-CstRenderNode* cst_box_layer_realize_node(CstBoxLayer *box_layer, CstBoxNode *parent, CstNode *node) {
-  sys_return_val_if_fail(box_layer != NULL, NULL);
-  sys_return_val_if_fail(node != NULL, NULL);
+CstLayerNode* cst_box_layer_realize_rnode_i(CstLayer *o, CstLayerNode *parent, CstRenderNode *rnode) {
+  CstLayerNode* child;
 
-  CstRenderNode* child;
-  CstRenderContext* rctx = cst_node_new_default_rctx(node);
-
-  child = cst_box_node_new_I(node, rctx);
-
+  child = cst_box_node_new_I(rnode);
   if (parent) {
 
-    cst_box_node_append(parent, CST_BOX_NODE(child));
+    cst_box_node_append(CST_BOX_NODE(parent), CST_BOX_NODE(child));
   }
 
   return child;
@@ -157,21 +156,8 @@ static void cst_box_layer_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_layer_parent_class)->dispose(o);
 }
 
-static void cst_box_layer_construct(CstLayer* o) {
-  CST_LAYER_CLASS(cst_box_layer_parent_class)->construct(o);
-
-  CstBoxLayer *self = CST_BOX_LAYER(o);
-
-  self->tree = NULL;
-  self->gap_nodes = NULL;
-}
-
 CstLayer *cst_box_layer_new_I(void) {
-  CstLayer *o = cst_box_layer_new();
-
-  cst_box_layer_construct(o);
-
-  return o;
+  return cst_box_layer_new();
 }
 
 static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
@@ -180,9 +166,11 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
 
   ocls->dispose = cst_box_layer_dispose;
 
-  lcls->construct = cst_box_layer_construct;
+  lcls->realize_node = cst_box_layer_realize_rnode_i;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {
+  self->tree = NULL;
+  self->gap_nodes = NULL;
 }
 

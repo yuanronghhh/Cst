@@ -72,7 +72,6 @@ static SysBool fr_awatch_check_i(FRAWatch *self, FREvent *e) {
 
 static void fr_awatch_dispatch_i(FRAWatch *self, FREvent *e) {
   sys_return_if_fail(self != NULL);
-
   sys_return_if_fail(self->func != NULL && "awatch bind is correct ?");
 
   self->func(e, self->user_data);

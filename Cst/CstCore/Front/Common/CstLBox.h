@@ -21,7 +21,7 @@ struct _CstLBoxClass {
 
 SysType cst_lbox_get_type(void);
 CstRenderNode* cst_lbox_new(void);
-CstRenderNode* cst_lbox_new_I(void);
+CstRenderNode* cst_lbox_new_I(CstNode *node);
 
 SYS_END_DECLS
 

@@ -33,15 +33,6 @@ void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
   cst_render_context_set_mbp(self->render_ctx, &m4);
 }
 
-CstRenderNode* cst_render_node_get_parent(CstRenderNode* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  CstRenderNodeClass *cls = CST_RENDER_NODE_GET_CLASS(self);
-  sys_return_val_if_fail(cls->get_parent != NULL, NULL);
-
-  return cls->get_parent(self);
-}
-
 void cst_render_node_set_render_ctx(CstRenderNode *self, CstRenderContext * render_ctx) {
   sys_return_if_fail(self != NULL);
 
@@ -97,8 +88,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   sys_object_ref(oself->node);
 
   nself->render_ctx = (CstRenderContext *)sys_object_dclone(oself->render_ctx);
-  nself->layer = oself->layer;
-  sys_object_ref(oself->layer);
+  nself->layer_node = NULL;
 
   for(SysUInt i = 0; i < oself->v_css_list->len; i++) {
     CstCssGroup *g = (CstCssGroup *)sys_object_dclone(oself->v_css_list->pdata[i]);
@@ -121,19 +111,17 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   return n;
 }
 
-void cst_render_node_print(CstRenderNode* self) {
+void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   sys_return_if_fail(self != NULL);
 
   CstNode* node;
   CstNode* pnode;
-  CstRenderNode* prnode;
   CstLayoutNode* lnode;
   const FRRect* bound;
 
   node = CST_RENDER_NODE_NODE(self);
   lnode = CST_LAYOUT_NODE(node);
   bound = cst_layout_node_get_bound(lnode);
-  prnode = cst_render_node_get_parent(self);
 
   if (prnode) {
     pnode = cst_render_node_get_node(prnode);
@@ -159,7 +147,7 @@ SysType cst_render_node_get_node_type(CstRenderNode *self) {
 }
 
 void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer) {
-  if (self->layer == tolayer) { return; }
+  // if (self->layer == tolayer) { return; }
 
   // cst_layer_remove_node(self->layer, tolayer);
   // cst_layer_add_node(tolayer, self);
@@ -201,18 +189,6 @@ SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v_css_list;
-}
-
-void cst_render_node_set_layer(CstRenderNode *self, CstLayer * layer) {
-  sys_return_if_fail(self != NULL);
-
-  self->layer = layer;
-}
-
-CstLayer * cst_render_node_get_layer(CstRenderNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->layer;
 }
 
 void cst_render_node_set_meta(const SysChar* name, SysType stype) {
@@ -277,6 +253,19 @@ const SysChar* cst_render_node_get_id(CstRenderNode *self) {
   return cst_node_get_id(self->node);
 }
 
+void cst_render_node_set_layer_node(CstRenderNode *self, CstLayerNode * layer_node) {
+  sys_return_if_fail(self != NULL);
+
+  self->layer_node = layer_node;
+  sys_object_ref(layer_node);
+}
+
+CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->layer_node;
+}
+
 /* object api */
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
@@ -288,9 +277,8 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-static void cst_render_node_construct(CstRenderNode* self, CstNode *node, CstRenderContext *rctx) {
+void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
   self->node = node;
-  self->render_ctx = rctx;
 
   sys_object_ref(node);
 }
@@ -299,10 +287,10 @@ CstRenderNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstNode *node, CstRenderContext *rctx) {
+CstRenderNode *cst_render_node_new_I(CstNode *node) {
   CstRenderNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, node, rctx);
+  cst_render_node_construct(o, node);
 
   return o;
 }

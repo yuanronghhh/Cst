@@ -1,7 +1,7 @@
 #ifndef __CST_COM_RNODE_H__
 #define __CST_COM_RNODE_H__
 
-#include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 
 SYS_BEGIN_DECLS
 
@@ -12,15 +12,15 @@ SYS_BEGIN_DECLS
 
 
 struct _CstComRNode {
-  CstNode parent;
+  CstRenderNode parent;
 };
 
 struct _CstComRNodeClass {
-  CstNodeClass parent;
+  CstRenderNodeClass parent;
 };
 
 SysType cst_com_rnode_get_type(void);
-CstNode* cst_com_rnode_new(void);
+CstRenderNode* cst_com_rnode_new(void);
 
 SYS_END_DECLS
 

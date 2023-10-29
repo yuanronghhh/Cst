@@ -33,8 +33,6 @@ struct _CstLayout {
   CstRender* render;
 
   FRDraw *draw;
-
-  CstModule *v_module;
 };
 
 struct _CstLayoutClass {
@@ -64,9 +62,6 @@ CstLayer * cst_layout_get_layer(CstLayout *self);
 
 void cst_layout_set_render(CstLayout *self, CstRender * render);
 CstRender * cst_layout_get_render(CstLayout *self);
-
-void cst_layout_set_v_module(CstLayout *self, CstModule * v_module);
-CstModule * cst_layout_get_v_module(CstLayout *self);
 
 void cst_layout_set_draw(CstLayout *self, FRDraw * draw);
 FRDraw * cst_layout_get_draw(CstLayout *self);

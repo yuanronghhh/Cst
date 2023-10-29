@@ -204,6 +204,15 @@ FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_n
   return func;
 }
 
+SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent, CstLayout *layout) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  CstComponent *comp = self->root_component;
+  cst_component_realize(comp, v_parent, layout);
+
+  return true;
+}
+
 /* object api */
 static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 

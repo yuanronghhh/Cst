@@ -8,6 +8,7 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
+#include <CstCore/Driver/CstRenderNode.h>
 #include <Framework/Event/Action/FRAWatch.h>
 
 
@@ -72,33 +73,38 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
   }
 }
 
-CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstRenderNode *prnode, CstLayout *layout) {
+CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstLayerNode *parent, CstLayout *layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstRenderNode* rnode;
+  CstRenderNode *rnode;
+  CstLayerNode *lnode;
   CstLayer *layer;
+  SysType tp;
 
   CstRender *render = cst_layout_get_render(layout);
   sys_return_val_if_fail(render != NULL, NULL);
 
-  switch (self->v_position) {
-    case CST_NODE_POSITION_BOX:
+  switch (self->v_layer) {
+    case CST_NODE_LAYER_BOX:
       layer = cst_render_get_box_layer(render);
-      rnode = cst_box_layer_realize_node(CST_BOX_LAYER(layer), CST_BOX_NODE(prnode), node);
       break;
 
-    case CST_NODE_POSITION_ABS:
+    case CST_NODE_LAYER_ABS:
       layer = cst_render_get_abs_layer(render);
-      rnode = NULL;
       break;
-
     default:
-      sys_warning_N("unknow node position: %d", self->v_position);
-      rnode = NULL;
+      sys_warning_N("unknow node layer: %d", self->v_layer);
       break;
   }
 
-  cst_render_node_set_layer(rnode, layer);
+  tp = cst_node_get_rnode_type(node);
+  sys_assert(tp != 0 && "node should be set render node type before realize.");
+
+  rnode = sys_object_new(tp, NULL);
+  cst_render_node_construct(rnode, node);
+
+  lnode = cst_layer_realize_node(layer, parent, rnode);
+  cst_render_node_set_layer_node(rnode, lnode);
 
   sys_list_foreach(self->v_awatch_list, item) {
     FRAWatch *o =  FR_AWATCH(item->data);
@@ -120,7 +126,7 @@ CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode 
     }
   }
 
-  return rnode;
+  return lnode;
 }
 
 void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode) {
@@ -186,11 +192,11 @@ void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value) 
   self->v_value = sys_strdup(v_value);
 }
 
-SysBool cst_node_builder_set_position(CstNodeBuilder *self, SysInt v_position) {
+SysBool cst_node_builder_set_layer(CstNodeBuilder *self, SysInt v_layer) {
   sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(v_position > 0, false);
+  sys_return_val_if_fail(v_layer > 0, false);
 
-  self->v_position = v_position;
+  self->v_layer = v_layer;
 
   return true;
 }
@@ -280,17 +286,17 @@ SysList * cst_node_builder_get_awatch_list(CstNodeBuilder *self) {
 }
 
 /* parse */
-SysBool cst_node_builder_parse_position_name(CstNodeBuilder *self, const SysChar *pstr) {
+SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(pstr != NULL, false);
 
-  SysInt position = cst_node_position_by_name(pstr);
-  if(position == -1) {
-    sys_warning_N("node builder position not correct: %s", pstr);
+  SysInt layer_type = cst_node_layer_by_name(pstr);
+  if(layer_type == -1) {
+    sys_warning_N("node builder layer_type not correct: %s", pstr);
     return false;
   }
 
-  return cst_node_builder_set_position(self, position);
+  return cst_node_builder_set_layer(self, layer_type);
 }
 
 SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str) {
@@ -455,7 +461,7 @@ void cst_node_builder_construct(CstNodeBuilder *o, CstModule* v_module, CstCompo
   o->v_module = v_module;
   o->v_component = v_component;
   o->v_pnode = v_pnode;
-  o->v_position = CST_NODE_POSITION_BOX;
+  o->v_layer = CST_NODE_LAYER_BOX;
 }
 
 CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {

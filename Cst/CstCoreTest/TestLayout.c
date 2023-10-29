@@ -24,8 +24,8 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   v_module = cst_manager_load_module(manager, NULL, entry);
   TEST_ASSERT_NOT_NULL(v_module);
 
-  cst_manager_realize(manager, v_module, v_render);
-  cst_render_render(v_render);
+  cst_manager_realize(v_render, v_module);
+  cst_render_render(v_render, v_module);
 
   root = cst_render_get_body_node(v_render);
 

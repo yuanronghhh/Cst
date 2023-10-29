@@ -10,19 +10,19 @@
 
 
 static const SysChar* CST_NODE_PROP_NAMES[] = {
-  "id","value","base","position", "label",
+  "id","value","base","layer", "label",
   "key_up","key_down",
 };
 
-static const SysChar* CST_NODE_POSITION_NAMES[] = {
+static const SysChar* CST_NODE_LAYER_NAMES[] = {
   "box", "absolute"
 };
 
 SYS_DEFINE_TYPE(CstNode, cst_node, SYS_TYPE_OBJECT);
 
 
-CST_NODE_POSITION_ENUM cst_node_position_by_name(const SysChar* name) {
-  return fr_get_type_by_name(CST_NODE_POSITION_NAMES, ARRAY_SIZE(CST_NODE_POSITION_NAMES), name);
+CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name) {
+  return fr_get_type_by_name(CST_NODE_LAYER_NAMES, ARRAY_SIZE(CST_NODE_LAYER_NAMES), name);
 }
 
 CstNode* cst_node_parent(CstNode *self) {
@@ -79,51 +79,54 @@ SysObject* cst_node_dclone_i(SysObject *o) {
   return n;
 }
 
-CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *prnode, CstLayout *layout) {
-  sys_return_val_if_fail(o != NULL, NULL);
+CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *parent, CstModule *v_module, CstLayout *layout) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CstRenderNode *rnode;
-  CstModule *v_module;
+  CstLayerNode *lnode;
   SysInt count;
 
-  rnode = cst_node_realize(self, prnode, layout);
-  v_module = cst_layout_get_v_module(layout);
+  lnode = cst_node_realize(self, parent, v_module, layout);
 
   count = cst_module_get_count(v_module);
   cst_module_set_count(v_module, ++count);
 
-  if (rnode == NULL) {
+  if (lnode == NULL) {
 
     sys_warning_N("failed to realize node: %s,%s", cst_node_get_name(self), cst_node_get_id(self));
   }
 
   if(self->children) {
 
-    cst_node_realize_r(self->children, rnode, layout);
+    cst_node_realize_r(self->children, lnode, v_module, layout);
   }
 
   if(self->next) {
 
-    cst_node_realize_r(self->next, prnode, layout);
+    cst_node_realize_r(self->next, parent, v_module, layout);
   }
 
-  return rnode;
+  return lnode;
 }
 
-CstRenderNode* cst_node_realize_self(CstRenderNode* prnode, CstNode* self, CstLayout *layout) {
+CstLayerNode* cst_node_realize_self(CstNode *self, CstLayerNode* parent, CstModule * v_module, CstLayout *layout) {
   sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(prnode != NULL, NULL);
+  sys_return_val_if_fail(parent != NULL, NULL);
 
   CstNodeBuilder *builder = self->builder;
 
-  return cst_node_builder_build_render_node(builder, self, prnode, layout);
+  return cst_node_builder_build_render_node(builder, self, parent, layout);
 }
 
-CstRenderContext * cst_node_new_default_rctx(CstNode *self) {
-  sys_return_val_if_fail(o != NULL, NULL);
-  SysType tp = self->v_default_rctx;
+void cst_node_set_rnode_type(CstNode *self, SysType rnode_type) {
+  sys_return_if_fail(self != NULL);
 
-  return sys_object_new(tp, NULL);
+  self->rnode_type = rnode_type;
+}
+
+SysType cst_node_get_rnode_type(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, 0);
+
+  return self->rnode_type;
 }
 
 /* css */
@@ -280,13 +283,13 @@ void cst_node_set_last_child(CstNode *self, CstNode *last_child) {
 void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
 }
 
-CstRenderNode* cst_node_realize(CstNode* self, CstRenderNode* prnode, CstLayout *layout) {
+CstLayerNode* cst_node_realize(CstNode* self, CstLayerNode* parent, CstModule *v_module, CstLayout *layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstNodeClass* cls = CST_NODE_GET_CLASS(self);
   sys_return_val_if_fail(cls->realize != NULL, NULL);
 
-  return cls->realize(self, prnode, layout);
+  return cls->realize(self, parent, v_module, layout);
 }
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
@@ -309,12 +312,12 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   return -1;
 }
 
-static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode* prnode, CstLayout *layout) {
+static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode* parent,  CstModule *v_module, CstLayout *layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstRenderNode *rnode = cst_node_builder_build_render_node(self->builder, self, prnode, layout);
+  CstLayerNode *lnode = cst_node_builder_build_render_node(self->builder, self, parent, layout);
 
-  return rnode;
+  return lnode;
 }
 
 static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
@@ -351,7 +354,6 @@ static void cst_node_class_init(CstNodeClass *cls) {
 
   cls->construct = cst_node_construct_i;
   cls->realize = cst_node_realize_i;
-
 }
 
 static void cst_node_dispose(SysObject* o) {

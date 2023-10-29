@@ -520,7 +520,9 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstComponentPass *p
 
     v_builder = cst_node_builder_new_I(v_module, v_component, v_pnode);
     v_node = cst_node_new();
+
     cst_node_set_name(v_node, cus_name);
+    cst_node_set_rnode_type(v_node, type);
 
     ast_node_parse(jnode, v_builder);
   }
@@ -646,26 +648,33 @@ SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *v_comp_b
   return true;
 }
 
+CstNode* ast_new_layout_node(CstModule *v_module, CstComponent *o) {
+  CstNode *layout;
+  CstNodeBuilder *v_node_builder;
+
+  layout = cst_node_new();
+  v_node_builder = cst_node_builder_new_I(v_module, o, NULL);
+
+  cst_node_set_name(layout, "<layout-node>");
+  cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
+  cst_node_construct(layout, v_node_builder);
+  sys_object_unref(v_node_builder);
+
+  return layout;
+}
+
 static void ast_component_body_parse(Component *ast, CstComponent *o, CstComponentBuilder *v_comp_builder) {
   AstComponentPass pass = {0};
-  CstNodeBuilder *v_node_builder;
-  CstNode *layout;
   CstModule *v_module;
 
   v_module = cst_component_builder_get_v_module(v_comp_builder);
   sys_return_if_fail(v_module != NULL);
 
-  layout = cst_com_rnode_new();
-  v_node_builder = cst_node_builder_new_I(v_module, o, NULL);
-
-  cst_node_construct(layout, v_node_builder);
-
   pass.v_component = o;
   pass.v_comp_builder = v_comp_builder;
-  pass.v_pnode = layout;
+  pass.v_pnode = ast_new_layout_node(v_module, o);
 
   ast_iter_jobject(ast->body, (AstJNodeFunc)component_body_func, (SysPointer)&pass);
-  sys_object_unref(v_node_builder);
 }
 
 /* Import */
@@ -844,7 +853,7 @@ static SysBool node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
         return false;
       }
 
-      if(!cst_node_builder_parse_position_name(builder, nnode->v.v_string)) {
+      if(!cst_node_builder_parse_layer_name(builder, nnode->v.v_string)) {
         return false;
       }
       break;

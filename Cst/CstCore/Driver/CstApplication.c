@@ -49,7 +49,6 @@ static void cst_application_active(CstApplication* self) {
   fr_awatch_bind(awatch, (SysPointer)self);
   cst_module_add_awatch(v_module, awatch);
 
-  cst_render_realize(v_render, v_module);
   cst_render_render(v_render, v_module);
 }
 

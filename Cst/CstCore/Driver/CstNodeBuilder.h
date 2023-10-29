@@ -29,7 +29,7 @@ struct _CstNodeBuilder {
   const SysChar *v_tag;
   SysType v_rctx;
 
-  SysInt v_position;
+  SysInt v_layer;
   SysChar *v_value;
   SysChar *v_label;
   SysInt  v_z_index;
@@ -52,7 +52,7 @@ const SysChar* cst_node_builder_get_value(CstNodeBuilder *self);
 void cst_node_builder_set_label(CstNodeBuilder *self, const SysChar *v_label);
 void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id);
 void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);
-SysBool cst_node_builder_set_position(CstNodeBuilder *self, SysInt v_position);
+SysBool cst_node_builder_set_layer(CstNodeBuilder *self, SysInt v_layer);
 
 SysPtrArray *cst_node_builder_new_css_list(void);
 
@@ -72,9 +72,9 @@ SysChar* cst_node_builder_extract_index(const SysChar* str, SysInt slen);
 
 SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str);
 SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name);
-SysBool cst_node_builder_parse_position_name(CstNodeBuilder *self, const SysChar *pstr);
+SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr);
 
-CstRenderNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstRenderNode *prnode, CstLayout *layout);
+CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstLayerNode *layer_node, CstLayout *layout);
 SysBool cst_node_builder_parse_base(CstNodeBuilder* self, const SysChar* v_base[], SysUInt len);
 void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *o);
 void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode);

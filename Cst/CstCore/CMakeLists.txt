@@ -59,6 +59,8 @@ set(SRC
 
   ./Driver/CstLayer.c
   ./Driver/CstLayer.h
+  ./Driver/CstLayerNode.c
+  ./Driver/CstLayerNode.h
   ./Driver/CstBoxLayer.c
   ./Driver/CstBoxLayer.h
   ./Driver/CstAbsLayer.c

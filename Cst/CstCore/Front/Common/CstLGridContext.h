@@ -24,8 +24,9 @@ struct _CstLGridContextClass {
   CstRenderContextClass parent;
 };
 
-CstRenderContext* cst_lgrid_context_new(void);
 SysType cst_lgrid_context_get_type(void);
+CstRenderContext* cst_lgrid_context_new(void);
+CstRenderContext* cst_lgrid_context_new_I(void);
 
 SYS_END_DECLS
 

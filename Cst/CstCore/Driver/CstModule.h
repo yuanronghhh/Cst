@@ -43,6 +43,8 @@ SysBool cst_module_is_loaded(CstModule *self);
 CstManager *cst_module_get_manager(CstModule *self);
 FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
 
+SysBool cst_module_realize(CstModule * self, CstLayerNode * v_parent, CstLayout * layout);
+
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);
 

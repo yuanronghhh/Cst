@@ -1,9 +1,11 @@
 #include <CstCore/Front/Common/CstComRNode.h>
 
-SYS_DEFINE_TYPE(CstComRNode, cst_com_rnode, CST_TYPE_NODE);
+#include <CstCore/Front/Common/CstLBoxContext.h>
+
+SYS_DEFINE_TYPE(CstComRNode, cst_com_rnode, CST_TYPE_RENDER_NODE);
 
 
-CstNode* cst_com_rnode_new(void) {
+CstRenderNode* cst_com_rnode_new(void) {
   return sys_object_new(CST_TYPE_COM_RNODE, NULL);
 }
 
@@ -20,6 +22,8 @@ static void cst_com_rnode_dispose(SysObject* o) {
 }
 
 static void cst_com_rnode_init(CstComRNode *self) {
-  CstNode *node = CST_NODE(self);
-  cst_node_set_name(node, "<layout-node>");
+  CstRenderNode *rnode = CST_RENDER_NODE(self);
+  CstRenderContext *rctx = cst_lbox_context_new_I();
+
+  cst_render_node_set_render_ctx(rnode, rctx);
 }

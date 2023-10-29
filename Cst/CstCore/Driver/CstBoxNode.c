@@ -1,33 +1,27 @@
 #include <CstCore/Driver/CstBoxNode.h>
+
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstRow.h>
-#include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Driver/CstLayerNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 
-typedef struct _BoxNodeContext BoxNodeContext;
+#define BOX_NODE_RNODE(o) (o->rnode)
 
-struct _BoxNodeContext {
+
+typedef struct _BoxNodePass BoxNodePass;
+
+struct _BoxNodePass {
   SysQueue* queue;
-  CstRenderNodeFunc func;
+  CstLayerNodeFunc func;
   SysPointer user_data;
 };
 
 
-SYS_DEFINE_TYPE(CstBoxNode, cst_box_node, CST_TYPE_RENDER_NODE);
+SYS_DEFINE_TYPE(CstBoxNode, cst_box_node, CST_TYPE_LAYER_NODE);
 
-
-CstBoxNode *cst_box_node_children(CstBoxNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->children;
-}
-
-CstBoxNode *cst_box_node_next(CstBoxNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->next;
-}
 
 CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -83,6 +77,7 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
 }
 
 void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstLayout *layout) {
+#if 0
   CstBoxNode *cnode;
   CstLayoutNode* lnode;
   CstNode* node;
@@ -90,7 +85,7 @@ void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstL
   SysSList* rows;
   const FRRect* rbound;
 
-  node = cst_render_node_get_node(CST_RENDER_NODE(self));
+  node = cst_layer_node_get_node(CST_LAYER_NODE(self));
   lnode = CST_LAYOUT_NODE(node);
   row = cst_row_new_I(lnode->bound.x, lnode->bound.y);
   rows = sys_slist_alloc();
@@ -104,6 +99,7 @@ void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstL
 
     cst_row_add(row, lnode);
   }
+#endif
 }
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
@@ -115,52 +111,15 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
 
+  CstLayerNode *lnode;
   CstRenderNode *rnode;
-  CstBoxNode *cnode;
   CstRenderContext* rctx;
-  CstRenderContext* cctx;
 
-  rnode = CST_RENDER_NODE(self);
+  lnode = CST_LAYER_NODE(self);
+  rnode = cst_layer_node_get_rnode(lnode);
   rctx = cst_render_node_get_render_ctx(rnode);
 
-  cst_render_node_render_enter(rnode, layout);
-
-  if (!cst_render_context_get_need_relayout(rctx)) {
-    return;
-  }
-
-  if (!cst_render_context_get_is_visible(rctx)) {
-    return;
-  }
-
-  cst_render_context_layout_self(rctx, rnode, layout);
-
-  cnode = self->children;
-  if (cnode) {
-
-    if (cst_box_node_has_one_child(self)) {
-      cctx = cst_render_node_get_render_ctx(CST_RENDER_NODE(cnode));
-
-      // set prefer_width, prefer_height
-      cst_render_context_inherit(cctx, rctx, layout);
-      cst_box_node_relayout_node(cnode, layout);
-
-    } else {
-
-      for (;cnode; cnode = cnode->next) {
-
-        cst_box_node_relayout_node(cnode, layout);
-      }
-    }
-  }
-
-  if (self->next) {
-
-    cst_box_node_relayout_node(self->next, layout);
-  }
-
-  cst_render_node_render_leave(rnode, layout);
-  cst_render_context_set_layout(rctx, false);
+  cst_render_context_layout_box_node(rctx, self, layout);
 }
 
 void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
@@ -191,10 +150,10 @@ void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout) {
   box_node_repaint_box_node_r(self, layout);
 }
 
-void cst_box_node_handle_r(CstBoxNode *self, BoxNodeContext* ctx) {
+void cst_box_node_handle_r(CstBoxNode *self, BoxNodePass* ctx) {
   sys_return_if_fail(self != NULL);
 
-  ctx->func(CST_RENDER_NODE(self), ctx->user_data);
+  ctx->func(CST_LAYER_NODE(self), ctx->user_data);
 
   if (self->children) {
 
@@ -207,7 +166,7 @@ void cst_box_node_handle_r(CstBoxNode *self, BoxNodeContext* ctx) {
   }
 }
 
-void cst_box_node_bfs_handle_r(CstBoxNode *self, BoxNodeContext *ctx) {
+void cst_box_node_bfs_handle_r(CstBoxNode *self, BoxNodePass *ctx) {
   CstBoxNode* node;
   CstBoxNode* nnode;
   SysQueue* queue = ctx->queue;
@@ -217,7 +176,7 @@ void cst_box_node_bfs_handle_r(CstBoxNode *self, BoxNodeContext *ctx) {
   while (!sys_queue_is_empty(queue)) {
     node = sys_queue_pop_tail(queue);
 
-    ctx->func(CST_RENDER_NODE(node), ctx->user_data);
+    ctx->func(CST_LAYER_NODE(node), ctx->user_data);
 
     for(nnode = node->children; nnode; nnode = nnode->next) {
 
@@ -226,25 +185,35 @@ void cst_box_node_bfs_handle_r(CstBoxNode *self, BoxNodeContext *ctx) {
   }
 }
 
-void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data) {
+void cst_box_node_bfs_handle(CstBoxNode* self, CstLayerNodeFunc func, SysPointer user_data) {
   SysQueue *queue = sys_queue_new();
 
-  BoxNodeContext ctx = { queue, func, user_data };
+  BoxNodePass ctx = { queue, func, user_data };
 
   cst_box_node_bfs_handle_r(self, &ctx);
 
   sys_queue_free(queue);
 }
 
-static CstRenderNode* cst_box_node_get_parent_i(CstRenderNode* o) {
+static CstLayerNode* cst_box_node_get_parent_i(CstLayerNode* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   CstBoxNode* self = CST_BOX_NODE(o);
 
-  return CST_RENDER_NODE(self->parent);
+  return CST_LAYER_NODE(self->parent);
+}
+
+void cst_box_node_print(CstBoxNode* self, SysPointer user_data) {
+  sys_return_if_fail(self != NULL);
+  CstLayerNode *lnode = CST_LAYER_NODE(self);
+  CstLayerNode *pnode = CST_LAYER_NODE(self->parent);
+
+  cst_render_node_print(
+    cst_layer_node_get_rnode(lnode),
+    cst_layer_node_get_rnode(pnode));
 }
 
 /* object api */
-CstRenderNode* cst_box_node_new(void) {
+CstLayerNode* cst_box_node_new(void) {
   return sys_object_new(CST_TYPE_BOX_NODE, NULL);
 }
 
@@ -253,26 +222,25 @@ static void cst_box_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }
 
-static void cst_box_node_construct(CstRenderNode* o, CstNode *node, CstRenderContext *rctx) {
-  CST_RENDER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node, rctx);
+static void cst_box_node_construct(CstLayerNode* o, CstRenderNode *rnode) {
+
+  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->construct(o, rnode);
 }
 
-CstRenderNode *cst_box_node_new_I(CstNode *node, CstRenderContext *rctx) {
-  CstRenderNode *o = cst_box_node_new();
+CstLayerNode *cst_box_node_new_I(CstRenderNode *rnode) {
+  CstLayerNode *o = cst_box_node_new();
 
-  cst_box_node_construct(o, node, rctx);
+  cst_box_node_construct(o, rnode);
 
   return o;
 }
 
 static void cst_box_node_class_init(CstBoxNodeClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstRenderNodeClass* rcls = CST_RENDER_NODE_CLASS(cls);
+  CstLayerNodeClass *ncls = CST_LAYER_NODE_CLASS(cls);
 
   ocls->dispose = cst_box_node_dispose;
-
-  rcls->construct = cst_box_node_construct;
-  rcls->get_parent = cst_box_node_get_parent_i;
+  ncls->construct = cst_box_node_construct;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

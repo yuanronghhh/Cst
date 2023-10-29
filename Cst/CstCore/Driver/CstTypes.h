@@ -12,7 +12,7 @@ typedef enum _CST_CSS_PROP_ENUM {
   CST_CSS_PROP_Y,
   CST_CSS_PROP_W,
   CST_CSS_PROP_H,
-  CST_CSS_PROP_POSITION,
+  CST_CSS_PROP_LAYER,
   CST_CSS_PROP_MARGIN,
   CST_CSS_PROP_BORDER,
   CST_CSS_PROP_PADDING,
@@ -99,12 +99,20 @@ typedef enum _CST_DIRTY_STATE_ENUM {
 } CST_DIRTY_STATE_ENUM;
 
 typedef enum _CST_NODE_POSITION_ENUM {
-  CST_NODE_POSITION_BOX = 1 << 0,
-  CST_NODE_POSITION_ABS = 1 << 1,
-  CST_NODE_POSITION_STATIC = 1 << 2,
-  CST_NODE_POSITION_PASS = 1 << 3,
-  CST_NODE_POSITION_MASK = (1 << 4) - 1
+  CST_NODE_POSITION_RELATIVE = 1 << 0,
+  CST_NODE_POSITION_ABSOLUTE = 1 << 1,
+  CST_NODE_POSITION_FIXED = 1 << 2,
+  CST_NODE_POSITION_STATIC = 1 << 3,
 } CST_NODE_POSITION_ENUM;
+
+typedef enum _CST_NODE_LAYER_ENUM {
+  CST_NODE_LAYER_BOX = 1 << 0,
+  CST_NODE_LAYER_ABS = 1 << 1,
+  CST_NODE_LAYER_STATIC = 1 << 2,
+  CST_NODE_LAYER_PASS = 1 << 3,
+  CST_NODE_LAYER_MASK = (1 << 4) - 1
+} CST_NODE_LAYER_ENUM;
+
 
 typedef struct _CstContext CstContext;
 
@@ -120,6 +128,8 @@ typedef struct _CstModuleClass CstModuleClass;
 typedef struct _CstRender CstRender;
 typedef struct _CstRenderClass CstRenderClass;
 
+typedef struct _CstLayerNode CstLayerNode;
+typedef struct _CstLayerNodeClass CstLayerNodeClass;
 typedef struct _CstLayer CstLayer;
 typedef struct _CstLayerClass CstLayerClass;
 typedef struct _CstBoxLayer CstBoxLayer;
@@ -192,7 +202,8 @@ typedef struct _CstValueMapClass CstValueMapClass;
 
 typedef void (*CstNodeMapFunc) (CstRenderNode *rnode, CstNodeMap *map);
 typedef void (*CstCssFree) (CstCssValue *value);
-typedef void (*CstRenderNodeFunc) (CstRenderNode *rnode, SysPointer user_data);
+typedef void (*CstLayerNodeFunc) (CstLayerNode *lnode, SysPointer user_data);
+typedef void (*CstRenderNodeFunc) (CstRenderNode *lnode, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *rnode, CstLayout *layout, SysPointer user_data);
 
 SYS_END_DECLS

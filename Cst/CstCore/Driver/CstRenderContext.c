@@ -1,4 +1,5 @@
 #include <CstCore/Driver/CstRenderContext.h>
+
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCss.h>
@@ -190,27 +191,31 @@ void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, 
   }
 }
 
-void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+void cst_render_context_layout_self(CstRenderContext *self, CstLayerNode *node, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
   sys_return_if_fail(cls->layout_self != NULL);
 
-  cls->layout_self(self, rnode, layout);
+  cls->layout_self(self, node, layout);
 }
 
-void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+void cst_render_context_layout_children(CstRenderContext *self, CstLayerNode *node, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
   sys_return_if_fail(cls->layout_children != NULL);
 
-  cls->layout_children(self, rnode, layout);
+  cls->layout_children(self, node, layout);
 }
 
-void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
-  CstLayoutNode* lnode = cst_render_node_get_lnode(rnode);
+void cst_render_context_layout_self_i(CstRenderContext *self, CstLayerNode *node, CstLayout *layout) {
   SysInt w, h;
+  CstLayoutNode *lnode;
+  CstRenderNode *rnode;
+
+  rnode = cst_layer_node_get_rnode(node);
+  lnode = CST_LAYOUT_NODE(rnode);
 
   cst_layout_node_get_size(lnode, &w, &h);
 
@@ -225,7 +230,58 @@ void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rno
   }
 }
 
-void cst_render_context_layout_children_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
+void cst_render_context_layout_children_i(CstRenderContext *self, CstLayerNode *node, CstLayout *layout) {
+}
+
+void cst_render_context_layout_box_node(CstRenderContext* self, CstBoxNode *box, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstRenderNode *rnode;
+  CstRenderNode *crnode;
+  CstLayerNode *clnode;
+  CstLayerNode *lnode;
+  CstBoxNode *bnode;
+  CstRenderContext* cctx;
+
+  lnode = CST_LAYER_NODE(box);
+  rnode = cst_layer_node_get_rnode(lnode);
+
+  cst_render_node_render_enter(rnode, layout);
+
+  if(!self->need_relayout) {
+    return;
+  }
+
+  if(!self->is_visible) {
+    return;
+  }
+
+  cst_render_context_layout_self(self, lnode, layout);
+
+  if (box->children) {
+    clnode = CST_LAYER_NODE(box->children);
+
+    if (cst_box_node_has_one_child(box)) {
+      crnode = cst_layer_node_get_rnode(clnode);
+      cctx = cst_render_node_get_render_ctx(crnode);
+
+      cst_render_context_inherit(cctx, self, layout);
+      cst_render_context_layout_box_node(cctx, box->children, layout);
+    } else {
+
+      for (bnode = box->children; bnode; bnode = bnode->next) {
+        cst_box_node_relayout_node(bnode, layout);
+      }
+    }
+  }
+
+  if (box->next) {
+
+    cst_box_node_relayout_node(box->next, layout);
+  }
+
+  cst_render_node_render_leave(rnode, layout);
+  self->need_relayout = false;
 }
 
 /* constraint */

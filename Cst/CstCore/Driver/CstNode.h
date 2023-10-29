@@ -25,7 +25,7 @@ struct _CstNode {
   SysChar     *name;
   SysChar     *id;
 
-  SysType v_default_rctx;
+  SysType rnode_type;
   CstNodeBuilder *builder;
 };
 
@@ -33,7 +33,7 @@ struct _CstNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstRenderNode* (*realize) (CstNode* self, CstRenderNode* prnode, CstLayout *layout);
+  CstLayerNode* (*realize) (CstNode* self, CstLayerNode* parent, CstModule *v_module, CstLayout *layout);
 };
 
 CstNode* cst_node_new(void);
@@ -57,21 +57,22 @@ const SysChar *cst_node_get_name(CstNode *node);
 void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
-CST_NODE_POSITION_ENUM cst_node_position_by_name(const SysChar* name);
+CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name);
 
-CstRenderNode* cst_node_realize(CstNode* self, CstRenderNode* prnode, CstLayout *layout);
+CstLayerNode * cst_node_realize(CstNode * self, CstLayerNode * parent, CstModule * v_module, CstLayout * layout);
 CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);
 
-CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *prnode, CstLayout *layout);
-CstRenderNode* cst_node_realize_self(CstRenderNode* prnode, CstNode* self, CstLayout *layout);
+CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *parent, CstModule * v_module, CstLayout *layout);
+CstLayerNode* cst_node_realize_self(CstNode *self, CstLayerNode* parent, CstModule * v_module, CstLayout *layout);
 
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
 void cst_node_set_builder(CstNode *self, CstNodeBuilder * builder);
 CstNodeBuilder * cst_node_get_builder(CstNode *self);
 
-CstRenderContext * cst_node_new_default_rctx(CstNode *self);
+void cst_node_set_rnode_type(CstNode *self, SysType rnode_type);
+SysType cst_node_get_rnode_type(CstNode *self);
 
 SYS_END_DECLS
 

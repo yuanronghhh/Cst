@@ -98,7 +98,7 @@ void cst_css_pair_set_height(CstRenderNode* rnode, CstLayout *layout, SysPointer
   cst_layout_node_set_height(CST_LAYOUT_NODE(node), v);
 }
 
-void cst_css_pair_set_position(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
+void cst_css_pair_set_layer(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
 
@@ -110,7 +110,7 @@ void cst_css_pair_set_position(CstRenderNode* rnode, CstLayout *layout, SysPoint
   sys_return_if_fail(v != -1);
 
   v_render = cst_layout_get_render(layout);
-  tolayer = cst_render_get_layer_by_position(v_render, v);
+  tolayer = cst_render_get_layer_by_type(v_render, v);
 
   cst_render_node_change_to_layer(rnode, tolayer);
 }
@@ -238,7 +238,7 @@ void cst_css_pair_setup(void) {
   cst_css_node_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_y);
   cst_css_node_bind_map("width"        ,  CST_CSS_PROP_W            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_width);
   cst_css_node_bind_map("height"       ,  CST_CSS_PROP_H            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_height);
-  cst_css_node_bind_map("position"     ,  CST_CSS_PROP_POSITION     ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_position);
+  cst_css_node_bind_map("layer"        ,  CST_CSS_PROP_LAYER        ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_layer);
   cst_css_node_bind_map("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_margin);
   cst_css_node_bind_map("border"       ,  CST_CSS_PROP_BORDER       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_border);
   cst_css_node_bind_map("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_padding);

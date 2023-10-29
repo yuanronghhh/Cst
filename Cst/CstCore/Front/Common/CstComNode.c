@@ -114,11 +114,11 @@ void cst_com_node_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_node, builder);
 }
 
-static CstRenderNode* cst_com_node_realize_i(CstNode* o, CstRenderNode* prnode, CstLayout* layout) {
+static CstLayerNode* cst_com_node_realize_i(CstNode* o, CstLayerNode* parent,  CstModule *v_module, CstLayout* layout) {
   CstComNode *self = CST_COM_NODE(o);
-  CstRenderNode* rnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, prnode, layout);
+  CstLayerNode* lnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, parent, v_module, layout);
 
-  return cst_component_realize(self->component, rnode, layout);
+  return cst_component_realize(self->component, lnode, layout);
 }
 
 static void cst_com_node_class_init(CstComNodeClass* cls) {
@@ -140,8 +140,12 @@ static void cst_com_node_dispose(SysObject* o) {
 
 static void cst_com_node_init(CstComNode *self) {
   SysHashTable *ht;
-
+  CstNode *node;
+  
+  node = CST_NODE(self);
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
 
   self->values_ht = ht;
+
+  cst_node_set_rnode_type(node, CST_TYPE_LBOX);
 }

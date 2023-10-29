@@ -1,7 +1,7 @@
 #ifndef __CST_BOX_NODE_H__
 #define __CST_BOX_NODE_H__
 
-#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstLayerNode.h>
 
 SYS_BEGIN_DECLS
 
@@ -12,36 +12,36 @@ SYS_BEGIN_DECLS
 
 
 struct _CstBoxNode {
-  CstRenderNode unowned;
+  CstLayerNode unowned;
 
-  /* <private> */
   CstBoxNode   *next;
   CstBoxNode   *prev;
   CstBoxNode   *parent;
   CstBoxNode   *children;
 
+  /* <private> */
   CstBoxNode   *last_child;
 };
 
 struct _CstBoxNodeClass {
-  CstRenderNodeClass parent;
+  CstLayerNodeClass parent;
 };
 
 SysType cst_box_node_get_type(void);
-CstRenderNode* cst_box_node_new(void);
-CstRenderNode *cst_box_node_new_I(CstNode *node, CstRenderContext *rctx);
+CstLayerNode* cst_box_node_new(void);
+CstLayerNode *cst_box_node_new_I(CstRenderNode *rnode);
 
 CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
 void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);
 void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child);
 CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self);
-CstBoxNode *cst_box_node_children(CstBoxNode *self);
-CstBoxNode *cst_box_node_next(CstBoxNode *self);
 void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout);
 void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout);
 
-void cst_box_node_bfs_handle(CstBoxNode* self, CstRenderNodeFunc func, SysPointer user_data);
+SysBool cst_box_node_has_one_child(CstBoxNode* self);
+void cst_box_node_bfs_handle(CstBoxNode* self, CstLayerNodeFunc func, SysPointer user_data);
+void cst_box_node_print(CstBoxNode * self, SysPointer user_data);
 
 SYS_END_DECLS
 

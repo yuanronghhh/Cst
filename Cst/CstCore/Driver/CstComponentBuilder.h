@@ -18,19 +18,18 @@ struct _CstComponentBuilder {
   /* < private > */
   SysChar *v_id;
   SysChar *v_base_name;
-  CstModule *v_module;
   CstComponent *v_parent;
 };
 
 struct _CstComponentBuilderClass {
   SysObjectClass parent;
 
-  void (*construct) (CstComponentBuilder *o, CstModule *v_module, CstComponent *v_parent);
+  void (*construct) (CstComponentBuilder *o, CstComponent *v_parent);
 };
 
 SysType cst_component_builder_get_type(void);
 CstComponentBuilder *cst_component_builder_new(void);
-CstComponentBuilder *cst_component_builder_new_I(CstModule *v_module, CstComponent *v_parent);
+CstComponentBuilder *cst_component_builder_new_I(CstComponent *v_parent);
 void cst_component_builder_build(CstComponentBuilder *self, CstComponent *v_component);
 
 void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name);
@@ -39,9 +38,6 @@ const SysChar *cst_component_builder_get_id(CstComponentBuilder *self);
 
 void cst_component_builder_set_v_parent(CstComponentBuilder *self, CstComponent * v_parent);
 CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self);
-
-void cst_component_builder_set_v_module(CstComponentBuilder *self, CstModule * v_module);
-CstModule * cst_component_builder_get_v_module(CstComponentBuilder *self);
 
 void cst_component_builder_build_component(CstComponentBuilder *self, CstComponent *o);
 

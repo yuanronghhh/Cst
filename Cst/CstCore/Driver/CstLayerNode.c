@@ -6,7 +6,7 @@
 SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
 
 
-void cst_layer_node_set_rnode(CstLayerNode *self, CstRenderNode * rnode) {
+void cst_layer_node_set_rnode(CstLayerNode *self, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
 
   self->rnode = rnode;
@@ -25,12 +25,21 @@ static void cst_layer_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_layer_node_parent_class)->dispose(o);
 }
 
-static void cst_layer_node_construct(CstLayerNode* self, CstRenderNode *rnode) {
-  self->rnode = rnode;
+static void cst_layer_node_construct(CstLayerNode* self, CstNode *node) {
+  self->node = node;
+  sys_object_ref(node);
 }
 
 CstLayerNode *cst_layer_node_new(void) {
   return sys_object_new(CST_TYPE_LAYER_NODE, NULL);
+}
+
+CstLayerNode *cst_layer_node_new_I(CstNode *node) {
+  CstLayerNode *o = cst_layer_node_new();
+
+  cst_layer_node_construct(o, node);
+
+  return o;
 }
 
 static void cst_layer_node_class_init(CstLayerNodeClass* cls) {

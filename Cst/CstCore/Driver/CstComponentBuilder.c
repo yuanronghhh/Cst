@@ -45,25 +45,9 @@ CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self) {
   return self->v_parent;
 }
 
-void cst_component_builder_set_v_module(CstComponentBuilder *self, CstModule * v_module) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_module = v_module;
-}
-
-CstModule * cst_component_builder_get_v_module(CstComponentBuilder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_module;
-}
-
 void cst_component_builder_build_component(CstComponentBuilder *self, CstComponent *o) {
   sys_return_if_fail(self != NULL);
 
-  CstModule *v_module = self->v_module;
-  sys_return_if_fail(v_module != NULL);
-
-  cst_component_set_v_module(o, self->v_module);
   cst_component_set_id(o, self->v_id);
 }
 
@@ -86,16 +70,15 @@ CstComponentBuilder *cst_component_builder_new(void) {
   return sys_object_new(CST_TYPE_COMPONENT_BUILDER, NULL);
 }
 
-static void cst_component_builder_construct(CstComponentBuilder *o, CstModule *v_module, CstComponent *v_parent) {
+static void cst_component_builder_construct(CstComponentBuilder *o, CstComponent *v_parent) {
   o->v_base_name = NULL;
-  o->v_module = v_module;
   o->v_parent = v_parent;
 }
 
-CstComponentBuilder *cst_component_builder_new_I(CstModule *v_module, CstComponent *v_parent) {
+CstComponentBuilder *cst_component_builder_new_I(CstComponent *v_parent) {
   CstComponentBuilder *o = cst_component_builder_new();
 
-  cst_component_builder_construct(o, v_module, v_parent);
+  cst_component_builder_construct(o, v_parent);
 
   return o;
 }

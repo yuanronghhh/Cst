@@ -222,15 +222,15 @@ static void cst_box_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }
 
-static void cst_box_node_construct(CstLayerNode* o, CstRenderNode *rnode) {
+static void cst_box_node_construct(CstLayerNode* o, CstNode *node) {
 
-  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->construct(o, rnode);
+  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->construct(o, node);
 }
 
-CstLayerNode *cst_box_node_new_I(CstRenderNode *rnode) {
+CstLayerNode *cst_box_node_new_I(CstNode *node) {
   CstLayerNode *o = cst_box_node_new();
 
-  cst_box_node_construct(o, rnode);
+  cst_box_node_construct(o, node);
 
   return o;
 }

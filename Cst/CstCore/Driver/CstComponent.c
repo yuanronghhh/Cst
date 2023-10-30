@@ -93,22 +93,6 @@ CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key) {
   return cst_css_env_get_r(CST_CSS_ENV(self->style_env), key);
 }
 
-SysFunc cst_component_get_function(CstComponent *self, const SysChar *func_name) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(func_name != NULL, false);
-
-  return cst_module_get_function(self->v_module, func_name);
-}
-
-void cst_component_set_function(CstComponent *self, const SysChar *func_name, SysFunc func) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(func_name != NULL);
-  sys_return_if_fail(sys_strneq(func_name, FR_FUNC_PREFIX, 2));
-  sys_return_if_fail(func != NULL);
-
-  cst_module_set_function(self->v_module, func_name, func);
-}
-
 CstValueMap *cst_component_get_value_map(CstComponent *self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -121,10 +105,10 @@ void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   fr_env_set(self->prop_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
-CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode* parent, CstLayout* layout) {
+CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode* parent, CstModule *v_module, CstLayout* layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_node_realize_r(self->layout_node, parent, self->v_module, layout);
+  return cst_node_realize_r(self->layout_node, parent, v_module, layout);
 }
 /* sys object api */
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
@@ -160,18 +144,6 @@ static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *b
 
   self->style_env = cst_css_env_new_I(NULL);
   self->layout_node = NULL;
-}
-
-void cst_component_set_v_module(CstComponent *self, CstModule * v_module) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_module = v_module;
-}
-
-CstModule * cst_component_get_v_module(CstComponent *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_module;
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {

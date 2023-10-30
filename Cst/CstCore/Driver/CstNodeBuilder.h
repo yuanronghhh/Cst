@@ -27,7 +27,6 @@ struct _CstNodeBuilder {
 
   const SysChar* v_id;
   const SysChar *v_tag;
-  SysType v_rctx;
 
   SysInt v_layer;
   SysChar *v_value;
@@ -74,7 +73,6 @@ SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *k
 SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name);
 SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr);
 
-CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstLayerNode *layer_node, CstLayout *layout);
 SysBool cst_node_builder_parse_base(CstNodeBuilder* self, const SysChar* v_base[], SysUInt len);
 void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *o);
 void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode);

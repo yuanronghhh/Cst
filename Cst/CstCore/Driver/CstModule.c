@@ -208,7 +208,7 @@ SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent, CstLayout *l
   sys_return_val_if_fail(self != NULL, false);
 
   CstComponent *comp = self->root_component;
-  cst_component_realize(comp, v_parent, layout);
+  cst_component_realize(comp, v_parent, self, layout);
 
   return true;
 }

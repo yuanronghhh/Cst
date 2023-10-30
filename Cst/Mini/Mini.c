@@ -1,6 +1,6 @@
 #include <Mini/Mini.h>
 
-#define CHECK_TYPE CST_TYPE_APPLICATION
+#define CHECK_TYPE FR_TYPE_AWATCH
 
 static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
   if (!sys_object_is_a(o, CHECK_TYPE)) {

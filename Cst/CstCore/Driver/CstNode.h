@@ -24,9 +24,25 @@ struct _CstNode {
   CstNode     *last_child;
   SysChar     *name;
   SysChar     *id;
+  SysType     rnode_type;
 
-  SysType rnode_type;
-  CstNodeBuilder *builder;
+  /* builder */
+  CstModule* v_module;
+  CstComponent* v_component;
+  CstNode* v_pnode;
+
+  /* property */
+  SysList *v_awatch_list;
+  SysList *v_nodemap_list;
+  SysPtrArray *v_css_list;
+
+  const SysChar* v_id;
+  const SysChar *v_tag;
+
+  CstLayer *v_layer;
+  SysChar *v_value;
+  SysChar *v_label;
+  SysInt  v_z_index;
 };
 
 struct _CstNodeClass {
@@ -64,7 +80,6 @@ CstNode *cst_node_get_last_child(CstNode *node);
 void cst_node_set_last_child(CstNode *node, CstNode *last_child);
 
 CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *parent, CstModule * v_module, CstLayout *layout);
-CstLayerNode* cst_node_realize_self(CstNode *self, CstLayerNode* parent, CstModule * v_module, CstLayout *layout);
 
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 
@@ -73,6 +88,43 @@ CstNodeBuilder * cst_node_get_builder(CstNode *self);
 
 void cst_node_set_rnode_type(CstNode *self, SysType rnode_type);
 SysType cst_node_get_rnode_type(CstNode *self);
+
+CstRenderNode *cst_node_new_render_node(CstNode* self);
+CstLayerNode* cst_node_new_layer_node(CstNode* self);
+
+/* props */
+void cst_node_set_v_module(CstNode *self, CstModule * v_module);
+CstModule * cst_node_get_v_module(CstNode *self);
+
+void cst_node_set_v_component(CstNode *self, CstComponent * v_component);
+CstComponent * cst_node_get_v_component(CstNode *self);
+
+void cst_node_set_v_pnode(CstNode *self, CstNode * v_pnode);
+CstNode * cst_node_get_v_pnode(CstNode *self);
+
+void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list);
+SysList * cst_node_get_v_awatch_list(CstNode *self);
+
+void cst_node_set_v_nodemap_list(CstNode *self, SysList * v_nodemap_list);
+SysList * cst_node_get_v_nodemap_list(CstNode *self);
+
+void cst_node_set_v_css_list(CstNode *self, SysPtrArray * v_css_list);
+SysPtrArray * cst_node_get_v_css_list(CstNode *self);
+
+void cst_node_set_v_id(CstNode *self, const SysChar * v_id);
+const SysChar * cst_node_get_v_id(CstNode *self);
+
+void cst_node_set_v_value(CstNode *self, SysChar * v_value);
+SysChar * cst_node_get_v_value(CstNode *self);
+
+void cst_node_set_v_label(CstNode *self, SysChar * v_label);
+SysChar * cst_node_get_v_label(CstNode *self);
+
+void cst_node_set_v_z_index(CstNode *self, SysInt v_z_index);
+SysInt cst_node_get_v_z_index(CstNode *self);
+
+void cst_node_set_v_layer(CstNode *self, CstLayer* v_layer);
+CstLayer* cst_node_get_v_layer(CstNode *self);
 
 SYS_END_DECLS
 

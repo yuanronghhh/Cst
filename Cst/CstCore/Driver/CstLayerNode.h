@@ -16,17 +16,18 @@ struct _CstLayerNode {
 
   /* < private > */
   CstRenderNode *rnode;
+  CstNode *node;
 };
 
 struct _CstLayerNodeClass {
   SysObjectClass parent;
 
-  void (*construct) (CstLayerNode *o, CstRenderNode *rnode);
-  CstLayerNode* (*get_parent) (CstLayerNode *o);
+  void (*construct) (CstLayerNode *o, CstNode *rnode);
 };
 
 SysType cst_layer_node_get_type(void);
 CstLayerNode *cst_layer_node_new(void);
+CstLayerNode *cst_layer_node_new_I(CstNode *node);
 
 void cst_layer_node_set_rnode(CstLayerNode *self, CstRenderNode * rnode);
 CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self);

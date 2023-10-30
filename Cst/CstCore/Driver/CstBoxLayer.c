@@ -124,10 +124,16 @@ void cst_box_node_unlink_node_r(CstBoxNode *self) {
   sys_object_unref(o);
 }
 
-CstLayerNode* cst_box_layer_realize_rnode_i(CstLayer *o, CstLayerNode *parent, CstRenderNode *rnode) {
+CstLayerNode* cst_box_layer_new_node_i(CstLayer *o, CstNode *node) {
+
+  return cst_box_node_new_I(node);
+}
+
+CstLayerNode* cst_box_layer_realize_rnode_i(CstLayer *o, CstLayerNode *parent, CstNode *node, CstLayout *layout) {
   CstLayerNode* child;
 
-  child = cst_box_node_new_I(rnode);
+  child = CST_LAYER_CLASS(cst_box_layer_parent_class)->realize_node(o, parent, node, layout);
+
   if (parent) {
 
     cst_box_node_append(CST_BOX_NODE(parent), CST_BOX_NODE(child));
@@ -167,6 +173,7 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   ocls->dispose = cst_box_layer_dispose;
 
   lcls->realize_node = cst_box_layer_realize_rnode_i;
+  lcls->new_node = cst_box_layer_new_node_i;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

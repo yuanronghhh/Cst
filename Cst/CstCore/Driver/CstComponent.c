@@ -121,10 +121,20 @@ void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   fr_env_set(self->prop_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
-CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode* parent, CstLayout* layout) {
-  sys_return_val_if_fail(self != NULL, NULL);
+CstLayerNode* cst_component_realize_full(CstComponent* self, CstLayerNode* parent, CstLayout* layout) {
 
   return cst_node_realize_r(self->layout_node, parent, self->v_module, layout);
+}
+
+SysBool component_realize_cb(CstNode *node, CstNodeRealizer *pass) {
+  CstLayerNode *lnode = cst_node_realizer_realize(pass, node);
+  return true;
+}
+
+CstLayerNode* cst_component_realize(CstComponent *self, CstNodeRealizer *pass, CstLayout* layout) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return fr_node_handle_node_ff_r(self->layout_node, (FRNodeFunc)component_realize_cb, (SysPointer)pass);
 }
 /* sys object api */
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {

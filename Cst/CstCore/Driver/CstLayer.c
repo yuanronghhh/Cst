@@ -10,13 +10,13 @@ void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *render_node) {
   sys_queue_push_tail(self->draw_queue, render_node);
 }
 
-CstLayerNode* cst_layer_realize_node (CstLayer *self, CstLayerNode *parent, CstRenderNode *rnode) {
+CstLayerNode* cst_layer_realize_node (CstLayer *self, CstNodeRealizer *pass, CstRenderNode *rnode) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
   sys_return_val_if_fail(lcls->realize_node != NULL, NULL);
 
-  return lcls->realize_node(self, parent, rnode);
+  return lcls->realize_node(self, pass, rnode);
 }
 
 CstLayerNode* cst_layer_realize_node_i (CstLayer *o, CstLayerNode *parent, CstRenderNode *rnode) {

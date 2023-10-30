@@ -73,7 +73,7 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
   }
 }
 
-CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstLayerNode *parent, CstLayout *layout) {
+CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstNodeRealizer *pass, CstLayout *layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstRenderNode *rnode;
@@ -103,7 +103,7 @@ CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *
   rnode = sys_object_new(tp, NULL);
   cst_render_node_construct(rnode, node);
 
-  lnode = cst_layer_realize_node(layer, parent, rnode);
+  lnode = cst_layer_realize_node(layer, pass, rnode);
   cst_render_node_set_layer_node(rnode, lnode);
 
   sys_list_foreach(self->v_awatch_list, item) {

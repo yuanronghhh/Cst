@@ -14,13 +14,8 @@ SYS_BEGIN_DECLS
 struct _CstBoxNode {
   CstLayerNode unowned;
 
-  CstBoxNode   *next;
-  CstBoxNode   *prev;
-  CstBoxNode   *parent;
-  CstBoxNode   *children;
-
   /* <private> */
-  CstBoxNode   *last_child;
+  FRNode tree_node;
 };
 
 struct _CstBoxNodeClass {
@@ -41,7 +36,13 @@ void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout);
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self);
 void cst_box_node_bfs_handle(CstBoxNode* self, CstLayerNodeFunc func, SysPointer user_data);
+void cst_box_node_handle_r(CstBoxNode *self, CstLayerNodeFunc func, SysPointer user_data);
+CstLayerNode* cst_box_node_get_parent(CstLayerNode* o);
 void cst_box_node_print(CstBoxNode * self, SysPointer user_data);
+
+CstBoxNode* cst_box_node_children(CstBoxNode *self);
+CstBoxNode* cst_box_node_next(CstBoxNode *self);
+CstBoxNode* cst_box_node_parent(CstBoxNode *self);
 
 SYS_END_DECLS
 

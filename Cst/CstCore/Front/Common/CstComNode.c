@@ -114,9 +114,9 @@ void cst_com_node_construct_i(CstNode *v_node, CstNodeBuilder *builder) {
   CST_NODE_CLASS(cst_com_node_parent_class)->construct(v_node, builder);
 }
 
-static CstLayerNode* cst_com_node_realize_i(CstNode* o, CstLayerNode* parent,  CstModule *v_module, CstLayout* layout) {
+static CstLayerNode* cst_com_node_realize_i(CstNode* o, CstNodeRealizer *pass, CstLayout* layout) {
   CstComNode *self = CST_COM_NODE(o);
-  CstLayerNode* lnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, parent, v_module, layout);
+  CstLayerNode* lnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, pass, layout);
 
   return cst_component_realize(self->component, lnode, layout);
 }

@@ -658,7 +658,6 @@ CstNode* ast_new_layout_node(CstModule *v_module, CstComponent *o) {
   cst_node_set_name(layout, "<layout-node>");
   cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
   cst_node_construct(layout, v_node_builder);
-  sys_object_unref(v_node_builder);
 
   return layout;
 }

@@ -127,6 +127,9 @@ typedef  struct  _FREnvClass      FREnvClass;
 typedef  struct  _FRPair           FRPair;
 typedef  struct  _FRPairClass      FRPairClass;
 
+typedef  struct  _FRNode           FRNode;
+typedef  struct  _FRNodeClass      FRNodeClass;
+
 typedef  struct  _FRMain           FRMain;
 typedef  struct  _FRMainClass      FRMainClass;
 
@@ -141,12 +144,12 @@ typedef  struct  _FRWorker           FRWorker;
 typedef  struct  _FRWorkerClass      FRWorkerClass;
 typedef  struct  _FRWorkerPrivate    FRWorkerPrivate;
 
-
 typedef  struct  _FRMonoContext   FRMonoContext;
 
 typedef SysBool (*FREventCheckFunc) (FREvent *e, SysPointer user_data);
 typedef SysInt (*FREventFunc) (FREvent *e, SysPointer user_data);
 typedef const FRRect* (*FRGetBoundFunc) (SysPointer user_data);
+typedef SysBool (*FRNodeFunc) (FRNode* node, SysPointer user_data);
 
 
 SYS_END_DECLS

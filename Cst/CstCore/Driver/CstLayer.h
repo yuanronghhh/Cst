@@ -21,12 +21,12 @@ struct _CstLayer {
 struct _CstLayerClass {
   SysObjectClass parent;
 
-  CstLayerNode* (*realize_node) (CstLayer *layer, CstLayerNode *parent, CstRenderNode *rnode);
+  CstLayerNode* (*realize_node) (CstLayer *layer, CstNodeRealizer* pass, CstRenderNode *rnode);
 };
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
-CstLayerNode* cst_layer_realize_node (CstLayer *layer, CstLayerNode *parent, CstRenderNode *rnode);
+CstLayerNode* cst_layer_realize_node (CstLayer *layer, CstNodeRealizer* pass, CstRenderNode *rnode);
 
 void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
 

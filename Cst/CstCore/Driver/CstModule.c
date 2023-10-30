@@ -1,10 +1,12 @@
 #include <CstCore/Driver/CstModule.h>
+
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstNodeRealizer.h>
 
 
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
@@ -171,8 +173,6 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
 }
 
 SysChar *cst_module_new_uid(CstModule *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
   SysChar *nid = NULL;
   SysUInt mid;
   SysUInt ccount = 0;
@@ -204,13 +204,11 @@ FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_n
   return func;
 }
 
-SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent, CstLayout *layout) {
+SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent) {
   sys_return_val_if_fail(self != NULL, false);
 
   CstComponent *comp = self->root_component;
-
-  CstNodeRealizer *pass = cst_node_realizer_new_I(v_parent, self, NULL);
-  cst_component_realize(comp, pass, layout);
+  cst_component_realize(comp, v_parent, NULL);
 
   return true;
 }

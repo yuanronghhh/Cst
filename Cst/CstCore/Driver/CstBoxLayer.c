@@ -17,7 +17,6 @@ struct _BoxLayerPass {
 
 SYS_DEFINE_TYPE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER);
 
-
 CstBoxNode *cst_box_layer_get_root(CstBoxLayer *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -110,17 +109,12 @@ void cst_box_layer_print_tree(CstBoxLayer *self) {
   cst_box_node_bfs_handle(self->tree, (CstLayerNodeFunc)cst_box_node_print, NULL);
 }
 
-CstLayerNode* cst_box_layer_realize_rnode_i(CstLayer *o, CstNodeRealizer *pass, CstRenderNode *rnode) {
-  CstLayerNode* child;
+CstLayerNode *cst_box_layer_new_node_i(CstLayer *layer, CstLayerNode *parent, CstNode *node) {
+  CstLayerNode *lnode = cst_box_node_new_I(node);
 
-  child = CST_LAYER_CLASS(cst_box_layer_parent_class)->realize_node(o, parent, node, layout);
+  cst_box_node_append(CST_BOX_NODE(parent), CST_BOX_NODE(lnode));
 
-  if (parent) {
-
-    cst_box_node_append(CST_BOX_NODE(parent), CST_BOX_NODE(child));
-  }
-
-  return child;
+  return lnode;
 }
 
 /* object api */
@@ -158,7 +152,6 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
 
   ocls->dispose = cst_box_layer_dispose;
 
-  lcls->realize_node = cst_box_layer_realize_rnode_i;
   lcls->new_node = cst_box_layer_new_node_i;
 }
 

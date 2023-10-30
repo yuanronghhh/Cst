@@ -43,11 +43,11 @@ struct _CstNodeClass {
   FRNodeClass parent;
 
   void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
-  CstLayerNode* (*realize) (CstNode* self, CstNodeRealizer *pass, CstLayout *layout);
+  CstLayerNode* (*realize) (CstNode* self, CstLayerNode *v_parent, CstComNode *com_node);
 };
 
 CstNode* cst_node_new(void);
-CstNode* cst_node_new_I(CstNodeBuilder* builder);
+CstNode* cst_node_new_I(CstNodeBuilder *builder);
 SysType cst_node_get_type(void);
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar *name);
@@ -61,13 +61,14 @@ const SysChar *cst_node_get_id(CstNode *node);
 CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name);
 
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
-CstLayerNode* cst_node_realize(CstNode* self, CstNodeRealizer* pass, CstLayout* layout);
+CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
+CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
 
 void cst_node_set_rnode_type(CstNode *self, SysType rnode_type);
 SysType cst_node_get_rnode_type(CstNode *self);
 
 CstRenderNode *cst_node_new_render_node(CstNode* self);
-CstLayerNode* cst_node_new_layer_node(CstNode* self);
+void cst_node_unlink_node_r(CstNode *self);
 
 /* props */
 void cst_node_set_v_module(CstNode *self, CstModule * v_module);

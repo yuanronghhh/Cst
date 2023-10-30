@@ -16,6 +16,7 @@ struct _CstNodeBuilder {
   SysObject parent;
 
   /* < private > */
+  CstRender* v_render;
   CstModule* v_module;
   CstComponent* v_component;
   CstNode* v_pnode;
@@ -37,14 +38,16 @@ struct _CstNodeBuilder {
 struct _CstNodeBuilderClass {
   SysObjectClass parent;
 
-  void (*construct) (CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
+  void (*construct) (CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render);
+  void (*parse) (CstNodeBuilder *o, JNode *jnode);
+  void (*build) (CstNodeBuilder *o, CstNode *node);
 };
 
 SysType cst_node_builder_get_type(void);
 CstNodeBuilder *cst_node_builder_new(void);
-CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
-CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode);
-void cst_node_builder_build(CstNodeBuilder *self, CstNode *v_node);
+CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render);
+CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode, CstRender *v_render);
+
 CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self);
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self);
 
@@ -73,9 +76,11 @@ SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *k
 SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name);
 SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr);
 
+void cst_node_builder_parse(CstNodeBuilder *self, JNode *jnode);
+void cst_node_builder_build(CstNodeBuilder *self, CstNode *v_node);
+
 SysBool cst_node_builder_parse_base(CstNodeBuilder* self, const SysChar* v_base[], SysUInt len);
-void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *o);
-void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode);
+void cst_node_builder_build(CstNodeBuilder *self, CstNode *node);
 
 SYS_END_DECLS
 

@@ -2,6 +2,7 @@
 #define __CST_COM_NODE_H__
 
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Front/Common/CstComNodeBuilder.h>
 
 SYS_BEGIN_DECLS
 
@@ -25,12 +26,19 @@ struct _CstComNodeClass {
 
 SysType cst_com_node_get_type(void);
 CstNode* cst_com_node_new(void);
-CstNode* cst_com_node_new_with_component(CstComponent * comp);
+CstNode* cst_com_node_new_I(CstNodeBuilder *builder);
 CstComponent* cst_com_node_get_component(CstComNode * self);
 
+CstNodeMap* cst_com_node_get_node_map(CstComNode* self, const SysChar *key);
+void cst_com_node_set_node_map(CstComNode* self, CstNodeMap *map);
+
 CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type);
-void com_node_set_node_map(CstComNode* self, CstNodeMap *map);
-CstNodeMap* cst_com_node_get_node_map(CstComNode * self, const SysChar *key);
+
+void cst_com_node_set_component(CstComNode *self, CstComponent * component);
+CstComponent * cst_com_node_get_component(CstComNode *self);
+
+void cst_com_node_set_values_ht(CstComNode *self, SysHashTable * values_ht);
+SysHashTable * cst_com_node_get_values_ht(CstComNode *self);
 
 SYS_END_DECLS
 

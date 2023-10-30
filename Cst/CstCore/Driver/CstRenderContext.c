@@ -275,9 +275,9 @@ void cst_render_context_layout_box_node(CstRenderContext* self, CstBoxNode *box,
     }
   }
 
-  if (box->next) {
+  if (cst_box_node_next(box)) {
 
-    cst_box_node_relayout_node(box->next, layout);
+    cst_box_node_relayout_node(cst_box_node_next(box), layout);
   }
 
   cst_render_node_render_leave(rnode, layout);

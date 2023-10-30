@@ -15,7 +15,7 @@ struct _CstNodeRealizer {
   SysObject unowned;
 
   /* <private> */
-  CstLayerNode *parent;
+  CstLayerNode *v_parent;
   CstModule *v_module;
   CstComNode *com_node;
 };
@@ -27,6 +27,12 @@ struct _CstNodeRealizerClass {
 CstNodeRealizer* cst_node_realizer_new(void);
 CstNodeRealizer* cst_node_realizer_new_I(CstLayerNode *parent, CstModule *v_module, CstComNode *com_node);
 CstLayerNode *cst_node_realizer_realize(CstNodeRealizer* realizer, CstNode *node);
+
+void cst_node_realizer_set_v_module(CstNodeRealizer *self, CstModule * v_module);
+CstModule * cst_node_realizer_get_v_module(CstNodeRealizer *self);
+
+void cst_node_realizer_set_v_parent(CstNodeRealizer *self, CstLayerNode * v_parent);
+CstLayerNode * cst_node_realizer_get_v_parent(CstNodeRealizer *self);
 
 SYS_END_DECLS
 

@@ -67,21 +67,19 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   cst_layout_end_layout(layout);
 }
 
-void cst_render_realize(CstRender *self, CstModule *v_module, CstLayout* layout) {
+void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstLayerNode* body;
   FRRegion* region;
-  CstNodeRealizer *pass;
   FRRect bound = { 0 };
 
   fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
   region = fr_region_create_rectangle(&bound);
 
-  pass = cst_node_realizer_new_I(NULL, v_module, NULL);
-  body = cst_node_realize(self->root_node, pass, layout);
+  body = cst_node_realize(self->root_node, NULL, NULL);
+  cst_module_realize(v_module, body);
 
-  cst_module_realize(v_module, body, layout);
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }
 
@@ -94,7 +92,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
 
   layer = self->box_layer;
 
-  cst_render_realize(self, v_module, layout);
+  cst_render_realize(self, v_module);
 
   cst_layout_begin_layout(layout, layer);
 
@@ -154,15 +152,20 @@ CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type) {
 }
 
 /* object api */
-CstNode *render_new_body(void) {
+CstNode *cst_render_new_body(CstRender *self) {
   CstNodeBuilder* builder;
   CstNode *node;
 
-  builder = cst_node_builder_new_I(NULL, NULL, NULL);
-  node = cst_node_new_I(builder);
+  builder = cst_node_builder_new_I(NULL, NULL, NULL, self);
 
-  cst_node_set_rnode_type(node, CST_TYPE_LBODY);
+  node = cst_node_new();
   cst_node_set_name(node, "body");
+  cst_node_set_rnode_type(node, CST_TYPE_LBODY);
+
+  cst_node_builder_build(builder, node);
+
+  sys_object_unref(builder);
+
   return node;
 }
 
@@ -179,7 +182,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
-  self->root_node = render_new_body();
+  self->root_node = cst_render_new_body(self);
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

@@ -15,7 +15,8 @@ struct _CstComNodeBuilder {
   CstNodeBuilder parent;
 
   /* <private> */
-  CstNodeMap* value;
+  CstComponent *component;
+  SysHashTable *values_ht;
 };
 
 struct _CstComNodeBuilderClass {
@@ -24,8 +25,13 @@ struct _CstComNodeBuilderClass {
 
 SysType cst_com_node_builder_get_type(void);
 CstNodeBuilder* cst_com_node_builder_new(void);
-CstNodeBuilder* cst_com_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
-void cst_com_node_builder_build_com_node(CstComNodeBuilder* self, CstNode *node);
+CstNodeBuilder* cst_com_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render);
+
+CstNodeMap* cst_com_node_builder_get_node_map(CstComNodeBuilder * self, const SysChar *key);
+void cst_com_node_builder_set_node_map(CstComNodeBuilder* self, CstNodeMap *map);
+
+void cst_com_node_builder_set_component(CstComNodeBuilder *self, CstComponent * component);
+CstComponent * cst_com_node_builder_get_component(CstComNodeBuilder *self);
 
 SYS_END_DECLS
 

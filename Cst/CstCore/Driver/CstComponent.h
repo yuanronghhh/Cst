@@ -49,7 +49,7 @@ CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name);
 void cst_component_set_layout_node(CstComponent *self, CstNode *node);
 CstNode * cst_component_get_layout_node(CstComponent * self);
 
-CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode* parent, CstModule *v_module, CstLayout* layout);
+CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, CstComNode *com_node);
 
 SYS_END_DECLS
 

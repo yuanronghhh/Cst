@@ -1,10 +1,36 @@
 #include <CstCore/Driver/CstNodeRealizer.h>
 
+
 SYS_DEFINE_TYPE(CstNodeRealizerRealizer, cst_node_realizer, SYS_TYPE_OBJECT);
 
 
-void cst_node_realizer_realize(CstNodeRealizer* realizer, CstNode *node, CstLayout *layout) {
-  return cst_node_realize(node, self);
+CstLayerNode *cst_node_realizer_realize(CstNodeRealizer* realizer, CstNode *node) {
+
+  return cst_node_realize(layer, self->v_parent, node);
+}
+
+void cst_node_realizer_set_v_module(CstNodeRealizer *self, CstModule * v_module) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_module = v_module;
+}
+
+CstModule * cst_node_realizer_get_v_module(CstNodeRealizer *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_module;
+}
+
+void cst_node_realizer_set_v_parent(CstNodeRealizer *self, CstLayerNode * v_parent) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_parent = v_parent;
+}
+
+CstLayerNode * cst_node_realizer_get_v_parent(CstNodeRealizer *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_parent;
 }
 
 /* sys object api */

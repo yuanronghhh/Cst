@@ -50,10 +50,19 @@ void cst_component_set_id(CstComponent* self, const SysChar *id) {
   self->id = sys_strdup(id);
 }
 
+SysBool component_print(FRNode *o, SysPointer user_data) {
+  CstNode *node = CST_NODE(o);
+  CstComponent *self = user_data;
+
+  sys_debug_N("%s,%s,%s", cst_component_get_id(self), cst_node_get_name(node), cst_node_get_id(node));
+
+  return true;
+}
+
 void cst_component_print(CstComponent* self) {
   sys_return_if_fail(self != NULL);
 
-  cst_node_print_node_r(self->layout_node);
+  fr_node_handle_bfs_r(FR_NODE(self->layout_node), component_print, self);
 }
 
 const SysChar* cst_component_get_id(CstComponent* self) {
@@ -105,15 +114,12 @@ void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   fr_env_set(self->prop_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
-SysBool component_realize_cb(CstNode *node, CstNodeRealizer *pass) {
-  CstLayerNode *lnode = cst_node_realizer_realize(pass, node);
-  return true;
-}
-
-CstLayerNode* cst_component_realize(CstComponent *self, CstNodeRealizer *pass, CstLayout* layout) {
+CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return fr_node_handle_node_ff_r(self->layout_node, (FRNodeFunc)component_realize_cb, (SysPointer)pass);
+  CstLayerNode *root = cst_node_realize_r(self->layout_node, v_parent, com_node);
+
+  return root;
 }
 
 /* sys object api */

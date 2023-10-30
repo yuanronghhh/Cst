@@ -110,6 +110,8 @@ set(SRC
   ./DataType/FRPQueue.c
   ./DataType/FRPair.h
   ./DataType/FRPair.c
+  ./DataType/FRNode.h
+  ./DataType/FRNode.c
   ./DataType/FREnv.c
   ./DataType/FREnv.h
 

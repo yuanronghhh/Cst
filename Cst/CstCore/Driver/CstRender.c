@@ -1,15 +1,18 @@
 #include <CstCore/Driver/CstRender.h>
 
+#include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
-#include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Driver/CstRenderContext.h>
+#include <CstCore/Driver/CstNodeRealizer.h>
+
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
+
 
 CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
@@ -69,12 +72,15 @@ void cst_render_realize(CstRender *self, CstModule *v_module, CstLayout* layout)
 
   CstLayerNode* body;
   FRRegion* region;
+  CstNodeRealizer *pass;
   FRRect bound = { 0 };
 
   fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
   region = fr_region_create_rectangle(&bound);
 
-  body = cst_node_realize(self->root_node, NULL, v_module, layout);
+  pass = cst_node_realizer_new_I(NULL, v_module, NULL);
+  body = cst_node_realize(self->root_node, pass, layout);
+
   cst_module_realize(v_module, body, layout);
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }
@@ -91,13 +97,12 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   cst_render_realize(self, v_module, layout);
 
   cst_layout_begin_layout(layout, layer);
-  cst_box_layer_layout(layer, layout);
-  cst_layout_end_layout(layout);
 
+  cst_box_layer_layout(layer, layout);
   cst_box_layer_render(layer, layout);
 
+  cst_layout_end_layout(layout);
   fr_region_destroy(region);
-
 
   sys_object_unref(layout);
 }

@@ -23,13 +23,14 @@ struct _CstLayerClass {
 
   CstLayerNode* (*new_node) (CstLayer *layer, CstNode *node);
   CstLayerNode* (*realize_node) (CstLayer *layer, CstLayerNode *parent, CstNode *node, CstLayout *layout);
+  CstLayerNode* (*realize_node) (CstLayer *layer, CstNodeRealizer* pass, CstRenderNode *rnode);
 };
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
 
-CstLayerNode* cst_layer_realize_node (CstLayer *self, CstLayerNode *parent, CstNode *node, CstLayout *layout);
 CstLayerNode* cst_layer_new_node(CstLayer *o, CstNode *node);
+CstLayerNode* cst_layer_realize_node (CstLayer *layer, CstNodeRealizer* pass, CstRenderNode *rnode);
 
 void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
 

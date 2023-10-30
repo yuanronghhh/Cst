@@ -30,15 +30,17 @@ void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root) {
   self->tree = root;
 }
 
-static void box_layer_mark_one(CstRenderNode* rnode, BoxLayerPass *ctx) {
+static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
   CstRenderContext *rctx;
   CstNode *node;
+  CstRenderNode *rnode;
   CstLayer* self;
   FRRegion* region;
   const FRRect *bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;
+  rnode = cst_layer_node_get_rnode(lnode);
   rctx = cst_render_node_get_render_ctx(rnode);
 
   node = cst_render_node_get_node(rnode);
@@ -108,28 +110,7 @@ void cst_box_layer_print_tree(CstBoxLayer *self) {
   cst_box_node_bfs_handle(self->tree, (CstLayerNodeFunc)cst_box_node_print, NULL);
 }
 
-void cst_box_node_unlink_node_r(CstBoxNode *self) {
-  sys_return_if_fail(self != NULL);
-
-  SysObject *o = SYS_OBJECT(self);
-
-  if(self->children) {
-    cst_box_node_unlink_node_r(self->children);
-  }
-
-  if(self->next) {
-    cst_box_node_unlink_node_r(self->next);
-  }
-
-  sys_object_unref(o);
-}
-
-CstLayerNode* cst_box_layer_new_node_i(CstLayer *o, CstNode *node) {
-
-  return cst_box_node_new_I(node);
-}
-
-CstLayerNode* cst_box_layer_realize_rnode_i(CstLayer *o, CstLayerNode *parent, CstNode *node, CstLayout *layout) {
+CstLayerNode* cst_box_layer_realize_rnode_i(CstLayer *o, CstNodeRealizer *pass, CstRenderNode *rnode) {
   CstLayerNode* child;
 
   child = CST_LAYER_CLASS(cst_box_layer_parent_class)->realize_node(o, parent, node, layout);
@@ -147,6 +128,11 @@ CstLayer* cst_box_layer_new(void) {
   return sys_object_new(CST_TYPE_BOX_LAYER, NULL);
 }
 
+static SysBool box_node_unlink(CstBoxNode *bnode, CstBoxLayer *layer) {
+  sys_object_unref(bnode);
+  return true;
+}
+
 static void cst_box_layer_dispose(SysObject* o) {
   CstBoxLayer *self = CST_BOX_LAYER(o);
 
@@ -156,7 +142,7 @@ static void cst_box_layer_dispose(SysObject* o) {
 
   if (root) {
 
-    cst_box_node_unlink_node_r(root);
+    cst_box_node_handle_r(root, (CstLayerNodeFunc)box_node_unlink, self);
   }
 
   SYS_OBJECT_CLASS(cst_box_layer_parent_class)->dispose(o);

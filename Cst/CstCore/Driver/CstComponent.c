@@ -105,11 +105,17 @@ void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   fr_env_set(self->prop_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
-CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode* parent, CstModule *v_module, CstLayout* layout) {
+SysBool component_realize_cb(CstNode *node, CstNodeRealizer *pass) {
+  CstLayerNode *lnode = cst_node_realizer_realize(pass, node);
+  return true;
+}
+
+CstLayerNode* cst_component_realize(CstComponent *self, CstNodeRealizer *pass, CstLayout* layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_node_realize_r(self->layout_node, parent, v_module, layout);
+  return fr_node_handle_node_ff_r(self->layout_node, (FRNodeFunc)component_realize_cb, (SysPointer)pass);
 }
+
 /* sys object api */
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
   sys_return_if_fail(builder != NULL);

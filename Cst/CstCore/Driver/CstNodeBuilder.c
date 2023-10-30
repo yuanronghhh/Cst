@@ -83,8 +83,65 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
   cst_node_set_v_css_list(node, self->v_css_list);
   cst_node_set_v_id(node, self->v_id);
   cst_node_set_v_value(node, self->v_value);
+  cst_node_set_v_layer(node, layer);
   cst_node_set_v_label(node, self->v_label);
   cst_node_set_v_z_index(node, self->v_z_index);
+}
+
+CstLayerNode *cst_node_builder_build_render_node(CstNodeBuilder *self, CstNode *node, CstNodeRealizer *pass, CstLayout *layout) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  CstRenderNode *rnode;
+  CstLayerNode *lnode;
+  CstLayer *layer;
+  SysType tp;
+
+  CstRender *render = cst_layout_get_render(layout);
+  sys_return_val_if_fail(render != NULL, NULL);
+
+  switch (self->v_layer) {
+    case CST_NODE_LAYER_BOX:
+      layer = cst_render_get_box_layer(render);
+      break;
+
+    case CST_NODE_LAYER_ABS:
+      layer = cst_render_get_abs_layer(render);
+      break;
+    default:
+      sys_warning_N("unknow node layer: %d", self->v_layer);
+      break;
+  }
+
+  tp = cst_node_get_rnode_type(node);
+  sys_assert(tp != 0 && "node should be set render node type before realize.");
+
+  rnode = sys_object_new(tp, NULL);
+  cst_render_node_construct(rnode, node);
+
+  lnode = cst_layer_realize_node(layer, pass, rnode);
+  cst_render_node_set_layer_node(rnode, lnode);
+
+  sys_list_foreach(self->v_awatch_list, item) {
+    FRAWatch *o =  FR_AWATCH(item->data);
+    fr_awatch_bind(o, rnode);
+    cst_render_node_ref_awatch(rnode, o);
+  }
+
+  sys_list_foreach(self->v_nodemap_list, item) {
+    CstNodeMap *o = CST_NODE_MAP(item->data);
+    cst_render_node_ref_nodemap(rnode, o);
+  }
+
+  if (self->v_css_list != NULL && self->v_css_list->len > 0) {
+    for (SysUInt i = 0; i < self->v_css_list->len; i++) {
+      CstCssGroup* o = self->v_css_list->pdata[i];
+      CstCssGroup *n = (CstCssGroup *)sys_object_dclone(o);
+
+      cst_render_node_add_v_css(rnode, n);
+    }
+  }
+
+  return lnode;
 }
 
 void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode) {

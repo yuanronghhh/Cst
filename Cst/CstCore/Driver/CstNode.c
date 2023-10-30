@@ -18,7 +18,8 @@ static const SysChar* CST_NODE_LAYER_NAMES[] = {
   "box", "absolute"
 };
 
-SYS_DEFINE_TYPE(CstNode, cst_node, SYS_TYPE_OBJECT);
+
+SYS_DEFINE_TYPE(CstNode, cst_node, FR_TYPE_NODE);
 
 
 CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name) {
@@ -259,46 +260,7 @@ void cst_node_set_id(CstNode *self, const SysChar * id) {
   self->id = sys_strdup(id);
 }
 
-void cst_node_unlink_node_r(CstNode *self) {
-  sys_return_if_fail(self != NULL);
-
-  SysObject *o = SYS_OBJECT(self);
-
-  if(self->children) {
-    cst_node_unlink_node_r(self->children);
-  }
-
-  if(self->next) {
-    cst_node_unlink_node_r(self->next);
-  }
-
-  sys_object_unref(o);
-}
-
-void cst_node_print_node_r(CstNode *self) {
-  sys_return_if_fail(self != NULL);
-
-  CstNode *pnode;
-
-  if (self->parent) {
-    pnode = self->parent;
-
-    sys_debug_N("<%s,%s,%s,%s>", cst_node_get_name(pnode), cst_node_get_id(pnode), cst_node_get_name(self), cst_node_get_id(self));
-  } else {
-
-    sys_debug_N("<%s,%s>", cst_node_get_name(self), cst_node_get_id(self));
-  }
-
-  if (self->children) {
-    cst_node_print_node_r(self->children);
-  }
-
-  if (self->next) {
-    cst_node_print_node_r(self->next);
-  }
-}
-
-void cst_node_print_node(CstNode* node) {
+void cst_node_print_node(CstNode* node, SysPointer user_data) {
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
@@ -312,70 +274,18 @@ void cst_node_construct(CstNode *self, CstNodeBuilder *builder) {
   ncls->construct(self, builder);
 }
 
-void cst_node_append(CstNode *parent, CstNode *node) {
-  sys_return_if_fail(parent != NULL);
-  sys_return_if_fail(node != NULL);
-
-  CstNode *last_child = cst_node_get_last_child(parent);
-  cst_node_insert_after(parent, last_child, node);
-
-  cst_node_set_last_child(parent, node);
-}
-
-CstNode* cst_node_insert_after (CstNode *parent, CstNode *sibling, CstNode *node) {
-  sys_return_val_if_fail (parent != NULL, node);
-  sys_return_val_if_fail (node != NULL, node);
-
-  if (sibling) {
-    sys_return_val_if_fail (sibling->parent == parent, node);
-  }
-
-  node->parent = parent;
-
-  if (sibling) {
-    if (sibling->next) {
-      sibling->next->prev = node;
-    }
-
-    node->next = sibling->next;
-    node->prev = sibling;
-    sibling->next = node;
-
-  } else {
-    if (parent->children) {
-      node->next = parent->children;
-      parent->children->prev = node;
-    }
-
-    parent->children = node;
-  }
-
-  return node;
-}
-
-CstNode *cst_node_get_last_child(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->last_child;
-}
-
-void cst_node_set_last_child(CstNode *self, CstNode *last_child) {
-  sys_return_if_fail(self != NULL);
-
-  self->last_child = last_child;
-}
-
-void cst_node_relayout_v(CstModule* v_module, CstNode* v_parent, CstNode* self, FRDraw *draw, CstLayout *layout) {
-}
-
-CstLayerNode* cst_node_realize(CstNode* self, CstLayerNode* parent, CstModule *v_module, CstLayout *layout) {
+CstLayerNode* cst_node_realize(CstNode* self, CstNodeRealizer *pass, CstLayout *layout) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstNodeClass* cls = CST_NODE_GET_CLASS(self);
   sys_return_val_if_fail(cls->realize != NULL, NULL);
 
-  return cls->realize(self, parent, v_module, layout);
+  return cls->realize(self, pass, layout);
 }
+
+CstLayerNode* cst_node_new_layer_node(CstNode* self) {
+}
+
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   sys_return_val_if_fail(name != NULL, -1);
@@ -410,6 +320,14 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
   cst_render_node_construct(rnode, self);
 
   return rnode;
+}
+
+static CstLayerNode* cst_node_realize_i(CstNode* self, CstNodeRealizer *pass, CstLayout *layout) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  CstLayerNode *lnode = cst_node_builder_build_render_node(self->builder, self, pass, layout);
+
+  return lnode;
 }
 
 

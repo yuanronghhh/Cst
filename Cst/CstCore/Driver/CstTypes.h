@@ -176,6 +176,9 @@ typedef struct _CstComponentClass CstComponentClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
 
+typedef struct _CstNodeRealizer CstNodeRealizer;
+typedef struct _CstNodeRealizerClass CstNodeRealizerClass;
+
 typedef struct _CstNodeBuilder CstNodeBuilder;
 typedef struct _CstNodeBuilderClass CstNodeBuilderClass;
 typedef struct _CstNode CstNode;
@@ -202,9 +205,10 @@ typedef struct _CstValueMapClass CstValueMapClass;
 
 typedef void (*CstNodeMapFunc) (CstRenderNode *rnode, CstNodeMap *map);
 typedef void (*CstCssFree) (CstCssValue *value);
-typedef void (*CstLayerNodeFunc) (CstLayerNode *lnode, SysPointer user_data);
+typedef SysBool (*CstLayerNodeFunc) (CstLayerNode *lnode, SysPointer user_data);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *lnode, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *rnode, CstLayout *layout, SysPointer user_data);
+typedef void (*CstNodeRealizeFunc) (CstNode *self, CstLayerNode* parent, CstModule *v_module, CstComNode *v_com_node, CstLayout *layout);
 
 SYS_END_DECLS
 

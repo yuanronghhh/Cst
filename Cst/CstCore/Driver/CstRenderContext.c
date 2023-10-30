@@ -258,18 +258,18 @@ void cst_render_context_layout_box_node(CstRenderContext* self, CstBoxNode *box,
 
   cst_render_context_layout_self(self, lnode, layout);
 
-  if (box->children) {
-    clnode = CST_LAYER_NODE(box->children);
+  if (cst_box_node_children(box)) {
+    clnode = CST_LAYER_NODE(cst_box_node_children(box));
 
     if (cst_box_node_has_one_child(box)) {
       crnode = cst_layer_node_get_rnode(clnode);
       cctx = cst_render_node_get_render_ctx(crnode);
 
       cst_render_context_inherit(cctx, self, layout);
-      cst_render_context_layout_box_node(cctx, box->children, layout);
+      cst_render_context_layout_box_node(cctx, cst_box_node_children(box), layout);
     } else {
 
-      for (bnode = box->children; bnode; bnode = bnode->next) {
+      for (bnode = cst_box_node_children(box); bnode; bnode = cst_box_node_next(box)) {
         cst_box_node_relayout_node(bnode, layout);
       }
     }

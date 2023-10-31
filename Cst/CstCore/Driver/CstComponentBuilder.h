@@ -13,30 +13,29 @@ SYS_BEGIN_DECLS
 
 
 struct _CstComponentBuilder {
-  SysObject parent;
+  CstBuilder unowned;
 
   /* < private > */
-  SysChar *v_id;
+  SysChar *id;
   SysChar *v_base_name;
+  FREnv *prop_maps_env;
+  FREnv *css_env;
+
   CstComponent *v_parent;
-  CstModule *v_module;
-  CstRender *v_render;
 };
 
 struct _CstComponentBuilderClass {
-  SysObjectClass parent;
-
-  void (*construct) (CstComponentBuilder *o, CstModule *v_module, CstComponent *v_parent);
+  CstBuilderClass parent;
 };
 
 SysType cst_component_builder_get_type(void);
-CstComponentBuilder *cst_component_builder_new(void);
-CstComponentBuilder * cst_component_builder_new_I(CstModule * v_module, CstComponent * v_parent);
-void cst_component_builder_build(CstComponentBuilder *self, CstComponent *v_component);
+CstBuilder *cst_component_builder_new(void);
+CstBuilder *cst_component_builder_new_I(CstParser *parser);
+
+CstValueMap * cst_component_builder_get_value_map(CstComponentBuilder * self, const SysChar * key);
+void cst_component_builder_set_value_map(CstComponentBuilder * self, CstValueMap * map);
 
 void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name);
-void cst_component_builder_set_id(CstComponentBuilder *self, const SysChar *v_id);
-const SysChar *cst_component_builder_get_id(CstComponentBuilder *self);
 
 void cst_component_builder_set_v_parent(CstComponentBuilder *self, CstComponent * v_parent);
 CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self);
@@ -44,10 +43,17 @@ CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self);
 void cst_component_builder_set_v_module(CstComponentBuilder *self, CstModule * v_module);
 CstModule * cst_component_builder_get_v_module(CstComponentBuilder *self);
 
-void cst_component_builder_build_component(CstComponentBuilder *self, CstComponent *o);
+void cst_component_builder_set_css(CstComponentBuilder* self, CstCssGroup *g);
+SysBool cst_component_builder_remove_css(CstComponentBuilder * self, CstCssGroup * g);
 
-void cst_component_builder_set_v_render(CstComponentBuilder *self, CstRender * v_render);
-CstRender * cst_component_builder_get_v_render(CstComponentBuilder *self);
+void cst_component_builder_set_id(CstComponentBuilder *self, const SysChar * id);
+const SysChar * cst_component_builder_get_id(CstComponentBuilder *self);
+
+void cst_component_builder_set_v_pnode(CstComponentBuilder *self, CstNode * v_pnode);
+CstNode * cst_component_builder_get_v_pnode(CstComponentBuilder *self);
+
+void cst_component_builder_set_css_env(CstComponentBuilder *self, FREnv * css_env);
+FREnv * cst_component_builder_get_css_env(CstComponentBuilder *self);
 
 SYS_END_DECLS
 

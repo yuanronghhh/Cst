@@ -59,16 +59,17 @@ void cst_parser_module_parse(CstParser* self, CstModule *v_module) {
   sys_return_if_fail(v_module != NULL);
 
   ast_module_parse(self->root_node, v_module);
+
   sys_clear_pointer(&self->root_node, ast_node_free);
 }
 
-void cst_parser_gstyle_parse(CstParser* self, CstCssEnv *gcss_env) {
+void cst_parser_gstyle_parse(CstParser* self) {
   sys_return_if_fail(self != NULL);
 
   GStyle* gstyle = ast_root_get_gstyle(self->root_node);
   sys_return_if_fail(gstyle != NULL);
 
-  ast_gstyle_parse(gstyle, gcss_env, cst_parser_get_filename(self));
+  ast_gstyle_parse(gstyle, cst_parser_get_filename(self));
 }
 
 /* object api */

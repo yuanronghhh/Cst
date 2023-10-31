@@ -16,7 +16,6 @@ struct _CstNodeBuilder {
   SysObject parent;
 
   /* < private > */
-  CstRender* v_render;
   CstModule* v_module;
   CstComponent* v_component;
   CstNode* v_pnode;
@@ -38,15 +37,15 @@ struct _CstNodeBuilder {
 struct _CstNodeBuilderClass {
   SysObjectClass parent;
 
-  void (*construct) (CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render);
+  void (*construct) (CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
   void (*parse) (CstNodeBuilder *o, JNode *jnode);
   void (*build) (CstNodeBuilder *o, CstNode *node);
 };
 
 SysType cst_node_builder_get_type(void);
 CstNodeBuilder *cst_node_builder_new(void);
-CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render);
-CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode, CstRender *v_render);
+CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode);
+CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode);
 
 CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self);
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self);

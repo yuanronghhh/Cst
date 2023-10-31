@@ -18,8 +18,6 @@ struct _CstModule {
   FREnv parent;
 
   /* <private> */
-  CstManager* manager;
-
   SysInt count;
   FREnv* function_env;
   SysList* awatches;
@@ -33,14 +31,17 @@ SYS_API SysType cst_module_get_type(void);
 
 SYS_API CstModule* cst_module_new(void);
 SysBool cst_module_load(CstModule *self);
-SYS_API CstModule* cst_module_new_I(CstManager *manager, CstModule *pmodule, const SysChar *path);
+SYS_API CstModule* cst_module_new_I(CstModule *pmodule, const SysChar *path);
 
 SysInt cst_module_get_hashcode(CstModule* self);
 
 const SysChar *cst_module_get_path(CstModule* self);
+CstModule* cst_module_load_path(CstModule* parent, const SysChar* path);
 SysBool cst_module_is_loaded(CstModule *self);
 
-CstManager *cst_module_get_manager(CstModule *self);
+void cst_module_setup(void);
+void cst_module_teardown(void);
+
 FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
 
 SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent);
@@ -48,15 +49,15 @@ SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent);
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);
 
-void cst_module_set_comp(CstModule * self, const SysChar * key, CstComponent * comp);
-CstComponent* cst_module_get_comp(CstModule * self, const SysChar * comp_name);
+void cst_module_set_component(CstModule * self, const SysChar * key, CstComponent * comp);
+CstComponent* cst_module_get_component(CstModule *self, const SysChar *comp_name);
 
 void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, const SysChar *func_name, FREventFunc func);
 SysList* cst_module_add_awatch(CstModule * self, FRAWatch *awatch);
 void cst_module_remove_awatch(CstModule * self, SysList * awatch_link);
 
-void cst_module_set_root_comp(CstModule *self, CstComponent *comp);
-CstComponent *cst_module_get_root_comp(CstModule *self);
+void cst_module_set_root_component(CstModule *self, CstComponent *comp);
+CstComponent *cst_module_get_root_component(CstModule *self);
 
 SysChar *cst_module_new_uid(CstModule *self);
 SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const SysChar *path);

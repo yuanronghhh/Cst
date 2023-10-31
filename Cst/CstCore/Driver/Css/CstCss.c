@@ -2,7 +2,6 @@
 #include <CstCore/Driver/Css/CstCssPair.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 
-
 void cst_css_setup(void) {
   cst_css_pair_setup();
   cst_css_env_setup();

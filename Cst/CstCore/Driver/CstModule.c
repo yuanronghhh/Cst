@@ -9,14 +9,49 @@
 #include <CstCore/Driver/CstNodeRealizer.h>
 
 
+static FREnv* root_module = NULL;
+
+
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
 
+
+CstModule* cst_module_load_path(CstModule* parent, const SysChar* path) {
+  sys_return_val_if_fail(path != NULL, NULL);
+
+  CstModule *mod, *old;
+
+  old = fr_env_get(root_module, (SysPointer)path));
+
+  if(old != NULL) {
+    if(!cst_module_is_loaded(old)) {
+      sys_error_N("module load cycle in %s: %s",
+          cst_module_get_path(parent),
+          cst_module_get_path(old));
+      return NULL;
+    } else {
+      return old;
+    }
+  }
+
+  mod = cst_module_new_I(parent, path);
+  if (mod == NULL) {
+    return NULL;
+  }
+
+  fr_env_set(root_module, cst_module_get_path(mod), (SysPointer)mod);
+
+  if (!cst_module_load(mod)) {
+    sys_abort_N("module parse failed: %s", path);
+    return NULL;
+  }
+
+  return mod;
+}
 
 SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const SysChar *path) {
   sys_return_val_if_fail(path != NULL, false);
 
   const SysChar *id;
-  CstManager *manager;
   CstModule *child;
   CstComponent *comp;
 
@@ -25,34 +60,26 @@ SysBool cst_module_for_import(SysPointer user_data, SysPtrArray *sarray, const S
     return false;
   }
 
-  manager = cst_module_get_manager(self);
-
-  child = cst_manager_load_module(manager, self, path);
+  child = cst_module_load_path(self, path);
   if (child == NULL) {
     sys_error_N("import module failed: %s", path);
     abort();
   }
 
   if (sarray->len > 0) {
-    comp = cst_module_get_root_comp(child);
+    comp = cst_module_get_root_component(child);
 
     for (SysUInt i = 0; i < sarray->len; i++) {
       id = sarray->pdata[i];
 
       if (comp) {
 
-        cst_module_set_comp(self, (SysPointer)id, comp);
+        cst_module_set_component(self, (SysPointer)id, comp);
       }
     }
   }
 
   return true;
-}
-
-CstManager *cst_module_get_manager(CstModule *self) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  return self->manager;
 }
 
 SysBool cst_module_is_loaded(CstModule *self) {
@@ -75,13 +102,13 @@ SysBool cst_module_load(CstModule *self) {
   return true;
 }
 
-void cst_module_set_root_comp(CstModule *self, CstComponent *comp) {
+void cst_module_set_root_component(CstModule *self, CstComponent *comp) {
   sys_return_if_fail(self != NULL);
 
   self->root_component = comp;
 }
 
-CstComponent *cst_module_get_root_comp(CstModule *self) {
+CstComponent *cst_module_get_root_component(CstModule *self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->root_component;
@@ -127,7 +154,7 @@ void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc 
   fr_env_set(self->function_env, sys_strdup(func_name), (SysPointer)func);
 }
 
-void cst_module_set_comp(CstModule *self, const SysChar *key, CstComponent *comp) {
+void cst_module_set_component(CstModule *self, const SysChar *key, CstComponent *comp) {
 
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(comp != NULL);
@@ -136,7 +163,7 @@ void cst_module_set_comp(CstModule *self, const SysChar *key, CstComponent *comp
   sys_object_ref(comp);
 }
 
-CstComponent* cst_module_get_comp(CstModule *self, const SysChar *comp_name) {
+CstComponent* cst_module_get_component(CstModule *self, const SysChar *comp_name) {
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(comp_name != NULL, NULL);
 
@@ -213,20 +240,28 @@ SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent) {
   return true;
 }
 
+void cst_module_setup(void) {
+  sys_assert(root_module == NULL && "module should init only once.");
+
+  root_module = (FREnv *)cst_module_new_I(NULL, "<root-module>");
+}
+
+void cst_module_teardown(void) {
+  sys_object_unref(root_module);
+}
+
 /* object api */
 static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
 
   FR_ENV_CLASS(cst_module_parent_class)->construct(o, ht, parent);
 }
 
-static void cst_module_construct(CstModule *self, CstManager *manager, CstModule *pmodule, CstParser *ps) {
+static void cst_module_construct(CstModule *self, CstModule *pmodule, CstParser *ps) {
   SysHashTable *ht;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
-
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
-  self->manager = manager;
   self->parser = ps;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
@@ -235,12 +270,12 @@ static void cst_module_construct(CstModule *self, CstManager *manager, CstModule
   self->root_component = NULL;
 }
 
-CstModule* cst_module_new_I(CstManager* manager, CstModule* pmodule, const SysChar* path) {
+CstModule* cst_module_new_I(CstModule* pmodule, const SysChar* path) {
   CstModule* self = cst_module_new();
 
   CstParser* ps = cst_parser_new_I(path);
 
-  cst_module_construct(self, manager, pmodule, ps);
+  cst_module_construct(self, pmodule, ps);
 
   cst_parser_set_data(self->parser, self);
   if (!cst_parser_parse(self->parser)) {

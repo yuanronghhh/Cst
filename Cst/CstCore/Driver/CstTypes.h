@@ -179,6 +179,9 @@ typedef struct _CstRenderContextClass CstRenderContextClass;
 typedef struct _CstNodeRealizer CstNodeRealizer;
 typedef struct _CstNodeRealizerClass CstNodeRealizerClass;
 
+typedef struct _CstBuilder CstBuilder;
+typedef struct _CstBuilderClass CstBuilderClass;
+
 typedef struct _CstNodeBuilder CstNodeBuilder;
 typedef struct _CstNodeBuilderClass CstNodeBuilderClass;
 typedef struct _CstNode CstNode;
@@ -191,9 +194,6 @@ typedef struct _CstCssNode CstCssNode;
 typedef struct _CstCssNodeClass CstCssNodeClass;
 typedef struct _CstCssPair CstCssPair;
 typedef struct _CstCssPairClass CstCssPairClass;
-
-typedef struct _CstCssEnv CstCssEnv;
-typedef struct _CstCssEnvClass CstCssEnvClass;
 
 #include <CstCore/Front/CstType.h>
 

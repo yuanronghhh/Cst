@@ -57,10 +57,6 @@ SysBool cst_node_builder_parse_base(CstNodeBuilder *self, const SysChar *v_base[
 void cst_node_builder_build_i(CstNodeBuilder *self, CstNode *node) {
   sys_return_if_fail(self != NULL);
   SysChar *id;
-  CstLayer *layer;
-
-  CstRender *v_render = self->v_render;
-  sys_return_if_fail(v_render != NULL);
 
   if (self->v_id) {
 
@@ -73,16 +69,9 @@ void cst_node_builder_build_i(CstNodeBuilder *self, CstNode *node) {
     sys_free_N(id);
   }
 
-  layer = cst_render_get_layer_by_type(v_render, self->v_layer);
-  sys_return_if_fail(layer != NULL);
-
-  cst_node_set_v_module(node, self->v_module);
-  cst_node_set_v_component(node, self->v_component);
-  cst_node_set_v_pnode(node, self->v_pnode);
   cst_node_set_v_awatch_list(node, self->v_awatch_list);
   cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
   cst_node_set_v_css_list(node, self->v_css_list);
-  cst_node_set_v_layer(node, layer);
 
   if (self->v_value) {
     cst_node_set_v_value(node, self->v_value);
@@ -447,26 +436,25 @@ CstNodeBuilder *cst_node_builder_new(void) {
   return sys_object_new(CST_TYPE_NODE_BUILDER, NULL);
 }
 
-void cst_node_builder_construct(CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render) {
-  o->v_render = v_render;
+void cst_node_builder_construct(CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {
   o->v_module = v_module;
   o->v_component = v_component;
   o->v_pnode = v_pnode;
   o->v_layer = CST_NODE_LAYER_BOX;
 }
 
-CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode, CstRender *v_render) {
+CstNodeBuilder *cst_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {
   CstNodeBuilder *o = cst_node_builder_new();
 
-  cst_node_builder_construct(o, v_module, v_component, v_pnode, v_render);
+  cst_node_builder_construct(o, v_module, v_component, v_pnode);
 
   return o;
 }
 
-CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode, CstRender *v_render) {
+CstNodeBuilder *cst_node_builder_new_simple(CstModule* v_module, CstNode* v_pnode) {
   CstNodeBuilder *o = cst_node_builder_new();
 
-  cst_node_builder_construct(o, v_module, NULL, v_pnode, v_render);
+  cst_node_builder_construct(o, v_module, NULL, v_pnode);
 
   return o;
 }

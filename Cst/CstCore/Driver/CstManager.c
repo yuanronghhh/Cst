@@ -5,41 +5,9 @@
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
 
+
 SYS_DEFINE_TYPE(CstManager, cst_manager, SYS_TYPE_OBJECT);
 
-
-CstModule* cst_manager_load_module(CstManager *self, CstModule* parent, const SysChar* path) {
-  sys_return_val_if_fail(path != NULL, NULL);
-
-  CstModule *mod, *old;
-
-  old = (CstModule *)fr_env_get(self->module_env, (SysPointer)path);
-
-  if(old != NULL) {
-    if(!cst_module_is_loaded(old)) {
-      sys_error_N("module load cycle in %s: %s",
-          cst_module_get_path(parent),
-          cst_module_get_path(old));
-      return NULL;
-    } else {
-      return old;
-    }
-  }
-
-  mod = cst_module_new_I(self, parent, path);
-  if (mod == NULL) {
-    return NULL;
-  }
-
-  fr_env_set(self->module_env, cst_module_get_path(mod), (SysPointer)mod);
-
-  if (!cst_module_load(mod)) {
-    sys_abort_N("module parse failed: %s", path);
-    return NULL;
-  }
-
-  return mod;
-}
 
 void cst_manager_gencode(CstManager *manager, CstModule* mod) {
 }
@@ -70,8 +38,6 @@ void cst_manager_construct(CstManager *self) {
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
   self->function_env = fr_env_new_I(ht, NULL);
-
-  sys_rec_mutex_init(&self->mlock);
 }
 
 CstManager* cst_manager_new_I(void) {
@@ -92,7 +58,6 @@ static void cst_manager_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->module_env, _sys_object_unref);
   sys_clear_pointer(&self->function_env, _sys_object_unref);
-  sys_rec_mutex_clear(&self->mlock);
 
   SYS_OBJECT_CLASS(cst_manager_parent_class)->dispose(o);
 }

@@ -156,7 +156,7 @@ CstNode *cst_render_new_body(CstRender *self) {
   CstNodeBuilder* builder;
   CstNode *node;
 
-  builder = cst_node_builder_new_I(NULL, NULL, NULL, self);
+  builder = cst_node_builder_new_I(NULL, NULL, NULL);
 
   node = cst_node_new();
   cst_node_set_name(node, "body");

@@ -56,11 +56,11 @@ static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
   return false;
 }
 
-SysBool cst_css_group_set_by_id(SysPtrArray *ptr, CstCssEnv *env, const SysChar *id) {
+SysBool cst_css_group_set_by_id(SysPtrArray *ptr, FREnv *env, const SysChar *id) {
   sys_return_val_if_fail(ptr != NULL, false);
   sys_return_val_if_fail(id != NULL, false);
 
-  CstCssGroup *self = cst_css_env_get_r(env, id);
+  CstCssGroup *self = fr_env_get_r(env, id);
   if (self == NULL) {
     sys_warning_N("set css by id failed: %s", id);
     return false;

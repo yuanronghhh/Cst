@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstNode.h>
 
+#include <CstCore/Front/Common/CstLBox.h>
 #include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Driver/CstLayerNode.h>
 #include <CstCore/Driver/CstComponent.h>
@@ -67,42 +68,6 @@ void cst_node_unlink_node_r(CstNode *self) {
   sys_return_if_fail(self != NULL);
 
   fr_node_handle_node_ft_r(FR_NODE(self), node_unlink_one, NULL);
-}
-
-void cst_node_set_v_module(CstNode *self, CstModule * v_module) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_module = v_module;
-}
-
-CstModule * cst_node_get_v_module(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_module;
-}
-
-void cst_node_set_v_component(CstNode *self, CstComponent * v_component) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_component = v_component;
-}
-
-CstComponent * cst_node_get_v_component(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_component;
-}
-
-void cst_node_set_v_pnode(CstNode *self, CstNode * v_pnode) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_pnode = v_pnode;
-}
-
-CstNode * cst_node_get_v_pnode(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_pnode;
 }
 
 void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list) {
@@ -211,6 +176,23 @@ SysInt cst_node_get_v_z_index(CstNode *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
   return self->v_z_index;
+}
+
+CstNode* cst_node_new_layout_node(CstModule *v_module) {
+  sys_return_val_if_fail(v_module != NULL, NULL);
+
+  CstNode *layout;
+  CstNodeBuilder *v_node_builder;
+
+  layout = cst_node_new();
+  v_node_builder = cst_node_builder_new_I(v_module, NULL, NULL);
+
+  cst_node_set_name(layout, "<layout-node>");
+  cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
+  cst_node_construct(layout, v_node_builder);
+  sys_object_unref(v_node_builder);
+
+  return layout;
 }
 
 /* api */

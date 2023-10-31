@@ -20,11 +20,6 @@ struct _CstNode {
   SysChar     *id;
   SysType     rnode_type;
 
-  /* builder */
-  CstModule* v_module;
-  CstComponent* v_component;
-  CstNode* v_pnode;
-
   /* property */
   SysList *v_awatch_list;
   SysList *v_nodemap_list;
@@ -59,6 +54,7 @@ void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
 CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name);
+CstNode* cst_node_new_layout_node(CstModule *v_module);
 
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
@@ -71,15 +67,6 @@ CstRenderNode *cst_node_new_render_node(CstNode* self);
 void cst_node_unlink_node_r(CstNode *self);
 
 /* props */
-void cst_node_set_v_module(CstNode *self, CstModule * v_module);
-CstModule * cst_node_get_v_module(CstNode *self);
-
-void cst_node_set_v_component(CstNode *self, CstComponent * v_component);
-CstComponent * cst_node_get_v_component(CstNode *self);
-
-void cst_node_set_v_pnode(CstNode *self, CstNode * v_pnode);
-CstNode * cst_node_get_v_pnode(CstNode *self);
-
 void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list);
 SysList * cst_node_get_v_awatch_list(CstNode *self);
 

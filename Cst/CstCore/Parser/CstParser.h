@@ -27,21 +27,21 @@ struct _CstParserClass {
   SysObjectClass parent;
 };
 
-SYS_API SysType cst_parser_get_type(void);
-SYS_API CstParser *cst_parser_new(void);
-SYS_API CstParser *cst_parser_new_I(const SysChar *fullpath);
+SysType cst_parser_get_type(void);
+CstParser *cst_parser_new(void);
+CstParser *cst_parser_new_I(const SysChar *fullpath);
 
-SYS_API void cst_parser_set_root(CstParser* self, AstNode* root);
+void cst_parser_set_root(CstParser* self, AstNode* root);
 
-SYS_API void cst_parser_set_data(CstParser* self, SysPointer user_data);
-SYS_API SysPointer cst_parser_get_data(CstParser* self);
-SYS_API const SysChar* cst_parser_get_filename(CstParser* self);
-SYS_API void cst_parser_error(CstParser* self, const SysChar* format, ...);
-SYS_API bool cst_parser_parse(CstParser* self);
-SYS_API yyscan_t cst_parser_get_scanner(CstParser* self);
+void cst_parser_set_data(CstParser* self, SysPointer user_data);
+SysPointer cst_parser_get_data(CstParser* self);
+const SysChar* cst_parser_get_filename(CstParser* self);
+void cst_parser_error(CstParser* self, const SysChar* format, ...);
+bool cst_parser_parse(CstParser* self);
+yyscan_t cst_parser_get_scanner(CstParser* self);
 
-SYS_API void cst_parser_module_parse(CstParser* self, CstModule* v_module);
-SYS_API void cst_parser_gstyle_parse(CstParser* self, CstCssEnv* gcss_env);
+void cst_parser_module_parse(CstParser* self, CstModule *v_module);
+void cst_parser_gstyle_parse(CstParser* self, FREnv* gcss_env);
 
 
 SYS_END_DECLS

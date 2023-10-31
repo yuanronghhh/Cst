@@ -68,9 +68,10 @@ void cst_application_env_setup(void) {
   fr_main_setup();
   fr_window_setup();
   fr_canvas_setup();
-  cst_css_setup();
-  cst_render_node_setup();
   fr_events_setup();
+  cst_css_setup();
+  cst_module_setup();
+  cst_render_node_setup();
 
 #if CST_USE_MONO
   fr_mono_setup(CST_MONO_HOME);
@@ -88,7 +89,9 @@ void cst_application_env_teardown(void) {
   }
 
   cst_render_node_teardown();
+  cst_module_setup();
   cst_css_teardown();
+
   fr_events_teardown();
   fr_canvas_teardown();
   fr_window_teardown();

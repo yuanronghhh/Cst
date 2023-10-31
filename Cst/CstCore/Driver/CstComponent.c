@@ -42,14 +42,6 @@ CstNode *cst_component_get_layout_node(CstComponent *self) {
   return self->layout_node;
 }
 
-void cst_component_set_id(CstComponent* self, const SysChar *id) {
-  sys_return_if_fail(self != NULL);
-
-  sys_assert(self->id == NULL);
-
-  self->id = sys_strdup(id);
-}
-
 SysBool component_print(FRNode *o, SysPointer user_data) {
   CstNode *node = CST_NODE(o);
   CstComponent *self = user_data;
@@ -65,6 +57,14 @@ void cst_component_print(CstComponent* self) {
   fr_node_handle_bfs_r(FR_NODE(self->layout_node), component_print, self);
 }
 
+void cst_component_set_id(CstComponent* self, const SysChar *id) {
+  sys_return_if_fail(self != NULL);
+
+  sys_assert(self->id == NULL);
+
+  self->id = sys_strdup(id);
+}
+
 const SysChar* cst_component_get_id(CstComponent* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -74,38 +74,56 @@ const SysChar* cst_component_get_id(CstComponent* self) {
 void cst_component_set_css(CstComponent* self, CstCssGroup *g) {
   sys_return_if_fail(self != NULL);
 
-  cst_css_env_set(self->style_env, (SysPointer)cst_css_group_get_id(g), g);
+  fr_env_set(self->css_env, (SysPointer)cst_css_group_get_id(g), g);
 }
 
 SysBool cst_component_remove_css(CstComponent* self, CstCssGroup *g) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return cst_css_env_remove(self->style_env, cst_css_group_get_id(g));
+  return fr_env_remove(self->css_env, cst_css_group_get_id(g));
 }
 
-FREnv *cst_component_get_css_env(CstComponent* self) {
+void cst_component_set_css_env(CstComponent *self, FREnv * css_env) {
+  sys_return_if_fail(self != NULL);
+
+  self->css_env = css_env;
+}
+
+FREnv * cst_component_get_css_env(CstComponent *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->style_env;
+  return self->css_env;
 }
 
 CstCssGroup *cst_component_get_css(CstComponent* self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_css_env_get(CST_CSS_ENV(self->style_env), key);
+  return fr_env_get(self->css_env, key);
 }
 
 CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(key != NULL, NULL);
 
-  return cst_css_env_get_r(CST_CSS_ENV(self->style_env), key);
+  return fr_env_get_r(self->css_env, key);
 }
 
 CstValueMap *cst_component_get_value_map(CstComponent *self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return fr_env_get_r(self->prop_maps_env, key);
+}
+
+void cst_component_set_prop_maps_env(CstComponent *self, FREnv * prop_maps_env) {
+  sys_return_if_fail(self != NULL);
+
+  self->prop_maps_env = prop_maps_env;
+}
+
+FREnv * cst_component_get_prop_maps_env(CstComponent *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->prop_maps_env;
 }
 
 void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
@@ -135,7 +153,13 @@ void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
 void cst_component_bind_parent(CstComponent *self, CstComponent *pself) {
 
   fr_env_set_parent(self->prop_maps_env, pself->prop_maps_env);
-  fr_env_set_parent(self->style_env, pself->style_env);
+  fr_env_set_parent(self->css_env, pself->css_env);
+}
+
+FREnv *cst_component_new_prop_maps_env(FREnv *parent) {
+  SysHashTable *ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+
+  return fr_env_new_I(ht, parent);
 }
 
 static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *builder) {
@@ -149,13 +173,7 @@ static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *b
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(pcomp));
 
-  cst_component_builder_build_component(builder, self);
-
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
-  self->prop_maps_env = fr_env_new_I(ht, NULL);
-
-  self->style_env = cst_css_env_new_I(NULL);
-  self->layout_node = NULL;
+  cst_component_builder_build(builder, self);
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {
@@ -168,7 +186,7 @@ static void cst_component_class_init(CstComponentClass* cls) {
 static void cst_component_dispose(SysObject* o) {
   CstComponent *self = CST_COMPONENT(o);
 
-  sys_clear_pointer(&self->style_env, _sys_object_unref);
+  sys_clear_pointer(&self->css_env, _sys_object_unref);
   sys_clear_pointer(&self->prop_maps_env, _sys_object_unref);
 
   cst_node_unlink_node_r(self->layout_node);

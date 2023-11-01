@@ -171,6 +171,11 @@ SysBool cst_css_group_list_exists(SysPtrArray *css_list, CstCssGroup *g) {
   return false;
 }
 
+SysPtrArray *cst_css_group_list_new(void) {
+
+  return sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
+}
+
 /* object api */
 static void cst_css_group_construct(CstCssGroup* self, const SysChar *id) {
   self->base = NULL;

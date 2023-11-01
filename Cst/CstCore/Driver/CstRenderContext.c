@@ -10,7 +10,7 @@
 
 SYS_DEFINE_TYPE(CstRenderContext, cst_render_context, SYS_TYPE_OBJECT);
 
-static SysHashTable* grctx_ht = NULL;
+static SysHashTable* g_rctx_ht = NULL;
 
 CstRenderContext* cst_render_context_new(void) {
   return sys_object_new(CST_TYPE_RENDER_CONTEXT, NULL);
@@ -317,14 +317,15 @@ void cst_render_context_set_paint(CstRenderContext* self, SysBool bvalue) {
 }
 
 void cst_render_context_setup(void) {
+  sys_assert(g_rctx_ht == NULL);
 
-  grctx_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);
+  g_rctx_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, NULL);
 }
 
 void cst_render_context_teardown(void) {
-  sys_assert(grctx_ht != NULL && "render context should init before use.");
+  sys_assert(g_rctx_ht != NULL && "render context should init before use.");
 
-  sys_hash_table_unref(grctx_ht);
+  sys_hash_table_unref(g_rctx_ht);
 }
 
 void constraint_width(CstRenderNode* rnode, CstLayout* layout, SysPointer user_data) {

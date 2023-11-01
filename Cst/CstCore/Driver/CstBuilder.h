@@ -15,20 +15,21 @@ struct _CstBuilder {
   SysObject parent;
 
   /* < private > */
-  CstParser *parser;
+  CstContext *c;
 };
 
 struct _CstBuilderClass {
   SysObjectClass parent;
 
-  void (*construct) (CstParser *parser);
-  void (*parse) (CstParser *parser);
+  void (*parse) (CstBuilder *self, CstParser *ps);
   void (*build) (CstBuilder *self, SysObject *o);
 };
 
 SysType cst_builder_get_type(void);
 CstBuilder *cst_builder_new(void);
-CstBuilder *cst_builder_new_I(CstParser *parser);
+
+void cst_builder_parse(CstNodeBuilder *self, CstParser *ps);
+void cst_builder_build(CstNodeBuilder *self, SysObject *o);
 
 SYS_END_DECLS
 

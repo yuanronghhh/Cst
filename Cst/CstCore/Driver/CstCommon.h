@@ -10,6 +10,9 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstTypes.h>
 #include <CstCore/Driver/CstContext.h>
 
+void cst_common_setup(void);
+void cst_common_teardown(void);
+
 SYS_END_DECLS
 
 #endif

@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstNode.h>
 
+#include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLBox.h>
 #include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Driver/CstLayerNode.h>
@@ -10,6 +11,7 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNodeRealizer.h>
+
 
 
 static const SysChar* CST_NODE_PROP_NAMES[] = {
@@ -178,21 +180,24 @@ SysInt cst_node_get_v_z_index(CstNode *self) {
   return self->v_z_index;
 }
 
-CstNode* cst_node_new_layout_node(CstModule *v_module) {
-  sys_return_val_if_fail(v_module != NULL, NULL);
-
+CstNode* cst_node_new_layout_node(void) {
   CstNode *layout;
-  CstNodeBuilder *v_node_builder;
 
   layout = cst_node_new();
-  v_node_builder = cst_node_builder_new_I(v_module, NULL, NULL);
-
   cst_node_set_name(layout, "<layout-node>");
   cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
-  cst_node_construct(layout, v_node_builder);
-  sys_object_unref(v_node_builder);
 
   return layout;
+}
+
+CstNode *cst_node_new_body(void) {
+  CstNode *node;
+
+  node = cst_node_new();
+  cst_node_set_name(node, "body");
+  cst_node_set_rnode_type(node, CST_TYPE_LBODY);
+
+  return node;
 }
 
 /* api */
@@ -352,8 +357,6 @@ static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
 
   SysChar* id = self->id;
   sys_assert(id == NULL && "node build should noly once !");
-
-  cst_node_builder_build(builder, self);
 }
 
 /* sys object api */

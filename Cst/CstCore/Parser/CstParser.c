@@ -58,7 +58,7 @@ void cst_parser_module_parse(CstParser* self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_module != NULL);
 
-  ast_module_parse(self->root_node, v_module);
+  ast_module_parse(self, self->root_node);
 
   sys_clear_pointer(&self->root_node, ast_node_free);
 }
@@ -74,7 +74,6 @@ void cst_parser_gstyle_parse(CstParser* self) {
 
 /* object api */
 static void cst_parser_construct(CstParser *self, FILE *fp, const SysChar *fullpath) {
-
   self->fp = fp;
   self->filename = sys_strdup(fullpath);
   self->scanner = NULL;

@@ -140,6 +140,25 @@ CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, 
   return root;
 }
 
+SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[], SysUInt len) {
+  SysPtrArray * list = cst_css_group_list_new();
+
+  for (SysUInt i = 0; i < len; i++) {
+    pname = v_base[i];
+    if (pname == NULL) { break; }
+
+    ng = cst_component_get_css_r(component, pname);
+    if (ng == NULL) {
+
+      sys_warning_N("css \"%s\" in component \"%s\" not found", pname, component->id);
+      continue;
+    }
+
+    cst_css_group_set_r(list, ng);
+  }
+
+  return list;
+}
 /* sys object api */
 void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
   sys_return_if_fail(builder != NULL);

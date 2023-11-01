@@ -25,18 +25,17 @@ struct _CstModule {
   SysBool loaded;
   CstComponent* root_component;
   CstParser* parser;
+  CstContext *c;
 };
 
-SYS_API SysType cst_module_get_type(void);
+SysType cst_module_get_type(void);
 
-SYS_API CstModule* cst_module_new(void);
+CstModule* cst_module_new(void);
 SysBool cst_module_load(CstModule *self);
-SYS_API CstModule* cst_module_new_I(CstModule *pmodule, const SysChar *path);
-
+CstModule* cst_module_new_I(CstContext *c, CstModule* pmodule, const SysChar* path);
 SysInt cst_module_get_hashcode(CstModule* self);
-
 const SysChar *cst_module_get_path(CstModule* self);
-CstModule* cst_module_load_path(CstModule* parent, const SysChar* path);
+CstModule* cst_module_load_path(CstContext *c, CstModule* parent, const SysChar* path);
 SysBool cst_module_is_loaded(CstModule *self);
 
 void cst_module_setup(void);

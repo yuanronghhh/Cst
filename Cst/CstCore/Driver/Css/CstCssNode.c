@@ -1,4 +1,5 @@
 #include <CstCore/Driver/Css/CstCssNode.h>
+
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/Css/CstCssClosure.h>
@@ -6,9 +7,7 @@
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
 
-
-static SysHashTable* gcss_node_ht = NULL;
-
+static SysHashTable* g_css_node_ht = NULL;
 
 SYS_DEFINE_TYPE(CstCssNode, cst_css_node, SYS_TYPE_OBJECT);
 
@@ -40,19 +39,6 @@ void cst_css_node_set_value(CstCssNode *self, CstRenderNode *rnode, CstLayout *l
   self->set_value(rnode, layout, user_data);
 }
 
-CstCssNode *cst_css_node_lookup(const SysChar *name) {
-  sys_return_val_if_fail(name != NULL, NULL);
-  sys_return_val_if_fail(gcss_node_ht != NULL, NULL);
-
-  return sys_hash_table_lookup(gcss_node_ht, (const SysPointer)name);
-}
-
-void cst_css_node_bind_map(SysChar* name, SysInt css_type, SysInt css_state, CstCssFunc set_value) {
-  CstCssNode* node = cst_css_node_new_I(name, css_type, css_state, set_value);
-
-  sys_hash_table_insert(gcss_node_ht, (SysPointer)node->name, (SysPointer)node);
-}
-
 void cst_css_node_set_css_ptype(CstCssNode *self, SysInt css_ptype) {
   sys_return_if_fail(self != NULL);
 
@@ -65,16 +51,43 @@ SysInt cst_css_node_get_css_ptype(CstCssNode *self) {
   return self->css_ptype;
 }
 
-void cst_css_node_setup(void) {
-  sys_assert(gcss_node_ht == NULL && "css node should setup only once.");
+void cst_css_node_set_name(CstCssNode *self, const SysChar* name) {
+  sys_return_if_fail(self != NULL);
 
-  gcss_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+  if(self->name) {
+
+    sys_clear_pointer(&self->name, sys_free);
+  }
+
+  self->name = sys_strdup(name);
+}
+
+const SysChar* cst_css_node_get_name(CstCssNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->name;
+}
+
+CstCssNode *cst_css_node_get_g_css_node(const SysChar *name) {
+  sys_return_val_if_fail(name != NULL, NULL);
+
+  return sys_hash_table_lookup(g_css_node_ht, (const SysPointer)name);
+}
+
+void cst_css_node_set_g_css_node(CstCssNode *o) {
+  sys_return_if_fail(o != NULL);
+
+  sys_hash_table_insert(g_css_node_ht, (SysPointer)cst_css_node_get_name(o), (SysPointer)o);
+}
+
+void cst_css_node_setup(void) {
+  sys_assert(g_css_node_ht == NULL);
+
+  g_css_node_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
 }
 
 void cst_css_node_teardown(void) {
-  sys_assert(gcss_node_ht != NULL && "css value should init before use.");
-
-  sys_hash_table_unref(gcss_node_ht);
+  sys_clear_pointer(&g_css_node_ht, sys_hash_table_unref);
 }
 
 /* object api */

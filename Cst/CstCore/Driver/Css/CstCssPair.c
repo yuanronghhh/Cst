@@ -232,25 +232,40 @@ void cst_css_pair_height_percent(CstRenderNode * rnode, CstLayout *layout, SysIn
 }
 
 void cst_css_pair_setup(void) {
+  CstCssNode *node;
+
   cst_css_node_setup();
 
-  cst_css_node_bind_map("x"            ,  CST_CSS_PROP_X            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_x);
-  cst_css_node_bind_map("y"            ,  CST_CSS_PROP_Y            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_y);
-  cst_css_node_bind_map("width"        ,  CST_CSS_PROP_W            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_width);
-  cst_css_node_bind_map("height"       ,  CST_CSS_PROP_H            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_height);
-  cst_css_node_bind_map("layer"        ,  CST_CSS_PROP_LAYER        ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_layer);
-  cst_css_node_bind_map("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_margin);
-  cst_css_node_bind_map("border"       ,  CST_CSS_PROP_BORDER       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_border);
-  cst_css_node_bind_map("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_padding);
-  cst_css_node_bind_map("font-family"  ,  CST_CSS_PROP_FONT_FAMILY  ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_font_family);
-  cst_css_node_bind_map("font-size"    ,  CST_CSS_PROP_FONT_SIZE    ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_font_size);
-  cst_css_node_bind_map("wrap"         ,  CST_CSS_PROP_WRAP         ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_wrap);
-  cst_css_node_bind_map("color"        ,  CST_CSS_PROP_COLOR        ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_color);
+  node = cst_css_node_new_I("x"            ,  CST_CSS_PROP_X            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_x);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("x"            ,  CST_CSS_PROP_X            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_x);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("y"            ,  CST_CSS_PROP_Y            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_y);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("width"        ,  CST_CSS_PROP_W            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_width);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("height"       ,  CST_CSS_PROP_H            ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_height);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("layer"        ,  CST_CSS_PROP_LAYER        ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_layer);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("margin"       ,  CST_CSS_PROP_MARGIN       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_margin);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("border"       ,  CST_CSS_PROP_BORDER       ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_border);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("padding"      ,  CST_CSS_PROP_PADDING      ,  CST_RENDER_STATE_LAYOUT  |  CST_RENDER_STATE_RELAYOUT  , cst_css_pair_set_padding);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("font-family"  ,  CST_CSS_PROP_FONT_FAMILY  ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_font_family);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("font-size"    ,  CST_CSS_PROP_FONT_SIZE    ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_font_size);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("wrap"         ,  CST_CSS_PROP_WRAP         ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_wrap);
+  cst_css_node_set_g_css_node(node);
+  node = cst_css_node_new_I("color"        ,  CST_CSS_PROP_COLOR        ,  CST_RENDER_STATE_PAINT   |  CST_RENDER_STATE_REPAINT   , cst_css_pair_set_color);
+  cst_css_node_set_g_css_node(node);
 }
 
 void cst_css_pair_teardown(void) {
-
-  cst_css_node_teardown();
+  cst_css_node_teardown(c);
 }
 
 /* object api */

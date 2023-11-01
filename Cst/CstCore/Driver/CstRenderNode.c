@@ -17,7 +17,7 @@
 static SysMutex gnode_meta_lock;
 #define NODE_META_LOCK sys_mutex_lock(&gnode_meta_lock)
 #define NODE_META_UNLOCK sys_mutex_unlock(&gnode_meta_lock)
-SysHashTable* gnode_meta_ht = NULL;
+SysHashTable* g_node_meta_ht = NULL;
 
 
 SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE);
@@ -191,9 +191,9 @@ SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self) {
   return self->v_css_list;
 }
 
-void cst_render_node_set_meta(const SysChar* name, SysType stype) {
+void cst_render_node_set_meta(CstRenderContext *ctx, const SysChar* name, SysType stype) {
   NODE_META_LOCK;
-  sys_hash_table_insert(gnode_meta_ht, (SysPointer)sys_strdup(name), (SysPointer)stype);
+  sys_hash_table_insert(g_node_meta_ht, (SysPointer)sys_strdup(name), (SysPointer)stype);
   NODE_META_UNLOCK;
 }
 
@@ -203,28 +203,30 @@ SysType cst_render_node_get_meta(const SysChar* name) {
   SysType tp;
 
   NODE_META_LOCK;
-  tp = (SysType)sys_hash_table_lookup(gnode_meta_ht, (SysPointer)name);
+  tp = (SysType)sys_hash_table_lookup(g_node_meta_ht, (SysPointer)name);
   NODE_META_UNLOCK;
 
   return tp;
 }
 
 void cst_render_node_setup(void) {
+  sys_assert(g_node_meta_ht == NULL);
+
   sys_mutex_init(&gnode_meta_lock);
   cst_render_context_setup();
 
-  gnode_meta_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
+  g_node_meta_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
 
-  cst_render_node_set_meta("LBox", CST_TYPE_LBOX);
-  cst_render_node_set_meta("LGrid", CST_TYPE_LGRID);
-  cst_render_node_set_meta("LBody", CST_TYPE_LBODY);
-  cst_render_node_set_meta("Text", CST_TYPE_TEXT);
+  cst_render_node_set_meta(ctx, "LBox", CST_TYPE_LBOX);
+  cst_render_node_set_meta(ctx, "LGrid", CST_TYPE_LGRID);
+  cst_render_node_set_meta(ctx, "LBody", CST_TYPE_LBODY);
+  cst_render_node_set_meta(ctx, "Text", CST_TYPE_TEXT);
 }
 
 void cst_render_node_teardown(void) {
-  sys_return_if_fail(gnode_meta_ht != NULL && "cst_render_node_setup must be called before use node");
+  sys_assert(g_node_meta_ht != NULL && "cst_render_node_setup must be called before use node");
 
-  sys_clear_pointer(&gnode_meta_ht, sys_hash_table_unref);
+  sys_clear_pointer(&g_node_meta_ht, sys_hash_table_unref);
   sys_mutex_clear(&gnode_meta_lock);
   cst_render_context_teardown();
 }

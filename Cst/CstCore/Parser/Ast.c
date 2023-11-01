@@ -823,11 +823,13 @@ static SysBool node_parse_prop_func(JNode *jnode, CstNodeBuilder *builder) {
   return true;
 }
 
-void ast_node_parse(CstNodeBuilder *builder, JNode *jnode) {
+void ast_node_parse(CstNodeBuilder *builder, AstNode *node) {
+  sys_return_if_fail(node->type == AstJsonNode);
+
+  JNode *jnode = node->v.jnode;
+  sys_return_if_fail(jnode != NULL);
   sys_return_if_fail(jnode->type == AstJPair);
   sys_return_if_fail(builder != NULL);
-
-  JPair *pair = jnode->v.v_pair;
 
   if (pair->prop != NULL) {
 
@@ -929,7 +931,11 @@ fail:
 }
 
 /* CstModule */
-SysBool ast_component_parse(Component *ast, CstModule *v_module, CstComponent *v_component, CstNode *v_pnode) {
+SysBool ast_component_parse(AstComponentPass *self, AstNode *ast) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(ast->type != AstComponent, false);
+  Component *comp_ast = ast->v.component;
+
   CstComponent *comp;
   const SysChar *comp_id;
 
@@ -972,18 +978,16 @@ SysBool ast_component_parse(Component *ast, CstModule *v_module, CstComponent *v
 SysBool ast_module_body_func(AstNode *body, AstModulePass *pass) {
   sys_return_val_if_fail(body != NULL, false);
 
-  GStyle *gstyle;
-  Component *ast;
   AstComponentPass comp_pass = {0};
+
+  comp_pass->v_module = pass->v_module;
 
   switch(body->type) {
     case AstImport:
       break;
 
     case AstComponent:
-      ast = body->v.component;
-
-      ast_component_parse(ast, &comp_pass);
+      ast_component_parse(comp_pass, ast);
       break;
 
     case AstGStyle:
@@ -1003,12 +1007,12 @@ SysBool ast_module_body_func(AstNode *body, AstModulePass *pass) {
   return true;
 }
 
-void ast_module_parse(AstNode *root, CstModule *v_module) {
+void ast_module_parse(CstParser * ps, AstNode *ast) {
   sys_return_if_fail(root != NULL);
   sys_return_if_fail(self != NULL);
 
   AstModulePass pass = { 0 };
-  pass.v_module = v_module;
+  pass.v_module = cst_parser_get_data(ps);
 
   ast_iter_narray(root->v.root, (AstNodeFunc)ast_module_body_func, &pass);
 }

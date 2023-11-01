@@ -137,6 +137,7 @@ set(SRC
   ./Config/CstConfig.h.in
   ./CstConfig.h
   ./CstCore.h
+  ./CstCore.c
 )
 
 if(USE_MONO)

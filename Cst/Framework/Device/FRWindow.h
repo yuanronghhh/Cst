@@ -61,6 +61,9 @@ SYS_API const SysChar* fr_key_get_name(SysInt key, SysInt scancode);
 void fr_window_create_vk_surface(FRWindow* window, VkInstance instance, VkSurfaceKHR* surfacekhr);
 #endif
 
+void fr_window_set_gwindow(FRWindow *self, GLFWwindow * gwindow);
+GLFWwindow * fr_window_get_gwindow(FRWindow *self);
+
 SYS_END_DECLS
 
 #endif

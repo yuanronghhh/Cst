@@ -113,7 +113,6 @@ typedef enum _CST_NODE_LAYER_ENUM {
   CST_NODE_LAYER_MASK = (1 << 4) - 1
 } CST_NODE_LAYER_ENUM;
 
-
 typedef struct _CstContext CstContext;
 
 typedef struct _CstApplication CstApplication;

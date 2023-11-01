@@ -54,7 +54,8 @@ void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
 CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name);
-CstNode* cst_node_new_layout_node(CstModule *v_module);
+CstNode* cst_node_new_layout_node(void);
+CstNode *cst_node_new_body(void);
 
 void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);

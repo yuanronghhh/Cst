@@ -40,10 +40,9 @@ int main(int argc, char* argv[]) {
 
   const SysChar *main_path = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
 
-  app = cst_application_new_I("MiniAPP");
-
   mini_types_setup();
 
+  app = cst_application_new_I(c, "MiniAPP");
   status = cst_application_run(app, main_path);
   sys_object_unref(app);
 

@@ -69,12 +69,12 @@ CstNodeBuilder *cst_com_node_builder_new(void) {
   return sys_object_new(CST_TYPE_COM_NODE_BUILDER, NULL);
 }
 
-void cst_com_node_builder_construct_i(CstNodeBuilder *o, CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {
+void cst_com_node_builder_construct_i(CstNodeBuilder *o, CstContext *c, CstNode* v_pnode) {
 
   CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->construct(o, v_module, v_component, v_pnode);
 }
 
-CstNodeBuilder* cst_com_node_builder_new_I(CstModule* v_module, CstComponent* v_component, CstNode* v_pnode) {
+CstNodeBuilder* cst_com_node_builder_new_I(CstContext *c, CstNode* v_pnode) {
   CstNodeBuilder* o = cst_com_node_builder_new();
 
   cst_com_node_builder_construct_i(o, v_module, v_component, v_pnode);

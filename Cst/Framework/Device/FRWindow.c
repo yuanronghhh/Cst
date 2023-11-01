@@ -107,6 +107,18 @@ const SysChar* fr_key_get_name(SysInt key, SysInt scancode) {
   return glfwGetKeyName(key, scancode);
 }
 
+void fr_window_set_gwindow(FRWindow *self, GLFWwindow * gwindow) {
+  sys_return_if_fail(self != NULL);
+
+  self->gwindow = gwindow;
+}
+
+GLFWwindow * fr_window_get_gwindow(FRWindow *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->gwindow;
+}
+
 /* event callbacks */
 static void fr_window_key_callback(GLFWwindow* gwindow, SysInt key, SysInt scancode, SysInt action, SysInt mods) {
   FRWindow *self = fr_glfw_get_window(gwindow);

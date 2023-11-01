@@ -38,7 +38,6 @@ SysObject* cst_node_map_dclone_i(SysObject* o) {
 void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
 
-  FRPair* pair;
   CstNodeMap* map;
   const SysChar* bind_var;
   SysInt data_type;

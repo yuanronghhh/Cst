@@ -94,7 +94,6 @@ set(SRC
   ./Device/FRDisplay.h
   ./Device/FRWindow.c
   ./Device/FRWindow.h
-  ./Device/FRWindowPrivate.h
 
   ./DataType/FRFunc.c
   ./DataType/FRFunc.h

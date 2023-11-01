@@ -42,7 +42,6 @@ static void cst_application_active(CstApplication* self) {
   sys_return_if_fail(self != NULL);
 
   CstModule* v_module = self->main_module;
-  CstManager *v_manager = self->manager;
   CstRender *v_render = self->render;
 
   FRAWatch *awatch = fr_awatch_any_new_I(FR_TYPE_EVENT, "app_window_resize_test", app_window_resize_test);

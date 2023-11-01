@@ -61,16 +61,17 @@ GStyle *ast_root_get_gstyle(AstNode *root);
 void ast_gstyle_parse(GStyle *gstyle, const SysChar *path);
 CstCssGroup * ast_css_group_new_with_jpair(FREnv *env, JPair * pair, SysBool key_lookup);
 void ast_module_parse(AstNode *root, CstParser *parser);
-SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *v_comp_bd);
 void ast_import_parse(CstParser * ps, AstNode * node);
+void ast_com_node_parse(CstNodeBuilder *builder, JNode *jnode);
+void ast_node_parse(CstNodeBuilder *builder, JNode *jnode);
+SysBool ast_component_parse(Component *ast, CstModule *v_module, CstComponent *v_component, CstNode *v_pnode);
+void ast_component_body_parse(Component *ast, CstComponentBuilder *builder);
+SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *builder);
 
 SysBool ast_css_value_parse(JNode *jnode, CstCssNode *node, CstCssValue *value);
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue * value);
 SysValue *ast_node_to_value(CstModule *v_module, const SysChar *key, JNode *nnode);
 
-void ast_com_node_parse(CstNodeBuilder *builder, JNode *jnode);
-void ast_node_parse(CstNodeBuilder *builder, JNode *jnode);
-void ast_component_body_parse(CstComponentBuilder *builder, Component *ast);
 
 JNode * ast_jnode_index(JNode * o, const SysChar * index_str);
 JNode * ast_jnode_clone_r(JNode * jnode);

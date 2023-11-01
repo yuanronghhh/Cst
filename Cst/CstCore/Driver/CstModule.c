@@ -4,7 +4,6 @@
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
-#include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstNodeRealizer.h>
 
@@ -20,7 +19,7 @@ CstModule* cst_module_load_path(CstModule* parent, const SysChar* path) {
 
   CstModule *mod, *old;
 
-  old = fr_env_get(root_module, (SysPointer)path));
+  old = fr_env_get(root_module, (SysPointer)path);
 
   if(old != NULL) {
     if(!cst_module_is_loaded(old)) {

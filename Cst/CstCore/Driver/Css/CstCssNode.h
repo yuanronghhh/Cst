@@ -27,21 +27,21 @@ struct _CstCssNodeClass {
 };
 
 
-SYS_API SysType cst_css_node_get_type(void);
-SYS_API CstCssNode *cst_css_node_new(void);
-SYS_API CstCssNode* cst_css_node_new_I(SysChar* name, SysInt css_ptype, SysInt css_state, CstCssFunc set_value);
+SysType cst_css_node_get_type(void);
+CstCssNode *cst_css_node_new(void);
+CstCssNode* cst_css_node_new_I(SysChar* name, SysInt css_ptype, SysInt css_state, CstCssFunc set_value);
 
-SYS_API void cst_css_node_setup(void);
-SYS_API void cst_css_node_teardown(void);
+void cst_css_node_setup(void);
+void cst_css_node_teardown(void);
 
-SYS_API const SysChar* cst_css_node_name(CstCssNode* o);
-SYS_API CstCssNode* cst_css_node_lookup(const SysChar* name);
-SYS_API void cst_css_node_bind_map(SysChar* name, SysInt css_type, SysInt css_state, CstCssFunc set_value);
-SYS_API void cst_css_node_set_value(CstCssNode *self, CstRenderNode *node, CstLayout *layout, SysPointer user_data);
-SYS_API SysBool cst_css_node_check(CstCssNode *self, CstLayout *layout);
+const SysChar* cst_css_node_name(CstCssNode* o);
+CstCssNode* cst_css_node_lookup(const SysChar* name);
+void cst_css_node_bind_map(SysChar* name, SysInt css_type, SysInt css_state, CstCssFunc set_value);
+void cst_css_node_set_value(CstCssNode *self, CstRenderNode *node, CstLayout *layout, SysPointer user_data);
+SysBool cst_css_node_check(CstCssNode *self, CstLayout *layout);
 
 void cst_css_node_set_css_ptype(CstCssNode *self, SysInt css_ptype);
-SYS_API CST_CSS_PROP_ENUM cst_css_node_get_css_ptype(CstCssNode *self);
+SysInt cst_css_node_get_css_ptype(CstCssNode *self);
 
 SYS_END_DECLS
 

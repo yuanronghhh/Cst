@@ -1,7 +1,7 @@
 #ifndef __CST_COMPONENT_BUILDER_H__
 #define __CST_COMPONENT_BUILDER_H__
 
-#include <CstCore/Driver/CstCommon.h>
+#include <CstCore/Driver/CstBuilder.h>
 
 SYS_BEGIN_DECLS
 
@@ -20,7 +20,6 @@ struct _CstComponentBuilder {
   SysChar *v_base_name;
   FREnv *prop_maps_env;
   FREnv *css_env;
-
   CstComponent *v_parent;
 };
 
@@ -36,12 +35,6 @@ CstValueMap * cst_component_builder_get_value_map(CstComponentBuilder * self, co
 void cst_component_builder_set_value_map(CstComponentBuilder * self, CstValueMap * map);
 
 void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name);
-
-void cst_component_builder_set_v_parent(CstComponentBuilder *self, CstComponent * v_parent);
-CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self);
-
-void cst_component_builder_set_v_module(CstComponentBuilder *self, CstModule * v_module);
-CstModule * cst_component_builder_get_v_module(CstComponentBuilder *self);
 
 void cst_component_builder_set_css(CstComponentBuilder* self, CstCssGroup *g);
 SysBool cst_component_builder_remove_css(CstComponentBuilder * self, CstCssGroup * g);

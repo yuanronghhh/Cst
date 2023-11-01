@@ -22,6 +22,9 @@ CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self) {
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);
 
+  sys_clear_pointer(&self->rnode, _sys_object_unref);
+  sys_clear_pointer(&self->node, _sys_object_unref);
+
   SYS_OBJECT_CLASS(cst_layer_node_parent_class)->dispose(o);
 }
 

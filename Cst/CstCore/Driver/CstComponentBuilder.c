@@ -48,30 +48,6 @@ CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self) {
   return self->v_parent;
 }
 
-void cst_component_builder_set_v_pnode(CstComponentBuilder *self, CstNode * v_pnode) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_pnode = v_pnode;
-}
-
-CstNode * cst_component_builder_get_v_pnode(CstComponentBuilder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_pnode;
-}
-
-void cst_component_builder_set_v_module(CstComponentBuilder *self, CstModule * v_module) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_module = v_module;
-}
-
-CstModule * cst_component_builder_get_v_module(CstComponentBuilder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_module;
-}
-
 CstValueMap *cst_component_builder_get_value_map(CstComponentBuilder *self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 

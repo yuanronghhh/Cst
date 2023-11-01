@@ -60,7 +60,7 @@ void ast_gstyle_free(GStyle* gstyle);
 GStyle *ast_root_get_gstyle(AstNode *root);
 void ast_gstyle_parse(GStyle *gstyle, const SysChar *path);
 CstCssGroup * ast_css_group_new_with_jpair(FREnv *env, JPair * pair, SysBool key_lookup);
-void ast_module_parse(AstNode *root, CstParser *parser);
+void ast_module_parse(AstNode *root, CstModule *v_module);
 void ast_import_parse(CstParser * ps, AstNode * node);
 void ast_com_node_parse(CstNodeBuilder *builder, JNode *jnode);
 void ast_node_parse(CstNodeBuilder *builder, JNode *jnode);

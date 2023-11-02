@@ -119,20 +119,7 @@ CstBuilder *cst_component_builder_new(void) {
   return sys_object_new(CST_TYPE_COMPONENT_BUILDER, NULL);
 }
 
-static void cst_component_builder_construct(CstBuilder *o, CstParser *parser) {
-
-  CST_BUILDER_CLASS(cst_component_builder_parent_class)->construct(o, parser);
-}
-
-CstBuilder *cst_component_builder_new_I(CstParser *parser) {
-  CstBuilder *o = cst_component_builder_new();
-
-  cst_component_builder_construct(o, parser);
-
-  return o;
-}
-
-CstBuilder *cst_component_builder_new_simple(CstModule *v_module) {
+CstComponentBuilder *cst_component_builder_new_I(CstContext *c, ) {
   CstBuilder *o = cst_component_builder_new();
 
   cst_component_builder_construct(o, v_module, NULL, NULL);

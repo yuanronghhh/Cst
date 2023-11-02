@@ -87,6 +87,7 @@ void cst_css_node_setup(void) {
 }
 
 void cst_css_node_teardown(void) {
+
   sys_clear_pointer(&g_css_node_ht, sys_hash_table_unref);
 }
 

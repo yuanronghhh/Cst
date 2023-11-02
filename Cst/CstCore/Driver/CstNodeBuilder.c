@@ -12,23 +12,11 @@
 #include <Framework/Event/Action/FRAWatch.h>
 
 
-SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, CST_TYPE_BUILDER);
+SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
 
 
-void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysPtrArray * v_css_list) {
-  sys_return_if_fail(self != NULL);
-
-  self->v_css_list = v_css_list;
-}
-
-SysPtrArray * cst_node_builder_get_v_css_list(CstNodeBuilder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_css_list;
-}
-
-void cst_node_builder_build_i(CstBuilder *o, CstNode *node) {
-  CstNodeBuilder *self = CST_NODE_BUILDER(o);
+void cst_node_builder_build_i (CstNodeBuilder *self, CstNode *node) {
+  CstNode *node = CST_NODE(o);
   sys_return_if_fail(self != NULL);
 
   SysChar *id;
@@ -46,17 +34,27 @@ void cst_node_builder_build_i(CstBuilder *o, CstNode *node) {
     sys_free_N(id);
   }
 
-  cst_node_set_v_awatch_list(node, self->v_awatch_list);
-  cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
-  cst_node_set_v_css_list(node, self->v_css_list);
+  if(self->v_awatch_list) {
+    cst_node_set_v_awatch_list(node, self->v_awatch_list);
+  }
+
+  if(self->v_nodemap_list) {
+    cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
+  }
+
+  if(self->v_css_list) {
+    cst_node_set_v_css_list(node, self->v_css_list);
+  }
 
   if (self->v_value) {
     cst_node_set_v_value(node, self->v_value);
   }
 
   if (self->v_label) {
+
     cst_node_set_v_label(node, self->v_label);
   }
+
   cst_node_set_v_z_index(node, self->v_z_index);
 }
 
@@ -247,7 +245,7 @@ static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysCha
   SysChar *index_name;
   SysInt len;
 
-  CstComponent *v_component = cst_context_get_v_component(self);
+  CstComponent *v_component = cst_context_get_v_component(self->c);
 
   len = (SysInt)sys_strlen(func_name, 100);
   index_name = cst_node_builder_extract_index(func_name, len);
@@ -280,10 +278,10 @@ SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch
   SysChar *bind_var = NULL;
   FRAWatchBuilder* builder;
 
-  CstModule *v_module = cst_context_get_v_module(self);
+  CstModule *v_module = cst_context_get_v_module(self->c);
   sys_return_val_if_fail(v_module != NULL, false);
 
-  CstComponent *v_component = cst_context_get_v_component(self);
+  CstComponent *v_component = cst_context_get_v_component(self->c);
   sys_return_val_if_fail(v_component != NULL, false);
 
   if(*func_name == '{') {
@@ -341,12 +339,6 @@ fail:
   return false;
 }
 
-static void cst_node_builder_parse_i(CstBuilder *o, AstNode *node) {
-  CstNodeBuilder *self = CST_NODE_BUILDER(o);
-
-  ast_node_parse(self, jnode);
-}
-
 /* object api */
 static void cst_node_builder_dispose(SysObject* o) {
   CstNodeBuilder *self = CST_NODE_BUILDER(o);
@@ -370,35 +362,32 @@ static void cst_node_builder_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_node_builder_parent_class)->dispose(o);
 }
 
-CstNodeBuilder *cst_node_builder_new(void) {
+CstBuilder *cst_node_builder_new(void) {
   return sys_object_new(CST_TYPE_NODE_BUILDER, NULL);
 }
 
-void cst_node_builder_construct(CstBuilder *o, CstNode* v_pnode) {
-  CST_BUILDER_CLASS(cst_node_builder_parent_class)->construct(o);
-
+void cst_node_builder_construct(CstNodeBuilder *o, CstContext *c, CstNode* v_pnode) {
   CstNodeBuilder *self = CST_NODE_BUILDER(o);
 
+  self->c = c;
   self->v_pnode = v_pnode;
   self->v_layer = CST_NODE_LAYER_BOX;
 }
 
-CstBuilder *cst_node_builder_new_I(CstNode* v_pnode) {
+CstBuilder *cst_node_builder_new_I(CstContext *c, CstNode* v_pnode) {
   CstBuilder *o = cst_node_builder_new();
 
-  cst_node_builder_construct(o, v_pnode);
+  cst_node_builder_construct(o, c, v_pnode);
 
   return o;
 }
 
 static void cst_node_builder_class_init(CstNodeBuilderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstBuilderClass *bcls = CST_BUILDER_CLASS(cls);
 
   ocls->dispose = cst_node_builder_dispose;
-  bcls->construct = cst_node_builder_construct;
-  bcls->parse = cst_node_builder_parse_i;
-  bcls->build = cst_node_builder_build_i;
+  cls->construct = cst_node_builder_construct;
+  cls->build = cst_node_builder_build_i;
 }
 
 static void cst_node_builder_init(CstNodeBuilder *self) {

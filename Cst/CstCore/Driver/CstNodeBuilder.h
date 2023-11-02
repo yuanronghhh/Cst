@@ -1,7 +1,7 @@
 #ifndef __CST_NODE_BUILDER_H__
 #define __CST_NODE_BUILDER_H__
 
-#include <CstCore/Driver/CstBuilder.h>
+#include <CstCore/Driver/CstCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 
 
 struct _CstNodeBuilder {
-  CstBuilder parent;
+  SysObject parent;
 
   /* < private > */
   CstContext *c;
@@ -34,12 +34,17 @@ struct _CstNodeBuilder {
 };
 
 struct _CstNodeBuilderClass {
-  CstBuilderClass parent;
+  SysObjectClass parent;
+
+  void (*construct) (CstNodeBuilder *self, CstContext *c, CstNode *v_pnode);
+  void (*build) (CstNodeBuilder *self, CstNode *o);
 };
 
 SysType cst_node_builder_get_type(void);
 CstBuilder *cst_node_builder_new(void);
-CstBuilder *cst_node_builder_new_I(CstNode* v_pnode);
+CstBuilder *cst_node_builder_new_I(CstContext *c, CstNode* v_pnode);
+
+void cst_node_builder_build(CstNodeBuilder *self, CstNode *o);
 
 CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self);
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self);
@@ -66,9 +71,6 @@ SysChar* cst_node_builder_extract_index(const SysChar* str, SysInt slen);
 SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str);
 SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name);
 SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr);
-
-void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysPtrArray * v_css_list);
-SysPtrArray * cst_node_builder_get_v_css_list(CstNodeBuilder *self);
 
 SYS_END_DECLS
 

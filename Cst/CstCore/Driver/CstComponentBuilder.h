@@ -1,7 +1,7 @@
 #ifndef __CST_COMPONENT_BUILDER_H__
 #define __CST_COMPONENT_BUILDER_H__
 
-#include <CstCore/Driver/CstBuilder.h>
+#include <CstCore/Driver/CstCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 
 
 struct _CstComponentBuilder {
-  CstBuilder unowned;
+  SysObject unowned;
 
   /* < private > */
   SysChar *id;
@@ -24,12 +24,11 @@ struct _CstComponentBuilder {
 };
 
 struct _CstComponentBuilderClass {
-  CstBuilderClass parent;
+  SysObjectClass parent;
 };
 
 SysType cst_component_builder_get_type(void);
 CstBuilder *cst_component_builder_new(void);
-CstBuilder *cst_component_builder_new_I(CstParser *parser);
 
 CstValueMap * cst_component_builder_get_value_map(CstComponentBuilder * self, const SysChar * key);
 void cst_component_builder_set_value_map(CstComponentBuilder * self, CstValueMap * map);

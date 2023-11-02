@@ -522,7 +522,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder
     return true;
 
   } else if (ast_jnode_is_type(njnode, AstJObject)) {
-    nbuilder = cst_component_builder_new_simple(v_module);
+    nbuilder = cst_component_builder_new(v_module);
 
     ast_iter_jobject(njnode, (AstJNodeFunc)ast_component_parse_layout_func, nbuilder);
 

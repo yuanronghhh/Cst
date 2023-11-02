@@ -265,7 +265,7 @@ void cst_css_pair_setup(void) {
 }
 
 void cst_css_pair_teardown(void) {
-  cst_css_node_teardown(c);
+  cst_css_node_teardown();
 }
 
 /* object api */

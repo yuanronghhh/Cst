@@ -8,8 +8,8 @@ struct _CstContext {
 
   /* global static data */
   SysInt argc;
-  const SysChar** argv;
-  const SysChar* progname;
+  SysChar** argv;
+  SysChar* progname;
 };
 
 void cst_context_set_v_component(CstContext *self, CstComponent * v_component) {

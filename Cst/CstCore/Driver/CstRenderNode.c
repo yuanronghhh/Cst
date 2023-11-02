@@ -191,7 +191,7 @@ SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self) {
   return self->v_css_list;
 }
 
-void cst_render_node_set_meta(CstRenderContext *ctx, const SysChar* name, SysType stype) {
+void cst_render_node_set_meta(const SysChar* name, SysType stype) {
   NODE_META_LOCK;
   sys_hash_table_insert(g_node_meta_ht, (SysPointer)sys_strdup(name), (SysPointer)stype);
   NODE_META_UNLOCK;
@@ -305,5 +305,5 @@ static void cst_render_node_class_init(CstRenderNodeClass* cls) {
 }
 
 static void cst_render_node_init(CstRenderNode *self) {
-  self->v_css_list = cst_node_builder_new_css_list();
+  self->v_css_list = cst_css_group_list_new();
 }

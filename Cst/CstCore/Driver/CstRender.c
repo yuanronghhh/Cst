@@ -74,6 +74,7 @@ void cst_render_realize(CstRender *self, CstContext *c, CstModule *v_module) {
   cst_context_set_v_render(c, self);
   body = cst_node_realize(self->body_node, NULL, NULL);
   cst_module_realize(v_module, body);
+  fr_region_destroy(region);
 
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }
@@ -88,7 +89,7 @@ void cst_render_render(CstRender *self, CstContext *c, CstModule *v_module) {
   layer = self->box_layer;
 
   cst_context_set_v_render(c, self);
-  cst_render_realize(self, c);
+  cst_render_realize(self, c, v_module);
   cst_layout_begin_layout(layout, layer);
 
   cst_box_layer_layout(layer, layout);

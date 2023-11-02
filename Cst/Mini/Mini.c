@@ -29,8 +29,10 @@ static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_cou
 }
 
 int main(int argc, char* argv[]) {
-  int status = 0;
+  int status;
   CstApplication *app;
+  CstContext *c;
+  const SysChar *main_path;
 
   sys_setup();
 
@@ -38,8 +40,11 @@ int main(int argc, char* argv[]) {
   sys_object_set_unref_hook(object_unref_debug);
   sys_object_set_new_hook(object_new_debug);
 
-  const SysChar *main_path = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
+  status = 0;
+  main_path = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
+  c = cst_context_new();
 
+  cst_context_set_args(argc, argv);
   mini_types_setup();
 
   app = cst_application_new_I(c, "MiniAPP");

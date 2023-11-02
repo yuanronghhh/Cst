@@ -353,10 +353,12 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
 static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->name != NULL);
-  sys_return_if_fail(builder != NULL);
+  sys_return_if_fail(c != NULL);
 
   SysChar* id = self->id;
   sys_assert(id == NULL && "node build should noly once !");
+
+  cst_node_builder_build(build, self);
 }
 
 /* sys object api */

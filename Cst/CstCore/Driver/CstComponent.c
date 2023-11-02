@@ -1,7 +1,6 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Parser/Ast.h>
 #include <CstCore/Driver/CstModule.h>
-#include <CstCore/Driver/CstManager.h>
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/Css/CstCssCore.h>
@@ -42,7 +41,7 @@ CstNode *cst_component_get_layout_node(CstComponent *self) {
   return self->layout_node;
 }
 
-SysBool component_print(FRNode *o, SysPointer user_data) {
+static SysBool component_print(FRNode *o, SysPointer user_data) {
   CstNode *node = CST_NODE(o);
   CstComponent *self = user_data;
 

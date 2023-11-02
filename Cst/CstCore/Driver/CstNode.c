@@ -233,16 +233,6 @@ void cst_node_print_node(CstNode* node, SysPointer user_data) {
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
-void cst_node_construct(CstNode *self, CstNodeBuilder *builder) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(builder != NULL);
-
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
-  sys_return_if_fail(ncls->construct != NULL);
-
-  ncls->construct(self, builder);
-}
-
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -350,28 +340,9 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   return lnode;
 }
 
-static void cst_node_construct_i(CstNode *self, CstNodeBuilder *builder) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(self->name != NULL);
-  sys_return_if_fail(c != NULL);
-
-  SysChar* id = self->id;
-  sys_assert(id == NULL && "node build should noly once !");
-
-  cst_node_builder_build(build, self);
-}
-
 /* sys object api */
 CstNode* cst_node_new(void) {
   return sys_object_new(CST_TYPE_NODE, NULL);
-}
-
-CstNode* cst_node_new_I(CstNodeBuilder *builder) {
-  CstNode* o = cst_node_new();
-
-  cst_node_construct_i(o, builder);
-
-  return o;
 }
 
 static void cst_node_class_init(CstNodeClass *cls) {
@@ -380,7 +351,6 @@ static void cst_node_class_init(CstNodeClass *cls) {
   ocls->dispose = cst_node_dispose;
   ocls->dclone = cst_node_dclone_i;
 
-  cls->construct = cst_node_construct_i;
   cls->realize = cst_node_realize_i;
 }
 

@@ -30,6 +30,13 @@ typedef struct _CstParserClass CstParserClass;
 
 typedef struct _CodeGen CodeGen;
 
+typedef struct _AstModulePass AstModulePass;
+typedef struct _AstComponentPass AstComponentPass;
+typedef struct _AstGStylePass AstGStylePass;
+typedef struct _AstNodePass AstNodePass;
+typedef struct _AstKeyNode AstKeyNode;
+typedef SysBool (*AstNodeFunc) (AstNode *ast, SysPointer user_data);
+
 SYS_END_DECLS
 
 #endif

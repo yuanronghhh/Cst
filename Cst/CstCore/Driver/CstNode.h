@@ -37,7 +37,6 @@ struct _CstNode {
 struct _CstNodeClass {
   FRNodeClass parent;
 
-  void (*construct) (CstNode* v_node, CstNodeBuilder* builder);
   CstLayerNode* (*realize) (CstNode* self, CstLayerNode *v_parent, CstComNode *com_node);
 };
 
@@ -57,7 +56,6 @@ CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name);
 CstNode* cst_node_new_layout_node(void);
 CstNode *cst_node_new_body(void);
 
-void cst_node_construct(CstNode *self, CstNodeBuilder *builder);
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
 CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
 

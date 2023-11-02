@@ -10,7 +10,6 @@
 
 SYS_DEFINE_TYPE(CstComponentBuilder, cst_component_builder, SYS_TYPE_OBJECT);
 
-
 void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_base_name != NULL);
@@ -84,19 +83,12 @@ SysBool cst_component_builder_remove_css(CstComponentBuilder* self, CstCssGroup 
   return fr_env_remove(self->css_env, cst_css_group_get_id(g));
 }
 
-void cst_component_builder_parse_i(CstComponentBuilder *self, Component *ast) {
+void cst_component_builder_build(CstNodeBuilder *self, CstContext *c, CstComponent *o) {
   sys_return_if_fail(self != NULL);
 
-  ast_component_body_parse(ast, self);
-}
-
-void cst_component_builder_build_i(CstBuilder *o, SysObject *v) {
-  sys_return_if_fail(o != NULL);
-  CstComponent *comp = CST_COMPONENT(v);
-
-  cst_component_set_id(comp, self->id);
-  cst_component_set_prop_maps_env(comp, self->prop_maps_env);
-  cst_component_set_css_env(comp, self->css_env);
+  cst_component_set_id(o, self->id);
+  cst_component_set_prop_maps_env(o, self->prop_maps_env);
+  cst_component_set_css_env(o, self->css_env);
 }
 
 /* object api */
@@ -114,28 +106,20 @@ static void cst_component_builder_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_component_builder_parent_class)->dispose(o);
 }
 
-CstBuilder *cst_component_builder_new(void) {
+CstComponentBuilder *cst_component_builder_new(void) {
 
   return sys_object_new(CST_TYPE_COMPONENT_BUILDER, NULL);
 }
 
-CstComponentBuilder *cst_component_builder_new_I(CstContext *c, ) {
-  CstBuilder *o = cst_component_builder_new();
-
-  cst_component_builder_construct(o, v_module, NULL, NULL);
-
+CstComponentBuilder *cst_component_builder_new_I() {
+  CstComponentBuilder *o = cst_component_builder_new();
   return o;
 }
 
 static void cst_component_builder_class_init(CstComponentBuilderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstBuilderClass *bcls = CST_BUILDER_CLASS(cls);
 
   ocls->dispose = cst_component_builder_dispose;
-
-  bcls->construct = cst_component_builder_construct;
-  bcls->parse = cst_component_builder_parse_i;
-  bcls->build = cst_component_builder_build_i;
 }
 
 static void cst_component_builder_init(CstComponentBuilder *self) {

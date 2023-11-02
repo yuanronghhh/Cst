@@ -60,7 +60,7 @@ program_unit : unit_list
              {
                 AstNode *root = ast_for_root(ps, $1);
                 $$ = root;
-                cst_parser_set_root(ps, root);
+                cst_parser_realize(ps, root);
              }
              ;
 unit_list : top_unit
@@ -94,7 +94,7 @@ top_unit: import
 import  : import_token id_list from_token string_token ';'
         {
             $$ = ast_for_import(ps, $2, $4);
-            ast_import_parse(ps, $$);
+            cst_parser_import(ps, $$);
         }
         ;
 source  : source_token

@@ -16,12 +16,6 @@
 #include <CstCore/Driver/CstModule.h>
 
 
-typedef struct _AstModulePass AstModulePass;
-typedef struct _AstComponentPass AstComponentPass;
-typedef struct _AstGStylePass AstGStylePass;
-typedef struct _AstNodePass AstNodePass;
-typedef struct _AstKeyNode AstKeyNode;
-
 struct _AstKeyNode {
   SysChar* key;
   SysPointer value;
@@ -89,26 +83,19 @@ struct _AstNode {
 };
 
 struct _AstNodePass {
-  CstNode *v_com_node;
-  CstNodeBuilder *v_node_builder;
+  CstContext *c;
+  CstNodeBuilder *v_builder;
 };
 
 struct _AstGStylePass {
-  const SysChar *path;
+  CstModule *v_module;
   FREnv *gcss_env;
 };
 
 struct _AstComponentPass {
-  CstModule *v_module;
-  CstComponent *v_component;
+  CstContext *c;
   CstNode *v_pnode;
-
   CstComponentBuilder *builder;
-};
-
-struct _AstModulePass {
-  CstModule  *v_module;
-  CstParser  *parser;
 };
 
 void ast_print_visitor(AstNode *node, SysPointer user_data) {
@@ -417,15 +404,15 @@ JNode* ast_component_body_value(JNode *node) {
   return ast_jnode_jnode(ast_jpair_value(node));
 }
 
-static SysBool component_style_node_func(JNode *jnode, CstComponentBuilder *builder) {
+static SysBool component_style_node_func(JNode *jnode, CstComponentBuilder *self) {
   sys_return_val_if_fail(jnode != NULL, false);
   sys_return_val_if_fail(jnode->type == AstJPair, false);
   JPair *pair = jnode->v.v_pair;
 
-  FREnv *env = cst_component_builder_get_css_env(builder);
+  FREnv *env = cst_component_builder_get_css_env(self);
   sys_return_val_if_fail(env != NULL, false);
 
-  const SysChar *id = cst_component_builder_get_id(builder);
+  const SysChar *id = cst_component_builder_get_id(self);
   sys_return_val_if_fail(id != NULL, false);
 
   CstCssGroup *g = ast_css_group_new_with_jpair(env, pair, true);
@@ -433,7 +420,7 @@ static SysBool component_style_node_func(JNode *jnode, CstComponentBuilder *buil
 
     sys_abort_N("parse component css failed: %s, %s", id, pair->key);
   }
-  cst_component_builder_set_css(builder, g);
+  cst_component_builder_set_css(self, g);
 
   return true;
 }
@@ -461,9 +448,9 @@ static SysBool ast_component_parse_props_func(JNode *jnode, CstComponentBuilder 
   return true;
 }
 
-static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder *v_comp_builder) {
+static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder *self) {
   sys_return_val_if_fail(jnode != NULL, false);
-  sys_return_val_if_fail(v_comp_builder != NULL, false);
+  sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(ast_jnode_is_type(jnode, AstJPair), false);
 
   JNode *njnode;
@@ -474,24 +461,26 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder
   CstNodeBuilder *v_builder;
   SysChar* tname;
   CstComponentBuilder *nbuilder;
+  AstNodePass node_pass = {0};
 
   JPair *pair = jnode->v.v_pair;
   sys_return_val_if_fail(pair != NULL, false);
 
-  CstModule *v_module = cst_component_builder_get_v_module(v_comp_builder);
+  CstContext *c = cst_component_builder_get_c(self);
+  CstModule *v_module = cst_context_get_v_module(self->c);
   sys_return_val_if_fail(v_module != NULL, false);
 
-  CstNode *v_pnode = cst_component_builder_get_v_pnode(v_comp_builder);
+  CstNode *v_pnode = self->v_pnode;
   sys_return_val_if_fail(v_pnode != NULL, false);
 
   cus_name = pair->key;
 
   CstComponent *child_comp = cst_module_get_component(v_module, cus_name);
   if (child_comp != NULL) {
-    v_builder = cst_com_node_builder_new_I(v_module, NULL, v_pnode);
+    v_builder = cst_com_node_builder_new_I(v_pnode);
     v_node = cst_com_node_new();
 
-    tname = sys_strdup_printf("<%s>", cst_component_builder_get_id(v_comp_builder));
+    tname = sys_strdup_printf("<%s>", cst_component_builder_get_id(self));
     cst_node_set_name(v_node, tname);
     sys_free_N(tname);
   } else {
@@ -501,15 +490,20 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder
       return false;
     }
 
-    v_builder = cst_node_builder_new_I(v_module, NULL, v_pnode);
+    v_builder = cst_node_builder_new_I(v_pnode);
     v_node = cst_node_new();
 
     cst_node_set_name(v_node, cus_name);
     cst_node_set_rnode_type(v_node, type);
   }
 
-  cst_node_builder_parse(v_builder, jnode);
+  node_pass.c = self->c;
+  node_pass.v_pnode = self->v_pnode;
+  node_pass.v_builder = v_builder;
+
+  cst_node_builder_parse(v_builder, &node_pass);
   cst_node_builder_build(v_builder, v_node);
+
   sys_object_unref(v_builder);
 
   count = cst_module_get_count(v_module);
@@ -522,7 +516,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder
     return true;
 
   } else if (ast_jnode_is_type(njnode, AstJObject)) {
-    nbuilder = cst_component_builder_new(v_module);
+    nbuilder = cst_component_builder_new();
 
     ast_iter_jobject(njnode, (AstJNodeFunc)ast_component_parse_layout_func, nbuilder);
 
@@ -534,9 +528,9 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, CstComponentBuilder
   return true;
 }
 
-static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
+static SysBool component_body_func(JNode *pair, CstComponentBuilder *self) {
   sys_return_val_if_fail(pair != NULL, false);
-  sys_return_val_if_fail(builder != NULL, false);
+  sys_return_val_if_fail(self != NULL, false);
 
   JNode *body_node;
 
@@ -548,19 +542,19 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
     case CST_COMPONENT_BSTYLE:
       body_node = ast_component_body_value(pair);
 
-      ast_iter_jobject(body_node, (AstJNodeFunc)component_style_node_func, builder);
+      ast_iter_jobject(body_node, (AstJNodeFunc)component_style_node_func, self);
       break;
     case CST_COMPONENT_BLAYOUT:
       body_node = ast_component_body_value(pair);
 
-      ast_iter_jobject(body_node, (AstJNodeFunc)ast_component_parse_layout_func, builder);
+      ast_iter_jobject(body_node, (AstJNodeFunc)ast_component_parse_layout_func, self);
       break;
 
     case CST_COMPONENT_BCOMPONENT:
     case CST_COMPONENT_BPROPS:
       body_node = ast_component_body_value(pair);
 
-      ast_iter_jobject(body_node, (AstJNodeFunc)ast_component_parse_props_func, builder);
+      ast_iter_jobject(body_node, (AstJNodeFunc)ast_component_parse_props_func, self);
       break;
     case CST_COMPONENT_BLAST:
       break;
@@ -571,19 +565,21 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
   return true;
 }
 
-static SysBool component_property_parse_func(JNode *jnode, CstComponentBuilder *builder) {
+static SysBool component_property_parse_func(JNode *jnode, AstComponentPass *self) {
   sys_return_val_if_fail(jnode != NULL, false);
-  sys_return_val_if_fail(builder != NULL, false);
+  sys_return_val_if_fail(self != NULL, false);
 
+  CstComponentBuilder *builder;
   JNode *nnode;
   CST_COMPONENT_PROP_ENUM prop;
+  JPair *pair;
 
-  JPair *pair = jnode->v.v_pair;
-
+  pair = jnode->v.v_pair;
   nnode = ast_jnode_jnode(pair->value);
-  if (nnode == NULL) {
-    return false;
-  }
+  if (nnode == NULL) { return false; }
+
+  builder = self->builder;
+  sys_return_val_if_fail(builder != NULL, false);
 
   prop = cst_component_prop_get_by_name(pair->key);
 
@@ -610,10 +606,10 @@ static SysBool component_property_parse_func(JNode *jnode, CstComponentBuilder *
   return true;
 }
 
-SysBool ast_component_property_parse(JNode *jnode, CstComponentBuilder *builder) {
+SysBool ast_component_property_parse(JNode *jnode, AstComponentPass *self) {
   sys_return_val_if_fail(jnode != NULL, false);
 
-  ast_iter_jobject(jnode, (AstJNodeFunc)component_property_parse_func, builder);
+  ast_iter_jobject(jnode, (AstJNodeFunc)component_property_parse_func, self);
 
   return true;
 }
@@ -624,9 +620,8 @@ void ast_component_body_parse(Component *ast, AstComponentPass *pass) {
 }
 
 /* Import */
-void ast_import_parse(CstParser *ps, AstNode *node) {
+void ast_import_parse(AstNode *ast, AstModulePass *pass) {
   sys_return_if_fail(node->type == AstImport);
-
   Import *import = node->v.import;
 
   SysChar *cwd = sys_path_dirname(cst_parser_get_filename(ps));
@@ -638,12 +633,7 @@ void ast_import_parse(CstParser *ps, AstNode *node) {
     abort();
   }
 
-  SysPointer data = cst_parser_get_data(ps);
-  if (data == NULL) {
-    abort();
-  }
-
-  if (!cst_module_for_import(data, import->ids, fullpath)) {
+  if (!cst_module_for_import(pass, import->ids, fullpath)) {
     abort();
   }
 
@@ -664,18 +654,18 @@ GStyle *ast_root_get_gstyle(AstNode *root) {
   return nnode->v.gstyle;
 }
 
-static SysBool ast_css_env_gstyle_func(JNode *node, AstGStylePass *pass) {
+static SysBool ast_css_env_gstyle_func(JNode *node, AstGStylePass *self) {
+  sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(node != NULL, false);
-  sys_return_val_if_fail(pass != NULL, false);
   sys_return_val_if_fail(node->type == AstJPair, false);
 
   const SysChar *id;
-  FREnv *gcss_env = pass->gcss_env;
+  FREnv *gcss_env = self->gcss_env;
   JPair *jpair = node->v.v_pair;
 
   CstCssGroup *g = ast_css_group_new_with_jpair(gcss_env, jpair, true);
   if (g == NULL) {
-    sys_abort_N("parse css failed: %s", pass->path);
+    sys_abort_N("parse css failed: %s", cst_module_get_path(self->v_module));
   }
 
   id = cst_css_group_get_id(g);
@@ -684,13 +674,12 @@ static SysBool ast_css_env_gstyle_func(JNode *node, AstGStylePass *pass) {
   return true;
 }
 
-void ast_gstyle_parse(GStyle *gstyle, const SysChar *path) {
+void ast_gstyle_parse(AstNode *ast, AstGStylePass *self) {
+  sys_return_if_fail(ast != NULL);
+  sys_return_if_fail(ast->type == AstGStyle);
+  GStyle *gstyle = ast->v.gstyle;
 
-  AstGStylePass pass = {0};
-  pass.gcss_env = cst_css_env_get_gcss_env();
-  pass.path = path;
-
-  ast_iter_jobject(gstyle->body, (AstJNodeFunc)ast_css_env_gstyle_func, (SysPointer)&pass);
+  ast_iter_jobject(gstyle->body, (AstJNodeFunc)ast_css_env_gstyle_func, (SysPointer)&self);
 }
 
 /* Node Ast */
@@ -823,17 +812,19 @@ static SysBool node_parse_prop_func(JNode *jnode, CstNodeBuilder *builder) {
   return true;
 }
 
-void ast_node_parse(CstNodeBuilder *builder, AstNode *node) {
-  sys_return_if_fail(node->type == AstJsonNode);
-
-  JNode *jnode = node->v.jnode;
+void ast_node_parse(JNode *jnode, CstContext *c, CstNodeBuilder *builder) {
   sys_return_if_fail(jnode != NULL);
   sys_return_if_fail(jnode->type == AstJPair);
-  sys_return_if_fail(builder != NULL);
+  JPair *pair = jnode->v.v_pair;
+
+  AstNodePass pass = {0};
+
+  pass.c = c;
+  pass.builder = builder;
 
   if (pair->prop != NULL) {
 
-    ast_iter_jobject(pair->prop, (AstJNodeFunc)node_parse_prop_func, builder);
+    ast_iter_jobject(pair->prop, (AstJNodeFunc)node_parse_prop_func, self);
   }
 }
 
@@ -931,22 +922,21 @@ fail:
 }
 
 /* CstModule */
-SysBool ast_component_parse(AstComponentPass *self, AstNode *ast) {
+SysBool ast_component_parse(AstNode *ast, AstComponentPass *self) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(ast->type != AstComponent, false);
   Component *comp_ast = ast->v.component;
 
   CstComponent *comp;
   const SysChar *comp_id;
+  CstComponentBuilder *builder;
 
-  AstComponentPass pass = {0};
+  builder = cst_component_builder_new();
+  self->builder = builder;
 
-  pass.v_component = v_component;
-  pass.v_module = v_module;
-  pass.v_pnode = v_pnode;
-
-  CstComponentBuilder *builder = cst_component_builder_new_simple(v_module);
-  ast_component_property_parse(ast->property, builder);
+  if(!ast_component_property_parse(ast->property, self)) {
+    return false;
+  }
 
   comp_id = cst_component_builder_get_id(builder);
   if(comp_id == NULL) {
@@ -966,8 +956,8 @@ SysBool ast_component_parse(AstComponentPass *self, AstNode *ast) {
     return false;
   }
 
-  cst_builder_parse(builder, ast);
-  cst_builder_build(builder, comp);
+  cst_component_builder_parse(builder, ast);
+  cst_component_builder_build(builder, comp);
 
   cst_module_set_root_component(v_module, comp);
   sys_object_unref(builder);
@@ -975,25 +965,30 @@ SysBool ast_component_parse(AstComponentPass *self, AstNode *ast) {
   return true;
 }
 
-SysBool ast_module_body_func(AstNode *body, AstModulePass *pass) {
+SysBool ast_module_body_func(AstNode *body, AstModulePass *self) {
   sys_return_val_if_fail(body != NULL, false);
-
-  AstComponentPass comp_pass = {0};
-
-  comp_pass->v_module = pass->v_module;
 
   switch(body->type) {
     case AstImport:
       break;
 
     case AstComponent:
-      ast_component_parse(comp_pass, ast);
+      {
+        AstComponentPass component_pass = {0};
+        component_pass->c = ast_module_pass_get_c(self);
+        component_pass->v_pnode = self->v_pnode;
+
+        ast_component_parse(ast->body, &component_pass);
+      }
       break;
 
     case AstGStyle:
-      gstyle = body->v.gstyle;
-
-      ast_gstyle_parse(gstyle, cst_module_get_path(v_module));
+      {
+        AstGStylePass gstyle_pass = {0};
+        gstyle_pass.v_module = self->v_module;
+        gstyle_pass.gcss_env = cst_css_env_get_gcss_env();
+        ast_gstyle_parse(ast->body, &gstyle_pass);
+      }
       break;
 
     case AstSource:
@@ -1007,14 +1002,11 @@ SysBool ast_module_body_func(AstNode *body, AstModulePass *pass) {
   return true;
 }
 
-void ast_module_parse(CstParser * ps, AstNode *ast) {
-  sys_return_if_fail(root != NULL);
+void ast_module_parse(AstNode *ast, AstModulePass *self) {
+  sys_return_if_fail(ast != NULL);
   sys_return_if_fail(self != NULL);
 
-  AstModulePass pass = { 0 };
-  pass.v_module = cst_parser_get_data(ps);
-
-  ast_iter_narray(root->v.root, (AstNodeFunc)ast_module_body_func, &pass);
+  ast_iter_narray(ast->v.root, (AstNodeFunc)ast_module_body_func, self);
 }
 
 /* CstCssValue */

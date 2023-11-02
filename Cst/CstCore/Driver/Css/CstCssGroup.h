@@ -36,6 +36,7 @@ SysBool cst_css_group_set_by_id(SysPtrArray *ptr, FREnv *env, const SysChar *id)
 const SysChar* cst_css_group_get_id(CstCssGroup *g);
 void cst_css_group_add_pair(CstCssGroup *g, CstCssPair *pair);
 
+SysPtrArray *cst_css_group_list_new(void);
 void cst_css_group_list_render(SysPtrArray *gs, CstRenderNode *render_node, CstLayout *layout);
 SysBool cst_css_group_list_exists(SysPtrArray *css_list, CstCssGroup *g);
 

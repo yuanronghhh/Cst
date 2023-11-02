@@ -15,49 +15,6 @@
 SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
 
 
-void cst_node_builder_build_i (CstNodeBuilder *self, CstNode *node) {
-  CstNode *node = CST_NODE(o);
-  sys_return_if_fail(self != NULL);
-
-  SysChar *id;
-  CstModule *v_module;
-
-  v_module = cst_context_get_v_module(self->c);
-  if (self->v_id) {
-
-    cst_node_set_id(node, self->v_id);
-  } else {
-
-    id = cst_module_new_uid(v_module);
-
-    cst_node_set_id(node, id);
-    sys_free_N(id);
-  }
-
-  if(self->v_awatch_list) {
-    cst_node_set_v_awatch_list(node, self->v_awatch_list);
-  }
-
-  if(self->v_nodemap_list) {
-    cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
-  }
-
-  if(self->v_css_list) {
-    cst_node_set_v_css_list(node, self->v_css_list);
-  }
-
-  if (self->v_value) {
-    cst_node_set_v_value(node, self->v_value);
-  }
-
-  if (self->v_label) {
-
-    cst_node_set_v_label(node, self->v_label);
-  }
-
-  cst_node_set_v_z_index(node, self->v_z_index);
-}
-
 void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode) {
   CstText* text = CST_TEXT(rnode);
 
@@ -191,6 +148,71 @@ SysList * cst_node_builder_get_awatch_list(CstNodeBuilder *self) {
 }
 
 /* parse */
+void cst_node_builder_parse(CstNodeBuilder *self, CstContext *c, JNode *jnode) {
+  sys_return_if_fail(self != NULL);
+
+  CstNodeBuilderClass* lcls = CST_NODE_BUILDER_GET_CLASS(self);
+  sys_return_if_fail(lcls->parse != NULL);
+
+  lcls->parse(self, c, jnode);
+}
+
+void cst_node_builder_build(CstNodeBuilder *self, CstContext *c, CstNode *node) {
+  sys_return_if_fail(self != NULL);
+
+  CstNodeBuilderClass* lcls = CST_NODE_BUILDER_GET_CLASS(self);
+  sys_return_if_fail(lcls->build != NULL);
+
+  lcls->build(self, c, node);
+}
+
+static void cst_node_builder_build_i(CstNodeBuilder *self, CstContext *c, CstNode *node) {
+  sys_return_if_fail(self != NULL);
+
+  SysChar *id;
+  CstModule *v_module;
+
+  v_module = cst_context_get_v_module(c);
+  if (self->v_id) {
+
+    cst_node_set_id(node, self->v_id);
+  } else {
+
+    id = cst_module_new_uid(v_module);
+
+    cst_node_set_id(node, id);
+    sys_free_N(id);
+  }
+
+  if(self->v_awatch_list) {
+    cst_node_set_v_awatch_list(node, self->v_awatch_list);
+  }
+
+  if(self->v_nodemap_list) {
+    cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
+  }
+
+  if(self->v_css_list) {
+    cst_node_set_v_css_list(node, self->v_css_list);
+  }
+
+  if (self->v_value) {
+    cst_node_set_v_value(node, self->v_value);
+  }
+
+  if (self->v_label) {
+
+    cst_node_set_v_label(node, self->v_label);
+  }
+
+  cst_node_set_v_z_index(node, self->v_z_index);
+}
+
+static void cst_node_builder_parse_i(CstNodeBuilder *self, CstContext *c, JNode *jnode) {
+
+  ast_node_parse(jnode, c, self);
+}
+
 SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(pstr != NULL, false);
@@ -204,7 +226,7 @@ SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *p
   return cst_node_builder_set_layer(self, layer_type);
 }
 
-SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str) {
+SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, CstContext *c, const SysChar *key, const SysChar *expr_str) {
   sys_return_val_if_fail(expr_str != NULL, false);
   sys_return_val_if_fail(self != NULL, false);
 
@@ -213,7 +235,7 @@ SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *k
   SysChar *index_name;
   SysInt len = (SysInt)sys_strlen(expr_str, 100);
 
-  CstComponent *v_component = cst_context_get_v_component(self->c);
+  CstComponent *v_component = cst_context_get_v_component(c);
   sys_return_val_if_fail(v_component != NULL, false);
 
   index_name = cst_node_builder_extract_index(expr_str, len);
@@ -236,16 +258,15 @@ SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *k
   return true;
 }
 
-static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name, SysChar **bind_var) {
+static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, CstContext *c, const SysChar *watch_name, const SysChar *func_name, SysChar **bind_var) {
   sys_return_val_if_fail(func_name != NULL, false);
-  sys_return_val_if_fail(self->c != NULL, false);
 
   CstValueMap *pmap = NULL;
   CstNodeMap *map;
   SysChar *index_name;
   SysInt len;
 
-  CstComponent *v_component = cst_context_get_v_component(self->c);
+  CstComponent *v_component = cst_context_get_v_component(c);
 
   len = (SysInt)sys_strlen(func_name, 100);
   index_name = cst_node_builder_extract_index(func_name, len);
@@ -268,7 +289,7 @@ static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, const SysCha
   return true;
 }
 
-SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name) {
+SysBool cst_node_builder_parse_action(CstNodeBuilder *self, CstContext *c, const SysChar *watch_name, const SysChar *func_name) {
   sys_return_val_if_fail(func_name != NULL, false);
   sys_return_val_if_fail(watch_name != NULL, false);
 
@@ -278,14 +299,14 @@ SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch
   SysChar *bind_var = NULL;
   FRAWatchBuilder* builder;
 
-  CstModule *v_module = cst_context_get_v_module(self->c);
+  CstModule *v_module = cst_context_get_v_module(c);
   sys_return_val_if_fail(v_module != NULL, false);
 
-  CstComponent *v_component = cst_context_get_v_component(self->c);
+  CstComponent *v_component = cst_context_get_v_component(c);
   sys_return_val_if_fail(v_component != NULL, false);
 
   if(*func_name == '{') {
-    if(!node_builder_parse_action_bind(self, watch_name, func_name, &bind_var)) {
+    if(!node_builder_parse_action_bind(self, c, watch_name, func_name, &bind_var)) {
       return false;
     }
 
@@ -362,33 +383,18 @@ static void cst_node_builder_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_node_builder_parent_class)->dispose(o);
 }
 
-CstBuilder *cst_node_builder_new(void) {
+CstNodeBuilder *cst_node_builder_new(void) {
   return sys_object_new(CST_TYPE_NODE_BUILDER, NULL);
-}
-
-void cst_node_builder_construct(CstNodeBuilder *o, CstContext *c, CstNode* v_pnode) {
-  CstNodeBuilder *self = CST_NODE_BUILDER(o);
-
-  self->c = c;
-  self->v_pnode = v_pnode;
-  self->v_layer = CST_NODE_LAYER_BOX;
-}
-
-CstBuilder *cst_node_builder_new_I(CstContext *c, CstNode* v_pnode) {
-  CstBuilder *o = cst_node_builder_new();
-
-  cst_node_builder_construct(o, c, v_pnode);
-
-  return o;
 }
 
 static void cst_node_builder_class_init(CstNodeBuilderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_node_builder_dispose;
-  cls->construct = cst_node_builder_construct;
+  cls->parse = cst_node_builder_parse_i;
   cls->build = cst_node_builder_build_i;
 }
 
 static void cst_node_builder_init(CstNodeBuilder *self) {
+  self->v_layer = CST_NODE_LAYER_BOX;
 }

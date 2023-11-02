@@ -18,6 +18,7 @@ struct _CstNodeBuilder {
   /* < private > */
   CstContext *c;
   CstNode* v_pnode;
+  CstNode *v_com_node;
 
   /* property */
   SysList *v_awatch_list;
@@ -36,15 +37,13 @@ struct _CstNodeBuilder {
 struct _CstNodeBuilderClass {
   SysObjectClass parent;
 
-  void (*construct) (CstNodeBuilder *self, CstContext *c, CstNode *v_pnode);
-  void (*build) (CstNodeBuilder *self, CstNode *o);
+  void (*parse) (CstNodeBuilder *self, CstContext *c, JNode *jnode);
+  void (*build) (CstNodeBuilder *self, CstContext *c, CstNode *o);
 };
 
 SysType cst_node_builder_get_type(void);
-CstBuilder *cst_node_builder_new(void);
-CstBuilder *cst_node_builder_new_I(CstContext *c, CstNode* v_pnode);
-
-void cst_node_builder_build(CstNodeBuilder *self, CstNode *o);
+CstNodeBuilder *cst_node_builder_new(void);
+CstNodeBuilder *cst_node_builder_new_I(CstContext *c, CstNode* v_pnode);
 
 CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self);
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self);
@@ -68,8 +67,11 @@ SysList * cst_node_builder_get_nodemap_list(CstNodeBuilder *self);
 
 SysChar* cst_node_builder_extract_index(const SysChar* str, SysInt slen);
 
-SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, const SysChar *key, const SysChar *expr_str);
-SysBool cst_node_builder_parse_action(CstNodeBuilder *self, const SysChar *watch_name, const SysChar *func_name);
+void cst_node_builder_parse(CstNodeBuilder *self, CstContext *c, JNode *jnode);
+void cst_node_builder_build(CstNodeBuilder *self, CstContext *c, CstNode *node);
+
+SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, CstContext *c, const SysChar *key, const SysChar *expr_str);
+SysBool cst_node_builder_parse_action(CstNodeBuilder *self, CstContext *c, const SysChar *watch_name, const SysChar *func_name);
 SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr);
 
 SYS_END_DECLS

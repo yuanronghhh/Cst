@@ -57,14 +57,13 @@ void ast_component_free(Component* component);
 void ast_gstyle_free(GStyle* gstyle);
 
 /* user api */
-void ast_gstyle_parse(GStyle *gstyle, const SysChar *path);
 CstCssGroup * ast_css_group_new_with_jpair(FREnv *env, JPair * pair, SysBool key_lookup);
 GStyle *ast_root_get_gstyle(AstNode *root);
 
-void ast_module_parse(CstParser * ps, AstNode *ast);
+void ast_module_parse(AstNode *ast, CstContext *c, CstNode *v_pnode, CstModule *v_module);
+void ast_node_parse(JNode *jnode, CstContext *c, CstNodeBuilder *builder);
 void ast_import_parse(CstParser * ps, AstNode *ast);
 void ast_com_node_parse(CstParser *ps, AstNode *ast);
-void ast_node_parse(CstParser *ps, AstNode *ast);
 SysBool ast_component_parse(CstParser *ps, AstNode *ast);
 void ast_component_body_parse(CstParser *ps, AstNode *ast);
 SysBool ast_component_property_parse(CstParser *ps, AstNode *ast);

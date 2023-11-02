@@ -30,6 +30,9 @@ struct _CstComponentBuilderClass {
 SysType cst_component_builder_get_type(void);
 CstBuilder *cst_component_builder_new(void);
 
+void cst_component_builder_parse(CstComponentBuilder *self, CstContext *c, AstComponentPass *pass);
+void cst_component_builder_build(CstComponentBuilder *self, CstContext *c, CstComponent *o);
+
 CstValueMap * cst_component_builder_get_value_map(CstComponentBuilder * self, const SysChar * key);
 void cst_component_builder_set_value_map(CstComponentBuilder * self, CstValueMap * map);
 

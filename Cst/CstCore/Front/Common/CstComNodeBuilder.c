@@ -42,10 +42,10 @@ SysBool cst_com_node_builder_parse_action(CstComNodeBuilder *self, const SysChar
   return true;
 }
 
-void cst_com_node_builder_parse_i(CstNodeBuilder *o, JNode *jnode) {
-  CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->parse(o, jnode);
+void cst_node_builder_parse(CstNodeBuilder *self, CstContext *c, AstNodePass *pass) {
+  CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->parse(o, c, pass);
 
-  ast_com_node_parse(o, jnode);
+  ast_com_node_parse(o, c, pass);
 }
 
 void cst_com_node_builder_build_i(CstNodeBuilder *o, CstNode *node) {
@@ -69,15 +69,15 @@ CstNodeBuilder *cst_com_node_builder_new(void) {
   return sys_object_new(CST_TYPE_COM_NODE_BUILDER, NULL);
 }
 
-void cst_com_node_builder_construct_i(CstNodeBuilder *o, CstContext *c, CstNode* v_pnode) {
+void cst_com_node_builder_construct_i(CstNodeBuilder *o, CstNode* v_pnode) {
 
-  CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->construct(o, v_module, v_component, v_pnode);
+  CST_NODE_BUILDER_CLASS(cst_com_node_builder_parent_class)->construct(o, v_pnode);
 }
 
-CstNodeBuilder* cst_com_node_builder_new_I(CstContext *c, CstNode* v_pnode) {
+CstNodeBuilder* cst_com_node_builder_new_I(CstNode* v_pnode) {
   CstNodeBuilder* o = cst_com_node_builder_new();
 
-  cst_com_node_builder_construct_i(o, v_module, v_component, v_pnode);
+  cst_com_node_builder_construct_i(o, v_pnode);
 
   return o;
 }

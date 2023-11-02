@@ -4,23 +4,48 @@
 
 SYS_DEFINE_TYPE(CstParser, cst_parser, SYS_TYPE_OBJECT);
 
-void cst_parser_set_root(CstParser* self, AstNode *root) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(root != NULL);
 
-  self->root_node = root;
+void cst_parser_set_realize_func(CstParser *self, AstNodeFunc realize_func) {
+  sys_return_if_fail(self != NULL);
+
+  self->realize_func = realize_func;
 }
 
-void cst_parser_set_data(CstParser* self, SysPointer user_data) {
+void cst_parser_set_import_func(CstParser *self, AstNodeFunc import_func) {
+  sys_return_if_fail(self != NULL);
+
+  self->import_func = import_func;
+}
+
+void cst_parser_set_user_data(CstParser *self, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
 
   self->user_data = user_data;
 }
 
-SysPointer cst_parser_get_data(CstParser* self) {
+SysPointer cst_parser_get_user_data(CstParser *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->user_data;
+}
+
+SysBool cst_parser_realize(CstParser* self, AstNode *ast) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(ast != NULL, false);
+  sys_return_val_if_fail(self->realize_func != NULL, false);
+
+  SysBool r = self->realize_func(self, ast, self->user_data);
+  ast_node_free(ast);
+
+  return r;
+}
+
+SysBool cst_parser_import(CstParser* self, AstNode *ast) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(ast != NULL, false);
+  sys_return_val_if_fail(self->realize_func != NULL, false);
+
+  return self->import_func(self, ast, self->user_data);
 }
 
 void cst_parser_error(CstParser* self, const SysChar* format, ...) {
@@ -35,7 +60,7 @@ const SysChar* cst_parser_get_filename(CstParser* self) {
   return self->filename;
 }
 
-bool cst_parser_parse(CstParser* self) {
+SysBool cst_parser_parse(CstParser* self) {
   sys_return_val_if_fail(self != NULL, false);
 
   YYSTYPE* udata = &self->udata;
@@ -54,19 +79,10 @@ yyscan_t cst_parser_get_scanner(CstParser* self) {
   return self->scanner;
 }
 
-void cst_parser_module_parse(CstParser* self, CstModule *v_module) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_module != NULL);
-
-  ast_module_parse(self, self->root_node);
-
-  sys_clear_pointer(&self->root_node, ast_node_free);
-}
-
-void cst_parser_gstyle_parse(CstParser* self) {
+void cst_parser_gstyle_parse(AstGStylePass *pass, AstNode *ast) {
   sys_return_if_fail(self != NULL);
 
-  GStyle* gstyle = ast_root_get_gstyle(self->root_node);
+  GStyle* gstyle = ast_root_get_gstyle(ast);
   sys_return_if_fail(gstyle != NULL);
 
   ast_gstyle_parse(gstyle, cst_parser_get_filename(self));

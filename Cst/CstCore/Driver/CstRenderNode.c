@@ -217,10 +217,10 @@ void cst_render_node_setup(void) {
 
   g_node_meta_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
 
-  cst_render_node_set_meta(ctx, "LBox", CST_TYPE_LBOX);
-  cst_render_node_set_meta(ctx, "LGrid", CST_TYPE_LGRID);
-  cst_render_node_set_meta(ctx, "LBody", CST_TYPE_LBODY);
-  cst_render_node_set_meta(ctx, "Text", CST_TYPE_TEXT);
+  cst_render_node_set_meta("LBox", CST_TYPE_LBOX);
+  cst_render_node_set_meta("LGrid", CST_TYPE_LGRID);
+  cst_render_node_set_meta("LBody", CST_TYPE_LBODY);
+  cst_render_node_set_meta("Text", CST_TYPE_TEXT);
 }
 
 void cst_render_node_teardown(void) {

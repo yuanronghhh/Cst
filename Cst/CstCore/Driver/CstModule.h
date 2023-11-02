@@ -25,18 +25,19 @@ struct _CstModule {
   SysBool loaded;
   CstComponent* root_component;
   CstParser* parser;
-  CstContext *c;
 };
 
 SysType cst_module_get_type(void);
 
 CstModule* cst_module_new(void);
-SysBool cst_module_load(CstModule *self);
-CstModule* cst_module_new_I(CstContext *c, CstModule* pmodule, const SysChar* path);
+CstModule* cst_module_new_I(CstModule* pmodule, const SysChar* path);
+
 SysInt cst_module_get_hashcode(CstModule* self);
 const SysChar *cst_module_get_path(CstModule* self);
-CstModule* cst_module_load_path(CstContext *c, CstModule* parent, const SysChar* path);
 SysBool cst_module_is_loaded(CstModule *self);
+
+CstModule* cst_module_load_path(CstContext *c, CstModule* parent, const SysChar* path);
+SysBool cst_module_load(CstModule *self, CstContext *c);
 
 void cst_module_setup(void);
 void cst_module_teardown(void);
@@ -44,6 +45,8 @@ void cst_module_teardown(void);
 FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
 
 SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent);
+
+CstModule * cst_module_ast_get_v_module(AstModulePass *pass);
 
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);

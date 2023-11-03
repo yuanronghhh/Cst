@@ -12,6 +12,12 @@
 #include <Framework/Event/Action/FRAWatch.h>
 
 
+struct _AstNodePass {
+  CstContext *c;
+  CstNodeBuilder *v_builder;
+};
+
+
 SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
 
 
@@ -209,8 +215,12 @@ static void cst_node_builder_build_i(CstNodeBuilder *self, CstContext *c, CstNod
 }
 
 static void cst_node_builder_parse_i(CstNodeBuilder *self, CstContext *c, JNode *jnode) {
+  AstNodePass pass = {0};
 
-  ast_node_parse(jnode, c, self);
+  pass.c = c;
+  pass.v_builder = self;
+
+  ast_node_parse(jnode, &pass);
 }
 
 SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr) {

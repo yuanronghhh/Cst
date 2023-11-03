@@ -60,13 +60,14 @@ void ast_gstyle_free(GStyle* gstyle);
 CstCssGroup * ast_css_group_new_with_jpair(FREnv *env, JPair * pair, SysBool key_lookup);
 GStyle *ast_root_get_gstyle(AstNode *root);
 
-void ast_module_parse(AstNode *ast, CstContext *c, CstNode *v_pnode, CstModule *v_module);
-void ast_node_parse(JNode *jnode, CstContext *c, CstNodeBuilder *builder);
-void ast_import_parse(CstParser * ps, AstNode *ast);
-void ast_com_node_parse(CstParser *ps, AstNode *ast);
-SysBool ast_component_parse(CstParser *ps, AstNode *ast);
-void ast_component_body_parse(CstParser *ps, AstNode *ast);
-SysBool ast_component_property_parse(CstParser *ps, AstNode *ast);
+void ast_module_parse(AstNode *ast, AstModulePass *self);
+void ast_gstyle_parse(AstNode *ast, AstGStylePass *self);
+void ast_node_parse(JNode *jnode, AstNodePass *self);
+void ast_com_node_parse(JNode *jnode, AstNodePass *self);
+void ast_import_parse(AstNode * ast, AstModulePass *self);
+void ast_component_parse(AstNode *ast, AstComponentPass *self);
+void ast_component_body_parse(AstNode *ast, AstComponentPass *self);
+void ast_component_property_parse(AstNode *ast, AstComponentPass *self);
 
 SysBool ast_css_value_parse(JNode *jnode, CstCssNode *node, CstCssValue *value);
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue * value);

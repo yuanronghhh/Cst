@@ -28,8 +28,9 @@ struct _CstComponentBuilderClass {
 };
 
 SysType cst_component_builder_get_type(void);
-CstBuilder *cst_component_builder_new(void);
+CstComponentBuilder *cst_component_builder_new(void);
 
+/* for ast */
 void cst_component_builder_parse(CstComponentBuilder *self, CstContext *c, AstComponentPass *pass);
 void cst_component_builder_build(CstComponentBuilder *self, CstContext *c, CstComponent *o);
 
@@ -49,6 +50,11 @@ CstNode * cst_component_builder_get_v_pnode(CstComponentBuilder *self);
 
 void cst_component_builder_set_css_env(CstComponentBuilder *self, FREnv * css_env);
 FREnv * cst_component_builder_get_css_env(CstComponentBuilder *self);
+
+CstComponentBuilder * cst_component_ast_get_builder(AstComponentPass *self);
+CstContext *cst_component_ast_get_c(AstComponentPass *self);
+CstModule * cst_component_ast_get_v_module(AstComponentPass *self);
+CstNode * cst_component_ast_get_v_pnode(AstComponentPass *self);
 
 SYS_END_DECLS
 

@@ -1,5 +1,7 @@
 #include <CstCore/Driver/CstComponent.h>
+
 #include <CstCore/Parser/Ast.h>
+#include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
@@ -140,13 +142,17 @@ CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, 
 }
 
 SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[], SysUInt len) {
-  SysPtrArray * list = cst_css_group_list_new();
+  SysPtrArray * list;
+  const SysChar *pname;
+  CstCssGroup *ng;
+
+  list = cst_css_group_list_new();
 
   for (SysUInt i = 0; i < len; i++) {
     pname = v_base[i];
     if (pname == NULL) { break; }
 
-    ng = cst_component_get_css_r(component, pname);
+    ng = cst_component_get_css_r(self, pname);
     if (ng == NULL) {
 
       sys_warning_N("css \"%s\" in component \"%s\" not found", pname, component->id);

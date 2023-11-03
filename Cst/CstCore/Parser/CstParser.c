@@ -34,7 +34,7 @@ SysBool cst_parser_realize(CstParser* self, AstNode *ast) {
   sys_return_val_if_fail(ast != NULL, false);
   sys_return_val_if_fail(self->realize_func != NULL, false);
 
-  SysBool r = self->realize_func(self, ast, self->user_data);
+  SysBool r = self->realize_func(ast, self->user_data);
   ast_node_free(ast);
 
   return r;
@@ -43,9 +43,9 @@ SysBool cst_parser_realize(CstParser* self, AstNode *ast) {
 SysBool cst_parser_import(CstParser* self, AstNode *ast) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(ast != NULL, false);
-  sys_return_val_if_fail(self->realize_func != NULL, false);
+  sys_return_val_if_fail(self->import_func != NULL, false);
 
-  return self->import_func(self, ast, self->user_data);
+  return self->import_func(ast, self->user_data);
 }
 
 void cst_parser_error(CstParser* self, const SysChar* format, ...) {
@@ -79,15 +79,6 @@ yyscan_t cst_parser_get_scanner(CstParser* self) {
   return self->scanner;
 }
 
-void cst_parser_gstyle_parse(AstGStylePass *pass, AstNode *ast) {
-  sys_return_if_fail(self != NULL);
-
-  GStyle* gstyle = ast_root_get_gstyle(ast);
-  sys_return_if_fail(gstyle != NULL);
-
-  ast_gstyle_parse(gstyle, cst_parser_get_filename(self));
-}
-
 /* object api */
 static void cst_parser_construct(CstParser *self, FILE *fp, const SysChar *fullpath) {
   self->fp = fp;
@@ -99,12 +90,6 @@ static void cst_parser_dispose(SysObject* o) {
   CstParser *self = CST_PARSER(o);
 
   sys_clear_pointer(&self->scanner, yylex_destroy);
-
-  if (self->root_node) {
-
-    sys_clear_pointer(&self->root_node, ast_node_free);
-  }
-
   sys_clear_pointer(&self->fp, sys_fclose);
   sys_clear_pointer(&self->filename, sys_free);
 

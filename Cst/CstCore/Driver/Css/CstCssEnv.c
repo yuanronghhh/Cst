@@ -5,6 +5,11 @@
 #define CST_GCSS_LOCK
 #define CST_GCSS_UNLOCK
 
+struct _AstGStylePass {
+  CstModule *v_module;
+  FREnv *gcss_env;
+};
+
 static FREnv *gcss_env = NULL;
 
 void cst_css_env_set_gcss_env(FREnv * new_gcss_env) {
@@ -38,6 +43,16 @@ FREnv *cst_css_env_new_I(FREnv *parent) {
   return fr_env_new_I(ht, parent);
 }
 
+void cst_css_gstyle_parse(AstNode *ast, CstModule *v_module) {
+  sys_return_if_fail(ast != NULL);
+
+  AstGStylePass pass = {0};
+  pass.v_module = v_module;
+  pass.gcss_env = gcss_env;
+
+  ast_gstyle_parse(ast, &pass);
+}
+
 void cst_css_env_setup(void) {
   CstParser* ps;
   SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
@@ -50,12 +65,11 @@ void cst_css_env_setup(void) {
     return;
   }
 
+  cst_parser_set_realize_func(ps, (AstNodeFunc)cst_css_gstyle_parse);
   if (!cst_parser_parse(ps)) {
     sys_abort_N(SYS_("Failed to load base style in path: %s"), buildin_css_path);
     return;
   }
-
-  cst_parser_gstyle_parse(ps, gcss_env);
 
   sys_object_unref(ps);
 }

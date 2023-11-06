@@ -42,8 +42,8 @@ FREnv *cst_css_env_new_I(FREnv *parent) {
 void cst_css_env_setup(void) {
   CstParser* ps;
   CstParserContext *ctx;
-  SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
   CstNode *body_node;
+  SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
 
   gcss_env = cst_css_env_new_I(NULL);
   body_node = cst_node_get_body_node();

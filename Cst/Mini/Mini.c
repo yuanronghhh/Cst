@@ -33,7 +33,6 @@ int main(int argc, char* argv[]) {
   CstApplication *app;
   const SysChar *main_path;
 
-  status = 0;
   main_path = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
   app = cst_application_new_I("MiniAPP");
 

@@ -1,7 +1,6 @@
 #ifndef __AST_PARSER_H__
 #define __AST_PARSER_H__
 
-
 #include <CstCore/Parser/CstParser.h>
 
 
@@ -21,9 +20,9 @@ struct _AstParser {
   CstComponent *v_pcomponent;
   CstComponent  *v_com_node;
   FREnv *gcss_env;
-  CstNode *pnode;
   CstNodeBuilder *node_builder;
   CstComponentBuilder *comp_builder;
+  CstNode *pnode;
 };
 
 struct _AstParserClass {

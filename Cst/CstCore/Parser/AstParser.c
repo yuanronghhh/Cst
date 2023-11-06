@@ -16,8 +16,16 @@
 #include <CstCore/Driver/CstModule.h>
 
 
+typedef struct _AstNodePass AstNodePass;
+
+struct _AstNodePass {
+  CstNode *pnode;
+  AstParser *parser;
+};
+
+
 CstCssGroup* ast_css_group_new_with_jpair(FREnv *env, JPair *pair, SysBool key_lookup);
-SYS_DEFINE_TYPE(AstParser, cst_parser, CST_TYPE_PARSER);
+SYS_DEFINE_TYPE(AstParser, ast_parser, CST_TYPE_PARSER);
 
 static SysValue *ast_parser_jnode_to_value(CstModule *v_module, const SysChar *key, JNode *jnode) {
   sys_return_val_if_fail(key != NULL, NULL);
@@ -164,9 +172,9 @@ static SysBool ast_component_parse_props_func(JNode *jnode, CstComponentBuilder 
   return true;
 }
 
-static SysBool ast_component_parse_layout_func(JNode *jnode, AstParser *self) {
+static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) {
   sys_return_val_if_fail(jnode != NULL, false);
-  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(pass != NULL, false);
   sys_return_val_if_fail(ast_jnode_get_type(jnode) == AstJPair, false);
 
   JNode *njnode;
@@ -180,10 +188,13 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstParser *self) {
   JPair *pair = jnode->v.v_pair;
   sys_return_val_if_fail(pair != NULL, false);
 
+  AstParser *self = pass->parser;
+  sys_return_val_if_fail(self != NULL, false);
+
   CstModule *v_module = self->v_module;
   sys_return_val_if_fail(v_module != NULL, false);
 
-  CstNode *pnode = self->pnode;
+  CstNode *pnode = pass->pnode;
   sys_return_val_if_fail(pnode != NULL, false);
 
   CstComponent *v_component = self->v_component;
@@ -228,9 +239,11 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstParser *self) {
     return true;
 
   } else if (ast_jnode_get_type(njnode) ==  AstJObject) {
-    AstParser *nself = (AstParser *)ast_parser_new_I(self->path, self->v_module, self->v_component, v_node);
+    AstNodePass npass = {0};
+    npass.parser = self;
+    npass.pnode = v_node;
 
-    ast_iter_jobject(njnode, (AstJNodeFunc)ast_component_parse_layout_func, nself);
+    ast_iter_jobject(njnode, (AstJNodeFunc)ast_component_parse_layout_func, &npass);
 
   } else {
 
@@ -555,10 +568,11 @@ SysBool ast_node_parse_action(
   sys_return_val_if_fail(watch_name != NULL, false);
 
   SysChar *fname;
-  FRAWatch *awatch;
   FRAWatchBuilder* builder;
+  FRAWatch *awatch = NULL;
   FREventFunc watch_func = NULL;
   SysChar *bind_var = NULL;
+  SysType type;
 
   CstModule *v_module = ctx->v_module;
   sys_return_val_if_fail(v_module != NULL, false);
@@ -586,7 +600,7 @@ SysBool ast_node_parse_action(
     bind_var = sys_strdup(func_name);
   }
 
-  SysType type = fr_awatch_get_type_by_name(watch_name);
+  type = fr_awatch_get_type_by_name(watch_name);
   sys_clear_pointer(&bind_var, sys_free);
 
   if (type == 0) {
@@ -1033,7 +1047,6 @@ static void ast_parser_construct_i(CstParser *o, FILE *fp, const SysChar *fullpa
 }
 
 static void ast_parser_dispose(SysObject* o) {
-  AstParser *self = AST_PARSER(o);
 
   SYS_OBJECT_CLASS(ast_parser_parent_class)->dispose(o);
 }
@@ -1042,10 +1055,11 @@ CstParser *ast_parser_new(void) {
   return sys_object_new(AST_TYPE_PARSER, NULL);
 }
 
-CstParser *ast_parser_new_I(
-    const SysChar *path,
-    CstModule *v_module,
-    CstNode *pnode) {
+CstParser *ast_parser_new_I(const SysChar *path, CstModule *v_module, CstNode *pnode) {
+  FILE *fp = sys_fopen(path, "r");
+  if(fp == NULL) {
+    return NULL;
+  }
 
   CstParser *o = ast_parser_new();
   AstParser *self = AST_PARSER(o);
@@ -1053,7 +1067,6 @@ CstParser *ast_parser_new_I(
   ast_parser_construct_i(o, fp, path);
 
   self->v_module = v_module;
-  self->pnode = pnode;
 
   return o;
 }

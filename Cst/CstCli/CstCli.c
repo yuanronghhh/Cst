@@ -1,21 +1,15 @@
 #include "CstCli.h"
 
 int main(int argc, char* argv[]) {
-  UNUSED(argc);
-  UNUSED(argv);
-
   CstModule *mod;
 
-  cst_application_env_setup();
-  CstManager *manager = cst_manager_new();
+  cst_core_setup();
 
   SysChar *entry = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
 
-  mod = cst_module_new_I(manager, NULL, entry);
-  cst_manager_gencode(manager, mod);
+  mod = cst_module_load_path(NULL, NULL, entry);
 
-  cst_application_env_teardown();
+  cst_core_teardown();
 
-  sys_leaks_report();
   return 0;
 }

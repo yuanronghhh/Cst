@@ -290,7 +290,7 @@ CstCssPair* cst_css_pair_new_by_key(const SysChar *key) {
   CstCssValue* o;
   CstCssPair* pair;
 
-  CstCssNode* node = cst_css_node_lookup(key);
+  CstCssNode* node = cst_css_node_get_g_css_node(key);
   if (node == NULL) {
 
     sys_warning_N("Not found css by name: %s", key);

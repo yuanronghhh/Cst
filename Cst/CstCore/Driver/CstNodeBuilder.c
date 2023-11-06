@@ -12,12 +12,6 @@
 #include <Framework/Event/Action/FRAWatch.h>
 
 
-struct _AstNodePass {
-  CstContext *c;
-  CstNodeBuilder *v_builder;
-};
-
-
 SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
 
 
@@ -28,12 +22,6 @@ void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode) {
 
     cst_text_set_text(text, self->v_value);
   }
-}
-
-CstNode* cst_node_builder_get_pnode(CstNodeBuilder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_pnode;
 }
 
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self) {
@@ -153,8 +141,20 @@ SysList * cst_node_builder_get_awatch_list(CstNodeBuilder *self) {
   return self->v_awatch_list;
 }
 
+void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysPtrArray * v_css_list) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_css_list = v_css_list;
+}
+
+SysPtrArray * cst_node_builder_get_v_css_list(CstNodeBuilder *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_css_list;
+}
+
 /* parse */
-void cst_node_builder_parse(CstNodeBuilder *self, CstContext *c, JNode *jnode) {
+void cst_node_builder_parse(CstNodeBuilder *self, AstParser *c, JNode *jnode) {
   sys_return_if_fail(self != NULL);
 
   CstNodeBuilderClass* lcls = CST_NODE_BUILDER_GET_CLASS(self);
@@ -163,7 +163,7 @@ void cst_node_builder_parse(CstNodeBuilder *self, CstContext *c, JNode *jnode) {
   lcls->parse(self, c, jnode);
 }
 
-void cst_node_builder_build(CstNodeBuilder *self, CstContext *c, CstNode *node) {
+void cst_node_builder_build(CstNodeBuilder *self, AstParser *c, CstNode *node) {
   sys_return_if_fail(self != NULL);
 
   CstNodeBuilderClass* lcls = CST_NODE_BUILDER_GET_CLASS(self);
@@ -172,13 +172,13 @@ void cst_node_builder_build(CstNodeBuilder *self, CstContext *c, CstNode *node) 
   lcls->build(self, c, node);
 }
 
-static void cst_node_builder_build_i(CstNodeBuilder *self, CstContext *c, CstNode *node) {
+static void cst_node_builder_build_i(CstNodeBuilder *self, AstParser *c, CstNode *node) {
   sys_return_if_fail(self != NULL);
 
   SysChar *id;
   CstModule *v_module;
 
-  v_module = cst_context_get_v_module(c);
+  v_module = ast_parser_get_v_module(c);
   if (self->v_id) {
 
     cst_node_set_id(node, self->v_id);
@@ -214,160 +214,9 @@ static void cst_node_builder_build_i(CstNodeBuilder *self, CstContext *c, CstNod
   cst_node_set_v_z_index(node, self->v_z_index);
 }
 
-static void cst_node_builder_parse_i(CstNodeBuilder *self, CstContext *c, JNode *jnode) {
-  AstNodePass pass = {0};
+static void cst_node_builder_parse_i (CstNodeBuilder *self, AstParser *c, JNode *jnode) {
 
-  pass.c = c;
-  pass.v_builder = self;
-
-  ast_node_parse(jnode, &pass);
-}
-
-SysBool cst_node_builder_parse_layer_name(CstNodeBuilder *self, const SysChar *pstr) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(pstr != NULL, false);
-
-  SysInt layer_type = cst_node_layer_by_name(pstr);
-  if(layer_type == -1) {
-    sys_warning_N("node builder layer_type not correct: %s", pstr);
-    return false;
-  }
-
-  return cst_node_builder_set_layer(self, layer_type);
-}
-
-SysBool cst_node_builder_parse_value_bind(CstNodeBuilder *self, CstContext *c, const SysChar *key, const SysChar *expr_str) {
-  sys_return_val_if_fail(expr_str != NULL, false);
-  sys_return_val_if_fail(self != NULL, false);
-
-  CstValueMap *vmap = NULL;
-  CstNodeMap *map;
-  SysChar *index_name;
-  SysInt len = (SysInt)sys_strlen(expr_str, 100);
-
-  CstComponent *v_component = cst_context_get_v_component(c);
-  sys_return_val_if_fail(v_component != NULL, false);
-
-  index_name = cst_node_builder_extract_index(expr_str, len);
-  if (index_name == NULL) {
-    return false;
-  }
-
-  vmap = cst_component_get_value_map(v_component, index_name);
-  sys_free_N(index_name);
-
-  if (vmap == NULL) {
-    return false;
-  }
-
-  map = cst_node_map_new_I(vmap, CST_NODE_PROP_VALUE, key, NULL);
-
-  cst_node_builder_add_nodemap(self, map);
-  cst_node_builder_set_v_value(self, expr_str);
-
-  return true;
-}
-
-static SysBool node_builder_parse_action_bind(CstNodeBuilder *self, CstContext *c, const SysChar *watch_name, const SysChar *func_name, SysChar **bind_var) {
-  sys_return_val_if_fail(func_name != NULL, false);
-
-  CstValueMap *pmap = NULL;
-  CstNodeMap *map;
-  SysChar *index_name;
-  SysInt len;
-
-  CstComponent *v_component = cst_context_get_v_component(c);
-
-  len = (SysInt)sys_strlen(func_name, 100);
-  index_name = cst_node_builder_extract_index(func_name, len);
-  if (index_name == NULL) {
-    return false;
-  }
-  *bind_var = index_name;
-
-  pmap = cst_component_get_value_map(v_component, index_name);
-  if (pmap == NULL) {
-    sys_error_N("Not found props in component: %s, %s", cst_component_get_id(v_component), index_name);
-    *bind_var = NULL;
-    sys_free_N(index_name);
-    return false;
-  }
-
-  map = cst_node_map_new_I(pmap, CST_NODE_PROP_BIND, watch_name, NULL);
-  cst_node_builder_add_nodemap(self, map);
-
-  return true;
-}
-
-SysBool cst_node_builder_parse_action(CstNodeBuilder *self, CstContext *c, const SysChar *watch_name, const SysChar *func_name) {
-  sys_return_val_if_fail(func_name != NULL, false);
-  sys_return_val_if_fail(watch_name != NULL, false);
-
-  SysChar *fname;
-  FRAWatch *awatch = NULL;
-  FREventFunc watch_func = NULL;
-  SysChar *bind_var = NULL;
-  FRAWatchBuilder* builder;
-
-  CstModule *v_module = cst_context_get_v_module(c);
-  sys_return_val_if_fail(v_module != NULL, false);
-
-  CstComponent *v_component = cst_context_get_v_component(c);
-  sys_return_val_if_fail(v_component != NULL, false);
-
-  if(*func_name == '{') {
-    if(!node_builder_parse_action_bind(self, c, watch_name, func_name, &bind_var)) {
-      return false;
-    }
-
-  } else {
-
-    fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
-    watch_func = (FREventFunc)cst_module_get_function(v_module, fname);
-    sys_free_N(fname);
-
-    if (watch_func == NULL) {
-      sys_warning_N("Not found function: \"%s\" in \"%s\" component",
-        func_name, cst_component_get_id(v_component));
-      return false;
-    }
-
-    bind_var = sys_strdup(func_name);
-  }
-
-  SysType type = fr_awatch_get_type_by_name(watch_name);
-  sys_clear_pointer(&bind_var, sys_free);
-
-  if (type == 0) {
-    sys_warning_N("Not found watch: %s,%s", watch_name, func_name);
-    goto fail;
-  }
-
-  awatch = sys_object_new(type, NULL);
-
-  builder = fr_awatch_builder_new_I(func_name, watch_func);
-  fr_awatch_construct(awatch, builder);
-  sys_object_unref(builder);
-
-  if (awatch == NULL) {
-
-    sys_warning_N("Not found action: \"%s\" in \"%s\" component", watch_name, cst_component_get_id(v_component));
-    goto fail;
-  }
-
-  cst_node_builder_add_awatch(self, awatch);
-
-  return true;
-
-fail:
-  if(awatch != NULL) {
-    sys_clear_pointer(&awatch, _sys_object_unref);
-  }
-
-  if(bind_var != NULL) {
-    sys_free_N(bind_var);
-  }
-  return false;
+  ast_node_props_parse(c, jnode);
 }
 
 /* object api */

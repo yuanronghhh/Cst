@@ -29,12 +29,10 @@ MiniComponent* mini_component_new(void) {
   return sys_object_new(MINI_TYPE_COMPONENT, NULL);
 }
 
-static void mini_component_construct(CstComponent *o, CstComponentBuilder *builder) {
-  CST_COMPONENT_CLASS(mini_component_parent_class)->construct(o, builder);
-  CstModule *v_module;
+static void mini_component_construct(CstComponent *o, CstComponentPass *c) {
+  CST_COMPONENT_CLASS(mini_component_parent_class)->construct(o, c);
   FRAWatch *awatch;
-
-  v_module = cst_component_builder_get_v_module(builder);
+  CstModule *v_module = c->v_module;
 
   awatch = fr_awatch_key_new_I(FR_KEY_Q, "mini_quit_key", mini_quit_key);
   fr_awatch_bind(awatch, (SysPointer)o);

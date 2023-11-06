@@ -5,31 +5,36 @@
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/CstComponent.h>
-#include <CstCore/Driver/CstNodeRealizer.h>
-
-struct _AstModulePass {
-  CstContext *c;
-  CstModule  *v_module;
-  CstNode *v_pnode;
-};
 
 static SysHashTable* g_module_ht;
 
+typedef struct _CstModuleContext CstModuleContext;
+
+struct _CstModuleContext {
+  CstModule *v_module;
+  CstModule *v_pmodule;
+  CstNode *v_pnode;
+};
+
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
 
-CstModule* cst_module_load_path(CstContext *c, CstModule* parent, const SysChar* path) {
+
+CstModule* cst_module_load_path(CstNode *pnode, CstModule *parent, const SysChar* path) {
   sys_return_val_if_fail(path != NULL, NULL);
+
   CstModule *mod, *old;
+  CstParser *ps;
 
   old = cst_module_get_g_module(path);
-
   if(old != NULL) {
-    if(!cst_module_is_loaded(old)) {
+    if(!old->loaded) {
       sys_error_N("module load cycle in %s: %s",
           cst_module_get_path(parent),
           cst_module_get_path(old));
+
       return NULL;
     } else {
+
       return old;
     }
   }
@@ -40,52 +45,18 @@ CstModule* cst_module_load_path(CstContext *c, CstModule* parent, const SysChar*
   }
   cst_module_set_g_module(mod);
 
-  if (!cst_module_load(mod, c)) {
-    sys_abort_N("module parse failed: %s", path);
-    return NULL;
+  ps = ast_parser_new_I(path, mod, pnode);
+  if(!cst_parser_parse(ps)) {
+    goto fail;
   }
+  sys_object_unref(ps);
+  mod->loaded = true;
 
   return mod;
-}
 
-CstModule * cst_module_ast_get_v_module(AstModulePass *c) {
-  sys_return_val_if_fail(c != NULL, NULL);
-
-  return c->v_module;
-}
-
-SysBool cst_module_for_import(AstModulePass *pass, SysPtrArray *sarray, const SysChar *path) {
-  sys_return_val_if_fail(pass != NULL, false);
-  const SysChar *id;
-  CstModule *child;
-  CstComponent *comp;
-
-  CstContext *c = pass->c;
-  if (c == NULL) { return false; }
-
-  CstModule *self = pass->v_module;
-  if (self == NULL) { return false; }
-
-  child = cst_module_load_path(c, self, path);
-  if (child == NULL) {
-    sys_error_N("import module failed: %s", path);
-    abort();
-  }
-
-  if (sarray->len > 0) {
-    comp = cst_module_get_root_component(child);
-
-    for (SysUInt i = 0; i < sarray->len; i++) {
-      id = sarray->pdata[i];
-
-      if (comp) {
-
-        cst_module_set_component(self, (SysPointer)id, comp);
-      }
-    }
-  }
-
-  return true;
+fail:
+  cst_module_remove_g_module(mod);
+  return NULL;
 }
 
 SysBool cst_module_is_loaded(CstModule *self) {
@@ -96,27 +67,6 @@ SysBool cst_module_is_loaded(CstModule *self) {
 
 CstModule* cst_module_new(void) {
   return (CstModule *)sys_object_new(CST_TYPE_MODULE, NULL);
-}
-
-SysBool cst_module_load(CstModule *self, CstContext *c) {
-  sys_return_val_if_fail(self != NULL, false);
-  AstModulePass pass = {0};
-
-  pass.v_module = self;
-  pass.c = c;
-
-  cst_parser_set_user_data(self->parser, &pass);
-  cst_parser_set_import_func(self->parser, (AstNodeFunc)ast_import_parse);
-  cst_parser_set_realize_func(self->parser, (AstNodeFunc)ast_module_parse);
-
-  if (!cst_parser_parse(self->parser)) {
-
-    sys_clear_pointer(&self->parser, _sys_object_unref);
-  }
-
-  self->loaded = true;
-
-  return true;
 }
 
 void cst_module_set_root_component(CstModule *self, CstComponent *comp) {
@@ -152,7 +102,7 @@ SysInt cst_module_get_count(CstModule *self) {
 const SysChar* cst_module_get_path(CstModule* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_parser_get_filename(self->parser);
+  return self->path;
 }
 
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name) {
@@ -263,6 +213,12 @@ CstModule* cst_module_get_g_module(const SysChar *name) {
   return sys_hash_table_lookup(g_module_ht, (const SysPointer)name);
 }
 
+SysBool cst_module_remove_g_module(CstModule *m) {
+  sys_return_val_if_fail(m != NULL, false);
+
+  return sys_hash_table_remove(g_module_ht, (SysPointer)cst_module_get_path(m));
+}
+
 void cst_module_set_g_module(CstModule *m) {
   sys_return_if_fail(m != NULL);
 
@@ -285,24 +241,28 @@ static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
   FR_ENV_CLASS(cst_module_parent_class)->construct(o, ht, parent);
 }
 
-static void cst_module_construct(CstModule *self, CstModule *pmodule, CstParser *ps) {
+static void cst_module_construct(CstModule *self, CstModule *pmodule, const SysChar* path) {
   SysHashTable *ht;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
 
-  self->parser = ps;
+  self->path = path;
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
-  self->function_env = fr_env_new_I(ht, NULL);
 
+  self->function_env = fr_env_new_I(ht, NULL);
   self->root_component = NULL;
+  self->pmodule = pmodule;
 }
 
-CstModule* cst_module_new_I(CstModule* pmodule, const SysChar* path) {
-  CstModule* self = cst_module_new();
-  CstParser* ps = cst_parser_new_I(path);
+CstModule* cst_module_new_I(CstModule *v_pmodule, const SysChar* path) {
+  if(!sys_path_exists(path)) {
+    sys_warning_N("module path not exists: %s", path);
+    return NULL;
+  }
 
-  cst_module_construct(self, pmodule, ps);
+  CstModule* self = cst_module_new();
+  cst_module_construct(self, v_pmodule, path);
 
   return self;
 }
@@ -322,8 +282,6 @@ static void cst_module_dispose(SysObject* o) {
   sys_list_free_full(self->awatches, (SysDestroyFunc)_sys_object_unref);
 
   fr_env_set_parent(FR_ENV(self), NULL);
-
-  sys_clear_pointer(&self->parser, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_module_parent_class)->dispose(o);
 }

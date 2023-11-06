@@ -65,6 +65,10 @@ SysType cst_node_get_rnode_type(CstNode *self);
 CstRenderNode *cst_node_new_render_node(CstNode* self);
 void cst_node_unlink_node_r(CstNode *self);
 
+CstNode *cst_node_get_body_node(void);
+void cst_node_setup(void);
+void cst_node_teardown(void);
+
 /* props */
 void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list);
 SysList * cst_node_get_v_awatch_list(CstNode *self);

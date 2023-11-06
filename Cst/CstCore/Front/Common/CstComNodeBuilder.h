@@ -25,7 +25,6 @@ struct _CstComNodeBuilderClass {
 
 SysType cst_com_node_builder_get_type(void);
 CstNodeBuilder* cst_com_node_builder_new(void);
-CstNodeBuilder* cst_com_node_builder_new_I(CstContext *c, CstNode* v_pnode);
 
 CstNodeMap* cst_com_node_builder_get_node_map(CstComNodeBuilder * self, const SysChar *key);
 void cst_com_node_builder_set_node_map(CstComNodeBuilder* self, CstNodeMap *map);

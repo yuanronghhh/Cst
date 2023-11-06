@@ -8,38 +8,7 @@
 #include <CstCore/Driver/CstNode.h>
 
 
-struct _AstComponentPass {
-  CstContext *c;
-  CstModule *v_module;
-  CstNode *v_pnode;
-  CstComponentBuilder *builder;
-};
-
 SYS_DEFINE_TYPE(CstComponentBuilder, cst_component_builder, SYS_TYPE_OBJECT);
-
-CstComponentBuilder * cst_component_ast_get_builder(AstComponentPass *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->builder;
-}
-
-CstModule * cst_component_ast_get_v_module(AstComponentPass *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_module;
-}
-
-CstNode * cst_component_ast_get_v_pnode(AstComponentPass *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_pnode;
-}
-
-CstContext *cst_component_ast_get_c(AstComponentPass *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->c;
-}
 
 /* builder */
 void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name) {
@@ -115,7 +84,7 @@ SysBool cst_component_builder_remove_css(CstComponentBuilder* self, CstCssGroup 
   return fr_env_remove(self->css_env, cst_css_group_get_id(g));
 }
 
-void cst_component_builder_build(CstComponentBuilder *self, CstContext *c, CstComponent *o) {
+void cst_component_builder_build(CstComponentBuilder *self, CstComponent *o) {
   sys_return_if_fail(self != NULL);
 
   cst_component_set_id(o, self->id);
@@ -143,11 +112,6 @@ CstComponentBuilder *cst_component_builder_new(void) {
   return sys_object_new(CST_TYPE_COMPONENT_BUILDER, NULL);
 }
 
-CstComponentBuilder *cst_component_builder_new_I() {
-  CstComponentBuilder *o = cst_component_builder_new();
-  return o;
-}
-
 static void cst_component_builder_class_init(CstComponentBuilderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
@@ -155,4 +119,6 @@ static void cst_component_builder_class_init(CstComponentBuilderClass* cls) {
 }
 
 static void cst_component_builder_init(CstComponentBuilder *self) {
+  self->css_env = cst_css_env_new_I(NULL);
+  self->prop_maps_env = cst_component_new_prop_maps_env(NULL);
 }

@@ -4,48 +4,17 @@
 
 SYS_DEFINE_TYPE(CstParser, cst_parser, SYS_TYPE_OBJECT);
 
-
-void cst_parser_set_realize_func(CstParser *self, AstNodeFunc realize_func) {
+/* parser */
+void cst_parser_set_ctx(CstParser *self, CstParserContext * ctx) {
   sys_return_if_fail(self != NULL);
 
-  self->realize_func = realize_func;
+  self->ctx = ctx;
 }
 
-void cst_parser_set_import_func(CstParser *self, AstNodeFunc import_func) {
-  sys_return_if_fail(self != NULL);
-
-  self->import_func = import_func;
-}
-
-void cst_parser_set_user_data(CstParser *self, SysPointer user_data) {
-  sys_return_if_fail(self != NULL);
-
-  self->user_data = user_data;
-}
-
-SysPointer cst_parser_get_user_data(CstParser *self) {
+CstParserContext * cst_parser_get_ctx(CstParser *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->user_data;
-}
-
-SysBool cst_parser_realize(CstParser* self, AstNode *ast) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(ast != NULL, false);
-  sys_return_val_if_fail(self->realize_func != NULL, false);
-
-  SysBool r = self->realize_func(ast, self->user_data);
-  ast_node_free(ast);
-
-  return r;
-}
-
-SysBool cst_parser_import(CstParser* self, AstNode *ast) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(ast != NULL, false);
-  sys_return_val_if_fail(self->import_func != NULL, false);
-
-  return self->import_func(ast, self->user_data);
+  return self->ctx;
 }
 
 void cst_parser_error(CstParser* self, const SysChar* format, ...) {
@@ -130,6 +99,7 @@ static void cst_parser_class_init(CstParserClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_parser_dispose;
+  cls->construct = cst_parser_construct;
 }
 
 static void cst_parser_init(CstParser *self) {

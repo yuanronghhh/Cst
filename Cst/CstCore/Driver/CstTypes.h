@@ -121,6 +121,7 @@ typedef struct _CstApplicationClass CstApplicationClass;
 typedef struct _CstManager CstManager;
 typedef struct _CstManagerClass CstManagerClass;
 
+typedef struct _CstModuleContext CstModuleContext;
 typedef struct _CstModule CstModule;
 typedef struct _CstModuleClass CstModuleClass;
 
@@ -169,6 +170,8 @@ typedef struct _CstCssValueClass CstCssValueClass;
 
 typedef struct _CstComponentBuilder CstComponentBuilder;
 typedef struct _CstComponentBuilderClass CstComponentBuilderClass;
+
+typedef struct _CstComponentPass CstComponentPass;
 typedef struct _CstComponent CstComponent;
 typedef struct _CstComponentClass CstComponentClass;
 

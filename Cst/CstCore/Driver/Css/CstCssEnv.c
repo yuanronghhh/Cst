@@ -1,14 +1,10 @@
 #include <CstCore/Driver/Css/CstCssEnv.h>
 
 #include <CstCore/Parser/CstParserCore.h>
+#include <CstCore/Driver/CstNode.h>
 
 #define CST_GCSS_LOCK
 #define CST_GCSS_UNLOCK
-
-struct _AstGStylePass {
-  CstModule *v_module;
-  FREnv *gcss_env;
-};
 
 static FREnv *gcss_env = NULL;
 
@@ -43,29 +39,27 @@ FREnv *cst_css_env_new_I(FREnv *parent) {
   return fr_env_new_I(ht, parent);
 }
 
-void cst_css_gstyle_parse(AstNode *ast, CstModule *v_module) {
-  sys_return_if_fail(ast != NULL);
-
-  AstGStylePass pass = {0};
-  pass.v_module = v_module;
-  pass.gcss_env = gcss_env;
-
-  ast_gstyle_parse(ast, &pass);
-}
-
 void cst_css_env_setup(void) {
   CstParser* ps;
+  CstParserContext *ctx;
   SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
+  CstNode *body_node;
 
   gcss_env = cst_css_env_new_I(NULL);
+  body_node = cst_node_get_body_node();
 
-  ps = cst_parser_new_I(buildin_css_path);
+  ps = ast_parser_new_I(buildin_css_path, NULL, body_node);
+
+  ctx = cst_parser_context_new();
+  ctx->realize_func = (AstNodeFunc)ast_parser_root_gstyle_handle;
+  ctx->user_data = (SysPointer)ps;
+  cst_parser_set_ctx(ps, ctx);
+
   if (ps == NULL) {
     sys_abort_N(SYS_("Failed to load base style in path: %s"), buildin_css_path);
     return;
   }
 
-  cst_parser_set_realize_func(ps, (AstNodeFunc)cst_css_gstyle_parse);
   if (!cst_parser_parse(ps)) {
     sys_abort_N(SYS_("Failed to load base style in path: %s"), buildin_css_path);
     return;

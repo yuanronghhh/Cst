@@ -29,9 +29,9 @@ static void mini_menubar_init(MiniMenuBar *self) {
   self->priv = mini_menubar_get_private(self);
 }
 
-static void mini_menubar_construct(CstComponent *o, CstComponentBuilder *builder) {
-  CST_COMPONENT_CLASS(mini_menubar_parent_class)->construct(o, builder);
-  CstModule *v_module = cst_component_builder_get_v_module(builder);
+static void mini_menubar_construct(CstComponent *o, CstComponentPass *c) {
+  CST_COMPONENT_CLASS(mini_menubar_parent_class)->construct(o, c);
+  CstModule *v_module = c->v_module;
 
   cst_module_set_function(v_module, FR_FUNC_EVENT(menubar_btn_press));
 }

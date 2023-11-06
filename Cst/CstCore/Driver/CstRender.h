@@ -11,6 +11,7 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_CLASS(o) ((CstRenderClass *)sys_class_cast_check(o, CST_TYPE_RENDER))
 #define CST_RENDER_GET_CLASS(o) sys_instance_get_class(o, CstRenderClass)
 
+
 struct _CstRenderClass {
   SysObjectClass parent;
 };
@@ -36,7 +37,7 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 void cst_render_rerender(CstRender *self, FRRegion *region, CstLayout *layout);
 
 CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type);
-void cst_render_render(CstRender *self, CstContext *c, CstModule *v_module);
+void cst_render_render(CstRender *self, CstModule *v_module);
 
 void cst_render_set_body_node(CstRender *self, CstNode * body_node);
 CstNode * cst_render_get_body_node(CstRender *self);

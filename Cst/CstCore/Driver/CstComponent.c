@@ -141,7 +141,7 @@ CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, 
   return root;
 }
 
-SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[], SysUInt len) {
+SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *base[], SysUInt len) {
   SysPtrArray * list;
   const SysChar *pname;
   CstCssGroup *ng;
@@ -149,13 +149,13 @@ SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[
   list = cst_css_group_list_new();
 
   for (SysUInt i = 0; i < len; i++) {
-    pname = v_base[i];
+    pname = base[i];
     if (pname == NULL) { break; }
 
     ng = cst_component_get_css_r(self, pname);
     if (ng == NULL) {
 
-      sys_warning_N("css \"%s\" in component \"%s\" not found", pname, component->id);
+      sys_warning_N("css \"%s\" in component \"%s\" not found", pname, self->id);
       continue;
     }
 
@@ -165,13 +165,13 @@ SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[
   return list;
 }
 /* sys object api */
-void cst_component_construct(CstComponent *self, CstComponentBuilder *builder) {
-  sys_return_if_fail(builder != NULL);
+void cst_component_construct(CstComponent *self, CstComponentPass *c) {
+  sys_return_if_fail(c != NULL);
 
   CstComponentClass *cls = CST_COMPONENT_GET_CLASS(self);
 
   sys_return_if_fail(cls->construct != NULL);
-  cls->construct(self, builder);
+  cls->construct(self, c);
 }
 
 void cst_component_bind_parent(CstComponent *self, CstComponent *pself) {
@@ -186,25 +186,21 @@ FREnv *cst_component_new_prop_maps_env(FREnv *parent) {
   return fr_env_new_I(ht, parent);
 }
 
-static void cst_component_construct_i(CstComponent *self, CstComponentBuilder *builder) {
+static void cst_component_construct_i(CstComponent *self, CstComponentPass *c) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(builder != NULL);
   SysHashTable *ht;
-  CstComponent *pcomp;
 
-  pcomp = cst_component_builder_get_v_parent(builder);
+  CstComponent *v_pcomponent = c->v_pcomponent;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
-  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(pcomp));
-
-  cst_component_builder_build(builder, self);
+  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_pcomponent));
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
-  cls->construct = cst_component_construct_i;
   ocls->dispose = cst_component_dispose;
+  cls->construct = cst_component_construct_i;
 }
 
 static void cst_component_dispose(SysObject* o) {
@@ -214,7 +210,6 @@ static void cst_component_dispose(SysObject* o) {
   sys_clear_pointer(&self->prop_maps_env, _sys_object_unref);
 
   cst_node_unlink_node_r(self->layout_node);
-
   sys_clear_pointer(&self->id, sys_free);
 
   SYS_OBJECT_CLASS(cst_component_parent_class)->dispose(o);

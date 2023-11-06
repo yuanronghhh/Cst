@@ -8,26 +8,19 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRenderContext.h>
-#include <CstCore/Driver/CstNodeRealizer.h>
 
+
+typedef struct _CstRenderPass CstRenderPass;
+
+struct _CstRenderPass {
+  CstModule *v_module;
+};
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
 
 CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
-}
-
-void cst_render_set_body_node(CstRender *self, CstNode * body_node) {
-  sys_return_if_fail(self != NULL);
-
-  self->body_node = body_node;
-}
-
-CstNode * cst_render_get_body_node(CstRender *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->body_node;
 }
 
 FRWindow *cst_render_get_default_window(CstRender *self) {
@@ -61,35 +54,41 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   cst_layout_end_layout(layout);
 }
 
-void cst_render_realize(CstRender *self, CstContext *c, CstModule *v_module) {
+void cst_render_realize(CstRender *self, CstRenderPass *ctx) {
   sys_return_if_fail(self != NULL);
 
   CstLayerNode* body;
   FRRegion* region;
+  CstModule *v_module;
   FRRect bound = { 0 };
+
+  v_module= ctx->v_module;
 
   fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
   region = fr_region_create_rectangle(&bound);
 
-  cst_context_set_v_render(c, self);
-  body = cst_node_realize(self->body_node, NULL, NULL);
+  body = cst_node_realize(cst_node_get_body_node(), NULL, NULL);
   cst_module_realize(v_module, body);
   fr_region_destroy(region);
 
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
 }
 
-void cst_render_render(CstRender *self, CstContext *c, CstModule *v_module) {
+void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstLayer *layer;
-  FRRegion *region = render_create_region(self->window);
-  CstLayout* layout = cst_layout_new_I(self, region);
+  FRRegion *region;
+  CstLayout* layout;
 
+  CstRenderPass ctx = {0};
+  ctx.v_module = v_module;
+
+  region = render_create_region(self->window);
+  layout = cst_layout_new_I(self, region);
   layer = self->box_layer;
 
-  cst_context_set_v_render(c, self);
-  cst_render_realize(self, c, v_module);
+  cst_render_realize(self, &ctx);
   cst_layout_begin_layout(layout, layer);
 
   cst_box_layer_layout(layer, layout);
@@ -161,7 +160,6 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
-  self->body_node = cst_node_new_body();
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {
@@ -182,7 +180,6 @@ static void cst_render_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
-  sys_clear_pointer(&self->body_node, _sys_object_unref);
 
   if (self->window) {
     sys_object_unref(self->window);

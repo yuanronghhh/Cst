@@ -42,7 +42,6 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rn
   const SysChar* bind_var;
   SysInt data_type;
   CstNode* node;
-  FRPair *pair;
 
   bind_var = cst_value_map_key(self->value_map);
   data_type = cst_value_map_prop_data_type(self->value_map);
@@ -55,7 +54,6 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rn
     return;
   }
 
-  pair = FR_PAIR(map);
   self->node_type = sys_type_from_instance(node);
   sys_object_ref(rnode);
 

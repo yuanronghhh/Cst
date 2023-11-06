@@ -58,9 +58,11 @@
 %%
 program_unit : unit_list
              {
-                AstNode *root = ast_for_root(ps, $1);
+                AstNode *root = ast_for_root($1);
                 $$ = root;
-                cst_parser_realize(ps, root);
+
+                CstParserContext *ctx = cst_parser_get_ctx(ps);
+                cst_parser_context_realize(ctx, root);
              }
              ;
 unit_list : top_unit
@@ -93,14 +95,16 @@ top_unit: import
         ;
 import  : import_token id_list from_token string_token ';'
         {
-            $$ = ast_for_import(ps, $2, $4);
-            cst_parser_import(ps, $$);
+            $$ = ast_for_import($2, $4);
+
+            CstParserContext *ctx = cst_parser_get_ctx(ps);
+            cst_parser_context_import(ctx, $$);
         }
         ;
 source  : source_token
         {
             SysInt lineno = yyget_lineno(yyscanner);
-            $$ = ast_for_source(ps, $1, lineno);
+            $$ = ast_for_source($1, lineno);
         }
         ;
 id_list : id_token
@@ -116,20 +120,20 @@ id_list : id_token
         ;
 gstyle   : GStyle_token jproperty ':' jobject
         {
-           $$ = ast_for_gstyle(ps, $2, $4);
+           $$ = ast_for_gstyle($2, $4);
         }
         | GStyle_token ':' jobject
         {
-           $$ = ast_for_gstyle(ps, NULL, $3);
+           $$ = ast_for_gstyle(NULL, $3);
         }
         ;
 component: Component_token jproperty ':' jobject
          {
-            $$ = ast_for_component(ps,$2, $4);
+            $$ = ast_for_component($2, $4);
          }
          | Component_token ':' jobject
          {
-            $$ = ast_for_component(ps,NULL, $3);
+            $$ = ast_for_component(NULL, $3);
          }
          ;
 jkey : string_token
@@ -143,78 +147,78 @@ jkey : string_token
      ;
 jpair : jkey ':' jnode
       {
-          $$ = ast_for_jpair(ps,$1, NULL, $3);
+          $$ = ast_for_jpair($1, NULL, $3);
       }
       | jkey jproperty ':' jnode
       {
-          $$ = ast_for_jpair(ps,$1, $2, $4);
+          $$ = ast_for_jpair($1, $2, $4);
       }
       ;
 jstring: string_token
        {
-          $$ = ast_for_jstring(ps,$1);
+          $$ = ast_for_jstring($1);
        }
        ;
 jbool : true_token
       {
-         $$ = ast_for_jbool(ps,true);
+         $$ = ast_for_jbool(true);
       }
       | false_token
       {
-         $$ = ast_for_jbool(ps,false);
+         $$ = ast_for_jbool(false);
       }
       ;
 jarray : '[' jnode_list ']'
        {
-          $$ = ast_for_jarray(ps, $2);
+          $$ = ast_for_jarray($2);
        }
        ;
 jnumber : int_token
         {
-            $$ = ast_for_jint(ps,$1);
+            $$ = ast_for_jint($1);
         }
         | double_token
         {
-            $$ = ast_for_jdouble(ps,$1);
+            $$ = ast_for_jdouble($1);
         }
         ;
 jnull: null_token
      {
-          $$ = ast_for_jnull(ps);
+          $$ = ast_for_jnull();
      }
      ;
 jsource: source_token
        {
-          $$ = ast_for_jsource(ps,$1);
+          $$ = ast_for_jsource($1);
        }
        ;
 jnode: jobject
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       | jarray
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       | jstring
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       | jbool
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       | jnull
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       | jnumber
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       | jsource
       {
-          $$ = ast_for_jnode(ps,$1);
+          $$ = ast_for_jnode($1);
       }
       ;
 jpair_list: jpair
@@ -249,12 +253,12 @@ jnode_list: jnode
            ;
 jproperty: '<' jpair_list '>'
          {
-            $$ = ast_for_jproperty(ps, $2);
+            $$ = ast_for_jproperty($2);
          }
          ;
 jobject : '{' jpair_list '}'
         {
-            $$ = ast_for_jobject(ps, $2);
+            $$ = ast_for_jobject($2);
         }
         ;
 %%

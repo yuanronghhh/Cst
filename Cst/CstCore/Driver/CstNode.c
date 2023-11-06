@@ -10,7 +10,6 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Driver/CstNodeRealizer.h>
 
 
 
@@ -23,6 +22,7 @@ static const SysChar* CST_NODE_LAYER_NAMES[] = {
   "box", "absolute"
 };
 
+static CstNode *body_node = NULL;
 
 SYS_DEFINE_TYPE(CstNode, cst_node, FR_TYPE_NODE);
 
@@ -338,6 +338,22 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   }
 
   return lnode;
+}
+
+CstNode *cst_node_get_body_node(void) {
+
+  return body_node;
+}
+
+void cst_node_setup(void) {
+  sys_assert(body_node == NULL);
+
+  body_node = cst_node_new_body();
+}
+
+void cst_node_teardown(void) {
+
+  sys_clear_pointer(&body_node, _sys_object_unref);
 }
 
 /* sys object api */

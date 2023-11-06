@@ -19,8 +19,8 @@ struct _CstApplication {
   FRMain* work_loop;
   FRSource *app_source;
   CstRender *render;
+  CstRender *body_node;
   CstModule *main_module;
-  CstContext *c;
   SysInt status;
 };
 
@@ -29,7 +29,7 @@ struct _CstApplicationClass {
 };
 
 SysType cst_application_get_type(void);
-CstApplication* cst_application_new_I(CstContext *ctx, const SysChar *appname);
+CstApplication* cst_application_new_I(const SysChar *appname);
 SysInt cst_application_run(CstApplication * self, const SysChar * main_path);
 CstApplication * cst_application_acquire(void);
 void cst_application_stop (CstApplication *app);

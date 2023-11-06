@@ -1,9 +1,5 @@
 #include <CstCore/Driver/CstApplication.h>
-
-#include <CstCore/Driver/Css/CstCss.h>
-#include <CstCore/Driver/CstModule.h>
-#include <CstCore/Driver/CstRender.h>
-#include <CstCore/Driver/CstNode.h>
+#include <CstCore/CstCore.h>
 
 
 SYS_DEFINE_TYPE(CstApplication, cst_application, SYS_TYPE_OBJECT);
@@ -48,8 +44,7 @@ static void cst_application_active(CstApplication* self) {
   fr_awatch_bind(awatch, (SysPointer)self);
   cst_module_add_awatch(v_module, awatch);
 
-  cst_context_set_v_module(self->c, v_module);
-  cst_render_render(v_render, self->c, v_module);
+  cst_render_render(v_render, v_module);
 }
 
 void cst_application_mono_setup(const SysChar *managed_path) {
@@ -62,9 +57,10 @@ void cst_application_mono_setup(const SysChar *managed_path) {
 
 SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
   sys_return_val_if_fail(self != NULL, 1);
+  CstNode *body_node = cst_node_get_body_node();
 
   self->render = cst_render_new_I(false);
-  self->main_module = cst_module_load_path(self->c, NULL, main_path);
+  self->main_module = cst_module_load_path(body_node, NULL, main_path);
 
   cst_application_active(self);
 
@@ -89,12 +85,13 @@ static void cst_application_dispose(SysObject* o) {
   sys_clear_pointer(&self->app_source, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_application_parent_class)->dispose(o);
+
+  cst_core_teardown();
 }
 
-void cst_application_construct(CstApplication* self, CstContext *c, const SysChar *appname) {
+void cst_application_construct(CstApplication* self, const SysChar *appname) {
   self->main_loop = fr_main_get_main_loop();
   self->app_source = fr_application_new_I(self);
-  self->c = c;
 
   fr_main_attach(self->main_loop, self->app_source);
 }
@@ -103,13 +100,12 @@ CstApplication *cst_application_new(void) {
   return sys_object_new(CST_TYPE_APPLICATION, NULL);
 }
 
-CstApplication* cst_application_new_I(CstContext *c, const SysChar *appname) {
+CstApplication* cst_application_new_I(const SysChar *appname) {
   sys_return_val_if_fail(appname != NULL, NULL);
-  sys_return_val_if_fail(c != NULL, NULL);
+  cst_core_setup();
 
   CstApplication* o = cst_application_new();
-
-  cst_application_construct(o, c, appname);
+  cst_application_construct(o, appname);
 
   return o;
 }

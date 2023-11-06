@@ -11,6 +11,11 @@ SYS_BEGIN_DECLS
 #define CST_COMPONENT_CLASS(o) ((CstComponentClass *)sys_class_cast_check(o, CST_TYPE_COMPONENT))
 #define CST_COMPONENT_GET_CLASS(o) sys_instance_get_class(o, CstComponentClass)
 
+struct _CstComponentPass {
+  CstModule *v_module;
+  CstComponent *v_pcomponent;
+};
+
 struct _CstComponent {
   FREnv parent;
 
@@ -27,14 +32,14 @@ struct _CstComponent {
 struct _CstComponentClass {
   FREnvClass parent;
 
-  void (*construct) (CstComponent *self, CstComponentBuilder *builder);
+  void (*construct) (CstComponent *o, CstComponentPass *ctx);
 };
 
 CstComponent* cst_component_new(void);
 SysType cst_component_get_type(void);
 CstValueMap * cst_component_get_value_map(CstComponent * self, const SysChar * key);
 void cst_component_set_value_map(CstComponent * self, CstValueMap * map);
-void cst_component_construct(CstComponent *self, CstComponentBuilder *builder);
+void cst_component_construct(CstComponent *self, CstComponentPass *c);
 
 void cst_component_print(CstComponent * self);
 SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[], SysUInt len);

@@ -125,11 +125,18 @@ set(SRC
 
   ./Parser/Ast.c
   ./Parser/Ast.h
-  # ./Parser/CodeGen.c
-  # ./Parser/CodeGen.h
+  ./Parser/AstJNode.c
+  ./Parser/AstJNode.h
+  ./Parser/AstNode.c
+  ./Parser/AstNode.h
+  ./Parser/AstParser.c
+  ./Parser/AstParser.h
+  ./Parser/AstPrivate.h
 
   ./Parser/CstParser.c
   ./Parser/CstParser.h
+  ./Parser/CstParserContext.c
+  ./Parser/CstParserContext.h
   ./Parser/CstParserCommon.h
   ./Parser/CstParserTypes.h
   ./Parser/CstParserCore.h

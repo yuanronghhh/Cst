@@ -28,6 +28,10 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Parser/CstParserCore.h>
+#include <CstCore/Driver/CstContext.h>
+
+void cst_core_setup (void);
+void cst_core_teardown (void);
 
 SYS_END_DECLS
 

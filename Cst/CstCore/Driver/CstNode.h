@@ -1,7 +1,7 @@
 #ifndef __CST_NODE_H__
 #define __CST_NODE_H__
 
-#include <CstCore/Driver/CstNodeBuilder.h>
+#include <CstCore/Driver/CstCommon.h>
 
 
 SYS_BEGIN_DECLS
@@ -41,7 +41,6 @@ struct _CstNodeClass {
 };
 
 CstNode* cst_node_new(void);
-CstNode* cst_node_new_I(CstNodeBuilder *builder);
 SysType cst_node_get_type(void);
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar *name);
@@ -52,7 +51,6 @@ const SysChar *cst_node_get_name(CstNode *node);
 void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
-CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name);
 CstNode* cst_node_new_layout_node(void);
 CstNode *cst_node_new_body(void);
 
@@ -70,11 +68,8 @@ void cst_node_setup(void);
 void cst_node_teardown(void);
 
 /* props */
-void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list);
-SysList * cst_node_get_v_awatch_list(CstNode *self);
-
-void cst_node_set_v_nodemap_list(CstNode *self, SysList * v_nodemap_list);
-SysList * cst_node_get_v_nodemap_list(CstNode *self);
+void cst_node_add_awatch(CstNode *self, FRAWatch* o);
+void cst_node_add_nodemap(CstNode *self, CstNodeMap* o);
 
 void cst_node_set_v_css_list(CstNode *self, SysPtrArray * v_css_list);
 SysPtrArray * cst_node_get_v_css_list(CstNode *self);
@@ -82,7 +77,7 @@ SysPtrArray * cst_node_get_v_css_list(CstNode *self);
 void cst_node_set_v_id(CstNode *self, const SysChar * v_id);
 const SysChar * cst_node_get_v_id(CstNode *self);
 
-void cst_node_set_v_value(CstNode *self, SysChar * v_value);
+void cst_node_set_v_value(CstNode *self, const SysChar * v_value);
 SysChar * cst_node_get_v_value(CstNode *self);
 
 void cst_node_set_v_label(CstNode *self, SysChar * v_label);

@@ -2,7 +2,6 @@
 #define __CST_COM_NODE_H__
 
 #include <CstCore/Driver/CstNode.h>
-#include <CstCore/Front/Common/CstComNodeBuilder.h>
 
 SYS_BEGIN_DECLS
 
@@ -26,7 +25,6 @@ struct _CstComNodeClass {
 
 SysType cst_com_node_get_type(void);
 CstNode* cst_com_node_new(void);
-CstNode* cst_com_node_new_I(CstNodeBuilder *builder);
 CstComponent* cst_com_node_get_component(CstComNode * self);
 
 CstNodeMap* cst_com_node_get_node_map(CstComNode* self, const SysChar *key);

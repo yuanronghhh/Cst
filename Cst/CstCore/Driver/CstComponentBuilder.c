@@ -10,14 +10,21 @@
 
 SYS_DEFINE_TYPE(CstComponentBuilder, cst_component_builder, SYS_TYPE_OBJECT);
 
+
 /* builder */
-void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_base_name != NULL);
+SysBool cst_component_builder_parse_base(CstComponentBuilder *self, const SysChar *base) {
+  sys_return_val_if_fail(self != NULL, false);
 
-  sys_assert(self->v_base_name == NULL);
+  CstComponent *c = cst_component_get_g_component(base);
+  if(c == NULL) {
 
-  self->v_base_name = sys_strdup(v_base_name);
+    sys_warning_N("%s is not a component", base);
+    return false;
+  }
+  self->base_component = c;
+  sys_object_ref(c);
+
+  return true;
 }
 
 void cst_component_builder_set_id(CstComponentBuilder *self, const SysChar * id) {
@@ -29,6 +36,7 @@ void cst_component_builder_set_id(CstComponentBuilder *self, const SysChar * id)
 
   self->id = sys_strdup(id);
 }
+
 
 const SysChar * cst_component_builder_get_id(CstComponentBuilder *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -51,13 +59,13 @@ CstComponent * cst_component_builder_get_v_parent(CstComponentBuilder *self) {
 CstValueMap *cst_component_builder_get_value_map(CstComponentBuilder *self, const SysChar *key) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return fr_env_get_r(self->prop_maps_env, key);
+  return fr_env_get_r(self->value_maps_env, key);
 }
 
 void cst_component_builder_set_value_map(CstComponentBuilder *self, CstValueMap *map) {
   sys_return_if_fail(self != NULL);
 
-  fr_env_set(self->prop_maps_env, cst_value_map_key(map), (SysPointer)map);
+  fr_env_set(self->value_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
 void cst_component_builder_set_css(CstComponentBuilder* self, CstCssGroup *g) {
@@ -88,7 +96,7 @@ void cst_component_builder_build(CstComponentBuilder *self, CstComponent *o) {
   sys_return_if_fail(self != NULL);
 
   cst_component_set_id(o, self->id);
-  cst_component_set_prop_maps_env(o, self->prop_maps_env);
+  cst_component_set_value_maps_env(o, self->value_maps_env);
   cst_component_set_css_env(o, self->css_env);
 }
 
@@ -100,8 +108,9 @@ static void cst_component_builder_dispose(SysObject* o) {
     sys_clear_pointer(&self->id, sys_free);
   }
 
-  if(self->v_base_name) {
-    sys_clear_pointer(&self->v_base_name, sys_free);
+  if(self->base_component) {
+
+    sys_clear_pointer(&self->base_component, _sys_object_unref);
   }
 
   SYS_OBJECT_CLASS(cst_component_builder_parent_class)->dispose(o);
@@ -120,5 +129,5 @@ static void cst_component_builder_class_init(CstComponentBuilderClass* cls) {
 
 static void cst_component_builder_init(CstComponentBuilder *self) {
   self->css_env = cst_css_env_new_I(NULL);
-  self->prop_maps_env = cst_component_new_prop_maps_env(NULL);
+  self->value_maps_env = cst_value_map_new_env(NULL);
 }

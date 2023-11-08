@@ -1,5 +1,3 @@
-
-
 Component<id: "mini-menubase">: {
   Style: {
     "ma0": {
@@ -15,7 +13,7 @@ Component<id: "mini-menubase">: {
   },
 
   Props: {
-    id: ""
+    id: "string"
   },
 
   Layout: {

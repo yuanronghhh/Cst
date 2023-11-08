@@ -25,11 +25,14 @@ struct _CstRender {
 
   CstLayer *box_layer;
   CstLayer *abs_layer;
-  CstNode *body_node;
 };
 
 SysType cst_render_get_type(void);
 CstRender* cst_render_new_I(SysBool is_offscreen);
+
+void cst_render_setup(void);
+void cst_render_teardown(void);
+CstRender *cst_render_get_g_render(void);
 
 FRWindow *cst_render_get_default_window(CstRender *self);
 void cst_render_resize_window(CstRender *self);

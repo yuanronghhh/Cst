@@ -2,7 +2,6 @@
 
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Front/Common/CstLBoxContext.h>

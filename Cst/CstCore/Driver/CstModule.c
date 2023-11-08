@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstModule.h>
 
+#include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/Css/CstCss.h>
@@ -16,14 +17,18 @@ struct _CstModuleContext {
   CstNode *v_pnode;
 };
 
+
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
 
 
-CstModule* cst_module_load_path(CstNode *pnode, CstModule *parent, const SysChar* path) {
+CstModule* cst_module_load_path(
+    CstModule *parent,
+    const SysChar* path) {
   sys_return_val_if_fail(path != NULL, NULL);
 
   CstModule *mod, *old;
   CstParser *ps;
+  CstNode *pnode = cst_node_get_body_node();
 
   old = cst_module_get_g_module(path);
   if(old != NULL) {
@@ -45,7 +50,14 @@ CstModule* cst_module_load_path(CstNode *pnode, CstModule *parent, const SysChar
   }
   cst_module_set_g_module(mod);
 
+  CstParserContext* ctx = cst_parser_context_new();
   ps = ast_parser_new_I(path, mod, pnode);
+
+  ctx->import_func = (AstNodeFunc)ast_parser_import_handle;
+  ctx->realize_func = (AstNodeFunc)ast_parser_module_handle;
+  ctx->user_data = ps;
+  cst_parser_set_ctx(ps, ctx);
+
   if(!cst_parser_parse(ps)) {
     goto fail;
   }
@@ -55,7 +67,7 @@ CstModule* cst_module_load_path(CstNode *pnode, CstModule *parent, const SysChar
   return mod;
 
 fail:
-  cst_module_remove_g_module(mod);
+  cst_module_remove_g_module(path);
   return NULL;
 }
 
@@ -213,10 +225,10 @@ CstModule* cst_module_get_g_module(const SysChar *name) {
   return sys_hash_table_lookup(g_module_ht, (const SysPointer)name);
 }
 
-SysBool cst_module_remove_g_module(CstModule *m) {
-  sys_return_val_if_fail(m != NULL, false);
+SysBool cst_module_remove_g_module(const SysChar *name) {
+  sys_return_val_if_fail(name != NULL, false);
 
-  return sys_hash_table_remove(g_module_ht, (SysPointer)cst_module_get_path(m));
+  return sys_hash_table_remove(g_module_ht, (SysPointer)name);
 }
 
 void cst_module_set_g_module(CstModule *m) {

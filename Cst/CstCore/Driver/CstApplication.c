@@ -27,8 +27,8 @@ FR_FUNC_DEFINE_EVENT(cst_application_event_func) {
 
 FR_FUNC_DEFINE_EVENT(app_window_resize_test) {
   CstApplication *app = CST_APPLICATION(user_data);
-  CstRender *render = app->render;
 
+  CstRender *render = cst_render_get_g_render();
   cst_render_resize_window(render);
 
   return 0;
@@ -38,13 +38,13 @@ static void cst_application_active(CstApplication* self) {
   sys_return_if_fail(self != NULL);
 
   CstModule* v_module = self->main_module;
-  CstRender *v_render = self->render;
 
   FRAWatch *awatch = fr_awatch_any_new_I(FR_TYPE_EVENT, "app_window_resize_test", app_window_resize_test);
   fr_awatch_bind(awatch, (SysPointer)self);
   cst_module_add_awatch(v_module, awatch);
 
-  cst_render_render(v_render, v_module);
+  CstRender *render = cst_render_get_g_render();
+  cst_render_render(render, v_module);
 }
 
 void cst_application_mono_setup(const SysChar *managed_path) {
@@ -57,10 +57,8 @@ void cst_application_mono_setup(const SysChar *managed_path) {
 
 SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
   sys_return_val_if_fail(self != NULL, 1);
-  CstNode *body_node = cst_node_get_body_node();
 
-  self->render = cst_render_new_I(false);
-  self->main_module = cst_module_load_path(body_node, NULL, main_path);
+  self->main_module = cst_module_load_path(NULL, main_path);
 
   cst_application_active(self);
 

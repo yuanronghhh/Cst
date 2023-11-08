@@ -33,7 +33,7 @@ const SysChar * cst_value_map_key(CstValueMap * self);
 SysInt cst_value_map_prop_data_type(CstValueMap * self);
 SysInt cst_value_map_parse_type(const SysChar* type_str);
 CstValueMap * cst_value_map_new_I(const SysChar * key, SYS_VALUE_ENUM data_type);
-FREnv *cst_value_map_new_env();
+FREnv *cst_value_map_new_env(FREnv *parent);
 
 SYS_END_DECLS
 

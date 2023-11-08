@@ -27,6 +27,7 @@ struct _CstLayerClass {
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
 
+CST_NODE_LAYER_ENUM cst_layer_get_by_name(const SysChar* name);
 CstLayerNode* cst_layer_new_node(CstLayer *o, CstLayerNode *v_parent, CstNode *node);
 void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
 

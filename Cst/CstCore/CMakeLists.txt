@@ -19,8 +19,8 @@ set(C_API_SRC
   ./Front/CstType.h
   ./Front/Common/CstComNode.c
   ./Front/Common/CstComNode.h
-  ./Front/Common/CstComNodeBuilder.c
-  ./Front/Common/CstComNodeBuilder.h
+  # ./Front/Common/CstComNodeBuilder.c.bak
+  # ./Front/Common/CstComNodeBuilder.h.bak
 
   ./Front/Common/CstLBox.c
   ./Front/Common/CstLBox.h
@@ -70,8 +70,8 @@ set(SRC
   ./Driver/CstModule.h
   ./Driver/CstNode.c
   ./Driver/CstNode.h
-  ./Driver/CstNodeBuilder.c
-  ./Driver/CstNodeBuilder.h
+  # ./Driver/CstNodeBuilder.c
+  # ./Driver/CstNodeBuilder.h
 
   ./Driver/Css/CstCssGroup.c
   ./Driver/Css/CstCssGroup.h

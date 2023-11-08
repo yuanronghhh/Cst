@@ -1,7 +1,6 @@
 #include <CstCore/Driver/CstRender.h>
 
 #include <CstCore/Front/Common/CstLBody.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
@@ -10,14 +9,23 @@
 #include <CstCore/Driver/CstRenderContext.h>
 
 
-typedef struct _CstRenderPass CstRenderPass;
-
-struct _CstRenderPass {
-  CstModule *v_module;
-};
-
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
+
+static CstRender *g_render = NULL;
+
+void cst_render_setup(void) {
+  g_render = cst_render_new_I(false);
+}
+
+void cst_render_teardown(void) {
+
+  sys_clear_pointer(&g_render, _sys_object_unref);
+}
+
+CstRender *cst_render_get_g_render(void) {
+  return g_render;
+}
 
 CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
@@ -54,15 +62,12 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   cst_layout_end_layout(layout);
 }
 
-void cst_render_realize(CstRender *self, CstRenderPass *ctx) {
+void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstLayerNode* body;
   FRRegion* region;
-  CstModule *v_module;
   FRRect bound = { 0 };
-
-  v_module= ctx->v_module;
 
   fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
   region = fr_region_create_rectangle(&bound);
@@ -81,14 +86,11 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   FRRegion *region;
   CstLayout* layout;
 
-  CstRenderPass ctx = {0};
-  ctx.v_module = v_module;
-
   region = render_create_region(self->window);
   layout = cst_layout_new_I(self, region);
   layer = self->box_layer;
 
-  cst_render_realize(self, &ctx);
+  cst_render_realize(self, v_module);
   cst_layout_begin_layout(layout, layer);
 
   cst_box_layer_layout(layer, layout);
@@ -138,8 +140,9 @@ CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type) {
     case CST_NODE_LAYER_ABS:
       return self->abs_layer;
     case CST_NODE_LAYER_PASS:
-    default:
       sys_warning_N("layer not implement: %d", layer_type);
+      break;
+    default:
       break;
   }
 

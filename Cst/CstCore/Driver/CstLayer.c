@@ -7,6 +7,14 @@
 
 SYS_DEFINE_TYPE(CstLayer, cst_layer, SYS_TYPE_OBJECT);
 
+static const SysChar* CST_NODE_LAYER_NAMES[] = {
+  "box", "absolute"
+};
+
+CST_NODE_LAYER_ENUM cst_layer_get_by_name(const SysChar* name) {
+  return fr_get_type_by_name(CST_NODE_LAYER_NAMES, ARRAY_SIZE(CST_NODE_LAYER_NAMES), name);
+}
+
 void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *render_node) {
   sys_return_if_fail(self != NULL);
 

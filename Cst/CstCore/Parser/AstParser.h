@@ -18,10 +18,9 @@ struct _AstParser {
   CstModule  *v_module;
   CstComponent  *v_component;
   CstComponent *v_pcomponent;
-  CstComponent  *v_com_node;
+  CstNode* v_com_node;
+  CstNode* node;
   FREnv *gcss_env;
-  CstNodeBuilder *node_builder;
-  CstComponentBuilder *comp_builder;
   CstNode *pnode;
 };
 
@@ -33,12 +32,18 @@ SysType ast_parser_get_type(void);
 CstParser *ast_parser_new(void);
 CstParser *ast_parser_new_I(const SysChar *path, CstModule *v_module, CstNode *pnode);
 
+CstParser *ast_parser_new_for_gcss(const SysChar *path);
+
 void ast_parser_parse_component(AstParser *self, AstNode *node);
 void ast_parser_parse_gstyle(AstParser *self, AstNode *node);
+
+void ast_parser_import_handle(AstNode* node, AstParser* self);
 void ast_parser_root_gstyle_handle(AstNode *node, AstParser *self);
+void ast_parser_module_handle(AstNode* node, AstParser* self);
 
 void ast_node_props_parse(AstParser *self, JNode *jnode);
 void ast_com_node_parse(AstParser *self, JNode *jnode);
+
 
 SysBool ast_css_value_parse(JNode *jnode, CstCssNode *node, CstCssValue *value);
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue *value);

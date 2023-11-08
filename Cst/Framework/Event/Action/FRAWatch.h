@@ -36,6 +36,7 @@ SYS_API SysType fr_awatch_get_type(void);
 
 SYS_API SysType fr_awatch_get_type_by_name(const SysChar * name);
 SYS_API FRAWatch* fr_awatch_new_by_name(const SysChar *name);
+SYS_API FRAWatch *fr_awatch_new_by_type(SysType tp, const SysChar * func_name, FREventFunc watch_func);
 
 SYS_API void fr_awatch_construct(FRAWatch* self, FRAWatchBuilder *builder);
 SYS_API void fr_awatch_dispatch(FRAWatch *self, FREvent *e);

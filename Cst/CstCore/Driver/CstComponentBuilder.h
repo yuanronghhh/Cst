@@ -17,8 +17,8 @@ struct _CstComponentBuilder {
 
   /* < private > */
   SysChar *id;
-  SysChar *v_base_name;
-  FREnv *prop_maps_env;
+  CstComponent *base_component;
+  FREnv *value_maps_env;
   FREnv *css_env;
   CstComponent *v_parent;
 };
@@ -38,7 +38,7 @@ void cst_component_builder_build(CstComponentBuilder *self, CstComponent *o);
 CstValueMap * cst_component_builder_get_value_map(CstComponentBuilder * self, const SysChar * key);
 void cst_component_builder_set_value_map(CstComponentBuilder * self, CstValueMap * map);
 
-void cst_component_builder_set_base_name(CstComponentBuilder *self, SysChar *v_base_name);
+SysBool cst_component_builder_parse_base(CstComponentBuilder *self, const SysChar *base);
 
 void cst_component_builder_set_css(CstComponentBuilder* self, CstCssGroup *g);
 SysBool cst_component_builder_remove_css(CstComponentBuilder * self, CstCssGroup * g);

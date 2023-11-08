@@ -42,17 +42,16 @@ FREnv *cst_css_env_new_I(FREnv *parent) {
 void cst_css_env_setup(void) {
   CstParser* ps;
   CstParserContext *ctx;
-  CstNode *body_node;
-  SysChar *buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
+  SysChar *buildin_css_path;
 
+  buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
   gcss_env = cst_css_env_new_I(NULL);
-  body_node = cst_node_get_body_node();
 
-  ps = ast_parser_new_I(buildin_css_path, NULL, body_node);
-
+  ps = ast_parser_new_for_gcss(buildin_css_path);
   ctx = cst_parser_context_new();
   ctx->realize_func = (AstNodeFunc)ast_parser_root_gstyle_handle;
   ctx->user_data = (SysPointer)ps;
+
   cst_parser_set_ctx(ps, ctx);
 
   if (ps == NULL) {

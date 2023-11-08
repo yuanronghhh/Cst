@@ -37,7 +37,9 @@ SysInt cst_module_get_hashcode(CstModule* self);
 const SysChar *cst_module_get_path(CstModule* self);
 SysBool cst_module_is_loaded(CstModule *self);
 
-CstModule* cst_module_load_path(CstNode *pnode, CstModule *parent, const SysChar* path);
+CstModule* cst_module_load_path(
+    CstModule *parent,
+    const SysChar* path);
 
 void cst_module_setup(void);
 void cst_module_teardown(void);
@@ -53,7 +55,7 @@ void cst_module_set_component(CstModule * self, const SysChar * key, CstComponen
 CstComponent* cst_module_get_component(CstModule *self, const SysChar *comp_name);
 
 CstModule* cst_module_get_g_module(const SysChar *name);
-SysBool cst_module_remove_g_module(CstModule *m);
+SysBool cst_module_remove_g_module(const SysChar *name);
 void cst_module_set_g_module(CstModule *m);
 
 void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, const SysChar *func_name, FREventFunc func);
@@ -64,7 +66,6 @@ void cst_module_set_root_component(CstModule *self, CstComponent *comp);
 CstComponent *cst_module_get_root_component(CstModule *self);
 
 SysChar *cst_module_new_uid(CstModule *self);
-SysBool cst_module_for_import(CstModule *self, AstParser *c, SysPtrArray *sarray, const SysChar *path);
 
 void cst_module_set_count(CstModule *self, SysInt count);
 SysInt cst_module_get_count(CstModule *self);

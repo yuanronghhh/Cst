@@ -53,6 +53,13 @@ static void cst_parser_construct(CstParser *self, FILE *fp, const SysChar *fullp
   self->fp = fp;
   self->filename = sys_strdup(fullpath);
   self->scanner = NULL;
+
+  if (yylex_init_extra(self, &self->scanner) != 0) {
+    sys_abort_N("%s", "scanner init failed.");
+  }
+
+  yyset_in(fp, self->scanner);
+  yyrestart(fp, self->scanner);
 }
 
 static void cst_parser_dispose(SysObject* o) {
@@ -79,14 +86,6 @@ CstParser *cst_parser_new_I(const SysChar *fullpath) {
   }
 
   cst_parser_construct(self, fp, fullpath);
-
-  if(yylex_init_extra(self, &self->scanner) != 0) {
-    sys_abort_N("%s", "scanner init failed.");
-    goto fail;
-  }
-
-  yyset_in(fp, self->scanner);
-  yyrestart(fp, self->scanner);
 
   return self;
 

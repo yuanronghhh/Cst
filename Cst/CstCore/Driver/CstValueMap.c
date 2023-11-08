@@ -18,6 +18,12 @@ SysInt cst_value_map_prop_data_type(CstValueMap *self) {
   return self->data_type;
 }
 
+FREnv *cst_value_map_new_env(FREnv *parent) {
+  SysHashTable *ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+
+  return fr_env_new_I(ht, parent);
+}
+
 /* object api */
 static void cst_value_map_init(CstValueMap *self) {
 }
@@ -28,6 +34,8 @@ static void cst_value_map_construct(CstValueMap* self, const SysChar *key, SYS_V
 }
 
 SysInt cst_value_map_parse_type(const SysChar* type_str) {
+  sys_return_val_if_fail(type_str != NULL, -1);
+
   if (sys_str_equal(type_str, "string")) {
 
     return SYS_VALUE_STRING;

@@ -238,7 +238,7 @@ JNode* ast_for_jstring(SysChar* str) {
 
 const SysChar *ast_jnode_get_string(JNode *jnode) {
   sys_return_val_if_fail(jnode != NULL, NULL);
-  sys_return_val_if_fail(jnode->type != AstJString, NULL);
+  sys_return_val_if_fail(jnode->type == AstJString, NULL);
 
   return jnode->v.v_string;
 }

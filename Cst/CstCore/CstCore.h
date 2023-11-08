@@ -21,7 +21,6 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstNode.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstNodeMap.h>
 #include <CstCore/Driver/CstValueMap.h>
 #include <CstCore/Driver/CstRender.h>

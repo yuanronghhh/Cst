@@ -1,3 +1,4 @@
+import MenuBase from "./MiniMenuBase.cst";
 
 
 Component<id: "mini-menubar", base: "mini-menubase">: {

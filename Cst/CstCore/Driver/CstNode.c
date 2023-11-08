@@ -18,18 +18,9 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
   "key_up","key_down",
 };
 
-static const SysChar* CST_NODE_LAYER_NAMES[] = {
-  "box", "absolute"
-};
-
 static CstNode *body_node = NULL;
 
 SYS_DEFINE_TYPE(CstNode, cst_node, FR_TYPE_NODE);
-
-
-CST_NODE_LAYER_ENUM cst_node_layer_by_name(const SysChar* name) {
-  return fr_get_type_by_name(CST_NODE_LAYER_NAMES, ARRAY_SIZE(CST_NODE_LAYER_NAMES), name);
-}
 
 SysObject* cst_node_dclone_i(SysObject *o) {
   sys_return_val_if_fail(o != NULL, NULL);
@@ -72,22 +63,24 @@ void cst_node_unlink_node_r(CstNode *self) {
   fr_node_handle_node_ft_r(FR_NODE(self), node_unlink_one, NULL);
 }
 
-void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list) {
+void cst_node_add_awatch(CstNode *self, FRAWatch* o) {
   sys_return_if_fail(self != NULL);
+  sys_return_if_fail(o != NULL);
 
-  self->v_awatch_list = v_awatch_list;
-}
-
-SysList * cst_node_get_v_awatch_list(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_awatch_list;
+  self->v_awatch_list = sys_list_prepend(self->v_awatch_list, o);
 }
 
 void cst_node_set_v_nodemap_list(CstNode *self, SysList * v_nodemap_list) {
   sys_return_if_fail(self != NULL);
 
   self->v_nodemap_list = v_nodemap_list;
+}
+
+void cst_node_add_nodemap(CstNode *self, CstNodeMap* o) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(o != NULL);
+
+  self->v_nodemap_list = sys_list_prepend(self->v_nodemap_list, o);
 }
 
 SysList * cst_node_get_v_nodemap_list(CstNode *self) {
@@ -136,7 +129,7 @@ CstLayer* cst_node_get_v_layer(CstNode *self) {
   return self->v_layer;
 }
 
-void cst_node_set_v_value(CstNode *self, SysChar * v_value) {
+void cst_node_set_v_value(CstNode *self, const SysChar * v_value) {
   sys_return_if_fail(self != NULL);
 
   if(self->v_value) {

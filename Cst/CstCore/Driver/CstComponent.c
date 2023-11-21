@@ -206,7 +206,7 @@ SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *base[],
   return list;
 }
 /* sys object api */
-void cst_component_construct(CstComponent *self, CstComponentPass *c) {
+void cst_component_construct(CstComponent *self, CstComponentContext *c) {
   sys_return_if_fail(c != NULL);
 
   CstComponentClass *cls = CST_COMPONENT_GET_CLASS(self);
@@ -215,14 +215,16 @@ void cst_component_construct(CstComponent *self, CstComponentPass *c) {
   cls->construct(self, c);
 }
 
-static void cst_component_construct_i(CstComponent *self, CstComponentPass *c) {
+static void cst_component_construct_i(CstComponent *self, CstComponentContext *c) {
   sys_return_if_fail(self != NULL);
   SysHashTable *ht;
 
-  CstComponent *v_pcomponent = c->v_pcomponent;
+  CstComponent *v_pcomponent = cst_component_context_get_v_pcomponent(c);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_pcomponent));
+
+  self->layout_node = cst_node_new_layout_node();
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {

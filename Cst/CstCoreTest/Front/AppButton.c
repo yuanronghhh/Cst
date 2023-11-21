@@ -26,10 +26,10 @@ AppButton* app_button_new(void) {
   return sys_object_new(APP_TYPE_BUTTON, NULL);
 }
 
-static void app_button_construct(CstComponent *self, CstComponentBuilder *builder) {
+static void app_button_construct(CstComponent *self, CstComponentContext *builder) {
   sys_return_if_fail(builder != NULL);
 
-  CstModule *v_module = cst_component_builder_get_v_module(builder);
+  CstModule *v_module = cst_component_context_get_v_module(builder);
 
   CST_COMPONENT_CLASS(app_button_parent_class)->construct(self, builder);
 

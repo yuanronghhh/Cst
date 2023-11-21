@@ -112,6 +112,9 @@ FRNode * fr_node_get_last_child(FRNode *self) {
   return self->last_child;
 }
 
+void fr_node_new_init(FRNode* node) {
+}
+
 /* object api */
 static void fr_node_construct(FRNode *self) {
 }

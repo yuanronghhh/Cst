@@ -29,7 +29,7 @@ static void mini_menubar_init(MiniMenuBar *self) {
   self->priv = mini_menubar_get_private(self);
 }
 
-static void mini_menubar_construct(CstComponent *o, CstComponentPass *c) {
+static void mini_menubar_construct(CstComponent *o, CstComponentContext *c) {
   CST_COMPONENT_CLASS(mini_menubar_parent_class)->construct(o, c);
   CstModule *v_module = c->v_module;
 

@@ -78,7 +78,6 @@ static void cst_application_dispose(SysObject* o) {
   CstApplication *self = CST_APPLICATION(o);
 
   sys_clear_pointer(&self->main_module, _sys_object_unref);
-  sys_clear_pointer(&self->render, _sys_object_unref);
   sys_clear_pointer(&self->main_loop, _sys_object_unref);
   sys_clear_pointer(&self->app_source, _sys_object_unref);
 

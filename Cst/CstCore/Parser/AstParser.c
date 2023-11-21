@@ -1,6 +1,6 @@
 #include <CstCore/Parser/AstParser.h>
 
-#include <CstCore/Driver/CstComponentBuilder.h>
+#include <CstCore/Driver/CstComponentContext.h>
 #include <CstCore/Parser/AstPrivate.h>
 #include <CstCore/Front/CstFrontCore.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
@@ -242,7 +242,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     cst_node_set_name(v_node, tname);
     sys_free_N(tname);
 
-    ast_node_props_parse(self, jnode);
+    ast_com_node_parse(self, jnode);
   } else {
     type = cst_render_node_get_meta(cus_name);
     if (type == 0) {
@@ -257,7 +257,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     cst_node_set_name(v_node, cus_name);
     cst_node_set_rnode_type(v_node, type);
 
-    ast_com_node_parse(self, jnode);
+    ast_node_props_parse(self, jnode);
   }
 
   count = cst_module_get_count(v_module);
@@ -342,7 +342,7 @@ static SysBool ast_component_parse_base(const SysChar *base, CstComponent **o) {
   return true;
 }
 
-static SysBool component_property_parse_func(JNode *jnode, CstComponentBuilder *o) {
+static SysBool component_property_parse_func(JNode *jnode, CstComponentContext *o) {
   sys_return_val_if_fail(jnode != NULL, false);
   sys_return_val_if_fail(o != NULL, false);
 
@@ -362,14 +362,14 @@ static SysBool component_property_parse_func(JNode *jnode, CstComponentBuilder *
         return false;
       }
 
-      cst_component_builder_set_id(o, nnode->v.v_string);
+      cst_component_context_set_id(o, nnode->v.v_string);
       break;
     case CST_COMPONENT_PROP_BASE:
       if (nnode->type != AstJString) {
         return false;
       }
 
-      if(!cst_component_builder_parse_base(o, nnode->v.v_string)) {
+      if(!cst_component_context_parse_base(o, nnode->v.v_string)) {
         return false;
       }
       break;
@@ -381,7 +381,7 @@ static SysBool component_property_parse_func(JNode *jnode, CstComponentBuilder *
   return true;
 }
 
-static void ast_component_property_parse(JNode *jnode, CstComponentBuilder *o) {
+static void ast_component_property_parse(JNode *jnode, CstComponentContext *o) {
 
   ast_iter_jobject(jnode, (AstJNodeFunc)component_property_parse_func, o);
 }
@@ -403,10 +403,12 @@ void ast_parser_parse_component(AstParser *self, AstNode *node) {
   CstModule *v_module = self->v_module;
   sys_return_if_fail(v_module != NULL);
 
-  CstComponentBuilder *builder = cst_component_builder_new();
-  ast_component_property_parse(comp_ast->property, builder);
+  CstComponentContext *c = cst_component_context_new();
 
-  comp_id = cst_component_builder_get_id(builder);
+  cst_component_context_set_v_module(c, v_module);
+  ast_component_property_parse(comp_ast->property, c);
+
+  comp_id = cst_component_context_get_id(c);
   if(comp_id == NULL) {
     sys_error_N("%s", "Not found id in component, maybe not init types ?");
     return;
@@ -423,7 +425,8 @@ void ast_parser_parse_component(AstParser *self, AstNode *node) {
     sys_error_N("Failed to create component: %s", comp_id);
   }
   self->v_component = ncomponent;
-  cst_component_builder_build(builder, ncomponent);
+  cst_component_context_build(c, ncomponent);
+  cst_component_construct(ncomponent, c);
 
   AstComponentPass pass = {0};
   pass.parser = self;
@@ -434,7 +437,7 @@ void ast_parser_parse_component(AstParser *self, AstNode *node) {
   sys_object_ref(ncomponent);
 
   cst_component_set_g_component(ncomponent);
-  sys_object_unref(builder);
+  sys_object_unref(c);
 }
 
 /* Import */

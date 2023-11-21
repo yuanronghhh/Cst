@@ -18,7 +18,6 @@ struct _CstApplication {
   FRMain* main_loop;
   FRMain* work_loop;
   FRSource *app_source;
-  CstRender *render;
   CstRender *body_node;
   CstModule *main_module;
   SysInt status;

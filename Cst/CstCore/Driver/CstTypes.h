@@ -168,10 +168,10 @@ typedef union _CstCssValueV CstCssValueV;
 typedef struct _CstCssValue CstCssValue;
 typedef struct _CstCssValueClass CstCssValueClass;
 
-typedef struct _CstComponentBuilder CstComponentBuilder;
-typedef struct _CstComponentBuilderClass CstComponentBuilderClass;
+typedef struct _CstComponentContext CstComponentContext;
+typedef struct _CstComponentContextClass CstComponentContextClass;
 
-typedef struct _CstComponentPass CstComponentPass;
+typedef struct _CstComponentContext CstComponentContext;
 typedef struct _CstComponent CstComponent;
 typedef struct _CstComponentClass CstComponentClass;
 

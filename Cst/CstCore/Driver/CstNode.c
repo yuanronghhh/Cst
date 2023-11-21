@@ -373,7 +373,10 @@ static void cst_node_dispose(SysObject* o) {
 }
 
 static void cst_node_init(CstNode *self) {
+  CstLayer *layer = cst_render_get_default_layer();
+
   self->id = NULL;
   self->last_child = NULL;
+  self->v_layer = layer;
 }
 

@@ -110,8 +110,8 @@ set(SRC
   ./Driver/CstValueMap.h
   ./Driver/CstValueMap.c
 
-  ./Driver/CstComponentBuilder.c
-  ./Driver/CstComponentBuilder.h
+  ./Driver/CstComponentContext.c
+  ./Driver/CstComponentContext.h
   ./Driver/CstComponent.h
   ./Driver/CstComponent.c
 

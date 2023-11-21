@@ -15,7 +15,7 @@ struct _CstBoxNode {
   CstLayerNode unowned;
 
   /* <private> */
-  FRNode tree_node;
+  FRNode *tree_node;
 };
 
 struct _CstBoxNodeClass {
@@ -24,7 +24,7 @@ struct _CstBoxNodeClass {
 
 SysType cst_box_node_get_type(void);
 CstLayerNode* cst_box_node_new(void);
-CstLayerNode *cst_box_node_new_I(CstNode *node);
+CstLayerNode* cst_box_node_new_I(CstNode* node);
 
 CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
 void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);

@@ -131,6 +131,12 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   fr_region_destroy(region);
 }
 
+CstLayer *cst_render_get_default_layer(void) {
+  CstRender *self = g_render;
+
+  return cst_render_get_layer_by_type(self, CST_NODE_LAYER_BOX);
+}
+
 CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type) {
   sys_return_val_if_fail(self != NULL, NULL);
 

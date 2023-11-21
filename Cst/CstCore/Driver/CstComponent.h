@@ -2,6 +2,7 @@
 #define __CST_COMPONENT__
 
 #include <CstCore/Driver/CstNodeMap.h>
+#include <CstCore/Driver/CstComponentContext.h>
 
 SYS_BEGIN_DECLS
 
@@ -9,11 +10,6 @@ SYS_BEGIN_DECLS
 #define CST_COMPONENT(o) ((CstComponent* )sys_object_cast_check(o, CST_TYPE_COMPONENT))
 #define CST_COMPONENT_CLASS(o) ((CstComponentClass *)sys_class_cast_check(o, CST_TYPE_COMPONENT))
 #define CST_COMPONENT_GET_CLASS(o) sys_instance_get_class(o, CstComponentClass)
-
-struct _CstComponentPass {
-  CstModule *v_module;
-  CstComponent *v_pcomponent;
-};
 
 struct _CstComponent {
   FREnv unowned;
@@ -31,7 +27,7 @@ struct _CstComponent {
 struct _CstComponentClass {
   FREnvClass unowned;
 
-  void (*construct) (CstComponent *o, CstComponentPass *ctx);
+  void (*construct) (CstComponent *o, CstComponentContext *c);
 };
 
 CstComponent* cst_component_new(void);
@@ -46,7 +42,7 @@ void cst_component_set_g_component(CstComponent *m);
 
 CstValueMap * cst_component_get_value_map(CstComponent * self, const SysChar * key);
 void cst_component_set_value_map(CstComponent * self, CstValueMap * map);
-void cst_component_construct(CstComponent *self, CstComponentPass *c);
+void cst_component_construct(CstComponent *self, CstComponentContext *c);
 
 void cst_component_print(CstComponent * self);
 SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[], SysUInt len);

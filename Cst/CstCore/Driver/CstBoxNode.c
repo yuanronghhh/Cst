@@ -25,21 +25,29 @@ SYS_DEFINE_TYPE(CstBoxNode, cst_box_node, CST_TYPE_LAYER_NODE);
 
 CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
+  FRNode* o = fr_node_get_last_child(self->tree_node);
+  if (o == NULL) {
+    return NULL;
+  }
 
-  return TREE_TO_BOXNODE(fr_node_get_last_child(&self->tree_node));
+  return TREE_TO_BOXNODE(o);
 }
 
 void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child) {
   sys_return_if_fail(self != NULL);
 
-  fr_node_set_last_child(&self->tree_node, &last_child->tree_node);
+  fr_node_set_last_child(self->tree_node, last_child->tree_node);
 }
 
 CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node) {
   sys_return_val_if_fail (parent != NULL, NULL);
   sys_return_val_if_fail (box_node != NULL, NULL);
+  FRNode* o = fr_node_insert_after(parent->tree_node, sibling->tree_node, box_node->tree_node);
+  if (o == NULL) {
+    return NULL;
+  }
 
-  return TREE_TO_BOXNODE(fr_node_insert_after(&parent->tree_node, &sibling->tree_node, &box_node->tree_node));
+  return TREE_TO_BOXNODE(o);
 }
 
 void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
@@ -81,7 +89,7 @@ void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstL
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return self->tree_node.children != NULL && self->tree_node.next == NULL;
+  return self->tree_node->children != NULL && self->tree_node->next == NULL;
 }
 
 void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
@@ -119,21 +127,21 @@ SysBool box_node_cb(FRNode *node, SysPointer user_data) {
 
 void cst_box_node_bfs_handle(CstBoxNode* self, CstLayerNodeFunc func, SysPointer user_data) {
   BoxNodePass pass = { func, user_data };
-  fr_node_handle_bfs_r(&self->tree_node, box_node_cb, &pass);
+  fr_node_handle_bfs_r(self->tree_node, box_node_cb, &pass);
 }
 
 void cst_box_node_handle_r(CstBoxNode *self, CstLayerNodeFunc func, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   BoxNodePass pass = { func, user_data };
 
-  fr_node_handle_node_ft_r(&self->tree_node, box_node_cb, &pass);
+  fr_node_handle_node_ft_r(self->tree_node, box_node_cb, &pass);
 }
 
 CstBoxNode* cst_box_node_get_parent(CstBoxNode* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   CstBoxNode* self = CST_BOX_NODE(o);
 
-  return TREE_TO_BOXNODE(self->tree_node.parent);
+  return TREE_TO_BOXNODE(self->tree_node->parent);
 }
 
 void cst_box_node_print(CstBoxNode* self, SysPointer user_data) {
@@ -149,19 +157,19 @@ void cst_box_node_print(CstBoxNode* self, SysPointer user_data) {
 CstBoxNode* cst_box_node_children(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return TREE_TO_BOXNODE(self->tree_node.children);
+  return TREE_TO_BOXNODE(self->tree_node->children);
 }
 
 CstBoxNode* cst_box_node_next(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return TREE_TO_BOXNODE(self->tree_node.next);
+  return TREE_TO_BOXNODE(self->tree_node->next);
 }
 
 CstBoxNode* cst_box_node_parent(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return TREE_TO_BOXNODE(self->tree_node.parent);
+  return TREE_TO_BOXNODE(self->tree_node->parent);
 }
 
 /* object api */
@@ -196,5 +204,6 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
 }
 
 static void cst_box_node_init(CstBoxNode *self) {
+  self->tree_node = fr_node_new_I();
 }
 

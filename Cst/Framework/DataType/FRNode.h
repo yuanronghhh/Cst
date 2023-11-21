@@ -29,7 +29,8 @@ struct _FRNodeClass {
 };
 
 SYS_API SysType fr_node_get_type(void);
-SYS_API FRNode *fr_node_new_I(void);
+SYS_API FRNode* fr_node_new_I(void);
+SYS_API void fr_node_new_init(FRNode* node);
 
 SYS_API void fr_node_set_last_child(FRNode *self, FRNode * last_child);
 SYS_API FRNode * fr_node_get_last_child(FRNode *self);

@@ -13,7 +13,7 @@ MiniMenuBase* mini_menubase_new(void) {
 static void mini_menubase_init(MiniMenuBase *self) {
 }
 
-static void mini_menubase_construct(CstComponent *o, CstComponentPass *c) {
+static void mini_menubase_construct(CstComponent *o, CstComponentContext *c) {
 
   CST_COMPONENT_CLASS(mini_menubase_parent_class)->construct(o, c);
 }

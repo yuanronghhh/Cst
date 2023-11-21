@@ -20,6 +20,7 @@ void cst_core_setup(void) {
 
   cst_context_setup();
   cst_css_setup();
+  cst_render_setup();
   cst_node_setup();
   cst_component_setup();
   cst_render_node_setup();
@@ -34,6 +35,7 @@ void cst_core_teardown(void) {
   cst_context_teardown();
   cst_render_node_teardown();
   cst_component_teardown();
+  cst_render_teardown();
   cst_node_teardown();
   cst_module_teardown();
   cst_css_teardown();

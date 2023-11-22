@@ -171,7 +171,6 @@ typedef struct _CstCssValueClass CstCssValueClass;
 typedef struct _CstComponentContext CstComponentContext;
 typedef struct _CstComponentContextClass CstComponentContextClass;
 
-typedef struct _CstComponentContext CstComponentContext;
 typedef struct _CstComponent CstComponent;
 typedef struct _CstComponentClass CstComponentClass;
 

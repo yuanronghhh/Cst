@@ -320,14 +320,14 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   o = FR_NODE(self);
 
   lnode = cst_node_realize(self, v_parent, com_node);
-  if (o->children) {
+  if (o->tree_node.children) {
 
-    cst_node_realize_r(CST_NODE(o->children), v_parent, com_node);
+    cst_node_realize_r(CST_NODE(o->tree_node.children), v_parent, com_node);
   }
 
-  if (o->next) {
+  if (o->tree_node.next) {
 
-    cst_node_realize_r(CST_NODE(o->next), v_parent, com_node);
+    cst_node_realize_r(CST_NODE(o->tree_node.next), v_parent, com_node);
   }
 
   return lnode;
@@ -376,7 +376,6 @@ static void cst_node_init(CstNode *self) {
   CstLayer *layer = cst_render_get_default_layer();
 
   self->id = NULL;
-  self->last_child = NULL;
   self->v_layer = layer;
 }
 

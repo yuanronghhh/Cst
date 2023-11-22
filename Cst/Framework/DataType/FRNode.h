@@ -14,14 +14,7 @@ SYS_BEGIN_DECLS
 
 struct _FRNode {
   SysObject unowned;
-
-  FRNode   *next;
-  FRNode   *prev;
-  FRNode   *parent;
-  FRNode   *children;
-
-  /* <private> */
-  FRNode     *last_child;
+  SysHNode tree_node;
 };
 
 struct _FRNodeClass {
@@ -30,17 +23,17 @@ struct _FRNodeClass {
 
 SYS_API SysType fr_node_get_type(void);
 SYS_API FRNode* fr_node_new_I(void);
-SYS_API void fr_node_new_init(FRNode* node);
 
 SYS_API void fr_node_set_last_child(FRNode *self, FRNode * last_child);
 SYS_API FRNode * fr_node_get_last_child(FRNode *self);
 
 SYS_API void fr_node_append(FRNode *parent, FRNode *node);
 SYS_API FRNode* fr_node_insert_after (FRNode *parent, FRNode *sibling, FRNode *node);
+SYS_API SysBool fr_node_has_one_child(FRNode *self);
 
-SYS_API void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
+SYS_API void fr_node_handle_bfs_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
 SYS_API void fr_node_handle_node_ff_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
-SYS_API void fr_node_handle_bfs_r(FRNode* self, FRNodeFunc func, SysPointer user_data);
+SYS_API void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
 
 SYS_END_DECLS
 

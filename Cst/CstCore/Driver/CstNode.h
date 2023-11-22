@@ -12,10 +12,8 @@ SYS_BEGIN_DECLS
 #define CST_NODE_GET_CLASS(o) sys_instance_get_class(o, CstNodeClass)
 
 struct _CstNode {
-  FRNode unowned;
-
+  FRNode      unowned;
   /* <private> */
-  CstNode     *last_child;
   SysChar     *name;
   SysChar     *id;
   SysType     rnode_type;

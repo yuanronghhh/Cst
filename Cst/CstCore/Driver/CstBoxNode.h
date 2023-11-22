@@ -15,7 +15,7 @@ struct _CstBoxNode {
   CstLayerNode unowned;
 
   /* <private> */
-  FRNode *tree_node;
+  SysHNode tree_node;
 };
 
 struct _CstBoxNodeClass {

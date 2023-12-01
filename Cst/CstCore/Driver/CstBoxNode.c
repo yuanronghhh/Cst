@@ -8,7 +8,7 @@
 #include <CstCore/Driver/CstRenderContext.h>
 
 #define BOX_NODE_TO_HNODE(o) SYS_HNODE(&o->tree_node)
-#define HNODE_TO_BOX_NODE(o) CST_BOX_NODE(SYS_HNODE_CAST_TO(o, CstBoxNode, tree_node))
+#define HNODE_TO_BOX_NODE(o) SYS_HNODE_CAST_TO(o, CstBoxNode, tree_node)
 
 typedef struct _BoxNodePass BoxNodePass;
 

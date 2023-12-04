@@ -1,38 +1,25 @@
 #include <Framework/Event/Base/FREventKey.h>
 
-struct _FREventKeyPrivate {
-  SysInt scancode;
-  SysInt action;
-  SysInt mods;
-  SysInt key;
-};
 
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FREventKey, fr_event_key, FR_TYPE_EVENT);
+SYS_DEFINE_TYPE(FREventKey, fr_event_key, FR_TYPE_EVENT);
 
 
 SysInt fr_event_key_scancode(FREventKey *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  FREventKeyPrivate* priv = self->priv;
-
-  return priv->scancode;
+  return self->scancode;
 }
 
 SysInt fr_event_key_key(FREventKey *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  FREventKeyPrivate* priv = self->priv;
-
-  return priv->key;
+  return self->key;
 }
 
 SysInt fr_event_key_action(FREventKey *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  FREventKeyPrivate* priv = self->priv;
-
-  return priv->action;
+  return self->action;
 }
 
 /* object api */
@@ -40,12 +27,11 @@ static void fr_event_key_construct(FREvent *o, FRWindow *window, SysInt key, Sys
   FR_EVENT_CLASS(fr_event_key_parent_class)->construct(o, window);
 
   FREventKey *self = FR_EVENT_KEY(o);
-  FREventKeyPrivate* priv = self->priv;
 
-  priv->key = key;
-  priv->scancode = scancode;
-  priv->action = action;
-  priv->mods = mods;
+  self->key = key;
+  self->scancode = scancode;
+  self->action = action;
+  self->mods = mods;
 }
 
 FREvent* fr_event_key_new(void) {
@@ -72,6 +58,5 @@ static void fr_event_key_class_init(FREventKeyClass* cls) {
 }
 
 void fr_event_key_init(FREventKey *self) {
-  self->priv = fr_event_key_get_private(self);
 }
 

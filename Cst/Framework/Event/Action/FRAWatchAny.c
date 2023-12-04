@@ -44,27 +44,27 @@ void fr_awatch_any_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
   fr_awatch_builder_build_awatch_any(builder, self);
 }
 
-FRAWatch *fr_awatch_any_new_I(SysType etype, const SysChar *func_name, FREventFunc func) {
+FRAWatch *fr_awatch_any_new_I(SysInt event_enum, const SysChar *func_name, FREventFunc func) {
   FRAWatch *o = fr_awatch_any_new();
 
   FRAWatchBuilder *builder = fr_awatch_builder_new_I(func_name, func);
-  fr_awatch_builder_set_etype(builder, etype);
+  fr_awatch_builder_set_event_enum(builder, event_enum);
   fr_awatch_any_construct_i(o, builder);
   sys_object_unref(builder);
 
   return o;
 }
 
-void fr_awatch_any_set_etype(FRAWatchAny *self, SysType etype) {
+void fr_awatch_any_set_event_enum(FRAWatchAny *self, SysInt event_enum) {
   sys_return_if_fail(self != NULL);
 
-  self->etype = etype;
+  self->event_enum = event_enum;
 }
 
-SysType fr_awatch_any_get_etype(FRAWatchAny *self) {
+SysInt fr_awatch_any_get_event_enum(FRAWatchAny *self) {
   sys_return_val_if_fail(self != NULL, 0);
 
-  return self->etype;
+  return self->event_enum;
 }
 
 static void fr_awatch_any_class_init(FRAWatchAnyClass* cls) {

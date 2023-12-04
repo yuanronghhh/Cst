@@ -69,6 +69,11 @@ static void cst_parser_dispose(SysObject* o) {
   sys_clear_pointer(&self->fp, sys_fclose);
   sys_clear_pointer(&self->filename, sys_free);
 
+  if (self->ctx) {
+
+    sys_clear_pointer(&self->ctx, _sys_object_unref);
+  }
+
   SYS_OBJECT_CLASS(cst_parser_parent_class)->dispose(o);
 }
 

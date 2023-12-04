@@ -1,3 +1,4 @@
+#include "CstNode.h"
 #include <CstCore/Driver/CstNode.h>
 
 #include <CstCore/Front/Common/CstLBody.h>
@@ -53,7 +54,7 @@ SysType cst_node_get_rnode_type(CstNode *self) {
 }
 
 SysBool node_unlink_one(FRNode *self, SysPointer user_data) {
-  sys_return_val_if_fail(self->tree_node.reserved > 0, false);
+  sys_return_val_if_fail(SYS_HNODE(&self->tree_node), false);
 
   sys_object_unref(self);
   return true;
@@ -175,11 +176,12 @@ SysInt cst_node_get_v_z_index(CstNode *self) {
   return self->v_z_index;
 }
 
-CstNode* cst_node_new_layout_node(void) {
+CstNode* cst_node_new_layout_node(CstModule *v_module) {
   CstNode *layout;
 
   layout = cst_node_new();
   cst_node_set_name(layout, "<layout-node>");
+  layout->id = cst_module_new_uid(v_module);
   cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
 
   return layout;
@@ -189,6 +191,7 @@ CstNode *cst_node_new_body(void) {
   CstNode *node;
 
   node = cst_node_new();
+  cst_node_set_id(node, "<body-id>");
   cst_node_set_name(node, "body");
   cst_node_set_rnode_type(node, CST_TYPE_LBODY);
 
@@ -368,8 +371,8 @@ static void cst_node_class_init(CstNodeClass *cls) {
 static void cst_node_dispose(SysObject* o) {
   CstNode *self = CST_NODE(o);
 
-  sys_clear_pointer(&self->name, sys_free);
   sys_clear_pointer(&self->id, sys_free);
+  sys_clear_pointer(&self->name, sys_free);
 
   SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);
 }

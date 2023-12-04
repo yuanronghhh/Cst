@@ -82,6 +82,18 @@ SysType fr_awatch_builder_get_etype(FRAWatchBuilder *self) {
   return self->etype;
 }
 
+void fr_awatch_builder_set_event_enum(FRAWatchBuilder *self, SysInt event_enum) {
+  sys_return_if_fail(self != NULL);
+
+  self->event_enum = event_enum;
+}
+
+SysInt fr_awatch_builder_get_event_enum(FRAWatchBuilder *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->event_enum;
+}
+
 /* object api */
 
 static void fr_awatch_builder_construct(FRAWatchBuilder* self, const SysChar *func_name, FREventFunc func) {

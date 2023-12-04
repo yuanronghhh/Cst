@@ -220,11 +220,12 @@ static void cst_component_construct_i(CstComponent *self, CstComponentContext *c
   SysHashTable *ht;
 
   CstComponent *v_pcomponent = cst_component_context_get_v_pcomponent(c);
+  CstModule* v_module = cst_component_context_get_v_module(c);
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_pcomponent));
 
-  self->layout_node = cst_node_new_layout_node();
+  self->layout_node = cst_node_new_layout_node(v_module);
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {

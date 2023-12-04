@@ -4,7 +4,9 @@
 
 #include <Mini/Front/MiniMenuBase.h>
 
+
 SYS_DEFINE_TYPE(MiniMenuBase, mini_menubase, CST_TYPE_COMPONENT);
+
 
 MiniMenuBase* mini_menubase_new(void) {
   return sys_object_new(MINI_TYPE_MENUBASE, NULL);

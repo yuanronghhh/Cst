@@ -48,6 +48,9 @@ SysInt fr_awatch_builder_get_key(FRAWatchBuilder *self);
 void fr_awatch_builder_set_etype(FRAWatchBuilder *self, SysType etype);
 SysType fr_awatch_builder_get_etype(FRAWatchBuilder *self);
 
+void fr_awatch_builder_set_event_enum(FRAWatchBuilder *self, SysInt event_enum);
+SysInt fr_awatch_builder_get_event_enum(FRAWatchBuilder *self);
+
 SYS_END_DECLS
 
 #endif

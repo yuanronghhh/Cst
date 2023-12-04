@@ -17,7 +17,11 @@ struct _FREventKeyClass {
 struct _FREventKey {
   FREvent parent;
 
-  FREventKeyPrivate *priv;
+  /* <private> */
+  SysInt scancode;
+  SysInt action;
+  SysInt mods;
+  SysInt key;
 };
 
 SYS_API SysType fr_event_key_get_type(void);

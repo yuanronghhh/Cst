@@ -28,6 +28,7 @@ CstModule* cst_module_load_path(
 
   CstModule *mod, *old;
   CstParser *ps;
+  CstParserContext* ctx;
   CstNode *pnode = cst_node_get_body_node();
 
   old = cst_module_get_g_module(path);
@@ -50,7 +51,7 @@ CstModule* cst_module_load_path(
   }
   cst_module_set_g_module(mod);
 
-  CstParserContext* ctx = cst_parser_context_new();
+  ctx = cst_parser_context_new();
   ps = ast_parser_new_I(path, mod, pnode);
 
   ctx->import_func = (AstNodeFunc)ast_parser_import_handle;
@@ -257,9 +258,9 @@ static void cst_module_construct(CstModule *self, CstModule *pmodule, const SysC
   SysHashTable *ht;
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
-  cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
-
   self->path = path;
+
+  cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
 
   self->function_env = fr_env_new_I(ht, NULL);
@@ -274,6 +275,7 @@ CstModule* cst_module_new_I(CstModule *v_pmodule, const SysChar* path) {
   }
 
   CstModule* self = cst_module_new();
+  
   cst_module_construct(self, v_pmodule, path);
 
   return self;

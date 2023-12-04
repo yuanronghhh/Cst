@@ -6,11 +6,7 @@
 #include <Mini/Front/MiniComponent.h>
 
 
-struct _MiniMenuBarPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(MiniMenuBar, mini_menubar, CST_TYPE_COMPONENT);
+SYS_DEFINE_TYPE(MiniMenuBar, mini_menubar, CST_TYPE_COMPONENT);
 
 
 FR_FUNC_DEFINE_EVENT(menubar_btn_press) {
@@ -26,7 +22,6 @@ MiniMenuBar* mini_menubar_new(void) {
 }
 
 static void mini_menubar_init(MiniMenuBar *self) {
-  self->priv = mini_menubar_get_private(self);
 }
 
 static void mini_menubar_construct(CstComponent *o, CstComponentContext *c) {

@@ -9,7 +9,7 @@ SYS_DEFINE_TYPE(FRAWatchAny, fr_awatch_any, FR_TYPE_AWATCH);
 static SysBool fr_awatch_any_check_i(FRAWatch *o, FREvent *e) {
   FRAWatchAny *self = FR_AWATCH_ANY(o);
 
-  return fr_event_is(e, self->etype);
+  return fr_event_is(e, self->event_enum);
 }
 
 FRAWatch *fr_awatch_any_new(void) {
@@ -24,7 +24,7 @@ SysObject *fr_awatch_any_clone_i(SysObject *o) {
   FRAWatchAny *oself = FR_AWATCH_ANY(o);
   FRAWatchAny *nself = FR_AWATCH_ANY(no);
 
-  nself->etype = oself->etype;
+  nself->event_enum = oself->event_enum;
 
   return no;
 }

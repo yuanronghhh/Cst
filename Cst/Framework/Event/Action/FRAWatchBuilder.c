@@ -31,7 +31,7 @@ void fr_awatch_builder_build_awatch(FRAWatchBuilder *self, FRAWatch *o) {
 void fr_awatch_builder_build_awatch_any(FRAWatchBuilder *self, FRAWatchAny *o) {
   sys_return_if_fail(self != NULL);
 
-  fr_awatch_any_set_etype(o, self->etype);
+  fr_awatch_any_set_event_enum(o, self->event_enum);
 }
 
 void fr_awatch_builder_build_awatch_key_press(FRAWatchBuilder *self, FRAWatchKeyPress *o) {

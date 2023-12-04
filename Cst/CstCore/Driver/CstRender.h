@@ -44,7 +44,6 @@ CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type);
 void cst_render_render(CstRender *self, CstModule *v_module);
 
 void cst_render_set_body_node(CstRender *self, CstNode * body_node);
-CstNode * cst_render_get_body_node(CstRender *self);
 
 SYS_END_DECLS
 

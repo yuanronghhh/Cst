@@ -1,27 +1,43 @@
 #include <Framework/DataType/FRNode.h>
 
-#define HNODE_TO_FR_NODE(o) ((FRNode *)(o - offsetof(FRNode, tree_node)))
+#define HNODE_TO_FR_NODE(o) SYS_HNODE_CAST_TO(o, FRNode, tree_node)
 
+typedef struct _HNodePass HNodePass;
+
+struct _HNodePass {
+  FRNodeFunc func;
+  SysPointer user_data;
+};
 
 SYS_DEFINE_TYPE(FRNode, fr_node, SYS_TYPE_OBJECT);
 
 
+SysBool hnode_handle(SysHNode* o, SysPointer user_data) {
+  HNodePass *pass = user_data;
+  FRNode* self = HNODE_TO_FR_NODE(o);
+
+  return pass->func(self, pass->user_data);
+}
+
 void fr_node_handle_bfs_r(FRNode *self, FRNodeFunc func, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
+  HNodePass pass = { .func = func, .user_data = user_data };
 
-  sys_hnode_handle_bfs_r(&self->tree_node, (SysHNodeFunc)func, user_data);
+  sys_hnode_handle_bfs_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
 }
 
 void fr_node_handle_node_ff_r(FRNode *self, FRNodeFunc func, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
+  HNodePass pass = { .func = func, .user_data = user_data };
 
-  sys_hnode_handle_node_ff_r(&self->tree_node, (SysHNodeFunc)func, user_data);
+  sys_hnode_handle_node_ff_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
 }
 
 void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
+  HNodePass pass = { .func = func, .user_data = user_data };
 
-  sys_hnode_handle_node_ft_r(&self->tree_node, (SysHNodeFunc)func, user_data);
+  sys_hnode_handle_node_ft_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
 }
 
 void fr_node_append(FRNode *parent, FRNode *node) {

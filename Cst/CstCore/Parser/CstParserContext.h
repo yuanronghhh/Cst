@@ -12,6 +12,7 @@ SYS_BEGIN_DECLS
 #define CST_PARSER_CONTEXT_GET_CLASS(o) sys_instance_get_class(o, CstParserContextClass)
 
 struct _CstParserContext {
+  SysObject parent;
   SysPointer user_data;
   AstNodeFunc realize_func;
   AstNodeFunc import_func;

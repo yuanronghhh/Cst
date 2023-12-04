@@ -63,6 +63,7 @@ program_unit : unit_list
 
                 CstParserContext *ctx = cst_parser_get_ctx(ps);
                 cst_parser_context_realize(ctx, root);
+                ast_node_free(root);
              }
              ;
 unit_list : top_unit

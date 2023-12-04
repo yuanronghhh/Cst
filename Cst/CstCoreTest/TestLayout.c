@@ -12,27 +12,23 @@ typedef void (*TestLayoutFunc) (CstNode *tree);
 
 static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
   CstModule* v_module;
-  CstManager *manager;
   CstNode *root;
   CstRender *v_render;
 
   v_render = cst_render_new_I(USE_OFFSREEN_RENDER);
-  manager = cst_manager_new_I();
 
-  cst_node_set_meta("layout-component", LAYOUT_TYPE_COMPONENT);
+  cst_render_node_set_meta("layout-component", LAYOUT_TYPE_COMPONENT);
 
-  v_module = cst_manager_load_module(manager, NULL, entry);
+  v_module = cst_module_load_path(NULL, entry);
   TEST_ASSERT_NOT_NULL(v_module);
 
-  cst_manager_realize(v_render, v_module);
   cst_render_render(v_render, v_module);
 
-  root = cst_render_get_body_node(v_render);
+  root = cst_node_get_body_node();
 
   func(root);
 
   sys_object_unref(v_render);
-  sys_object_unref(manager);
 }
 
 static void test_layout_wrap(CstNode *tree) {

@@ -138,7 +138,6 @@ typedef  struct  _FRSourceClass      FRSourceClass;
 
 typedef  struct  _FRApplication           FRApplication;
 typedef  struct  _FRApplicationClass      FRApplicationClass;
-typedef  struct  _FRApplicationPrivate    FRApplicationPrivate;
 
 typedef  struct  _FRWorker           FRWorker;
 typedef  struct  _FRWorkerClass      FRWorkerClass;

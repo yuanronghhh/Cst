@@ -1,7 +1,6 @@
 #ifndef __FR_APPLICATION__
 #define __FR_APPLICATION__
 
-#include <Framework/Device/FRWindow.h>
 #include <Framework/DataType/FRSource.h>
 
 SYS_BEGIN_DECLS
@@ -18,7 +17,9 @@ struct _FRApplicationClass {
 
 struct _FRApplication {
   FRSource parent;
-  FRApplicationPrivate *priv;
+  
+  /* <private> */
+  SysPointer app_data;
 };
 
 SYS_API SysType fr_application_get_type(void);

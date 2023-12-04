@@ -1,11 +1,10 @@
 #include <Framework/DataType/FRApplication.h>
+#include <Framework/Device/FRWindow.h>
 #include <Framework/Event/FREvents.h>
 
-struct _FRApplicationPrivate {
-  SysPointer app_data;
-};
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRApplication, fr_application, FR_TYPE_SOURCE);
+SYS_DEFINE_TYPE(FRApplication, fr_application, FR_TYPE_SOURCE);
+
 
 SysBool fr_application_check_i(FRSource *o) {
 
@@ -41,9 +40,8 @@ static void fr_application_construct(FRSource *o, SysPointer app_data) {
   FR_SOURCE_CLASS(fr_application_parent_class)->construct(o, (SysPointer)o);
 
   FRApplication *self = FR_APPLICATION(o);
-  FRApplicationPrivate* priv = self->priv;
 
-  priv->app_data = app_data;
+  self->app_data = app_data;
 }
 
 FRSource* fr_application_new(void) {
@@ -79,5 +77,4 @@ static void fr_application_class_init(FRApplicationClass* cls) {
 }
 
 void fr_application_init(FRApplication *self) {
-  self->priv = fr_application_get_private(self);
 }

@@ -7,8 +7,8 @@
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstRenderContext.h>
 
-#define BOX_NODE_TO_HNODE(o) SYS_HNODE(&o->tree_node)
-#define HNODE_TO_BOX_NODE(o) SYS_HNODE_CAST_TO(o, CstBoxNode, tree_node)
+#define BOX_NODE_TO_HNODE(o) _box_node_to_hnode(o)
+#define HNODE_TO_BOX_NODE(o) CST_BOX_NODE(SYS_HNODE_CAST_TO(o, CstBoxNode, tree_node))
 
 typedef struct _BoxNodePass BoxNodePass;
 
@@ -20,11 +20,19 @@ struct _BoxNodePass {
 SYS_DEFINE_TYPE(CstBoxNode, cst_box_node, CST_TYPE_LAYER_NODE);
 
 
+SysHNode *_box_node_to_hnode(CstBoxNode *self) {
+  if (self == NULL) {
+    return NULL;
+  }
+
+  return SYS_HNODE(&self->tree_node);
+}
+
 CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  
+
   SysHNode *node = sys_hnode_get_last_child(BOX_NODE_TO_HNODE(self));
-  
+
   return HNODE_TO_BOX_NODE(node);
 }
 
@@ -38,7 +46,11 @@ CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, C
   sys_return_val_if_fail (parent != NULL, NULL);
   sys_return_val_if_fail (box_node != NULL, NULL);
 
-  SysHNode *node = sys_hnode_insert_after(BOX_NODE_TO_HNODE(parent), BOX_NODE_TO_HNODE(sibling), BOX_NODE_TO_HNODE(box_node));
+  SysHNode *p = BOX_NODE_TO_HNODE(parent);
+  SysHNode *s = BOX_NODE_TO_HNODE(sibling);
+  SysHNode *c = BOX_NODE_TO_HNODE(box_node);
+
+  SysHNode *node = sys_hnode_insert_after(p, s, c);
 
   return HNODE_TO_BOX_NODE(node);
 }

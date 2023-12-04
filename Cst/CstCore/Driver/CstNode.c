@@ -53,6 +53,8 @@ SysType cst_node_get_rnode_type(CstNode *self) {
 }
 
 SysBool node_unlink_one(FRNode *self, SysPointer user_data) {
+  sys_return_val_if_fail(self->tree_node.reserved > 0, false);
+
   sys_object_unref(self);
   return true;
 }

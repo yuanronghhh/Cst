@@ -26,7 +26,7 @@ FR_FUNC_DEFINE_EVENT(cst_application_event_func) {
 }
 
 FR_FUNC_DEFINE_EVENT(app_window_resize_test) {
-  CstApplication *app = CST_APPLICATION(user_data);
+  // CstApplication *app = CST_APPLICATION(user_data);
 
   CstRender *render = cst_render_get_g_render();
   cst_render_resize_window(render);
@@ -78,7 +78,6 @@ static void cst_application_dispose(SysObject* o) {
   CstApplication *self = CST_APPLICATION(o);
 
   sys_clear_pointer(&self->main_module, _sys_object_unref);
-  sys_clear_pointer(&self->main_loop, _sys_object_unref);
   sys_clear_pointer(&self->app_source, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_application_parent_class)->dispose(o);
@@ -114,4 +113,5 @@ static void cst_application_class_init(CstApplicationClass* cls) {
 }
 
 static void cst_application_init(CstApplication *self) {
+  g_application = self;
 }

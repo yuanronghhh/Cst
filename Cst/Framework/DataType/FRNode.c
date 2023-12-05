@@ -30,14 +30,14 @@ void fr_node_handle_node_ff_r(FRNode *self, FRNodeFunc func, SysPointer user_dat
   sys_return_if_fail(self != NULL);
   HNodePass pass = { .func = func, .user_data = user_data };
 
-  sys_hnode_handle_node_ff_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
+  sys_hnode_handle_ff_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
 }
 
 void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   HNodePass pass = { .func = func, .user_data = user_data };
 
-  sys_hnode_handle_node_ft_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
+  sys_hnode_handle_bfs_r(&self->tree_node, (SysHNodeFunc)hnode_handle, &pass);
 }
 
 void fr_node_append(FRNode *parent, FRNode *node) {
@@ -51,7 +51,6 @@ FRNode* fr_node_insert_after (FRNode *parent, FRNode *sibling, FRNode *node) {
   sys_return_val_if_fail (parent != NULL, node);
   sys_return_val_if_fail (node != NULL, node);
 
-
   return node;
 }
 
@@ -63,6 +62,19 @@ FRNode * fr_node_get_last_child(FRNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return HNODE_TO_FR_NODE(sys_hnode_get_last_child(&self->tree_node));
+}
+
+void fr_node_set_parent(FRNode *self, FRNode * parent) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(parent != NULL);
+
+  self->tree_node.parent = SYS_HNODE(&parent->tree_node);
+}
+
+FRNode * fr_node_get_parent(FRNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return sys_hnode_parent(self);
 }
 
 /* object api */

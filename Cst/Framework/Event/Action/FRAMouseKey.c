@@ -5,7 +5,6 @@
 SYS_DEFINE_TYPE(FRAMouseKey, fr_amouse_key, FR_TYPE_ACTION);
 
 
-
 static SysBool fr_amouse_key_check_i(FRAction *self, FREvent *e) {
 
   if(!fr_event_is(e, FR_TYPE_EVENT_MOUSEKEY)) {

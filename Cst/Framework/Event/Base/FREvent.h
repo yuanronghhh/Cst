@@ -13,7 +13,7 @@ SYS_BEGIN_DECLS
 struct _FREventClass {
   SysObjectClass parent;
 
-  void (*construct)(FREvent *self, FRWindow *window);
+  void (*construct) (FREvent *self, FRWindow *window);
 };
 
 struct _FREvent {
@@ -21,7 +21,6 @@ struct _FREvent {
 
   /* < private > */
   FRWindow *window;
-  FR_EVENT_ENUM etype;
 };
 
 SYS_API SysType fr_event_get_type(void);

@@ -89,7 +89,7 @@ void fr_awatch_builder_set_event_enum(FRAWatchBuilder *self, SysInt event_enum) 
 }
 
 SysInt fr_awatch_builder_get_event_enum(FRAWatchBuilder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self != NULL, -1);
 
   return self->event_enum;
 }

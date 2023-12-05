@@ -139,7 +139,7 @@ void cst_box_node_handle_r(CstBoxNode *self, CstLayerNodeFunc func, SysPointer u
   sys_return_if_fail(self != NULL);
   BoxNodePass pass = { func, user_data };
 
-  sys_hnode_handle_node_ft_r(&self->tree_node, box_node_cb, &pass);
+  sys_hnode_handle_ft_r(&self->tree_node, box_node_cb, &pass);
 }
 
 CstBoxNode* cst_box_node_get_parent(CstBoxNode* self) {

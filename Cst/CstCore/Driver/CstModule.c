@@ -214,6 +214,8 @@ FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_n
 SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent) {
   sys_return_val_if_fail(self != NULL, false);
 
+  cst_node_print_r(cst_node_get_body_node(), NULL);
+
   CstComponent *comp = self->root_component;
   cst_component_realize(comp, v_parent, NULL);
 
@@ -275,7 +277,7 @@ CstModule* cst_module_new_I(CstModule *v_pmodule, const SysChar* path) {
   }
 
   CstModule* self = cst_module_new();
-  
+
   cst_module_construct(self, v_pmodule, path);
 
   return self;

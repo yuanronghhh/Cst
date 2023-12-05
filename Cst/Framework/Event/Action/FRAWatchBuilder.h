@@ -20,6 +20,7 @@ struct _FRAWatchBuilder {
 
   // FRAction *action;
   SysType etype;
+  SysInt event_enum;
   SysInt key;
   FRGetBoundFunc bound_func;
 };

@@ -228,8 +228,19 @@ void cst_node_set_id(CstNode *self, const SysChar * id) {
 }
 
 void cst_node_print_node(CstNode* node, SysPointer user_data) {
+  sys_return_if_fail(node != NULL);
+
+  CstNode* pnode = fr_node_parent(FR_NODE(node));
+
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
+
+void cst_node_print_r(CstNode* node, SysPointer user_data) {
+  sys_return_if_fail(node != NULL);
+
+  fr_node_handle_node_ft_r(FR_NODE(node), (FRNodeFunc)cst_node_print_node, user_data);
+}
+
 
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);

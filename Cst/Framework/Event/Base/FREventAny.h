@@ -21,11 +21,11 @@ struct _FREventAny {
 
   /* < private > */
   FRWindow *window;
-  FR_EVENT_ENUM etype;
+  FR_EVENT_ENUM event_enum;
 };
 
 SYS_API SysType fr_event_any_get_type(void);
-SYS_API FREvent *fr_event_any_new_I(FRWindow *window, SysInt etype);
+SYS_API FREvent *fr_event_any_new_I(FRWindow *window, SysInt event_enum);
 SYS_API FRWindow* fr_event_any_get_window(FREventAny *self);
 SYS_API SysBool fr_event_any_is(FREventAny *self, SysType type);
 

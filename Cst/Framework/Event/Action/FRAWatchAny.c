@@ -1,15 +1,21 @@
 #include <Framework/Event/Action/FRAWatchAny.h>
 
 #include <Framework/Event/Action/FRAction.h>
+#include <Framework/Event/Base/FREventAny.h>
 #include <Framework/Event/Base/FREvent.h>
 
 
 SYS_DEFINE_TYPE(FRAWatchAny, fr_awatch_any, FR_TYPE_AWATCH);
 
 static SysBool fr_awatch_any_check_i(FRAWatch *o, FREvent *e) {
-  FRAWatchAny *self = FR_AWATCH_ANY(o);
+  if (!fr_event_is(e, FR_TYPE_EVENT_ANY)) {
+    return false;
+  }
 
-  return fr_event_is(e, self->event_enum);
+  FRAWatchAny *self = FR_AWATCH_ANY(o);
+  FREventAny *aevent = FR_EVENT_ANY(e);
+
+  return aevent->event_enum == self->event_enum;
 }
 
 FRAWatch *fr_awatch_any_new(void) {
@@ -34,7 +40,6 @@ static void fr_awatch_any_dispose(SysObject* o) {
 
   SYS_OBJECT_CLASS(fr_awatch_any_parent_class)->dispose(o);
 }
-
 
 void fr_awatch_any_construct_i(FRAWatch* o, FRAWatchBuilder *builder) {
   FR_AWATCH_CLASS(fr_awatch_any_parent_class)->construct(o, builder);

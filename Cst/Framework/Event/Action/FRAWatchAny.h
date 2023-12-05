@@ -18,14 +18,14 @@ struct _FRAWatchAny {
   FRAWatch parent;
 
   /* <private> */
-  SysInt event_enum;
+  FR_EVENT_ENUM event_enum;
 };
 
 SYS_API SysType fr_awatch_any_get_type(void);
 SYS_API FRAWatch *fr_awatch_any_new(void);
-SYS_API FRAWatch *fr_awatch_any_new_I(SysType etype, const SysChar *func_name, FREventFunc func);
+SYS_API FRAWatch *fr_awatch_any_new_I(SysInt event_enum, const SysChar *func_name, FREventFunc func);
 
-void fr_awatch_any_set_event_enum(FRAWatchAny *self, SysType event_enum);
+void fr_awatch_any_set_event_enum(FRAWatchAny* self, SysInt event_enum);
 SysInt fr_awatch_any_get_event_enum(FRAWatchAny *self);
 
 SYS_END_DECLS

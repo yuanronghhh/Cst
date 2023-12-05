@@ -29,11 +29,13 @@ SYS_API FRNode * fr_node_get_last_child(FRNode *self);
 
 SYS_API void fr_node_append(FRNode *parent, FRNode *node);
 SYS_API FRNode* fr_node_insert_after (FRNode *parent, FRNode *sibling, FRNode *node);
-SYS_API SysBool fr_node_has_one_child(FRNode *self);
 
 SYS_API void fr_node_handle_bfs_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
 SYS_API void fr_node_handle_node_ff_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
 SYS_API void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data);
+
+void fr_node_set_parent(FRNode *self, FRNode * parent);
+FRNode * fr_node_get_parent(FRNode *self);
 
 SYS_END_DECLS
 

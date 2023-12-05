@@ -17,23 +17,23 @@ FRWindow* fr_event_any_get_window(FREventAny *self) {
 }
 
 /* object api */
-static void fr_event_any_construct(FREvent *o, FRWindow *window, SysInt etype) {
+static void fr_event_any_construct(FREvent *o, FRWindow *window, SysInt event_enum) {
   FR_EVENT_CLASS(fr_event_any_parent_class)->construct(o, window);
 
   FREventAny *self = FR_EVENT_ANY(o);
 
   self->window = window;
-  self->etype = etype;
+  self->event_enum = event_enum;
 }
 
 FREvent* fr_event_any_new(void) {
   return sys_object_new(FR_TYPE_EVENT_ANY, NULL);
 }
 
-FREvent *fr_event_any_new_I(FRWindow *window, SysInt etype) {
+FREvent *fr_event_any_new_I(FRWindow *window, SysInt event_enum) {
   FREvent *o = fr_event_any_new();
 
-  fr_event_any_construct(o, window, etype);
+  fr_event_any_construct(o, window, event_enum);
 
   return o;
 }

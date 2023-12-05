@@ -43,7 +43,7 @@ static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
   rctx = cst_render_node_get_render_ctx(rnode);
 
   node = cst_render_node_get_node(rnode);
-  bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(node));
+  bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(rnode));
 
   sys_return_if_fail(region != NULL);
   sys_return_if_fail(self != NULL);

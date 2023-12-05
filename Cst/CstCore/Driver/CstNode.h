@@ -52,6 +52,9 @@ const SysChar *cst_node_get_id(CstNode *node);
 CstNode* cst_node_new_layout_node(CstModule* v_module);
 CstNode *cst_node_new_body(void);
 
+void cst_node_print_node(CstNode* node, SysPointer user_data);
+void cst_node_print_r(CstNode* node, SysPointer user_data);
+
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
 CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
 

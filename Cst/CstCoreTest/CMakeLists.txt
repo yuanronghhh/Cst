@@ -27,6 +27,8 @@ set(SRC
   ./TestCore.c
   ./TestCore.h
 
+  ./TestBasic.c
+  ./TestBasic.h
   ./TestApp.c
   ./TestApp.h
   ./TestModule.c
@@ -42,18 +44,21 @@ set(SRC
   ./TestFramework.h
 
   ./Front/AppButton.cst
-  ./Front/AppComponent.cst
+  ./Front/AppButton.c
+  ./Front/AppButton.h
   ./Front/LayoutComponent.cst
+  ./Front/LayoutComponent.c
+  ./Front/LayoutComponent.h
+  ./Front/AppBox.cst
+  ./Front/AppBox.c
+  ./Front/AppBox.h
+  ./Front/AppComponent.cst
+  ./Front/AppComponent.c
+  ./Front/AppComponent.h
+
   ./Front/LayoutRow.cst
   ./Front/LayoutBoxNested.cst
   ./Front/LayoutWrap.cst
-
-  ./Front/AppButton.c
-  ./Front/AppButton.h
-  ./Front/AppComponent.c
-  ./Front/AppComponent.h
-  ./Front/LayoutComponent.c
-  ./Front/LayoutComponent.h
 )
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/TestConfig.h.in

@@ -33,11 +33,13 @@ int main(int argc, char* argv[]) {
   CstApplication *app;
   const SysChar *main_path;
 
-  cst_core_setup();
+  sys_setup();
 
   sys_object_set_ref_hook(object_ref_debug);
   sys_object_set_unref_hook(object_unref_debug);
   sys_object_set_new_hook(object_new_debug);
+
+  cst_core_setup();
 
   main_path = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
   app = cst_application_new_I("MiniAPP");
@@ -48,6 +50,8 @@ int main(int argc, char* argv[]) {
   sys_object_unref(app);
 
   cst_core_teardown();
+
+  sys_teardown();
 
   return status;
 }

@@ -54,7 +54,7 @@ SysType cst_node_get_rnode_type(CstNode *self) {
 }
 
 SysBool node_unlink_one(FRNode *self, SysPointer user_data) {
-  sys_return_val_if_fail(SYS_HNODE(&self->tree_node), false);
+  sys_return_val_if_fail(SYS_HNODE(&self->tree), false);
 
   sys_object_unref(self);
   return true;
@@ -230,7 +230,7 @@ void cst_node_set_id(CstNode *self, const SysChar * id) {
 void cst_node_print_node(CstNode* node, SysPointer user_data) {
   sys_return_if_fail(node != NULL);
 
-  CstNode* pnode = fr_node_parent(FR_NODE(node));
+  CstNode* pnode = CST_NODE(fr_node_get_parent(FR_NODE(node)));
 
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
@@ -336,14 +336,14 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   o = FR_NODE(self);
 
   lnode = cst_node_realize(self, v_parent, com_node);
-  if (o->tree_node.children) {
+  if (o->tree.children) {
 
-    cst_node_realize_r(CST_NODE(o->tree_node.children), v_parent, com_node);
+    cst_node_realize_r(CST_NODE(o->tree.children), v_parent, com_node);
   }
 
-  if (o->tree_node.next) {
+  if (o->tree.next) {
 
-    cst_node_realize_r(CST_NODE(o->tree_node.next), v_parent, com_node);
+    cst_node_realize_r(CST_NODE(o->tree.next), v_parent, com_node);
   }
 
   return lnode;
@@ -362,7 +362,7 @@ void cst_node_setup(void) {
 
 void cst_node_teardown(void) {
 
-  sys_clear_pointer(&body_node, _sys_object_unref);
+  sys_clear_pointer(&body_node, cst_node_unlink_node_r);
 }
 
 /* sys object api */

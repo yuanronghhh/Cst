@@ -32,7 +32,6 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
 }
 
 static void test_layout_wrap(CstNode *tree) {
-  getchar();
 }
 
 static void test_layout_component_basic (CstNode *tree) {
@@ -47,7 +46,6 @@ DEFINE_FLOW_FUNC(test_layout_wrap, CST_PROJECT_DIR"/Cst/CstCoreTest/Front/Layout
 // DEFINE_FLOW_FUNC(test_layout_component_basic, CST_PROJECT_DIR"/Cst/CstCoreTest/Front/LayoutComponentBasic.cst")
 
 void test_layout_init(int argc, SysChar * argv[]) {
-
   UNITY_BEGIN();
   {
     RUN_TEST(_test_layout_wrap);

@@ -238,10 +238,20 @@ static void cst_component_class_init(CstComponentClass* cls) {
 static void cst_component_dispose(SysObject* o) {
   CstComponent *self = CST_COMPONENT(o);
 
-  sys_clear_pointer(&self->css_env, _sys_object_unref);
-  sys_clear_pointer(&self->value_maps_env, _sys_object_unref);
+  if (self->css_env) {
+    
+    sys_clear_pointer(&self->css_env, _sys_object_unref);
+  }
 
-  cst_node_unlink_node_r(self->layout_node);
+  if (self->layout_node) {
+
+    sys_clear_pointer(&self->layout_node, cst_node_unlink_node_r);
+  }
+
+  if (self->value_maps_env) {
+
+    sys_clear_pointer(&self->value_maps_env, _sys_object_unref);
+  }
   sys_clear_pointer(&self->id, sys_free);
 
   SYS_OBJECT_CLASS(cst_component_parent_class)->dispose(o);

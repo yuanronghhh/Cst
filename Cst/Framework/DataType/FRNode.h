@@ -14,7 +14,8 @@ SYS_BEGIN_DECLS
 
 struct _FRNode {
   SysObject unowned;
-  SysHNode tree_node;
+
+  SysHNode tree;
 };
 
 struct _FRNodeClass {

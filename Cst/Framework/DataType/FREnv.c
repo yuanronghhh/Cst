@@ -89,6 +89,8 @@ static void fr_env_dispose(SysObject* o) {
   sys_hash_table_unref(self->ht);
   self->ht = NULL;
 
+  fr_env_set_parent(self, NULL);
+
   SYS_OBJECT_CLASS(fr_env_parent_class)->dispose(o);
 }
 

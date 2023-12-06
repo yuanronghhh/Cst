@@ -2,7 +2,6 @@
 #define __TEST_LAYOUT__
 
 #include "TestCommon.h"
-
 #include "Front/LayoutComponent.h"
 
 SYS_BEGIN_DECLS

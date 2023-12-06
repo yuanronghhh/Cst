@@ -1,0 +1,9 @@
+Component<id: "app-box">: {
+  Style: {
+  },
+
+  Layout: {
+    LBox<id: "box" >: {
+    }
+  }
+}

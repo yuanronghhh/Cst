@@ -5,6 +5,7 @@
 
 SYS_BEGIN_DECLS
 
+#include "TestBasic.h"
 #include "TestWindow.h"
 #include "TestApp.h"
 #include "TestModule.h"

@@ -96,7 +96,10 @@ void cst_component_context_build(CstComponentContext *self, CstComponent *o) {
 
   cst_component_set_id(o, self->id);
   cst_component_set_value_maps_env(o, self->value_maps_env);
+  sys_object_ref(self->value_maps_env);
+
   cst_component_set_css_env(o, self->css_env);
+  sys_object_ref(self->css_env);
 }
 
 void cst_component_context_set_v_module(CstComponentContext *self, CstModule * v_module) {
@@ -128,6 +131,7 @@ static void cst_component_context_dispose(SysObject* o) {
   CstComponentContext *self = CST_COMPONENT_CONTEXT(o);
 
   if(self->id) {
+
     sys_clear_pointer(&self->id, sys_free);
   }
 
@@ -135,6 +139,9 @@ static void cst_component_context_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->base_component, _sys_object_unref);
   }
+
+  sys_clear_pointer(&self->value_maps_env, _sys_object_unref);
+  sys_clear_pointer(&self->css_env, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_component_context_parent_class)->dispose(o);
 }

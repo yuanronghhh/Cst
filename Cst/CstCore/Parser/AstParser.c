@@ -233,7 +233,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
   CstComponent *child_comp = cst_module_get_component(v_module, cus_name);
   if (child_comp != NULL) {
     v_node = cst_com_node_new();
-    self->node = v_node;
+    self->node = sys_object_ref(v_node);
 
     tname = sys_strdup_printf("<%s>", cst_component_get_id(v_component));
 
@@ -244,12 +244,12 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
   } else {
     type = cst_render_node_get_meta(cus_name);
     if (type == 0) {
-      sys_error_N("Not found node or component \"%s\".", cus_name);
+      sys_error_N("Not found node or component \"%s\" in \"%s\".", cus_name, cst_module_get_path(v_module));
       return false;
     }
 
     v_node = cst_node_new();
-    self->node = v_node;
+    self->node = sys_object_ref(v_node);
 
     cst_node_set_name(v_node, cus_name);
     cst_node_set_rnode_type(v_node, type);
@@ -1142,6 +1142,12 @@ static void ast_parser_construct_i(CstParser *o, FILE *fp, const SysChar *fullpa
 }
 
 static void ast_parser_dispose(SysObject* o) {
+  AstParser* self = AST_PARSER(o);
+
+  if (self->node) {
+    
+    sys_clear_pointer(&self->node, _sys_object_unref);
+  }
 
   SYS_OBJECT_CLASS(ast_parser_parent_class)->dispose(o);
 }

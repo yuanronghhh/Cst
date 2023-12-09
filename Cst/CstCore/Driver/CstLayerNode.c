@@ -10,6 +10,7 @@ void cst_layer_node_set_rnode(CstLayerNode *self, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
 
   self->rnode = rnode;
+  sys_object_ref(rnode);
 }
 
 CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self) {

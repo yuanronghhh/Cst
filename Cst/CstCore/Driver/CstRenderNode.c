@@ -13,10 +13,12 @@
 #include <CstCore/Front/Common/CstLGridContext.h>
 
 
-static SysMutex gnode_meta_lock;
 #define NODE_META_LOCK sys_mutex_lock(&gnode_meta_lock)
 #define NODE_META_UNLOCK sys_mutex_unlock(&gnode_meta_lock)
-SysHashTable* g_node_meta_ht = NULL;
+
+static SysMutex gnode_meta_lock;
+static SysHashTable* g_node_meta_ht = NULL;
+static CstRenderNode *body_rnode = NULL;
 
 
 SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE);

@@ -1,6 +1,6 @@
 #include "TestCore.h"
 
-#define CHECK_TYPE CST_TYPE_RENDER_NODE
+#define CHECK_TYPE FR_TYPE_DISPLAY
 
 
 void setUp(void) {

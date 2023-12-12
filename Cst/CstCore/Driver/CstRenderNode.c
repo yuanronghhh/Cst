@@ -258,9 +258,9 @@ const SysChar* cst_render_node_get_id(CstRenderNode *self) {
 
 void cst_render_node_set_layer_node(CstRenderNode *self, CstLayerNode * layer_node) {
   sys_return_if_fail(self != NULL);
+  sys_return_if_fail(layer_node != NULL);
 
   self->layer_node = layer_node;
-  sys_object_ref(layer_node);
 }
 
 CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {

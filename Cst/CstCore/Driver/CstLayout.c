@@ -125,6 +125,9 @@ static void cst_layout_init(CstLayout *self) {
 
 static void cst_layout_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
+  CstLayout* self = CST_LAYOUT(o);
+
+  sys_clear_pointer(&self->draw, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_layout_parent_class)->dispose(o);
 }

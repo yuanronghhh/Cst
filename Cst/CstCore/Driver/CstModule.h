@@ -65,7 +65,7 @@ void cst_module_remove_awatch(CstModule * self, SysList * awatch_link);
 void cst_module_set_root_component(CstModule *self, CstComponent *comp);
 CstComponent *cst_module_get_root_component(CstModule *self);
 
-SysChar *cst_module_new_uid(CstModule *self);
+SysChar *cst_module_new_node_id(CstModule *self);
 
 void cst_module_set_count(CstModule *self, SysInt count);
 SysInt cst_module_get_count(CstModule *self);

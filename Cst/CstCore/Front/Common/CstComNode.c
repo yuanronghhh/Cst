@@ -121,9 +121,22 @@ static CstLayerNode* cst_com_node_realize_i(CstNode* o, CstLayerNode *v_parent, 
   return cst_component_realize(self->component, lnode, self);
 }
 
+static void cst_com_node_construct(CstComNode *self, CstComponent *comp) {
+  self->component = comp;
+  sys_object_ref(comp);
+}
+
 /* sys object api */
 CstNode* cst_com_node_new(void) {
   return sys_object_new(CST_TYPE_COM_NODE, NULL);
+}
+
+CstNode* cst_com_node_new_I(CstComponent *comp) {
+  CstNode* o = cst_com_node_new();
+
+  cst_com_node_construct(CST_COM_NODE(o), comp);
+
+  return o;
 }
 
 static void cst_com_node_class_init(CstComNodeClass* cls) {

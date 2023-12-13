@@ -72,27 +72,30 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   FRSurface *surface;
+
   if (self->window == NULL) {
     surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
-    return surface;
-  }
+
+  } else {
 
 #if SYS_OS_WIN32
-  HWND hwd = fr_window_get_win32_window(self->window);
-  HDC hdc = GetDC(hwd);
-  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+    HWND hwd = fr_window_get_win32_window(self->window);
+    HDC hdc = GetDC(hwd);
+    surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 #elif SYS_OS_UNIX
-  FRDisplay *display = fr_window_get_display(self->window);
-  Window xwindow = fr_window_get_x11_window(self->window);
-  Display *ndisplay = fr_display_get_x11_display(display);
-  int nscreen = DefaultScreen(ndisplay);
-  Visual *nvisual = DefaultVisual(ndisplay, nscreen);
+    FRDisplay *display = fr_window_get_display(self->window);
+    Window xwindow = fr_window_get_x11_window(self->window);
+    Display *ndisplay = fr_display_get_x11_display(display);
+    int nscreen = DefaultScreen(ndisplay);
+    Visual *nvisual = DefaultVisual(ndisplay, nscreen);
 
-  surface = cairo_xlib_surface_create(ndisplay,
-      xwindow,
-      nvisual,
-      width, height);
+    surface = cairo_xlib_surface_create(ndisplay,
+        xwindow,
+        nvisual,
+        width, height);
 #endif
+
+  }
 
   return surface;
 }
@@ -198,6 +201,12 @@ FRDraw *fr_draw_new_I(FRWindow *window) {
 }
 
 static void fr_draw_dispose(SysObject* o) {
+  FRDraw* self = FR_DRAW(o);
+
+  if (self->window) {
+
+    sys_clear_pointer(&self->window, _sys_object_unref);
+  }
 
   SYS_OBJECT_CLASS(fr_draw_parent_class)->dispose(o);
 }

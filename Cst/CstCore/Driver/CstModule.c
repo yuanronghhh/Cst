@@ -179,7 +179,7 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
   sys_object_unref(awatch_link->data);
 }
 
-SysChar *cst_module_new_uid(CstModule *self) {
+SysChar *cst_module_new_node_id(CstModule *self) {
   SysChar *nid = NULL;
   SysUInt mid;
   SysUInt ccount = 0;

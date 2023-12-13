@@ -181,7 +181,7 @@ CstNode* cst_node_new_layout_node(CstModule *v_module) {
 
   layout = cst_node_new();
   cst_node_set_name(layout, "<layout-node>");
-  layout->id = cst_module_new_uid(v_module);
+  layout->id = cst_module_new_node_id(v_module);
   cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
 
   return layout;
@@ -384,6 +384,11 @@ static void cst_node_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->id, sys_free);
   sys_clear_pointer(&self->name, sys_free);
+
+  sys_list_foreach(self->v_awatch_list, node) {
+
+    sys_clear_pointer(&node->data, _sys_object_unref);
+  }
 
   SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);
 }

@@ -1,6 +1,6 @@
 #include <Mini/Mini.h>
 
-#define CHECK_TYPE CST_TYPE_MODULE
+#define CHECK_TYPE CST_TYPE_NODE
 
 static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
   if (!sys_object_is_a(o, CHECK_TYPE)) {
@@ -8,6 +8,7 @@ static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count
   }
 
   sys_debug_N("%p\t%s\t%d", o, name, ref_count);
+  sys_assert(ref_count == 1);
 }
 
 static void object_ref_debug(SysObject *o, const SysChar *name, SysInt ref_count) {

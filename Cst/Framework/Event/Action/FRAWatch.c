@@ -192,10 +192,14 @@ SysPointer fr_awatch_get_user_data(FRAWatch *self) {
 
 FRAWatch *fr_awatch_new_by_type(SysType tp, const SysChar * func_name, FREventFunc watch_func) {
   FRAWatch *o = FR_AWATCH(sys_object_new(tp, NULL));
+  FRAWatchBuilder* b;
+
   sys_return_val_if_fail(o != NULL, NULL);
 
-  o->func_name = sys_strdup(func_name);
-  o->func = watch_func;
+  b = fr_awatch_builder_new_I(func_name, watch_func);
+  fr_awatch_construct(o, b);
+
+  sys_object_unref(b);
 
   return o;
 }

@@ -153,65 +153,20 @@ SysPtrArray * cst_node_builder_get_v_css_list(CstNodeBuilder *self) {
   return self->v_css_list;
 }
 
-/* parse */
-void cst_node_builder_parse(CstNodeBuilder *self, AstParser *c, JNode *jnode) {
+static void cst_node_builder_build_i(CstNodeBuilder *self, CstNode *node) {
   sys_return_if_fail(self != NULL);
 
-  CstNodeBuilderClass* lcls = CST_NODE_BUILDER_GET_CLASS(self);
-  sys_return_if_fail(lcls->parse != NULL);
-
-  lcls->parse(self, c, jnode);
-}
-
-void cst_node_builder_build(CstNodeBuilder *self, AstParser *c, CstNode *node) {
-  sys_return_if_fail(self != NULL);
-
-  CstNodeBuilderClass* lcls = CST_NODE_BUILDER_GET_CLASS(self);
-  sys_return_if_fail(lcls->build != NULL);
-
-  lcls->build(self, c, node);
-}
-
-static void cst_node_builder_build_i(CstNodeBuilder *self, AstParser *c, CstNode *node) {
-  sys_return_if_fail(self != NULL);
-
-  SysChar *id;
   CstModule *v_module;
 
-  v_module = ast_parser_get_v_module(c);
   if (self->v_id) {
 
     cst_node_set_id(node, self->v_id);
   } else {
-
-    id = cst_module_new_uid(v_module);
+    SysChar *id = cst_module_new_node_id(v_module);
 
     cst_node_set_id(node, id);
     sys_free_N(id);
   }
-
-  if(self->v_awatch_list) {
-    cst_node_set_v_awatch_list(node, self->v_awatch_list);
-  }
-
-  if(self->v_nodemap_list) {
-    cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
-  }
-
-  if(self->v_css_list) {
-    cst_node_set_v_css_list(node, self->v_css_list);
-  }
-
-  if (self->v_value) {
-    cst_node_set_v_value(node, self->v_value);
-  }
-
-  if (self->v_label) {
-
-    cst_node_set_v_label(node, self->v_label);
-  }
-
-  cst_node_set_v_z_index(node, self->v_z_index);
 }
 
 static void cst_node_builder_parse_i (CstNodeBuilder *self, AstParser *c, JNode *jnode) {
@@ -250,7 +205,6 @@ static void cst_node_builder_class_init(CstNodeBuilderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_node_builder_dispose;
-  cls->parse = cst_node_builder_parse_i;
   cls->build = cst_node_builder_build_i;
 }
 

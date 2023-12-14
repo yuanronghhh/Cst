@@ -7,7 +7,7 @@ int main(int argc, char* argv[]) {
 
   SysChar *entry = CST_PROJECT_DIR"/Cst/Mini/Front/MiniComponent.cst";
 
-  mod = cst_module_load_path(NULL, NULL, entry);
+  mod = cst_module_load_path(NULL, entry);
 
   cst_core_teardown();
 

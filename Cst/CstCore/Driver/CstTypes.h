@@ -177,6 +177,9 @@ typedef struct _CstComponentClass CstComponentClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
 
+typedef struct _CstNodeBuilder CstNodeBuilder;
+typedef struct _CstNodeBuilderClass CstNodeBuilderClass;
+
 typedef struct _CstNode CstNode;
 typedef struct _CstNodeClass CstNodeClass;
 

@@ -68,8 +68,8 @@ set(SRC
   ./Driver/CstModule.h
   ./Driver/CstNode.c
   ./Driver/CstNode.h
-  # ./Driver/CstNodeBuilder.c
-  # ./Driver/CstNodeBuilder.h
+  ./Driver/CstNodeBuilder.c
+  ./Driver/CstNodeBuilder.h
 
   ./Driver/Css/CstCssGroup.c
   ./Driver/Css/CstCssGroup.h

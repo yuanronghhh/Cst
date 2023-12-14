@@ -1,6 +1,6 @@
 #include "TestCore.h"
 
-#define CHECK_TYPE FR_TYPE_AWATCH_MOUSE_RELEASE
+#define CHECK_TYPE CST_TYPE_NODE
 
 
 void setUp(void) {

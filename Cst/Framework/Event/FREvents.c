@@ -1,4 +1,3 @@
-#include "FREvents.h"
 #include <Framework/Event/FREvents.h>
 #include <Framework/Event/FREventCore.h>
 

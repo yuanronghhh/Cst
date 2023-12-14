@@ -1,4 +1,3 @@
-#include "CstComNode.h"
 #include <CstCore/Front/Common/CstComNode.h>
 
 #include <CstCore/Driver/CstComponent.h>

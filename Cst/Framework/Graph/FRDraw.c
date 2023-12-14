@@ -1,5 +1,3 @@
-#include "FRDraw.h"
-#include "FRDraw.h"
 #include <Framework/Graph/FRDraw.h>
 #include <Framework/Device/FRDisplay.h>
 #include <Framework/Device/FRWindow.h>

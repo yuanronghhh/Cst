@@ -41,8 +41,7 @@ void ast_parser_import_handle(AstNode* node, AstParser* self);
 void ast_parser_root_gstyle_handle(AstNode *node, AstParser *self);
 void ast_parser_module_handle(AstNode* node, AstParser* self);
 
-void ast_node_props_parse(AstParser *self, JNode *jnode);
-void ast_com_node_parse(AstParser *self, JNode *jnode);
+void ast_node_props_parse(AstParser *self, CstNodeBuilder *builder, JNode *jnode);
 
 
 SysBool ast_css_value_parse(JNode *jnode, CstCssNode *node, CstCssValue *value);

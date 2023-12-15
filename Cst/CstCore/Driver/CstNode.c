@@ -370,7 +370,12 @@ static void cst_node_construct_i (CstNode* self, CstNodeBuilder* builder) {
 }
 
 void cst_node_construct (CstNode* self, CstNodeBuilder *builder) {
-  cst_node_construct_i(self, builder);
+  sys_return_if_fail(self != NULL);
+
+  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
+  sys_return_if_fail(ncls->construct != NULL);
+
+  ncls->construct(self, builder);
 }
 
 /* sys object api */

@@ -48,7 +48,7 @@ void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value) 
   self->v_value = sys_strdup(v_value);
 }
 
-SysBool cst_node_builder_set_layer(CstNodeBuilder *self, SysInt v_layer) {
+SysBool cst_node_builder_set_v_layer(CstNodeBuilder *self, CstLayer* v_layer) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(v_layer > 0, false);
 
@@ -57,7 +57,7 @@ SysBool cst_node_builder_set_layer(CstNodeBuilder *self, SysInt v_layer) {
   return true;
 }
 
-void cst_node_builder_set_label(CstNodeBuilder *self, const SysChar *v_label) {
+void cst_node_builder_set_v_label(CstNodeBuilder *self, const SysChar *v_label) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(v_label != NULL);
 
@@ -169,18 +169,11 @@ static void cst_node_builder_build_i(CstNodeBuilder *self, CstNode *node) {
   }
 }
 
-static void cst_node_builder_parse_i (CstNodeBuilder *self, AstParser *c, JNode *jnode) {
-
-  ast_node_props_parse(c, jnode);
-}
-
 /* object api */
 static void cst_node_builder_dispose(SysObject* o) {
   CstNodeBuilder *self = CST_NODE_BUILDER(o);
 
-  if(self->v_id) {
-    sys_clear_pointer(&self->v_id, sys_free);
-  }
+  sys_clear_pointer(&self->v_id, sys_free);
 
   if (self->v_tag) {
     sys_clear_pointer(&self->v_tag, sys_free);
@@ -205,9 +198,7 @@ static void cst_node_builder_class_init(CstNodeBuilderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_node_builder_dispose;
-  cls->build = cst_node_builder_build_i;
 }
 
 static void cst_node_builder_init(CstNodeBuilder *self) {
-  self->v_layer = CST_NODE_LAYER_BOX;
 }

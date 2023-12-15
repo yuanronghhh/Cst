@@ -213,7 +213,6 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
   SysType type;
   SysInt count;
   const SysChar *cus_name;
-  SysChar* tname;
   SysChar *tid;
 
   JPair *pair = jnode->v.v_pair;
@@ -240,9 +239,9 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
 
   if (child_comp != NULL) {
     v_node = cst_com_node_new_I(child_comp);
-    tname = sys_strdup_printf("<%s>", cst_component_get_id(v_component));
 
     ast_com_node_parse(self, builder, jnode);
+    cst_com_node_build(builder, CST_COM_NODE(v_node));
   } else {
     type = cst_render_node_get_meta(cus_name);
     if (type == 0) {
@@ -254,9 +253,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     cst_node_set_rnode_type(v_node, type);
     ast_node_props_parse(self, builder, jnode);
   }
-  cst_node_construct(v_node, builder);
 
-  sys_free_N(tname);
   sys_free_N(tid);
 
   count = cst_module_get_count(v_module);

@@ -131,6 +131,13 @@ static void cst_com_node_construct(CstComNode *self, CstComponent *comp) {
   sys_object_ref(comp);
 }
 
+void cst_com_node_build(CstComNode *self, CstNodeBuilder *builder, CstComponent *c) {
+  SysChar* tname = sys_strdup_printf("<%s>", cst_component_get_id(component));
+
+  cst_node_construct(v_node, builder);
+  sys_free_N(tname);
+}
+
 /* sys object api */
 CstNode* cst_com_node_new(void) {
   return sys_object_new(CST_TYPE_COM_NODE, NULL);

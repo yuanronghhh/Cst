@@ -32,6 +32,8 @@ SYS_BEGIN_DECLS
 #include <Framework/ThirdParty/FRCairo.h>
 #include <Framework/ThirdParty/FRFont.h>
 
+void fr_core_setup(void);
+void fr_core_teardown(void);
 
 SYS_END_DECLS
 

@@ -15,6 +15,8 @@ SYS_BEGIN_DECLS
 struct _CstNodeBuilder {
   SysObject parent;
 
+  CstModule *v_module;
+  CstComponent *v_component;
   SysList *v_awatch_list;
   SysList *v_nodemap_list;
   SysPtrArray *v_css_list;
@@ -37,7 +39,9 @@ struct _CstNodeBuilderClass {
 SysType cst_node_builder_get_type(void);
 CstNodeBuilder *cst_node_builder_new(void);
 
-void cst_node_builder_node(CstNodeBuilder *self, CstNode *node);
+void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node);
+void cst_node_builder_build_com_node(CstNodeBuilder *self, CstNode *node);
+
 void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map);
 void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);
 SysBool cst_node_builder_set_v_layer(CstNodeBuilder *self, CstLayer* v_layer);
@@ -49,4 +53,5 @@ void cst_node_builder_add_awatch(CstNodeBuilder *self, FRAWatch* map);
 SYS_END_DECLS
 
 #endif
+
 

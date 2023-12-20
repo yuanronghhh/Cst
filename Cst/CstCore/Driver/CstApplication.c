@@ -16,7 +16,7 @@ void cst_application_stop (CstApplication *self) {
 
 
 FR_FUNC_DEFINE_EVENT(application_window_resize) {
-  CstApplication *app = CST_APPLICATION(user_data);
+  // CstApplication *app = CST_APPLICATION(user_data);
 
   CstRender *render = cst_render_get_g_render();
   cst_render_resize_window(render);

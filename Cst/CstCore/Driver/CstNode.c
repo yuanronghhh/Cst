@@ -230,8 +230,6 @@ void cst_node_set_id(CstNode *self, const SysChar * id) {
 void cst_node_print_node(CstNode* node, SysPointer user_data) {
   sys_return_if_fail(node != NULL);
 
-  CstNode* pnode = CST_NODE(fr_node_get_parent(FR_NODE(node)));
-
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
 }
 
@@ -365,7 +363,12 @@ void cst_node_teardown(void) {
 }
 
 static void cst_node_construct_i (CstNode* self, CstNodeBuilder* builder) {
-  self->id = sys_strdup(builder->v_id);
+  if (builder->v_id) {
+    self->id = sys_strdup(builder->v_id);
+  } else {
+    self->id = cst_module_new_node_id(builder->v_module);
+  }
+
   self->name = sys_strdup(builder->v_name);
 }
 
@@ -399,7 +402,7 @@ static void cst_node_dispose(SysObject* o) {
   sys_clear_pointer(&self->id, sys_free);
   sys_clear_pointer(&self->name, sys_free);
 
-  sys_list_free_full(self->v_awatch_list, _sys_object_unref);
+  sys_list_free_full(self->v_awatch_list, (SysDestroyFunc)_sys_object_unref);
   self->v_awatch_list = NULL;
 
   SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);

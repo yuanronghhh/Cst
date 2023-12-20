@@ -153,10 +153,12 @@ SysPtrArray * cst_node_builder_get_v_css_list(CstNodeBuilder *self) {
   return self->v_css_list;
 }
 
-static void cst_node_builder_build_i(CstNodeBuilder *self, CstNode *node) {
+void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
   sys_return_if_fail(self != NULL);
 
-  CstModule *v_module;
+  CstModule *v_module = self->v_module;
+
+  cst_node_set_name(node, self->v_name);
 
   if (self->v_id) {
 
@@ -167,6 +169,15 @@ static void cst_node_builder_build_i(CstNodeBuilder *self, CstNode *node) {
     cst_node_set_id(node, id);
     sys_free_N(id);
   }
+}
+
+void cst_node_builder_build_com_node(CstNodeBuilder *self, CstNode *node) {
+  sys_return_if_fail(self != NULL);
+
+  SysChar* tname = sys_strdup_printf("<%s>", cst_component_get_id(self->v_component));
+  cst_node_set_name(node, tname);
+
+  sys_free_N(tname);
 }
 
 /* object api */

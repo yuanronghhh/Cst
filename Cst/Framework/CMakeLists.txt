@@ -127,6 +127,7 @@ set(SRC
   ./FRTypes.h
   ./FRCommon.h
   ./FRCommon.c
+  ./FRCore.c
   ./FRCore.h
 )
 

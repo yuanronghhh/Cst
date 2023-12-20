@@ -24,6 +24,12 @@ void cst_node_builder_build_text(CstNodeBuilder *self, CstRenderNode *rnode) {
   }
 }
 
+void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *v_node) {
+  SysChar* tname = sys_strdup_printf("<%s>", cst_component_get_id(self->component));
+
+  sys_free_N(tname);
+}
+
 const SysChar* cst_node_builder_get_value(CstNodeBuilder *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 

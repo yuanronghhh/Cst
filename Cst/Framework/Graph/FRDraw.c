@@ -66,18 +66,16 @@ FRSurface *fr_draw_get_surface(FRDraw *self) {
   return self->paint_surface;
 }
 
-FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
+static FRSurface* create_surface(FRWindow *window, SysInt width, SysInt height) {
   FRSurface *surface;
 
-  if (self->window == NULL) {
+  if (window == NULL) {
     surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
 
   } else {
 
 #if SYS_OS_WIN32
-    HWND hwd = fr_window_get_win32_window(self->window);
+    HWND hwd = fr_window_get_win32_window(window);
     HDC hdc = GetDC(hwd);
     surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 #elif SYS_OS_UNIX
@@ -98,6 +96,21 @@ FRSurface* fr_draw_create_surface(FRDraw* self, SysInt width, SysInt height) {
   return surface;
 }
 
+static  FRSurface* create_image_surface_from_surface(FRSurface *surface, SysInt width, SysInt height) {
+  FRSurface * nsur =cairo_surface_create_similar_image(surface, CAIRO_FORMAT_ARGB32, 
+    width, height);
+
+  return nsur;
+}
+
+void fr_context_fill_background(FRContext *cr, SysInt width, SysInt height) {
+  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+  cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
+  cairo_rectangle(cr, 0, 0, width, height);
+  cairo_fill(cr);
+}
+
+
 void fr_draw_set_color(FRDraw *self, FRColor *color) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->cr != NULL);
@@ -117,20 +130,14 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   SysInt fbw = 0, fbh = 0;
   fr_window_get_framebuffer_size(self->window, &fbw, &fbh);
 
-  self->window_surface = fr_draw_create_surface(self, fbw, fbh);
-  self->paint_surface = cairo_surface_create_similar_image(self->window_surface, CAIRO_FORMAT_ARGB32, fbw, fbh);
-
-#if SYS_OS_WIN32
-  FRContext* cr = cairo_create(self->window_surface);
-
-  cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-  cairo_paint(cr);
-  cairo_destroy(cr);
-#endif
+  self->window_surface = create_surface(self->window, fbw, fbh);
+  self->paint_surface = create_image_surface_from_surface(self->window_surface, fbw, fbh);
 
   sys_assert(self->cr == NULL && "draw cr should be NULL when fr_draw_frame_begin, missing fr_draw_frame_end ?");
 
   self->cr = cairo_create(self->paint_surface);
+  fr_context_fill_background(self->cr, fbw, fbh);
+
   self->is_painting = true;
 }
 

@@ -69,7 +69,7 @@ FRAWatch *fr_awatch_key_new_I(SysInt key, const SysChar *func_name, FREventFunc 
   FRAWatch *o = fr_awatch_key_new();
 
   FRAWatchBuilder *builder = fr_awatch_builder_new_I(func_name, func);
-  fr_awatch_builder_set_key(builder, FR_KEY_Q);
+  fr_awatch_builder_set_key(builder, key);
   fr_awatch_key_construct_i(o, builder);
   sys_object_unref(builder);
 

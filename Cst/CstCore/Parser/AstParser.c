@@ -242,7 +242,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     v_node = cst_com_node_new_I(child_comp);
 
     ast_com_node_parse(self, builder, jnode);
-    cst_node_builder_build_com_node(builder, v_node);
+    cst_node_builder_build_com_node(builder, CST_COM_NODE(v_node));
   } else {
     type = cst_render_node_get_meta(cus_name);
     if (type == 0) {

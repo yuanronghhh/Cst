@@ -40,7 +40,7 @@ SysType cst_node_builder_get_type(void);
 CstNodeBuilder *cst_node_builder_new(void);
 
 void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node);
-void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *v_node);
+void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *cnode);
 
 void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map);
 void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);

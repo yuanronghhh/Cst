@@ -1,3 +1,4 @@
+#include "FRNode.h"
 #include <Framework/DataType/FRNode.h>
 
 #define HNODE_TO_FR_NODE(o) SYS_HNODE_CAST_TO(o, FRNode, tree)
@@ -75,6 +76,25 @@ FRNode * fr_node_get_parent(FRNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return HNODE_TO_FR_NODE(sys_hnode_parent(&self->tree));
+}
+
+FRNode* fr_node_get_children(FRNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return HNODE_TO_FR_NODE(sys_hnode_children(&self->tree));
+}
+
+FRNode* fr_node_get_next(FRNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return HNODE_TO_FR_NODE(sys_hnode_next(&self->tree));
+}
+
+
+FRNode* fr_node_get_prev(FRNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return HNODE_TO_FR_NODE(sys_hnode_prev(&self->tree));
 }
 
 /* object api */

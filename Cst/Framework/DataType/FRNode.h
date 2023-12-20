@@ -38,6 +38,9 @@ SYS_API void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer 
 void fr_node_set_parent(FRNode *self, FRNode * parent);
 FRNode * fr_node_get_parent(FRNode *self);
 
+FRNode* fr_node_get_children(FRNode* self);
+FRNode* fr_node_get_next(FRNode* self);
+
 SYS_END_DECLS
 
 #endif

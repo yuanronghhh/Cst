@@ -23,7 +23,6 @@ struct _CstNode {
   SysList *v_nodemap_list;
   SysPtrArray *v_css_list;
 
-  const SysChar* v_id;
   const SysChar *v_tag;
 
   CstLayer *v_layer;
@@ -78,9 +77,6 @@ void cst_node_add_nodemap(CstNode *self, CstNodeMap* o);
 void cst_node_set_v_css_list(CstNode *self, SysPtrArray * v_css_list);
 SysPtrArray * cst_node_get_v_css_list(CstNode *self);
 
-void cst_node_set_v_id(CstNode *self, const SysChar * v_id);
-const SysChar * cst_node_get_v_id(CstNode *self);
-
 void cst_node_set_v_value(CstNode *self, const SysChar * v_value);
 SysChar * cst_node_get_v_value(CstNode *self);
 
@@ -92,6 +88,12 @@ SysInt cst_node_get_v_z_index(CstNode *self);
 
 void cst_node_set_v_layer(CstNode *self, CstLayer* v_layer);
 CstLayer* cst_node_get_v_layer(CstNode *self);
+
+void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list);
+SysList * cst_node_get_v_awatch_list(CstNode *self);
+
+void cst_node_set_v_nodemap_list(CstNode *self, SysList * v_nodemap_list);
+SysList * cst_node_get_v_nodemap_list(CstNode *self);
 
 SYS_END_DECLS
 

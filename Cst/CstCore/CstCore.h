@@ -5,9 +5,10 @@
 
 SYS_BEGIN_DECLS
 
-#include <CstCore/Driver/Css/CstCssCore.h>
-
 #include <CstCore/Front/CstFrontCore.h>
+#include <CstCore/Parser/CstParserCore.h>
+
+#include <CstCore/Driver/Css/CstCssCore.h>
 #include <CstCore/Driver/CstAbsLayer.h>
 #include <CstCore/Driver/CstApplication.h>
 #include <CstCore/Driver/CstBoxLayer.h>
@@ -26,8 +27,7 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Parser/CstParserCore.h>
-#include <CstCore/Driver/CstContext.h>
+#include <CstCore/Driver/CstNodeBuilder.h>
 
 void cst_core_setup (void);
 void cst_core_teardown (void);

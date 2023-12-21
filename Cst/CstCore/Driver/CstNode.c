@@ -104,22 +104,6 @@ SysPtrArray * cst_node_get_v_css_list(CstNode *self) {
   return self->v_css_list;
 }
 
-void cst_node_set_v_id(CstNode *self, const SysChar * v_id) {
-  sys_return_if_fail(self != NULL);
-
-  if(self->v_id) {
-    sys_clear_pointer(&self->v_id, sys_free);
-  }
-
-  self->v_id = sys_strdup(v_id);
-}
-
-const SysChar * cst_node_get_v_id(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->v_id;
-}
-
 void cst_node_set_v_layer(CstNode *self, CstLayer* v_layer) {
   sys_return_if_fail(self != NULL);
 
@@ -130,6 +114,18 @@ CstLayer* cst_node_get_v_layer(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v_layer;
+}
+
+void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list) {
+  sys_return_if_fail(self != NULL);
+
+  self->v_awatch_list = v_awatch_list;
+}
+
+SysList * cst_node_get_v_awatch_list(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->v_awatch_list;
 }
 
 void cst_node_set_v_value(CstNode *self, const SysChar * v_value) {
@@ -404,6 +400,9 @@ static void cst_node_dispose(SysObject* o) {
 
   sys_list_free_full(self->v_awatch_list, (SysDestroyFunc)_sys_object_unref);
   self->v_awatch_list = NULL;
+
+  sys_list_free_full(self->v_nodemap_list, (SysDestroyFunc)_sys_object_unref);
+  self->v_nodemap_list = NULL;
 
   SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);
 }

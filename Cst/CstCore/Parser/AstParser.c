@@ -114,7 +114,6 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
   prop_map = cst_value_map_new_I(pair->key, sys_value_get_data_type(svalue));
 
   map = cst_node_map_new_I(prop_map, CST_NODE_PROP_ACTION, pair->key, svalue);
-  sys_object_unref(prop_map);
 
   cst_node_builder_add_nodemap(bnode, map);
 
@@ -255,6 +254,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     ast_node_props_parse(self, builder, jnode);
     cst_node_builder_build_node(builder, v_node);
   }
+  sys_object_unref(builder);
 
   count = cst_module_get_count(v_module);
   cst_module_set_count(v_module, ++count);
@@ -277,7 +277,6 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     sys_warning_N("Not correct type in component \"%s\" pair value: %s", cus_name, pair->key);
   }
 
-  sys_object_unref(builder);
 
   return true;
 }
@@ -728,6 +727,7 @@ SysBool ast_node_parse_layer_name(CstNodeBuilder *o, const SysChar *pstr) {
   sys_return_val_if_fail(layer == NULL, false);
 
   cst_node_builder_set_v_layer(o, layer);
+  sys_object_ref(layer);
 
   return true;
 }

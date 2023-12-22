@@ -9,6 +9,8 @@ int main(int argc, char* argv[]) {
 
   mod = cst_module_load_path(NULL, entry);
 
+  sys_object_unref(mod);
+
   cst_core_teardown();
 
   return 0;

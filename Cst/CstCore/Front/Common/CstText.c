@@ -120,7 +120,7 @@ static void cst_text_init(CstText *self) {
 
   rnode = CST_RENDER_NODE(self);
   rctx = cst_lbox_context_new_I();
-  font_map= pango_cairo_font_map_get_default();
+  font_map = pango_cairo_font_map_get_default();
   pctx = pango_font_map_create_context(font_map);
   self->playout = pango_layout_new (pctx);
 

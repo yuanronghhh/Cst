@@ -27,7 +27,7 @@ struct _CstNodeMap {
 };
 
 struct _CstNodeMapClass {
-  SysObjectClass parent;
+  FRPairClass parent;
 };
 
 SysType cst_node_map_get_type(void);

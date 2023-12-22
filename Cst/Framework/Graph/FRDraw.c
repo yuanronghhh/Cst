@@ -79,8 +79,8 @@ static FRSurface* create_surface(FRWindow *window, SysInt width, SysInt height) 
     HDC hdc = GetDC(hwd);
     surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 #elif SYS_OS_UNIX
-    FRDisplay *display = fr_window_get_display(self->window);
-    Window xwindow = fr_window_get_x11_window(self->window);
+    FRDisplay *display = fr_window_get_display(window);
+    Window xwindow = fr_window_get_x11_window(window);
     Display *ndisplay = fr_display_get_x11_display(display);
     int nscreen = DefaultScreen(ndisplay);
     Visual *nvisual = DefaultVisual(ndisplay, nscreen);

@@ -37,6 +37,7 @@ target_link_libraries(CstCli
   CstCore
   System
   ${MONO_LIBRARIES}
+  ${PANGOCAIRO_LIBRARIES}
   ${PIXMAN_LIBRARIES}
   ${FONTCONFIG_LIBRARIES}
   ${FREETYPE_LIBRARIES}

@@ -18,7 +18,6 @@
 
 static SysMutex gnode_meta_lock;
 static SysHashTable* g_node_meta_ht = NULL;
-static CstRenderNode *body_rnode = NULL;
 
 
 SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE);

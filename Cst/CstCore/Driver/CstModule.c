@@ -150,7 +150,10 @@ CstComponent* cst_module_get_component(CstModule *self, const SysChar *comp_name
   return fr_env_get_r(FR_ENV(self), (SysPointer)comp_name);
 }
 
-void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, const SysChar *func_name, FREventFunc func) {
+void cst_module_add_user_awatch(CstModule * self, 
+  const SysChar *event_name, 
+  const SysChar *func_name, FREventFunc func,
+  SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(event_name != NULL);
   sys_return_if_fail(func_name != NULL);
@@ -161,6 +164,7 @@ void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, con
   fr_awatch_construct(awatch, builder);
   sys_object_unref(builder);
 
+  fr_awatch_bind(awatch, user_data);
   cst_module_add_awatch(self, awatch);
 }
 

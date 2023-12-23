@@ -1,6 +1,6 @@
 #include <Mini/Mini.h>
 
-#define CHECK_TYPE CST_TYPE_NODE_MAP
+#define CHECK_TYPE CST_TYPE_APPLICATION
 
 static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
   if (!sys_object_is_a(o, CHECK_TYPE)) {
@@ -51,7 +51,6 @@ int main(int argc, char* argv[]) {
   sys_object_unref(app);
 
   cst_core_teardown();
-
   sys_teardown();
 
   return status;

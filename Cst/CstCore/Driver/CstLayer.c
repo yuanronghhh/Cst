@@ -11,8 +11,15 @@ static const SysChar* CST_NODE_LAYER_NAMES[] = {
   "box", "absolute"
 };
 
-CST_NODE_LAYER_ENUM cst_layer_get_by_name(const SysChar* name) {
+CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name) {
   return fr_get_type_by_name(CST_NODE_LAYER_NAMES, ARRAY_SIZE(CST_NODE_LAYER_NAMES), name);
+}
+
+void cst_layer_set_name(CstLayer *self, const SysChar* name) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(name != NULL);
+
+  self->name = sys_strdup(name);
 }
 
 void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *render_node) {
@@ -42,6 +49,7 @@ static void cst_layer_dispose(SysObject* o) {
   CstLayer *self = CST_LAYER(o);
 
   sys_queue_free_full(self->draw_queue, (SysDestroyFunc)_sys_object_unref);
+  sys_clear_pointer(&self->name, sys_free);
 
   SYS_OBJECT_CLASS(cst_layer_parent_class)->dispose(o);
 }

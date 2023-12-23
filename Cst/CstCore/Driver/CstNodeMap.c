@@ -6,10 +6,10 @@
 
 SYS_DEFINE_TYPE(CstNodeMap, cst_node_map, FR_TYPE_PAIR);
 
-void cst_node_map_construct(CstNodeMap *self, CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysPointer value) {
+void cst_node_map_construct(CstNodeMap *self, CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysValue *value) {
   sys_assert(prop_type > 0 && "prop_type > 0 failed, see CST_NODE_PROP_ENUM");
 
-  FR_PAIR_CLASS(cst_node_map_parent_class)->construct(FR_PAIR(self), prop_name, value);
+  FR_PAIR_CLASS(cst_node_map_parent_class)->construct(FR_PAIR(self), sys_strdup(prop_name), value);
 
   self->value_map = value_map;
   self->prop_type = prop_type;
@@ -72,7 +72,7 @@ CstNodeMap* cst_node_map_new(void) {
   return sys_object_new(CST_TYPE_NODE_MAP, NULL);
 }
 
-CstNodeMap* cst_node_map_new_I(CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysPointer value) {
+CstNodeMap* cst_node_map_new_I(CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysValue *value) {
   CstNodeMap * o = cst_node_map_new();
 
   cst_node_map_construct(o, value_map, prop_type, prop_name, value);
@@ -94,7 +94,11 @@ static void cst_node_map_dispose(SysObject* o) {
 
 static void cst_node_map_class_init(CstNodeMapClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
+  FRPairClass* pcls = FR_PAIR_CLASS(cls);
 
   ocls->dispose = cst_node_map_dispose;
   ocls->dclone = cst_node_map_dclone_i;
+
+  pcls->key_destroy = sys_free;
+  pcls->value_destroy = sys_value_free;
 }

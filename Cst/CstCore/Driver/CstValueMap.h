@@ -7,9 +7,9 @@
 SYS_BEGIN_DECLS
 
 
-#define CST_TYPE_PROP_MAP (cst_value_map_get_type())
-#define CST_VALUE_MAP(o) ((CstValueMap* )sys_object_cast_check(o, CST_TYPE_PROP_MAP))
-#define CST_VALUE_MAP_CLASS(o) ((CstValueMapClass *)sys_class_cast_check(o, CST_TYPE_PROP_MAP))
+#define CST_TYPE_VALUE_MAP (cst_value_map_get_type())
+#define CST_VALUE_MAP(o) ((CstValueMap* )sys_object_cast_check(o, CST_TYPE_VALUE_MAP))
+#define CST_VALUE_MAP_CLASS(o) ((CstValueMapClass *)sys_class_cast_check(o, CST_TYPE_VALUE_MAP))
 #define CST_VALUE_MAP_GET_CLASS(o) sys_instance_get_class(o, CstValueMapClass)
 
 

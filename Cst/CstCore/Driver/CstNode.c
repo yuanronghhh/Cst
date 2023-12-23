@@ -324,19 +324,22 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstLayerNode *lnode;
-  FRNode *o;
+  FRNode *o, *co, *no;
 
   o = FR_NODE(self);
 
   lnode = cst_node_realize(self, v_parent, com_node);
-  if (o->tree.children) {
+  
+  co = fr_node_get_children(o);
+  if (co) {
 
-    cst_node_realize_r(CST_NODE(o->tree.children), v_parent, com_node);
+    cst_node_realize_r(CST_NODE(co), v_parent, com_node);
   }
+  
+  no = fr_node_get_next(o);
+  if (no) {
 
-  if (o->tree.next) {
-
-    cst_node_realize_r(CST_NODE(o->tree.next), v_parent, com_node);
+    cst_node_realize_r(CST_NODE(no), v_parent, com_node);
   }
 
   return lnode;
@@ -368,15 +371,6 @@ static void cst_node_construct_i (CstNode* self, CstNodeBuilder* builder) {
   self->name = sys_strdup(builder->v_name);
 }
 
-void cst_node_construct (CstNode* self, CstNodeBuilder *builder) {
-  sys_return_if_fail(self != NULL);
-
-  CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
-  sys_return_if_fail(ncls->construct != NULL);
-
-  ncls->construct(self, builder);
-}
-
 /* sys object api */
 CstNode* cst_node_new(void) {
   return sys_object_new(CST_TYPE_NODE, NULL);
@@ -389,20 +383,19 @@ static void cst_node_class_init(CstNodeClass *cls) {
   ocls->dclone = cst_node_dclone_i;
 
   cls->realize = cst_node_realize_i;
-  cls->construct = cst_node_construct_i;
 }
 
 static void cst_node_dispose(SysObject* o) {
   CstNode *self = CST_NODE(o);
-
-  sys_clear_pointer(&self->id, sys_free);
-  sys_clear_pointer(&self->name, sys_free);
 
   sys_list_free_full(self->v_awatch_list, (SysDestroyFunc)_sys_object_unref);
   self->v_awatch_list = NULL;
 
   sys_list_free_full(self->v_nodemap_list, (SysDestroyFunc)_sys_object_unref);
   self->v_nodemap_list = NULL;
+
+  sys_clear_pointer(&self->id, sys_free);
+  sys_clear_pointer(&self->name, sys_free);
 
   SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);
 }

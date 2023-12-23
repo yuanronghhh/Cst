@@ -25,4 +25,6 @@ static void cst_abs_layer_class_init(CstAbsLayerClass* cls) {
 }
 
 static void cst_abs_layer_init(CstAbsLayer *self) {
+
+  cst_layer_set_name(CST_LAYER(self), "AbsLayer");
 }

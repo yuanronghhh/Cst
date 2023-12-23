@@ -78,6 +78,12 @@ static FRSurface* create_surface(FRWindow *window, SysInt width, SysInt height) 
     HWND hwd = fr_window_get_win32_window(window);
     HDC hdc = GetDC(hwd);
     surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+
+    cairo_t *cr = cairo_create(surface);
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr);
+    cairo_destroy(cr);
+
 #elif SYS_OS_UNIX
     FRDisplay *display = fr_window_get_display(window);
     Window xwindow = fr_window_get_x11_window(window);
@@ -97,17 +103,16 @@ static FRSurface* create_surface(FRWindow *window, SysInt width, SysInt height) 
 }
 
 static  FRSurface* create_image_surface_from_surface(FRSurface *surface, SysInt width, SysInt height) {
-  FRSurface * nsur =cairo_surface_create_similar_image(surface, CAIRO_FORMAT_ARGB32, 
+  FRSurface * nsur = cairo_surface_create_similar_image(surface, CAIRO_FORMAT_ARGB32, 
     width, height);
 
   return nsur;
 }
 
 void fr_context_fill_background(FRContext *cr, SysInt width, SysInt height) {
-  cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
   cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
   cairo_rectangle(cr, 0, 0, width, height);
-  cairo_fill(cr);
+  cairo_paint(cr);
 }
 
 

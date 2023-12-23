@@ -84,7 +84,7 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
 
   JNode *nnode;
   CstNodeMap *map;
-  CstValueMap *prop_map;
+  CstValueMap *value_map;
   SysValue *svalue;
   SysInt ptype;
 
@@ -111,9 +111,10 @@ static SysBool com_node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
   }
 
   svalue = ast_parser_jnode_to_value(v_module, pair->key, nnode);
-  prop_map = cst_value_map_new_I(pair->key, sys_value_get_data_type(svalue));
+  value_map = cst_value_map_new_I(pair->key, sys_value_get_data_type(svalue));
 
-  map = cst_node_map_new_I(prop_map, CST_NODE_PROP_ACTION, pair->key, svalue);
+  map = cst_node_map_new_I(value_map, CST_NODE_PROP_ACTION, pair->key, svalue);
+  sys_object_unref(value_map);
 
   cst_node_builder_add_nodemap(bnode, map);
 
@@ -235,7 +236,6 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
 
   builder->v_module = v_module;
   builder->v_component = v_component;
-  builder->v_name = sys_strdup(cus_name);
 
   if (child_comp != NULL) {
     v_node = cst_com_node_new_I(child_comp);
@@ -243,6 +243,8 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
     ast_com_node_parse(self, builder, jnode);
     cst_node_builder_build_com_node(builder, CST_COM_NODE(v_node));
   } else {
+    builder->v_name = sys_strdup(cus_name);
+
     type = cst_render_node_get_meta(cus_name);
     if (type == 0) {
       sys_error_N("Not found node or component \"%s\" in \"%s\".", cus_name, cst_module_get_path(v_module));
@@ -717,7 +719,7 @@ SysBool ast_node_parse_layer_name(CstNodeBuilder *o, const SysChar *pstr) {
   CstRender *render = cst_render_get_g_render();
   sys_return_val_if_fail(render == NULL, false);
 
-  SysInt layer_type = cst_layer_get_by_name(pstr);
+  SysInt layer_type = cst_layer_get_by_prop(pstr);
   if(layer_type == -1) {
     sys_warning_N("node o layer_type not correct: %s", pstr);
     return false;

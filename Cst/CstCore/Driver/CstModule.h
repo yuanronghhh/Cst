@@ -58,7 +58,11 @@ CstModule* cst_module_get_g_module(const SysChar *name);
 SysBool cst_module_remove_g_module(const SysChar *name);
 void cst_module_set_g_module(CstModule *m);
 
-void cst_module_add_user_awatch(CstModule * self, const SysChar *event_name, const SysChar *func_name, FREventFunc func);
+void cst_module_add_user_awatch(CstModule * self, 
+  const SysChar *event_name, 
+  const SysChar *func_name, FREventFunc func,
+  SysPointer user_data);
+
 SysList* cst_module_add_awatch(CstModule * self, FRAWatch *awatch);
 void cst_module_remove_awatch(CstModule * self, SysList * awatch_link);
 

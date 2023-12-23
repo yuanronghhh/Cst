@@ -15,19 +15,24 @@ SYS_BEGIN_DECLS
 struct _FRPair {
   SysObject parent;
 
-  SysChar *key;
+  SysPointer key;
   SysPointer value;
   /* <private> */
 };
 
 struct _FRPairClass {
   SysObjectClass parent;
-  void (*construct) (FRPair *o, const SysChar *key, SysPointer value);
+  void (*construct) (FRPair *o, SysPointer key, SysPointer value);
+
+  /* virtual */
+  void (*key_destroy) (SysPointer key);
+  void (*value_destroy) (SysPointer value);
 };
 
 
 SYS_API SysType fr_pair_get_type(void);
-SYS_API FRPair *fr_pair_new_I(const SysChar *key, SysPointer value);
+SYS_API FRPair * fr_pair_new(void);
+SYS_API FRPair *fr_pair_new_I(SysPointer key, SysPointer value);
 
 SYS_END_DECLS
 

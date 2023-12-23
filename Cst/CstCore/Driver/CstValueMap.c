@@ -3,7 +3,7 @@
 SYS_DEFINE_TYPE(CstValueMap, cst_value_map, SYS_TYPE_OBJECT);
 
 CstValueMap* cst_value_map_new(void) {
-  return sys_object_new(CST_TYPE_PROP_MAP, NULL);
+  return sys_object_new(CST_TYPE_VALUE_MAP, NULL);
 }
 
 const SysChar* cst_value_map_key(CstValueMap *self) {
@@ -74,7 +74,8 @@ CstValueMap * cst_value_map_new_I(const SysChar * key, SYS_VALUE_ENUM data_type)
 
 static void cst_value_map_dispose(SysObject* o) {
   CstValueMap *self = CST_VALUE_MAP(o);
-  sys_free_N(self->key);
+  
+  sys_clear_pointer(&self->key, sys_free);
 
   SYS_OBJECT_CLASS(cst_value_map_parent_class)->dispose(o);
 }

@@ -121,11 +121,6 @@ static CstLayerNode* cst_com_node_realize_i(CstNode* o, CstLayerNode *v_parent, 
   return cst_component_realize(self->component, lnode, self);
 }
 
-static void cst_com_node_construct_i (CstNode* o, CstNodeBuilder *builder) {
-
-  CST_NODE_CLASS(cst_com_node_parent_class)->construct(o, builder);
-}
-
 static void cst_com_node_construct(CstComNode *self, CstComponent *comp) {
   self->component = comp;
   sys_object_ref(comp);
@@ -149,8 +144,6 @@ static void cst_com_node_class_init(CstComNodeClass* cls) {
   CstNodeClass *ncls = CST_NODE_CLASS(cls);
 
   ncls->realize = cst_com_node_realize_i;
-  ncls->construct = cst_com_node_construct_i;
-
   ocls->dispose = cst_com_node_dispose;
 }
 

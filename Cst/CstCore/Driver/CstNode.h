@@ -35,7 +35,6 @@ struct _CstNodeClass {
   FRNodeClass parent;
 
   CstLayerNode* (*realize) (CstNode* self, CstLayerNode *v_parent, CstComNode *com_node);
-  void (*construct) (CstNode* self, CstNodeBuilder *builder);
 };
 
 CstNode* cst_node_new(void);
@@ -67,8 +66,6 @@ void cst_node_unlink_node_r(CstNode *self);
 CstNode *cst_node_get_body_node(void);
 void cst_node_setup(void);
 void cst_node_teardown(void);
-
-void cst_node_construct (CstNode* self, CstNodeBuilder *builder);
 
 /* props */
 void cst_node_add_awatch(CstNode *self, FRAWatch* o);

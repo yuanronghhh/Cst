@@ -24,6 +24,7 @@ void cst_render_teardown(void) {
 }
 
 CstRender *cst_render_get_g_render(void) {
+  sys_assert(g_render && "cst_render_setup need called before get");
   return g_render;
 }
 

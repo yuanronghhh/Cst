@@ -32,7 +32,7 @@ struct _CstNodeMapClass {
 
 SysType cst_node_map_get_type(void);
 CstNodeMap* cst_node_map_new(void);
-CstNodeMap* cst_node_map_new_I(CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysPointer value);
+CstNodeMap* cst_node_map_new_I(CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysValue *value);
 void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rnode);
 
 SYS_END_DECLS

@@ -16,6 +16,7 @@ struct _CstLayer {
 
   /* < private > */
   SysQueue *draw_queue;
+  SysChar *name;
 };
 
 struct _CstLayerClass {
@@ -26,8 +27,8 @@ struct _CstLayerClass {
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
-
-CST_NODE_LAYER_ENUM cst_layer_get_by_name(const SysChar* name);
+SYS_API void cst_layer_set_name(CstLayer *self, const SysChar* name);
+CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name);
 CstLayerNode* cst_layer_new_node(CstLayer *o, CstLayerNode *v_parent, CstNode *node);
 void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *v_node);
 

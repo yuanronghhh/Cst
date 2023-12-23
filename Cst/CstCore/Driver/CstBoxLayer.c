@@ -159,5 +159,6 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
 static void cst_box_layer_init(CstBoxLayer *self) {
   self->tree = NULL;
   self->gap_nodes = NULL;
+  cst_layer_set_name(CST_LAYER(self), "BoxLayer");
 }
 

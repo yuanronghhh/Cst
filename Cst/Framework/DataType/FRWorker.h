@@ -18,7 +18,9 @@ struct _FRWorkerClass {
 
 struct _FRWorker {
   FRSource parent;
-  FRWorkerPrivate *priv;
+
+  /* <private> */
+  SysPointer app_data;
 };
 
 SYS_API SysType fr_worker_get_type(void);

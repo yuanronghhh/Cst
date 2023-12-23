@@ -16,8 +16,6 @@ struct _FREventRefreshClass {
 
 struct _FREventRefresh {
   FREvent parent;
-
-  FREventRefreshPrivate *priv;
 };
 
 SYS_API SysType fr_event_refresh_get_type(void);

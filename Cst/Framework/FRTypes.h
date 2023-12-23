@@ -87,12 +87,10 @@ typedef  struct  _FRAWatch                   FRAWatch;
 typedef  struct  _FRAWatchClass              FRAWatchClass;
 typedef  struct  _FRAWatchAny                FRAWatchAny;
 typedef  struct  _FRAWatchAnyClass           FRAWatchAnyClass;
-typedef  struct  _FRAWatchAnyPrivate         FRAWatchAnyPrivate;
 typedef  struct  _FRAWatchRefresh                FRAWatchRefresh;
 typedef  struct  _FRAWatchRefreshClass           FRAWatchRefreshClass;
 typedef  struct  _FRAWatchKey                FRAWatchKey;
 typedef  struct  _FRAWatchKeyClass           FRAWatchKeyClass;
-typedef  struct  _FRAWatchKeyPrivate         FRAWatchKeyPrivate;
 typedef  struct  _FRAWatchKeyPress                FRAWatchKeyPress;
 typedef  struct  _FRAWatchKeyPressClass           FRAWatchKeyPressClass;
 
@@ -112,10 +110,8 @@ typedef  struct  _FREventAnyClass              FREventAnyClass;
 
 typedef  struct  _FREventRefresh                   FREventRefresh;
 typedef  struct  _FREventRefreshClass              FREventRefreshClass;
-typedef  struct  _FREventRefreshPrivate            FREventRefreshPrivate;
 typedef  struct  _FREventKey                FREventKey;
 typedef  struct  _FREventKeyClass           FREventKeyClass;
-typedef  struct  _FREventKeyPrivate         FREventKeyPrivate;
 typedef  struct  _FREventMouseKey           FREventMouseKey;
 typedef  struct  _FREventMouseKeyClass      FREventMouseKeyClass;
 typedef  struct  _FREventCursorMove         FREventCursorMove;
@@ -141,7 +137,6 @@ typedef  struct  _FRApplicationClass      FRApplicationClass;
 
 typedef  struct  _FRWorker           FRWorker;
 typedef  struct  _FRWorkerClass      FRWorkerClass;
-typedef  struct  _FRWorkerPrivate    FRWorkerPrivate;
 
 typedef  struct  _FRMonoContext   FRMonoContext;
 

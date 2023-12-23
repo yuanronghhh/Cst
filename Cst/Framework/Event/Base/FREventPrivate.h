@@ -35,7 +35,6 @@ struct _FREventCursorMove {
   SysDouble y;
 };
 
-
 struct _FREventScroll {
   FREvent parent;
   SysDouble xoffset;

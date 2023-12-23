@@ -1,12 +1,7 @@
 #include <Framework/Event/Base/FREventRefresh.h>
 
 
-struct _FREventRefreshPrivate {
-  SysChar reserved;
-};
-
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(FREventRefresh, fr_event_refresh, FR_TYPE_EVENT);
+SYS_DEFINE_TYPE(FREventRefresh, fr_event_refresh, FR_TYPE_EVENT);
 
 
 /* object api */
@@ -39,6 +34,5 @@ static void fr_event_refresh_class_init(FREventRefreshClass* cls) {
 }
 
 void fr_event_refresh_init(FREventRefresh *self) {
-  self->priv = fr_event_refresh_get_private(self);
 }
 

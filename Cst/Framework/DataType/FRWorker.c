@@ -1,11 +1,9 @@
 #include <Framework/DataType/FRWorker.h>
 #include <Framework/Event/FREvents.h>
 
-struct _FRWorkerPrivate {
-  SysPointer app_data;
-};
 
-SYS_DEFINE_TYPE_WITH_PRIVATE(FRWorker, fr_worker, FR_TYPE_SOURCE);
+SYS_DEFINE_TYPE(FRWorker, fr_worker, FR_TYPE_SOURCE);
+
 
 SysBool fr_worker_check_i(FRSource *o) {
 
@@ -40,9 +38,8 @@ void fr_worker_construct(FRSource *o, SysPointer app_data) {
   FR_SOURCE_CLASS(fr_worker_parent_class)->construct(o, (SysPointer)o);
 
   FRWorker* self = FR_WORKER(o);
-  FRWorkerPrivate* priv = self->priv;
 
-  priv->app_data = app_data;
+  self->app_data = app_data;
 }
 
 FRSource* fr_worker_new(void) {
@@ -78,5 +75,4 @@ static void fr_worker_class_init(FRWorkerClass* cls) {
 }
 
 void fr_worker_init(FRWorker *self) {
-  self->priv = fr_worker_get_private(self);
 }

@@ -1,6 +1,8 @@
 #include <CstCore/Driver/CstValueMap.h>
 
+
 SYS_DEFINE_TYPE(CstValueMap, cst_value_map, SYS_TYPE_OBJECT);
+
 
 CstValueMap* cst_value_map_new(void) {
   return sys_object_new(CST_TYPE_VALUE_MAP, NULL);

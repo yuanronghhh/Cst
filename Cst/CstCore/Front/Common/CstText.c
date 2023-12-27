@@ -6,7 +6,9 @@
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Front/Common/CstLBoxContext.h>
 
+
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_RENDER_NODE);
+
 
 CstRenderNode* cst_text_new(void) {
   return sys_object_new(CST_TYPE_TEXT, NULL);

@@ -93,6 +93,8 @@ set(SRC
 
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
+  ./Driver/CstFlexItem.h
+  ./Driver/CstFlexItem.c
   ./Driver/CstLayoutNode.h
   ./Driver/CstLayoutNode.c
   ./Driver/CstRenderContext.h

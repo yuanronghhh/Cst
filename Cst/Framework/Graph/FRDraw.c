@@ -115,7 +115,6 @@ void fr_context_fill_background(FRContext *cr, SysInt width, SysInt height) {
   cairo_paint(cr);
 }
 
-
 void fr_draw_set_color(FRDraw *self, FRColor *color) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->cr != NULL);

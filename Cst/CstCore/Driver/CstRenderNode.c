@@ -4,6 +4,7 @@
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstFlexItem.h>
 
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
@@ -19,9 +20,13 @@
 static SysMutex gnode_meta_lock;
 static SysHashTable* g_node_meta_ht = NULL;
 
+void cst_render_node_flex_item(CstFlexItemInterface* item);
 
-SYS_DEFINE_TYPE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE);
+SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
+  SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item));
 
+void cst_render_node_flex_item(CstFlexItemInterface *item) {
+}
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);

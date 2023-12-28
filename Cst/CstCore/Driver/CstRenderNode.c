@@ -25,7 +25,13 @@ void cst_render_node_flex_item(CstFlexItemInterface* item);
 SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
   SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item));
 
-void cst_render_node_flex_item(CstFlexItemInterface *item) {
+
+void render_node_get_width (CstFlexItem *item) {
+}
+
+void cst_render_node_flex_item(CstFlexItemInterface *iface) {
+
+  iface->get_width = render_node_get_width;
 }
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {

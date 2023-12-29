@@ -96,6 +96,9 @@ cst-test: cst-test-build
 cst-test-check: cst-test-build
 	@make PROJ_NAME="CstCoreTest" check-${PLATFORM}
 
+system-test-build:
+	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}
+
 # -------------------- CstCli start --------------------
 cst-cli-gen:
 	@#gen ${PROJ}.yy.c ${PROJ}.yy.h

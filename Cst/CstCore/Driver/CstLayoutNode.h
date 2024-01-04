@@ -24,12 +24,14 @@ struct _CstLayoutNode {
 struct _CstLayoutNodeClass {
   SysObjectClass parent;
 
+  void (*construct) (CstLayoutNode* o, CstNode *node);
   void (*layout) (CstLayoutNode* o, CstLayout *layout);
 };
 
 SysType cst_layout_node_get_type(void);
 CstLayoutNode* cst_layout_node_new(void);
-CstLayoutNode *cst_layout_node_new_I(void);
+CstLayoutNode *cst_layout_node_new_I(CstNode *node);
+void cst_layout_node_construct(CstLayoutNode *self, CstNode *node);
 
 void cst_layout_node_set_width(CstLayoutNode* self, SysInt width);
 SysInt cst_layout_node_get_width(CstLayoutNode* self);
@@ -44,6 +46,9 @@ SysInt cst_layout_node_get_y(CstLayoutNode* self);
 void cst_layout_node_set_xy(CstLayoutNode* self, SysInt x, SysInt y);
 void cst_layout_node_set_size(CstLayoutNode* self, SysInt width, SysInt height);
 void cst_layout_node_get_size(CstLayoutNode* self, SysInt *width, SysInt *height);
+
+void cst_layout_node_set_layer_node(CstLayoutNode *self, CstLayerNode * layer_node);
+CstLayerNode * cst_layout_node_get_layer_node(CstLayoutNode *self);
 
 void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext* ctx);
 void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4);

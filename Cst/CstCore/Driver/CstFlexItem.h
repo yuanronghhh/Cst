@@ -14,6 +14,7 @@ typedef struct _CstFlexItem CstFlexItem;
 typedef struct _CstFlexItemInterface CstFlexItemInterface;
 
 struct _CstFlexItemInterface {
+  SysTypeInterface parent;
 
   void (*get_width) (CstFlexItem *item);
 };

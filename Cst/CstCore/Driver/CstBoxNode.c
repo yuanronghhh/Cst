@@ -65,7 +65,7 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
   cst_box_node_set_last_child(parent, box_node);
 }
 
-void cst_box_node_layout_children(CstBoxNode *self, CstRenderContext *rctx, CstLayout *layout) {
+void cst_box_node_relayout_children(CstBoxNode *self, CstRenderContext *rctx, CstLayout *layout) {
 #if 0
   CstBoxNode *cnode;
   CstLayoutNode* lnode;
@@ -97,30 +97,34 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   return sys_hnode_has_one_child(BOX_NODE_TO_HNODE(self));
 }
 
-void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
+static void cst_box_node_relayout_node(CstLayerNode* lnode, CstLayout* layout) {
   CstLayerNode *lnode;
   CstRenderNode *rnode;
   CstRenderContext* rctx;
 
-  lnode = CST_LAYER_NODE(self);
   rnode = cst_layer_node_get_rnode(lnode);
   rctx = cst_render_node_get_render_ctx(rnode);
 
   cst_render_context_layout_box_node(rctx, self, layout);
 }
 
-void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  cst_box_node_relayout_node(self, layout);
-}
-
 void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {
 }
 
+CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
+  CstLayerNode *lnode = CST_LAYER_NODE(self);
+  CstRenderNode *rnode = cst_layer_node_get_rnode(lnode);
+  CstLayoutNode *lynode = CST_LAYOUT_NODE(rnode);
+
+  return lynode;
+}
+
 void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout) {
+  FRDraw* draw = cst_layout_get_draw(layout);
+  CstLayoutNode *lynode = cst_box_node_get_layout_node(self);
+  const FRRect *bound = cst_layout_node_get_bound(lynode);
+
+  fr_draw_fill_rectangle(layout->draw, bound);
 }
 
 SysBool box_node_cb(SysHNode *node, SysPointer user_data) {
@@ -205,6 +209,8 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
 
   ocls->dispose = cst_box_node_dispose;
   ncls->construct = cst_box_node_construct;
+  ncls->relayout_node = cst_box_node_relayout_node;
+  ncls->relayout_children = cst_box_node_relayout_children;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

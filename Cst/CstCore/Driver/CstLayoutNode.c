@@ -110,10 +110,22 @@ static SysObject* cst_layout_node_dclone_i(SysObject* o) {
   nself->border = oself->border;
   nself->padding = oself->padding;
 
+  nself->node = oself->node;
+  sys_object_ref(oself->node);
+
   return n;
 }
 
 static void cst_layout_node_layout_i(CstLayoutNode* self, CstLayout *layout) {
+}
+
+void cst_layout_node_construct(CstLayoutNode *self, CstNode *node) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayoutNodeClass *cls = CST_LAYOUT_NODE_GET_CLASS(self);
+  sys_return_if_fail(cls->layout != NULL);
+
+  cls->construct(self, node);
 }
 
 void cst_layout_node_layout(CstLayoutNode *self, CstLayout *layout) {
@@ -225,9 +237,31 @@ void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rc
    cst_render_context_constraint_height(rctx, pctx, &self->bound.height);
 }
 
+void cst_layout_node_set_layer_node(CstLayoutNode *self, CstLayerNode * layer_node) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(layer_node != NULL);
+
+  self->layer_node = layer_node;
+}
+
+CstLayerNode * cst_layout_node_get_layer_node(CstLayoutNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->layer_node;
+}
+
+static void cst_layout_node_construct_i(CstLayoutNode *self, CstNode *node) {
+  self->node = node;
+
+  sys_object_ref(node);
+}
+
 /* object api */
-CstLayoutNode *cst_layout_node_new_I(void) {
+CstLayoutNode *cst_layout_node_new_I(CstNode *node) {
   CstLayoutNode * o = cst_layout_node_new();
+
+  cst_layout_node_construct_i(o, node);
+
   return o;
 }
 
@@ -239,6 +273,8 @@ static void cst_layout_node_init(CstLayoutNode *self) {
 static void cst_layout_node_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
+  sys_object_unref(&self->node, _sys_object_unref);
+
   SYS_OBJECT_CLASS(cst_layout_node_parent_class)->dispose(o);
 }
 
@@ -249,4 +285,5 @@ static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {
   ocls->dclone = cst_layout_node_dclone_i;
 
   cls->layout = cst_layout_node_layout_i;
+  cls->construct = cst_layout_node_construct_i;
 }

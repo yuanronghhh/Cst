@@ -48,7 +48,7 @@ const SysChar *cst_node_get_name(CstNode *node);
 void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
-CstNode* cst_node_new_layout_node(CstModule* v_module);
+CstNode* cst_node_new_comp_layout_node(CstModule* v_module);
 CstNode *cst_node_new_body(void);
 
 void cst_node_print_node(CstNode* node, SysPointer user_data);
@@ -60,7 +60,7 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
 void cst_node_set_rnode_type(CstNode *self, SysType rnode_type);
 SysType cst_node_get_rnode_type(CstNode *self);
 
-CstRenderNode *cst_node_new_render_node(CstNode* self);
+CstLayoutNode *cst_node_new_render_node(CstNode* self);
 void cst_node_unlink_node_r(CstNode *self);
 
 CstNode *cst_node_get_body_node(void);

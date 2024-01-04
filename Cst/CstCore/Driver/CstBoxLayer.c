@@ -31,17 +31,17 @@ void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root) {
 
 static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
   CstRenderContext *rctx;
-  CstRenderNode *rnode;
+  CstLayoutNode *lynode;
   CstLayer* self;
   FRRegion* region;
   const FRRect *bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;
-  rnode = cst_layer_node_get_rnode(lnode);
-  rctx = cst_render_node_get_render_ctx(rnode);
+  lynode = cst_layer_node_get_layout_node(lnode);
+  rctx = cst_render_node_get_render_ctx(CST_RENDER_NODE(lynode));
 
-  bound = cst_layout_node_get_bound(CST_LAYOUT_NODE(rnode));
+  bound = cst_layout_node_get_bound(lynode);
 
   sys_return_if_fail(region != NULL);
   sys_return_if_fail(self != NULL);
@@ -66,7 +66,7 @@ static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
   sys_assert(bound->width != -1 && "width should be set before check dirty.");
 
   cst_render_context_set_paint(rctx, true);
-  cst_layer_queue_draw_node(self, rnode);
+  cst_layer_queue_draw_node(self, lynode);
 }
 
 void cst_box_layer_check(CstLayer *o, CstLayout *layout) {

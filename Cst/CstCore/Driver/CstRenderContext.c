@@ -212,11 +212,8 @@ void cst_render_context_layout_children(CstRenderContext *self, CstLayerNode *no
 void cst_render_context_layout_self_i(CstRenderContext *self, CstLayerNode *node, CstLayout *layout) {
   SysInt w, h;
   CstLayoutNode *lnode;
-  CstRenderNode *rnode;
 
-  rnode = cst_layer_node_get_rnode(node);
-  lnode = CST_LAYOUT_NODE(rnode);
-
+  lnode = cst_layer_node_get_layout_node(node);
   cst_layout_node_get_size(lnode, &w, &h);
 
   if (w == -1) {
@@ -236,15 +233,17 @@ void cst_render_context_layout_children_i(CstRenderContext *self, CstLayerNode *
 void cst_render_context_layout_box_node(CstRenderContext* self, CstBoxNode *box, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
 
-  CstRenderNode *rnode;
+  CstLayoutNode *lynode;
   CstRenderNode *crnode;
   CstLayerNode *clnode;
   CstLayerNode *lnode;
   CstBoxNode *bnode;
   CstRenderContext* cctx;
+  CstRenderNode *rnode;
 
   lnode = CST_LAYER_NODE(box);
-  rnode = cst_layer_node_get_rnode(lnode);
+  rnode = CST_RENDER_NODE(lnode);
+  lynode = cst_layer_node_get_layout_node(lnode);
 
   cst_render_node_render_enter(rnode, layout);
 

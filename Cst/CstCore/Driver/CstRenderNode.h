@@ -9,16 +9,12 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_NODE(o) ((CstRenderNode* )sys_object_cast_check(o, CST_TYPE_RENDER_NODE))
 #define CST_RENDER_NODE_CLASS(o) ((CstRenderNodeClass *)sys_class_cast_check(o, CST_TYPE_RENDER_NODE))
 #define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
-#define CST_RENDER_NODE_NODE(o) ((o)->node)
 
 
 struct _CstRenderNode {
   CstLayoutNode parent;
+
   /* < private > */
-
-  /* ref node */
-  CstNode *node;
-
   /* FRAWatch */
   SysList *awatch_list;
 
@@ -63,7 +59,6 @@ CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self);
 
 CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self);
 void cst_render_node_prepare(CstRenderNode * self, CstLayout * layout);
-CstNode * cst_render_node_get_node(CstRenderNode *self);
 void cst_render_node_print(CstRenderNode * self, CstRenderNode * prnode);
 SysType cst_render_node_get_node_type(CstRenderNode *self);
 
@@ -84,8 +79,6 @@ const SysChar* cst_render_node_get_name(CstRenderNode *self);
 void cst_render_node_set_id(CstRenderNode *self, const SysChar* id);
 const SysChar* cst_render_node_get_id(CstRenderNode *self);
 
-void cst_render_node_set_layer_node(CstRenderNode *self, CstLayerNode * layer_node);
-CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self);
 
 SYS_END_DECLS
 

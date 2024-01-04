@@ -6,25 +6,25 @@
 SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
 
 
-void cst_layer_node_set_rnode(CstLayerNode *self, CstRenderNode *rnode) {
+void cst_layer_node_set_layout_node(CstLayerNode *self, CstLayoutNode *layout_node) {
   sys_return_if_fail(self != NULL);
 
-  self->rnode = rnode;
+  self->layout_node = layout_node;
 }
 
-CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self) {
+CstLayoutNode * cst_layer_node_get_layout_node(CstLayerNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->rnode;
+  return self->layout_node;
 }
 
 /* object api */
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);
 
-  if (self->rnode) {
+  if (self->layout_node) {
 
-    sys_clear_pointer(&self->rnode, _sys_object_unref);
+    sys_clear_pointer(&self->layout_node, _sys_object_unref);
   }
   sys_clear_pointer(&self->node, _sys_object_unref);
 

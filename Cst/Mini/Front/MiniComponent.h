@@ -11,8 +11,8 @@ SYS_BEGIN_DECLS
 
 #define MINI_TYPE_COMPONENT (mini_component_get_type())
 
-#define MINI_COMPONENT(o) ((MiniComponent* )sys_object_cast_check(o))
-#define MINI_COMPONENT_CLASS(o) ((MiniComponentClass *)sys_class_cast_check(o))
+#define MINI_COMPONENT(o) (sys_object_cast_check(o, MINI_TYPE_COMPONENT))
+#define MINI_COMPONENT_CLASS(o) (sys_class_cast_check(o, MINI_TYPE_COMPONENT))
 #define MINI_COMPONENT_GET_CLASS(o) sys_instance_get_class(o, MiniComponentClass)
 
 typedef struct _MiniComponent MiniComponent;

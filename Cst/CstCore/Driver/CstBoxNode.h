@@ -12,7 +12,7 @@ SYS_BEGIN_DECLS
 
 
 struct _CstBoxNode {
-  CstLayerNode unowned;
+  CstLayerNode parent;
 
   /* <private> */
   SysHNode tree_node;

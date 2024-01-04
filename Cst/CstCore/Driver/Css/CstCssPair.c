@@ -41,8 +41,7 @@ void cst_css_pair_calc(CstCssPair *self, CstRenderNode *rnode, CstLayout *layout
 void cst_css_pair_set_x(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-
-  CstNode *node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_CLOSURE)) {
     CstCssClosure *v = cst_css_value_get_v_closure(self->value);
@@ -53,25 +52,25 @@ void cst_css_pair_set_x(CstRenderNode* rnode, CstLayout *layout, SysPointer user
   if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_INT)) {
     SysInt v = cst_css_value_get_v_int(self->value);
 
-    cst_layout_node_set_x(CST_LAYOUT_NODE(node), v);
+    cst_layout_node_set_x(lnode, v);
   }
 }
 
 void cst_css_pair_set_y(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode *node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   SysInt v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
 
-  cst_layout_node_set_y(CST_LAYOUT_NODE(node), v);
+  cst_layout_node_set_y(lnode, v);
 }
 
 void cst_css_pair_set_width(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_CLOSURE)) {
     CstCssClosure *v = cst_css_value_get_v_closure(self->value);
@@ -79,7 +78,7 @@ void cst_css_pair_set_width(CstRenderNode* rnode, CstLayout *layout, SysPointer 
     cst_css_closure_calc(v, layout, rnode);
   } else if (cst_css_value_is_d_type(self->value, CST_CSS_VALUE_INT)) {
     SysInt v = cst_css_value_get_v_int(self->value);
-    cst_layout_node_set_width(CST_LAYOUT_NODE(node), v);
+    cst_layout_node_set_width(lnode, v);
 
   } else {
 
@@ -95,7 +94,7 @@ void cst_css_pair_set_height(CstRenderNode* rnode, CstLayout *layout, SysPointer
   SysInt v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
 
-  cst_layout_node_set_height(CST_LAYOUT_NODE(node), v);
+  cst_layout_node_set_height(lnode, v);
 }
 
 void cst_css_pair_set_layer(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
@@ -118,56 +117,56 @@ void cst_css_pair_set_layer(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 void cst_css_pair_set_margin(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   FRSInt4 *v = cst_css_value_get_v_m4(self->value);
   sys_return_if_fail(v != NULL);
 
-  cst_layout_node_set_margin(CST_LAYOUT_NODE(node), v);
+  cst_layout_node_set_margin(lnode, v);
 }
 
 void cst_css_pair_set_border(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   FRSInt4 *v = cst_css_value_get_v_m4(self->value);
   sys_return_if_fail(v != NULL);
 
-  cst_layout_node_set_border(CST_LAYOUT_NODE(node), v);
+  cst_layout_node_set_border(lnode, v);
 }
 
 void cst_css_pair_set_padding(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   FRSInt4 *v = cst_css_value_get_v_m4(self->value);
   sys_return_if_fail(v != NULL);
 
-  cst_layout_node_set_padding(CST_LAYOUT_NODE(node), v);
+  cst_layout_node_set_padding(lnode, v);
 }
 
 void cst_css_pair_set_font_family(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   const SysChar *v = cst_css_value_get_v_string(self->value);
   sys_return_if_fail(v != NULL);
 
-  cst_text_set_font_desc(CST_TEXT(node), v);
+  cst_text_set_font_desc(CST_TEXT(rnode), v);
 }
 
 void cst_css_pair_set_font_size(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode* node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   SysInt v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
 
-  cst_text_set_font_size(CST_TEXT(node), v);
+  cst_text_set_font_size(CST_TEXT(rnode), v);
 }
 
 void cst_css_pair_set_wrap(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {

@@ -109,8 +109,8 @@ static  FRSurface* create_image_surface_from_surface(FRSurface *surface, SysInt 
   return nsur;
 }
 
-void fr_context_fill_background(FRContext *cr, SysInt width, SysInt height) {
-  cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
+static void fr_context_fill_background(FRContext *cr, SysInt width, SysInt height) {
+  cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
   cairo_rectangle(cr, 0, 0, width, height);
   cairo_paint(cr);
 }

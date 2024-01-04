@@ -172,7 +172,7 @@ SysInt cst_node_get_v_z_index(CstNode *self) {
   return self->v_z_index;
 }
 
-CstNode* cst_node_new_layout_node(CstModule *v_module) {
+CstNode* cst_node_new_comp_layout_node(CstModule *v_module) {
   CstNode *layout;
 
   layout = cst_node_new();
@@ -264,17 +264,17 @@ CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar * name) {
   return -1;
 }
 
-CstRenderNode *cst_node_new_render_node(CstNode* self) {
+CstLayoutNode *cst_node_new_render_node(CstNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   SysType tp;
-  CstRenderNode *rnode;
+  CstLayoutNode *rnode;
 
   tp = self->rnode_type;
   sys_assert(tp != 0 && "node should be set render node type before realize.");
 
   rnode = sys_object_new(tp, NULL);
-  cst_render_node_construct(rnode, self);
+  cst_layout_node_construct(rnode, self);
 
   return rnode;
 }
@@ -285,6 +285,7 @@ static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode *v_parent, C
   CstLayer *layer;
   FRAWatch *awatch;
   CstNodeMap *nmap;
+  CstLayoutNode *lynode;
   CstRenderNode *rnode;
   CstLayerNode *lnode;
 
@@ -292,14 +293,15 @@ static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode *v_parent, C
   sys_return_val_if_fail(layer != NULL, NULL);
 
   lnode = cst_layer_new_node(layer, v_parent, self);
-  rnode = cst_node_new_render_node(self);
+  lynode = cst_node_new_render_node(self);
+  rnode = CST_RENDER_NODE(lynode);
 
-  cst_render_node_set_layer_node(rnode, lnode);
-  cst_layer_node_set_rnode(lnode, rnode);
+  cst_layout_node_set_layer_node(lynode, lnode);
+  cst_layer_node_set_layout_node(lnode, lynode);
 
   sys_list_foreach(self->v_awatch_list, item) {
     awatch =  FR_AWATCH(item->data);
-    fr_awatch_bind(awatch, rnode);
+    fr_awatch_bind(awatch, lynode);
     cst_render_node_ref_awatch(rnode, awatch);
   }
 

@@ -22,11 +22,11 @@ void cst_layer_set_name(CstLayer *self, const SysChar* name) {
   self->name = sys_strdup(name);
 }
 
-void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *render_node) {
+void cst_layer_queue_draw_node(CstLayer *self, CstLayoutNode *lynode) {
   sys_return_if_fail(self != NULL);
 
-  sys_object_ref(render_node);
-  sys_queue_push_tail(self->draw_queue, render_node);
+  sys_object_ref(lynode);
+  sys_queue_push_tail(self->draw_queue, lynode);
 }
 
 CstLayerNode* cst_layer_new_node(CstLayer *self, CstLayerNode *parent, CstNode *node) {

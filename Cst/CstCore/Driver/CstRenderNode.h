@@ -15,6 +15,8 @@ struct _CstRenderNode {
   CstLayoutNode parent;
 
   /* < private > */
+  CstNode *node;
+
   /* FRAWatch */
   SysList *awatch_list;
 
@@ -57,7 +59,6 @@ void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_set_render_ctx(CstRenderNode *self, CstRenderContext * render_ctx);
 CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self);
 
-CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self);
 void cst_render_node_prepare(CstRenderNode * self, CstLayout * layout);
 void cst_render_node_print(CstRenderNode * self, CstRenderNode * prnode);
 SysType cst_render_node_get_node_type(CstRenderNode *self);

@@ -89,7 +89,7 @@ void cst_css_pair_set_width(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 void cst_css_pair_set_height(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstNode *node = cst_render_node_get_node(rnode);
+  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   SysInt v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
@@ -199,10 +199,8 @@ void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt6
   SysInt pwidth;
   FRSInt4 m4;
   CstLayoutNode* lnode;
-  CstNode* node;
 
-  node = cst_render_node_get_node(rnode);
-  lnode = CST_LAYOUT_NODE(node);
+  lnode = CST_LAYOUT_NODE(rnode);
   bound = cst_layout_node_get_bound(lnode);
 
   cst_layout_node_get_mbp(lnode, &m4);
@@ -218,10 +216,8 @@ void cst_css_pair_height_percent(CstRenderNode * rnode, CstLayout *layout, SysIn
   SysInt pheight;
   FRSInt4 m4;
   CstLayoutNode* lnode;
-  CstNode* node;
 
-  node = cst_render_node_get_node(rnode);
-  lnode = CST_LAYOUT_NODE(node);
+  lnode = CST_LAYOUT_NODE(rnode);
   bound = cst_layout_node_get_bound(lnode);
 
   cst_layout_node_get_mbp(lnode, &m4);

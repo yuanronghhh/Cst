@@ -84,40 +84,70 @@ void ${type_name}_init(SysObject* o) {
 """
 
 template_struct = """
-struct _CstNodeProvider {
+struct _CstElement {
   /* <private> */
-  CstModule* v_module;
-  CstComponent* v_component;
-  CstNode* v_parent;
-  CstNode* v_node;
+  CstNode *node;
+  CstRenderNode *rnode;
+  CstLayerNode *lnode;
 };
 """
 
 class TemplateInfo:
-    def __init__(self, structStr):
-        self.tpl = structStr;
-        self.FName = ""
-        self.F_NAME = ""
-        self.f_name = ""
-        self.F_TYPE_NAME = ""
-        self.F_TYPE_PARENT_NAME = ""
-        self.f_parent_name = ""
-        self.FParentName = ""
-        self.F_PARENT_NAME = ""
-        self.prefix = ""
+    struct_name_re = re.compile(r"struct _(\w+)")
+    type_re = re.compile(r"^\s+([a-zA-Z0-9]+\s*\*{0,1}) ")
+    prop_re = re.compile(r"\s\+([a-zA-Z0-9_]+)\s*;")
+
+    def __init__(self, structStr, Prefix):
+        self.tpl = structStr.strip(" ").split("\n")
+        self.F = Prefix.upper()
+        self.f = "%s%s" % (Prefix[0].lower(), Prefix[1:])
+        self.Name = ""
+        self.name = ""
+        self.props = []
 
     def parse_info(self):
-        sp = self.tpl.split("\n")
-        self.prefix = sp.parse_prefix(sp[0])
-        self.FName = sp.parse_struct_name(sp[0])
+        self.Name = self.parse_struct_name(self.tpl[1])
+        self.name = "%s%s" % (self.Name[0].lower(), self.Name[1:])
+        self.props = self.parse_props(self.tpl[2:-1])
+
+    def parse_prop(self, line):
+        prop = [None, None]
+        match = TemplateInfo.type_re.findall(line)
+        if not match:
+            return prop
+
+        prop[0] = match[0]
+
+        match = TemplateInfo.prop_re.findall(line)
+        if not match:
+            return prop
+        prop[1] = match[0]
+
+        return match[0]
+
+    def parse_props(self, lines):
+        for line in lines:
+            prop = self.parse_prop(line)
+
+    def parse_struct_name(self, line):
+        match = TemplateInfo.struct_name_re.findall(line)
+        if not match:
+            return None
+
+        return match[0][len(self.F):]
 
     def parse_prefix(self, line):
-        pass
+        match = TemplateInfo.struct_name_re.findall(line)
+        if not match:
+            return None
+
+        return match[0]
 
 class TemplateGenerator:
+    def __init__(self, structStr, prefix, dstDir):
+        self.sInfo = TemplateInfo(structStr, prefix)
+        self.sInfo.parse_info()
 
-    def __init__(self, structStr, dstDir):
-        self.sInfo = new TemplateInfo(structStr)
         self.dstDir = dstDir
 
     def generate_file(self):
@@ -130,8 +160,7 @@ def main():
     dst = os.getcwd() + "/Cst/Driver/"
     dst = dst.replace("\\", "/")
 
-    gen = TemplateGenerator(template_struct, dst)
-    gen.parse_info()
+    gen = TemplateGenerator(template_struct, "Cst", dst)
     gen.generate_file()
 
     for info in infos:

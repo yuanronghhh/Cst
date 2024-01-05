@@ -15,7 +15,7 @@ struct _CstLayerNode {
   SysObject parent;
 
   /* < private > */
-  CstLayoutNode *layout_node;
+  CstRenderNode *rnode;
   CstNode *node;
 };
 

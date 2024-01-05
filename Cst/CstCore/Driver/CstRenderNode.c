@@ -56,12 +56,6 @@ CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self) {
   return self->render_ctx;
 }
 
-CstLayoutNode* cst_render_node_get_lnode(CstRenderNode* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return CST_LAYOUT_NODE(self);
-}
-
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
   FRDraw* draw = cst_layout_get_draw(layout);
@@ -92,6 +86,9 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   nself->render_ctx = (CstRenderContext *)sys_object_dclone(oself->render_ctx);
   nself->layer_node = NULL;
 
+  nself->node = oself->node;
+  sys_object_ref(oself->node);
+
   for(SysUInt i = 0; i < oself->v_css_list->len; i++) {
     CstCssGroup *g = (CstCssGroup *)sys_object_dclone(oself->v_css_list->pdata[i]);
 
@@ -121,8 +118,7 @@ void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   CstLayoutNode* lnode;
   const FRRect* bound;
 
-  node = CST_RENDER_NODE(self);
-  lnode = CST_LAYOUT_NODE(node);
+  lnode = CST_LAYOUT_NODE(self);
   bound = cst_layout_node_get_bound(lnode);
 
   if (prnode) {

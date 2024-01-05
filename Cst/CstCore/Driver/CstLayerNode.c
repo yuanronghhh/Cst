@@ -12,6 +12,13 @@ void cst_layer_node_set_layout_node(CstLayerNode *self, CstLayoutNode *layout_no
   self->layout_node = layout_node;
 }
 
+CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->rnode;
+}
+
+
 CstLayoutNode * cst_layer_node_get_layout_node(CstLayerNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 

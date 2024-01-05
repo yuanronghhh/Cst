@@ -110,9 +110,6 @@ static SysObject* cst_layout_node_dclone_i(SysObject* o) {
   nself->border = oself->border;
   nself->padding = oself->padding;
 
-  nself->node = oself->node;
-  sys_object_ref(oself->node);
-
   return n;
 }
 
@@ -254,6 +251,18 @@ static void cst_layout_node_construct_i(CstLayoutNode *self, CstNode *node) {
   self->node = node;
 
   sys_object_ref(node);
+}
+
+void cst_layout_node_set_node(CstLayoutNode *self, CstNode * node) {
+  sys_return_if_fail(self != NULL);
+
+  self->node = node;
+}
+
+CstNode * cst_layout_node_get_node(CstLayoutNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->node;
 }
 
 /* object api */

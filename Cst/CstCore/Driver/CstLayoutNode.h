@@ -73,6 +73,9 @@ void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rc
 
 void cst_layout_node_layout(CstLayoutNode * self, CstLayout * layout);
 
+void cst_layout_node_set_node(CstLayoutNode *self, CstNode * node);
+CstNode * cst_layout_node_get_node(CstLayoutNode *self);
+
 SYS_END_DECLS
 
 #endif

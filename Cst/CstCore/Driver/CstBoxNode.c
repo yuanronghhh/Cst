@@ -99,13 +99,15 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
 
 static void cst_box_node_relayout_node(CstLayerNode* lnode, CstLayout* layout) {
   CstLayerNode *lnode;
-  CstRenderNode *rnode;
+  CstRenderNode* rnode;
+  CstLayoutNode *lynode;
   CstRenderContext* rctx;
 
-  rnode = cst_layer_node_get_rnode(lnode);
+  lynode = cst_layer_node_get_layout_node(lnode);
+  rnode = CST_RENDER_NODE(lynode);
   rctx = cst_render_node_get_render_ctx(rnode);
 
-  cst_render_context_layout_box_node(rctx, self, layout);
+  cst_render_context_layout_box_node(rctx, rnode, layout);
 }
 
 void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {

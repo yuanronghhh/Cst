@@ -2,6 +2,7 @@
 #define __CST_RENDER_NODE__
 
 #include <CstCore/Driver/CstLayoutNode.h>
+#include <CstCore/Driver/CstRenderContext.h>
 
 SYS_BEGIN_DECLS
 
@@ -10,6 +11,7 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_NODE_CLASS(o) ((CstRenderNodeClass *)sys_class_cast_check(o, CST_TYPE_RENDER_NODE))
 #define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
 
+#define CST_RENDER_NODE_RCTX(o) (&(o)->rctx)
 
 struct _CstRenderNode {
   CstLayoutNode parent;
@@ -30,7 +32,7 @@ struct _CstRenderNode {
   CstLayerNode *layer_node;
 
   /* render context */
-  CstRenderContext *render_ctx;
+  CstRenderContext rctx;
 };
 
 struct _CstRenderNodeClass {
@@ -52,12 +54,12 @@ SysType cst_render_node_get_meta(const SysChar* name);
 void cst_render_node_setup(void);
 void cst_render_node_teardown(void);
 
+#define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)
+#define cst_render_node_get_is_visible(o) cst_render_context_get_is_visible(CST_RENDER_NODE_RCTX(o))
+
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout);
-
-void cst_render_node_set_render_ctx(CstRenderNode *self, CstRenderContext * render_ctx);
-CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self);
 
 void cst_render_node_prepare(CstRenderNode * self, CstLayout * layout);
 void cst_render_node_print(CstRenderNode * self, CstRenderNode * prnode);

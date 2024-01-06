@@ -30,9 +30,7 @@ CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, C
 void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);
 void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child);
 CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self);
-void cst_box_node_relayout_root(CstBoxNode *self, CstLayout *layout);
 void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
-void cst_box_node_relayout_node(CstBoxNode* self, CstLayout* layout);
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self);
 void cst_box_node_bfs_handle(CstBoxNode* self, CstLayerNodeFunc func, SysPointer user_data);

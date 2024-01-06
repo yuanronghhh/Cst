@@ -230,59 +230,6 @@ void cst_render_context_layout_self_i(CstRenderContext *self, CstLayerNode *node
 void cst_render_context_layout_children_i(CstRenderContext *self, CstLayerNode *node, CstLayout *layout) {
 }
 
-void cst_render_context_layout_box_node(CstRenderContext* self, CstBoxNode *box, CstLayout* layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayoutNode *lynode;
-  CstRenderNode *crnode;
-  CstLayerNode *clnode;
-  CstLayerNode *lnode;
-  CstBoxNode *bnode;
-  CstRenderContext* cctx;
-  CstRenderNode *rnode;
-
-  lnode = CST_LAYER_NODE(box);
-  rnode = CST_RENDER_NODE(lnode);
-  lynode = cst_layer_node_get_layout_node(lnode);
-
-  cst_render_node_render_enter(rnode, layout);
-
-  if(!self->need_relayout) {
-    return;
-  }
-
-  if(!self->is_visible) {
-    return;
-  }
-
-  cst_render_context_layout_self(self, lnode, layout);
-
-  if (cst_box_node_children(box)) {
-    clnode = CST_LAYER_NODE(cst_box_node_children(box));
-
-    if (cst_box_node_has_one_child(box)) {
-      crnode = cst_layer_node_get_rnode(clnode);
-      cctx = cst_render_node_get_render_ctx(crnode);
-
-      cst_render_context_inherit(cctx, self, layout);
-      cst_render_context_layout_box_node(cctx, cst_box_node_children(box), layout);
-    } else {
-
-      for (bnode = cst_box_node_children(box); bnode; bnode = cst_box_node_next(box)) {
-        cst_box_node_relayout_node(bnode, layout);
-      }
-    }
-  }
-
-  if (cst_box_node_next(box)) {
-
-    cst_box_node_relayout_node(cst_box_node_next(box), layout);
-  }
-
-  cst_render_node_render_leave(rnode, layout);
-  self->need_relayout = false;
-}
-
 /* constraint */
 void cst_render_context_constraint_width(CstRenderContext* self, CstRenderContext* pctx, SysInt* width) {
 

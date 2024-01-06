@@ -66,29 +66,6 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
 }
 
 void cst_box_node_relayout_children(CstBoxNode *self, CstRenderContext *rctx, CstLayout *layout) {
-#if 0
-  CstBoxNode *cnode;
-  CstLayoutNode* lnode;
-  CstNode* node;
-  CstRow* row;
-  SysSList* rows;
-  const FRRect* rbound;
-
-  node = cst_layer_node_get_node(CST_LAYER_NODE(self));
-  lnode = CST_LAYOUT_NODE(node);
-  row = cst_row_new_I(lnode->bound.x, lnode->bound.y);
-  rows = sys_slist_alloc();
-
-  for(cnode = self->children; cnode; cnode = cnode->next) {
-    rbound = cst_row_get_bound(row);
-
-    if(cst_render_context_check_wrap(rctx, rbound)) {
-      sys_slist_prepend(rows, row);
-    }
-
-    cst_row_add(row, lnode);
-  }
-#endif
 }
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
@@ -97,17 +74,61 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   return sys_hnode_has_one_child(BOX_NODE_TO_HNODE(self));
 }
 
-static void cst_box_node_relayout_node(CstLayerNode* lnode, CstLayout* layout) {
-  CstLayerNode *lnode;
+static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
+  sys_return_if_fail(o != NULL);
+  CstBoxNode *self = CST_BOX_NODE(o);
+
   CstRenderNode* rnode;
   CstLayoutNode *lynode;
-  CstRenderContext* rctx;
 
-  lynode = cst_layer_node_get_layout_node(lnode);
+  lynode = cst_layer_node_get_layout_node(o);
   rnode = CST_RENDER_NODE(lynode);
-  rctx = cst_render_node_get_render_ctx(rnode);
 
-  cst_render_context_layout_box_node(rctx, rnode, layout);
+  CstRenderNode *crnode;
+  CstLayerNode *clnode;
+  CstLayerNode *lnode;
+  CstBoxNode *bnode;
+
+  lnode = CST_LAYER_NODE(box);
+  rnode = CST_RENDER_NODE(lnode);
+
+  cst_render_node_render_enter(rnode, layout);
+
+  if(!cst_render_node_need_relayout(self)) {
+    return;
+  }
+
+  if(!cst_render_node_get_is_visible(self)) {
+    return;
+  }
+
+  cst_render_context_layout_self(self, lnode, layout);
+
+  if (cst_box_node_children(box)) {
+    clnode = CST_LAYER_NODE(cst_box_node_children(box));
+
+    if (cst_box_node_has_one_child(box)) {
+      crnode = cst_layer_node_get_rnode(clnode);
+      cctx = cst_render_node_get_render_ctx(crnode);
+
+      cst_render_context_inherit(cctx, self, layout);
+      cst_render_context_layout_box_node(cctx, cst_box_node_children(box), layout);
+    } else {
+
+      for (bnode = cst_box_node_children(box); bnode; bnode = cst_box_node_next(box)) {
+        cst_box_node_relayout_node(bnode, layout);
+      }
+    }
+  }
+
+  if (cst_box_node_next(box)) {
+
+    cst_box_node_relayout_node(cst_box_node_next(box), layout);
+  }
+
+  cst_render_node_render_leave(rnode, layout);
+  self->need_relayout = false;
+
 }
 
 void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {

@@ -15,8 +15,10 @@ struct _CstLayerNode {
   SysObject parent;
 
   /* < private > */
-  CstRenderNode *rnode;
+  CstLayer *layer;
   CstNode *node;
+
+  CstLayoutNode *layout_node;
 };
 
 struct _CstLayerNodeClass {
@@ -24,14 +26,24 @@ struct _CstLayerNodeClass {
 
   void (*construct) (CstLayerNode *o, CstNode *rnode);
   void (*relayout_node) (CstLayerNode *o, CstLayout* layout);
+  void (*repaint_node) (CstLayerNode *o, CstLayout* layout);
+  void (*repaint_children) (CstLayerNode *o, CstLayout* layout);
   void (*relayout_children) (CstLayerNode *o, CstLayout* layout);
 };
 
 SysType cst_layer_node_get_type(void);
 CstLayerNode *cst_layer_node_new(void);
-CstLayerNode *cst_layer_node_new_I(CstNode *node);
+CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);
 
-void cst_layer_node_set_layout_node(CstLayerNode *self, CstLayoutNode *layout_node);
+const FRRect *cst_layer_node_get_bound(CstLayerNode *self);
+
+void cst_layer_node_relayout_node (CstLayerNode *self, CstLayout* layout);
+void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout* layout);
+
+void cst_layer_node_set_rnode(CstLayerNode *self, CstRenderNode * rnode);
+CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self);
+
+void cst_layer_node_set_layout_node(CstLayerNode *self, CstLayoutNode * layout_node);
 CstLayoutNode * cst_layer_node_get_layout_node(CstLayerNode *self);
 
 SYS_END_DECLS

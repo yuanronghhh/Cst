@@ -174,7 +174,7 @@ static void fr_window_framebuffer_size_callback(GLFWwindow* gwindow, SysInt widt
 }
 
 static void fr_window_focus_callback(GLFWwindow* gwindow, SysInt focused) {
-  sys_debug_N("%s", "window_focus");
+  sys_debug_N("window_focus :%d", focused);
 }
 
 static void fr_window_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
@@ -253,9 +253,9 @@ void fr_window_set_data(FRWindow *self, SysPointer data) {
 }
 
 void fr_wait_events(void) {
-  SYS_LEAK_DISABLE;
+  SYS_LEAK_IGNORE_BEGIN;
     glfwWaitEvents();
-  SYS_LEAK_ENABLE;
+  SYS_LEAK_IGNORE_END;
 }
 
 void fr_post_empty_events(void) {

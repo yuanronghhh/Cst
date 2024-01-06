@@ -41,19 +41,7 @@ void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
   CstLayoutNode *lnode = CST_LAYOUT_NODE(self);
 
   cst_layout_node_get_mbp(lnode, &m4);
-  cst_render_context_set_mbp(self->render_ctx, &m4);
-}
-
-void cst_render_node_set_render_ctx(CstRenderNode *self, CstRenderContext * render_ctx) {
-  sys_return_if_fail(self != NULL);
-
-  self->render_ctx = render_ctx;
-}
-
-CstRenderContext * cst_render_node_get_render_ctx(CstRenderNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->render_ctx;
+  cst_render_context_set_mbp(&self->rctx, &m4);
 }
 
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
@@ -63,7 +51,7 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   fr_draw_save(draw);
   cst_render_node_prepare(self, layout);
   cst_css_group_list_render(self->v_css_list, self, layout);
-  cst_render_context_calc_size(self->render_ctx, layout, self);
+  cst_render_context_calc_size(self->rctx, layout, self);
 }
 
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout) {
@@ -83,7 +71,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   CstRenderNode *nself = CST_RENDER_NODE(n);
   CstRenderNode *oself = CST_RENDER_NODE(o);
 
-  nself->render_ctx = (CstRenderContext *)sys_object_dclone(oself->render_ctx);
+  nself->rctx = (CstRenderContext *)sys_object_dclone(oself->rctx);
   nself->layer_node = NULL;
 
   nself->node = oself->node;
@@ -257,7 +245,7 @@ const SysChar* cst_render_node_get_id(CstRenderNode *self) {
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
 
-  sys_clear_pointer(&self->render_ctx, _sys_object_unref);
+  sys_clear_pointer(&self->rctx, _sys_object_unref);
   sys_clear_pointer(&self->v_css_list, sys_ptr_array_unref);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);

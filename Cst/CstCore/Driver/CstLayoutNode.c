@@ -234,42 +234,14 @@ void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rc
    cst_render_context_constraint_height(rctx, pctx, &self->bound.height);
 }
 
-void cst_layout_node_set_layer_node(CstLayoutNode *self, CstLayerNode * layer_node) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(layer_node != NULL);
-
-  self->layer_node = layer_node;
-}
-
-CstLayerNode * cst_layout_node_get_layer_node(CstLayoutNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->layer_node;
-}
-
-static void cst_layout_node_construct_i(CstLayoutNode *self, CstNode *node) {
-  self->node = node;
-
-  sys_object_ref(node);
-}
-
-void cst_layout_node_set_node(CstLayoutNode *self, CstNode * node) {
-  sys_return_if_fail(self != NULL);
-
-  self->node = node;
-}
-
-CstNode * cst_layout_node_get_node(CstLayoutNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->node;
+static void cst_layout_node_construct_i(CstLayoutNode *self) {
 }
 
 /* object api */
-CstLayoutNode *cst_layout_node_new_I(CstNode *node) {
+CstLayoutNode *cst_layout_node_new_I(void) {
   CstLayoutNode * o = cst_layout_node_new();
 
-  cst_layout_node_construct_i(o, node);
+  cst_layout_node_construct_i(o);
 
   return o;
 }
@@ -281,8 +253,6 @@ static void cst_layout_node_init(CstLayoutNode *self) {
 
 static void cst_layout_node_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
-
-  sys_object_unref(&self->node, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_layout_node_parent_class)->dispose(o);
 }

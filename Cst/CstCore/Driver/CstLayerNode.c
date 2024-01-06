@@ -6,23 +6,40 @@
 SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
 
 
-void cst_layer_node_set_layout_node(CstLayerNode *self, CstLayoutNode *layout_node) {
+void cst_layer_node_set_layout_node(CstLayerNode *self, CstLayoutNode * layout_node) {
   sys_return_if_fail(self != NULL);
 
   self->layout_node = layout_node;
 }
 
-CstRenderNode * cst_layer_node_get_rnode(CstLayerNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->rnode;
-}
-
-
 CstLayoutNode * cst_layer_node_get_layout_node(CstLayerNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->layout_node;
+}
+
+void cst_layer_node_relayout_node (CstLayerNode *self, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerNodeClass* cls = CST_LAYER_NODE_GET_CLASS(self);
+  sys_return_if_fail(cls->relayout_node != NULL);
+
+  cls->relayout_node(self, layout);
+}
+
+void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout* layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerNodeClass* cls = CST_LAYER_NODE_GET_CLASS(self);
+  sys_return_if_fail(cls->repaint_node != NULL);
+
+  cls->repaint_node(self, layout);
+}
+
+const FRRect *cst_layer_node_get_bound(CstLayerNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return cst_layout_node_get_bound(self->layout_node);
 }
 
 /* object api */
@@ -38,8 +55,10 @@ static void cst_layer_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_layer_node_parent_class)->dispose(o);
 }
 
-static void cst_layer_node_construct(CstLayerNode* self, CstNode *node) {
+static void cst_layer_node_construct(CstLayerNode* self, CstLayer *layer, CstNode *node) {
   self->node = node;
+  self->layer = layer;
+
   sys_object_ref(node);
 }
 
@@ -47,10 +66,10 @@ CstLayerNode *cst_layer_node_new(void) {
   return sys_object_new(CST_TYPE_LAYER_NODE, NULL);
 }
 
-CstLayerNode *cst_layer_node_new_I(CstNode *node) {
+CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node) {
   CstLayerNode *o = cst_layer_node_new();
 
-  cst_layer_node_construct(o, node);
+  cst_layer_node_construct(o, layer, node);
 
   return o;
 }

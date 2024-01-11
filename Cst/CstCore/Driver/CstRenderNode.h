@@ -11,7 +11,7 @@ SYS_BEGIN_DECLS
 #define CST_RENDER_NODE_CLASS(o) ((CstRenderNodeClass *)sys_class_cast_check(o, CST_TYPE_RENDER_NODE))
 #define CST_RENDER_NODE_GET_CLASS(o) sys_instance_get_class(o, CstRenderNodeClass)
 
-#define CST_RENDER_NODE_RCTX(o) (&(o)->rctx)
+#define CST_RENDER_NODE_RCTX(o) cst_render_node_get_rctx(o)
 
 struct _CstRenderNode {
   CstLayoutNode parent;
@@ -32,7 +32,7 @@ struct _CstRenderNode {
   CstLayerNode *layer_node;
 
   /* render context */
-  CstRenderContext rctx;
+  CstRenderContext *rctx;
 };
 
 struct _CstRenderNodeClass {
@@ -56,6 +56,7 @@ void cst_render_node_teardown(void);
 
 #define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_get_is_visible(o) cst_render_context_get_is_visible(CST_RENDER_NODE_RCTX(o))
+#define cst_render_node_need_layout(o) cst_render_context_need_layout(CST_RENDER_NODE_RCTX(o))
 
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);
@@ -82,6 +83,10 @@ const SysChar* cst_render_node_get_name(CstRenderNode *self);
 void cst_render_node_set_id(CstRenderNode *self, const SysChar* id);
 const SysChar* cst_render_node_get_id(CstRenderNode *self);
 
+void cst_render_node_set_layer_node(CstRenderNode *self, CstLayerNode * layer_node);
+CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self);
+
+CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self);
 
 SYS_END_DECLS
 

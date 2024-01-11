@@ -26,6 +26,12 @@ SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
   SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item));
 
 
+CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->ctx;
+}
+
 void render_node_get_width (CstFlexItem *item) {
 }
 
@@ -41,7 +47,7 @@ void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
   CstLayoutNode *lnode = CST_LAYOUT_NODE(self);
 
   cst_layout_node_get_mbp(lnode, &m4);
-  cst_render_context_set_mbp(&self->rctx, &m4);
+  cst_render_context_set_mbp(self->rctx, &m4);
 }
 
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
@@ -71,7 +77,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   CstRenderNode *nself = CST_RENDER_NODE(n);
   CstRenderNode *oself = CST_RENDER_NODE(o);
 
-  nself->rctx = (CstRenderContext *)sys_object_dclone(oself->rctx);
+  *nself->rctx = *oself->rctx;
   nself->layer_node = NULL;
 
   nself->node = oself->node;
@@ -98,29 +104,25 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   return n;
 }
 
+const FRRect *cst_render_node_get_bound(CstRenderNode *self) {
+  return cst_layout_node_get_bound(CST_LAYOUT_NODE(self));
+}
+
 void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   sys_return_if_fail(self != NULL);
 
-  CstLayoutNode* node;
-  CstLayoutNode* pnode;
-  CstLayoutNode* lnode;
-  const FRRect* bound;
-
-  lnode = CST_LAYOUT_NODE(self);
-  bound = cst_layout_node_get_bound(lnode);
+  const FRRect* bound = cst_render_node_get_bound(self);
 
   if (prnode) {
-    pnode = cst_render_node_get_node(prnode);
-
     sys_debug_N("%s,%s<%d,%d,%d,%d>",
-      cst_node_get_name(pnode),
-      cst_node_get_name(node),
+      cst_render_node_get_name(prnode),
+      cst_render_node_get_name(node),
       bound->x, bound->y, bound->width, bound->height);
 
   } else {
 
     sys_debug_N("%s<%d,%d,%d,%d>",
-      cst_node_get_name(node),
+      cst_render_node_get_name(self),
       bound->x, bound->y, bound->width, bound->height);
   }
 }
@@ -241,11 +243,23 @@ const SysChar* cst_render_node_get_id(CstRenderNode *self) {
   return cst_node_get_id(self->node);
 }
 
+void cst_render_node_set_layer_node(CstRenderNode *self, CstLayerNode * layer_node) {
+  sys_return_if_fail(self != NULL);
+
+  self->layer_node = layer_node;
+}
+
+CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->layer_node;
+}
+
 /* object api */
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
 
-  sys_clear_pointer(&self->rctx, _sys_object_unref);
+  sys_clear_pointer(self->rctx, _sys_object_unref);
   sys_clear_pointer(&self->v_css_list, sys_ptr_array_unref);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);

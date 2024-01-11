@@ -296,8 +296,8 @@ static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode *v_parent, C
   lynode = cst_node_new_render_node(self);
   rnode = CST_RENDER_NODE(lynode);
 
-  cst_layout_node_set_layer_node(lynode, lnode);
-  cst_layer_node_set_layout_node(lnode, lynode);
+  cst_render_node_set_layer_node(lynode, lnode);
+  cst_layer_node_set_render_node(lnode, lynode);
 
   sys_list_foreach(self->v_awatch_list, item) {
     awatch =  FR_AWATCH(item->data);

@@ -234,7 +234,9 @@ void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rc
    cst_render_context_constraint_height(rctx, pctx, &self->bound.height);
 }
 
-static void cst_layout_node_construct_i(CstLayoutNode *self) {
+static void cst_layout_node_construct_i(CstLayoutNode *self, CstLayer *layer) {
+
+  self->layer = layer;
 }
 
 /* object api */

@@ -87,7 +87,7 @@ void cst_render_context_calc_height(CstRenderContext *self, CstLayout *layout, C
   cst_css_closure_calc(self->height_calc, layout, rnode);
 }
 
-  void cst_render_context_calc_size(CstRenderContext *self, CstLayout *layout, CstRenderNode *rnode) {
+void cst_render_context_calc_size(CstRenderContext *self, CstLayout *layout, CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(rnode != NULL);
 

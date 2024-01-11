@@ -41,7 +41,7 @@ CstLayerNode* cst_layer_new_node(CstLayer *self, CstLayerNode *parent, CstNode *
 CstLayerNode* cst_layer_new_node_i(CstLayer *self, CstLayerNode *parent, CstNode *node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_layer_node_new_I(node);
+  return cst_layer_node_new_I(self, node);
 }
 
 /* object api */

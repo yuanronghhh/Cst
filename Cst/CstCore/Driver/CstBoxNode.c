@@ -74,27 +74,20 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   return sys_hnode_has_one_child(BOX_NODE_TO_HNODE(self));
 }
 
+CstRenderNode *cst_box_node_get_render_node(CstBoxNode *box) {
+  CstLayerNode *lnode = CST_LAYER_NODE(box);
+
+  return cst_layer_node_get_render_node(lnode);
+}
+
 static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
   sys_return_if_fail(o != NULL);
   CstBoxNode *self = CST_BOX_NODE(o);
-
-  CstRenderNode* rnode;
-  CstLayoutNode *lynode;
-
-  lynode = cst_layer_node_get_layout_node(o);
-  rnode = CST_RENDER_NODE(lynode);
-
-  CstRenderNode *crnode;
-  CstLayerNode *clnode;
-  CstLayerNode *lnode;
-  CstBoxNode *bnode;
-
-  lnode = CST_LAYER_NODE(box);
-  rnode = CST_RENDER_NODE(lnode);
+  CstRenderNode* rnode = cst_layer_node_get_render_node(o);
 
   cst_render_node_render_enter(rnode, layout);
 
-  if(!cst_render_node_need_relayout(self)) {
+  if(!cst_render_node_need_relayout(rnode)) {
     return;
   }
 
@@ -108,7 +101,7 @@ static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
     clnode = CST_LAYER_NODE(cst_box_node_children(box));
 
     if (cst_box_node_has_one_child(box)) {
-      crnode = cst_layer_node_get_rnode(clnode);
+      crnode = cst_layer_node_get_render_node(clnode);
       cctx = cst_render_node_get_render_ctx(crnode);
 
       cst_render_context_inherit(cctx, self, layout);
@@ -136,7 +129,7 @@ void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {
 
 CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
   CstLayerNode *lnode = CST_LAYER_NODE(self);
-  CstRenderNode *rnode = cst_layer_node_get_rnode(lnode);
+  CstRenderNode *rnode = cst_layer_node_get_render_node(lnode);
   CstLayoutNode *lynode = CST_LAYOUT_NODE(rnode);
 
   return lynode;
@@ -181,8 +174,8 @@ void cst_box_node_print(CstBoxNode* self, SysPointer user_data) {
   CstLayerNode *pnode = CST_LAYER_NODE(cst_box_node_get_parent(self));
 
   cst_render_node_print(
-    cst_layer_node_get_rnode(lnode),
-    cst_layer_node_get_rnode(pnode));
+    cst_layer_node_get_render_node(lnode),
+    cst_layer_node_get_render_node(pnode));
 }
 
 CstBoxNode* cst_box_node_children(CstBoxNode *self) {

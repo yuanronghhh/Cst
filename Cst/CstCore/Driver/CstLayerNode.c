@@ -36,19 +36,13 @@ void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout* layout) {
   cls->repaint_node(self, layout);
 }
 
-const FRRect *cst_layer_node_get_bound(CstLayerNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return cst_layout_node_get_bound(self->layout_node);
-}
-
 /* object api */
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);
 
-  if (self->layout_node) {
+  if (self->render_node) {
 
-    sys_clear_pointer(&self->layout_node, _sys_object_unref);
+    sys_clear_pointer(&self->render_node, _sys_object_unref);
   }
   sys_clear_pointer(&self->node, _sys_object_unref);
 

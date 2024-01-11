@@ -35,8 +35,6 @@ SysType cst_layer_node_get_type(void);
 CstLayerNode *cst_layer_node_new(void);
 CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);
 
-const FRRect *cst_layer_node_get_bound(CstLayerNode *self);
-
 void cst_layer_node_relayout_node (CstLayerNode *self, CstLayout* layout);
 void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout* layout);
 

@@ -225,7 +225,7 @@ static void cst_component_construct_i(CstComponent *self, CstComponentContext *c
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_pcomponent));
 
-  self->layout_node = cst_node_new_layout_node(v_module);
+  self->layout_node = cst_node_new_tree_node(v_module);
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {
@@ -239,7 +239,7 @@ static void cst_component_dispose(SysObject* o) {
   CstComponent *self = CST_COMPONENT(o);
 
   if (self->css_env) {
-    
+
     sys_clear_pointer(&self->css_env, _sys_object_unref);
   }
 

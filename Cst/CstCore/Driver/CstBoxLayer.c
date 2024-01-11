@@ -6,7 +6,6 @@
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
-#include <CstCore/Driver/CstRenderContext.h>
 
 typedef struct _BoxLayerPass BoxLayerPass;
 
@@ -30,8 +29,7 @@ void cst_box_layer_set_root (CstBoxLayer *self, CstLayerNode *root) {
 }
 
 static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
-  CstRenderContext *rctx;
-  CstLayoutNode *lynode;
+  CstRenderNode *rnode;
   CstLayer* self;
   FRRegion* region;
   const FRRect *bound;
@@ -39,7 +37,8 @@ static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
   self = ctx->v_layer;
   region = ctx->v_region;
 
-  bound = cst_layer_node_get_bound(lnode);
+  rnode = lnode->render_node;
+  bound = cst_render_node_get_bound(rnode);
 
   sys_return_if_fail(region != NULL);
   sys_return_if_fail(self != NULL);
@@ -48,11 +47,11 @@ static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
     return;
   }
 
-  if (cst_render_context_is_dirty(rctx)) {
+  if (cst_render_node_is_dirty(rnode)) {
     return;
   }
 
-  if (!cst_render_context_get_is_visible(rctx)) {
+  if (!cst_render_node_is_visible(rnode)) {
     return;
   }
 
@@ -63,8 +62,8 @@ static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
 
   sys_assert(bound->width != -1 && "width should be set before check dirty.");
 
-  cst_render_context_set_paint(rctx, true);
-  cst_layer_queue_draw_node(self, lynode);
+  cst_render_node_set_paint(rnode, true);
+  cst_layer_queue_draw_node(self, rnode);
 }
 
 void cst_box_layer_check(CstLayer *o, CstLayout *layout) {

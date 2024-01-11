@@ -113,27 +113,6 @@ static SysObject* cst_layout_node_dclone_i(SysObject* o) {
   return n;
 }
 
-static void cst_layout_node_layout_i(CstLayoutNode* self, CstLayout *layout) {
-}
-
-void cst_layout_node_construct(CstLayoutNode *self, CstNode *node) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayoutNodeClass *cls = CST_LAYOUT_NODE_GET_CLASS(self);
-  sys_return_if_fail(cls->layout != NULL);
-
-  cls->construct(self, node);
-}
-
-void cst_layout_node_layout(CstLayoutNode *self, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayoutNodeClass *cls = CST_LAYOUT_NODE_GET_CLASS(self);
-  sys_return_if_fail(cls->layout != NULL);
-
-  cls->layout(self, layout);
-}
-
 void cst_layout_node_set_margin(CstLayoutNode *self, const FRSInt4 * margin) {
   sys_return_if_fail(self != NULL);
 
@@ -234,18 +213,9 @@ void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rc
    cst_render_context_constraint_height(rctx, pctx, &self->bound.height);
 }
 
-static void cst_layout_node_construct_i(CstLayoutNode *self, CstLayer *layer) {
-
-  self->layer = layer;
-}
-
 /* object api */
 CstLayoutNode *cst_layout_node_new_I(void) {
-  CstLayoutNode * o = cst_layout_node_new();
-
-  cst_layout_node_construct_i(o);
-
-  return o;
+  return cst_layout_node_new();
 }
 
 static void cst_layout_node_init(CstLayoutNode *self) {
@@ -264,7 +234,4 @@ static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {
 
   ocls->dispose = cst_layout_node_dispose;
   ocls->dclone = cst_layout_node_dclone_i;
-
-  cls->layout = cst_layout_node_layout_i;
-  cls->construct = cst_layout_node_construct_i;
 }

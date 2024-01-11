@@ -87,15 +87,15 @@ static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
 
   cst_render_node_render_enter(rnode, layout);
 
-  if(!cst_render_node_need_relayout(rnode)) {
+  if(!cst_render_node_need_layout(rnode)) {
     return;
   }
 
-  if(!cst_render_node_get_is_visible(self)) {
+  if(!cst_render_node_is_visible(self)) {
     return;
   }
 
-  cst_render_context_layout_self(self, lnode, layout);
+  cst_render_node_layout(self, rnode, layout);
 
   if (cst_box_node_children(box)) {
     clnode = CST_LAYER_NODE(cst_box_node_children(box));

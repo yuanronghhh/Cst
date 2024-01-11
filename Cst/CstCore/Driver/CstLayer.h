@@ -30,7 +30,7 @@ SYS_API CstLayer *cst_layer_new(void);
 SYS_API void cst_layer_set_name(CstLayer *self, const SysChar* name);
 CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name);
 CstLayerNode* cst_layer_new_node(CstLayer *o, CstLayerNode *v_parent, CstNode *node);
-void cst_layer_queue_draw_node(CstLayer *self, CstLayoutNode *lynode);
+void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *rnode);
 
 SYS_END_DECLS
 

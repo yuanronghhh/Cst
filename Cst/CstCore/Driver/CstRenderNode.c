@@ -29,7 +29,7 @@ SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
 CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->ctx;
+  return self->rctx;
 }
 
 void render_node_get_width (CstFlexItem *item) {
@@ -116,7 +116,7 @@ void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   if (prnode) {
     sys_debug_N("%s,%s<%d,%d,%d,%d>",
       cst_render_node_get_name(prnode),
-      cst_render_node_get_name(node),
+      cst_render_node_get_name(self),
       bound->x, bound->y, bound->width, bound->height);
 
   } else {
@@ -131,7 +131,7 @@ SysType cst_render_node_get_node_type(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, 0);
   sys_return_val_if_fail(self->node != NULL, 0);
 
-  return sys_type_from_instance(CST_RENDER_NODE_NODE(self));
+  return sys_type_from_instance(self);
 }
 
 void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer) {
@@ -266,7 +266,8 @@ static void cst_render_node_dispose(SysObject* o) {
 }
 
 void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
-  CST_LAYOUT_NODE_CLASS(cst_render_node_parent_class)->construct(o, node);
+  self->node = node;
+  sys_object_ref(node);
 }
 
 CstRenderNode *cst_render_node_new(void) {

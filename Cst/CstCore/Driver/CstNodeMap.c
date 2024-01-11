@@ -41,20 +41,18 @@ void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rn
   CstNodeMap* map;
   const SysChar* bind_var;
   SysInt data_type;
-  CstNode* node;
 
   bind_var = cst_value_map_key(self->value_map);
   data_type = cst_value_map_prop_data_type(self->value_map);
-  node = cst_render_node_get_node(rnode);
 
   map = cst_com_node_get_node_map(com_node, bind_var);
   if (map == NULL) {
-    sys_warning_N("Not found key \"%s\" in component node \"%s\"", 
+    sys_warning_N("Not found key \"%s\" in component render node \"%s\"",
       bind_var, cst_node_get_name(CST_NODE(com_node)));
     return;
   }
 
-  self->node_type = sys_type_from_instance(node);
+  self->node_type = sys_type_from_instance(rnode);
   sys_object_ref(rnode);
 
   self->func = cst_com_node_get_func(self->node_type, self->prop_type, data_type);

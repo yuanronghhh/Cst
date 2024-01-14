@@ -8,21 +8,16 @@
 SYS_DEFINE_TYPE(CstLBodyContext, cst_lbody_context, CST_TYPE_RENDER_CONTEXT);
 
 
-static void cst_lbody_layout_self_i (CstRenderContext *o, CstLayerNode *node, CstLayout *layout) {
+static void cst_lbody_layout_self_i (CstRenderContext *o, CstRenderNode *rnode, CstLayout *layout) {
   SysInt width, height;
 
-  CstLayoutNode *lnode;
-  CstRenderNode *rnode;
-
-  rnode = cst_layer_node_get_rnode(node);
-  lnode = cst_render_node_get_lnode(rnode);
-
   cst_layout_get_buffer_size(layout, &width, &height);
+  cst_render_node_set_size(rnode, width, height);
 
   o->prefer_width = width;
   o->prefer_height = height;
 
-  cst_layout_node_set_size(lnode, width, height);
+  cst_render_node_set_size(rnode, width, height);
 }
 
 /* sys object api */

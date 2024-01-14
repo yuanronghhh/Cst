@@ -22,21 +22,22 @@ set(C_API_SRC
 
   ./Front/Common/CstLBox.c
   ./Front/Common/CstLBox.h
-  ./Front/Common/CstLGrid.c
-  ./Front/Common/CstLGrid.h
-  ./Front/Common/CstLBody.c
-  ./Front/Common/CstLBody.h
-  ./Front/Common/CstText.c
-  ./Front/Common/CstText.h
-  ./Front/Common/CstComRNode.h
-  ./Front/Common/CstComRNode.c
-
-  ./Front/Common/CstLGridContext.c
-  ./Front/Common/CstLGridContext.h
   ./Front/Common/CstLBoxContext.c
   ./Front/Common/CstLBoxContext.h
+  ./Front/Common/CstLGrid.c
+  ./Front/Common/CstLGrid.h
+  ./Front/Common/CstLGridContext.c
+  ./Front/Common/CstLGridContext.h
+  ./Front/Common/CstLBody.c
+  ./Front/Common/CstLBody.h
   ./Front/Common/CstLBodyContext.c
   ./Front/Common/CstLBodyContext.h
+  ./Front/Common/CstText.c
+  ./Front/Common/CstText.h
+  ./Front/Common/CstTextContext.c
+  ./Front/Common/CstTextContext.h
+  ./Front/Common/CstComRNode.h
+  ./Front/Common/CstComRNode.c
 )
 
 set(SRC

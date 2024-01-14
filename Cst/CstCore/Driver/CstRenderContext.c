@@ -199,13 +199,13 @@ void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode
   cls->layout_self(self, rnode, layout);
 }
 
-void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *node, CstLayout *layout) {
+void cst_render_context_paint_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *paint) {
   sys_return_if_fail(self != NULL);
 
   CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
-  sys_return_if_fail(cls->layout_children != NULL);
+  sys_return_if_fail(cls->paint_self != NULL);
 
-  cls->layout_children(self, node, layout);
+  cls->paint_self(self, rnode, paint);
 }
 
 void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
@@ -222,9 +222,6 @@ void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rno
 
     cst_render_node_set_height(rnode, self->prefer_height);
   }
-}
-
-void cst_render_context_layout_children_i(CstRenderContext *self, CstRenderNode *node, CstLayout *layout) {
 }
 
 /* constraint */
@@ -310,5 +307,4 @@ static void cst_render_context_class_init(CstRenderContextClass* cls) {
   ocls->dispose = cst_render_context_dispose;
 
   cls->layout_self = cst_render_context_layout_self_i;
-  cls->layout_children = cst_render_context_layout_children_i;
 }

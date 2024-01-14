@@ -25,8 +25,8 @@ struct _FRPairClass {
   void (*construct) (FRPair *o, SysPointer key, SysPointer value);
 
   /* virtual */
-  void (*key_destroy) (SysPointer key);
-  void (*value_destroy) (SysPointer value);
+  SysDestroyFunc key_destroy;
+  SysDestroyFunc value_destroy;
 };
 
 

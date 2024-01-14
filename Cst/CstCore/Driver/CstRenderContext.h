@@ -38,7 +38,6 @@ struct _CstRenderContextClass {
   SysObjectClass parent;
 
   void (*layout_self) (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
-  void (*layout_children) (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 };
 
 SysType cst_render_context_get_type(void);
@@ -90,7 +89,7 @@ SysInt cst_render_context_get_direction(CstRenderContext *self);
 SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound);
 
 void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *node, CstLayout *layout);
-void cst_render_context_layout_children(CstRenderContext *self, CstRenderNode *node, CstLayout *layout);
+void cst_render_context_paint_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *paint);
 
 SYS_END_DECLS
 

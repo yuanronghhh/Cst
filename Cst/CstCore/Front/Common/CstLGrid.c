@@ -6,9 +6,6 @@
 SYS_DEFINE_TYPE(CstLGrid, cst_lgrid, CST_TYPE_RENDER_NODE);
 
 
-static void cst_lgrid_layout_i (CstLayoutNode* o, CstLayout *layout) {
-}
-
 static void cst_lgrid_construct_i(CstRenderNode *o, CstNode* node) {
 
   CST_RENDER_NODE_CLASS(cst_lgrid_parent_class)->construct(o, node);
@@ -30,7 +27,7 @@ static void cst_lgrid_init(CstLGrid *self) {
   CstRenderContext *rctx = cst_lgrid_context_new_I();
   CstRenderNode *rnode = CST_RENDER_NODE(self);
 
-  cst_render_node_set_render_ctx(rnode, rctx);
+  cst_render_node_set_rctx(rnode, rctx);
 }
 
 static void cst_lgrid_dispose(SysObject* o) {
@@ -40,10 +37,8 @@ static void cst_lgrid_dispose(SysObject* o) {
 
 static void cst_lgrid_class_init(CstLGridClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
   CstRenderNodeClass *rcls = CST_RENDER_NODE_CLASS(cls);
 
   ocls->dispose = cst_lgrid_dispose;
-  lcls->layout = cst_lgrid_layout_i;
   rcls->construct = cst_lgrid_construct_i;
 }

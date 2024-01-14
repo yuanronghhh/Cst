@@ -150,7 +150,6 @@ void cst_css_pair_set_padding(CstRenderNode* rnode, CstLayout *layout, SysPointe
 void cst_css_pair_set_font_family(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   const SysChar *v = cst_css_value_get_v_string(self->value);
   sys_return_if_fail(v != NULL);
@@ -161,7 +160,6 @@ void cst_css_pair_set_font_family(CstRenderNode* rnode, CstLayout *layout, SysPo
 void cst_css_pair_set_font_size(CstRenderNode* rnode, CstLayout *layout, SysPointer user_data) {
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
-  CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
   SysInt v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);

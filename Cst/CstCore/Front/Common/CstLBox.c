@@ -26,7 +26,7 @@ static void cst_lbox_init(CstLBox *self) {
   CstRenderContext *rctx = cst_lbox_context_new_I();
   CstRenderNode *rnode = CST_RENDER_NODE(self);
 
-  cst_render_node_set_render_ctx(rnode, rctx);
+  cst_render_node_set_rctx(rnode, rctx);
 }
 
 static void cst_lbox_dispose(SysObject* o) {

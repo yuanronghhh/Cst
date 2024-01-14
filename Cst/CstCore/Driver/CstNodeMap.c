@@ -98,5 +98,5 @@ static void cst_node_map_class_init(CstNodeMapClass* cls) {
   ocls->dclone = cst_node_map_dclone_i;
 
   pcls->key_destroy = sys_free;
-  pcls->value_destroy = sys_value_free;
+  pcls->value_destroy = (SysDestroyFunc)sys_value_free;
 }

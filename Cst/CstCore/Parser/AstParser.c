@@ -326,21 +326,6 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
   return true;
 }
 
-static SysBool ast_component_parse_base(const SysChar *base, CstComponent **o) {
-  sys_return_val_if_fail(o != NULL, false);
-  sys_return_val_if_fail(*o == NULL, false);
-
-  CstComponent *c = cst_component_get_g_component(base);
-  if(c == NULL) {
-
-    sys_warning_N("%s is not a component", base);
-    return false;
-  }
-  *o = c;
-
-  return true;
-}
-
 static SysBool component_property_parse_func(JNode *jnode, CstComponentContext *o) {
   sys_return_val_if_fail(jnode != NULL, false);
   sys_return_val_if_fail(o != NULL, false);

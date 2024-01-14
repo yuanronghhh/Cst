@@ -81,7 +81,7 @@ void cst_box_layer_render(CstLayer*o, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->tree != NULL);
 
-  cst_layer_node_repaint_node(self->tree, layout);
+  cst_box_node_repaint_children(CST_BOX_NODE(self->tree), layout);
 }
 
 void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {

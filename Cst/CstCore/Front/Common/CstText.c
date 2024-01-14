@@ -1,10 +1,11 @@
 #include <CstCore/Front/Common/CstText.h>
 
+#include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Front/Common/CstTextContext.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstNode.h>
-#include <CstCore/Front/Common/CstLBoxContext.h>
 
 
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_RENDER_NODE);
@@ -89,22 +90,7 @@ static void cst_text_repaint_i(CstRenderNode *rnode, CstLayout *layout) {
 }
 #endif
 
-static void cst_text_relayout_i(CstLayoutNode *o, CstLayout *layout) {
-  CstText *self = CST_TEXT(o);
-  SysInt width = 0;
-  SysInt height = 0;
-
-  FRDrawLayout *playout = self->playout;
-  PangoFontDescription *font_desc = self->font_desc;
-  FRDraw *draw = cst_layout_get_draw(layout);
-
-  fr_layout_set_font_description (playout, font_desc);
-  fr_layout_get_pixel_size(playout, &width, &height);
-  fr_draw_layout_layout(draw, playout);
-  cst_layout_node_set_size(o, width, height);
-}
-
-void cst_text_get_size_i(CstRenderNode *o, SysInt *width, SysInt *height) {
+void cst_text_get_size(CstRenderNode *o, SysInt *width, SysInt *height) {
   sys_return_if_fail(o != NULL);
 
   CstText *self = CST_TEXT(o);
@@ -121,12 +107,12 @@ static void cst_text_init(CstText *self) {
   PangoContext *pctx;
 
   rnode = CST_RENDER_NODE(self);
-  rctx = cst_lbox_context_new_I();
+  rctx = cst_text_context_new_I();
   font_map = pango_cairo_font_map_get_default();
   pctx = pango_font_map_create_context(font_map);
   self->playout = pango_layout_new (pctx);
 
-  cst_render_node_set_render_ctx(rnode, rctx);
+  cst_render_node_set_rctx(rnode, rctx);
 
   g_object_unref(pctx);
 }
@@ -148,11 +134,9 @@ static void cst_text_dispose(SysObject* o) {
 static void cst_text_class_init(CstTextClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
   CstRenderNodeClass *ncls = CST_RENDER_NODE_CLASS(cls);
-  CstLayoutNodeClass *lcls = CST_LAYOUT_NODE_CLASS(cls);
 
   ocls->dispose = cst_text_dispose;
   ocls->dclone = cst_text_dclone_i;
 
   ncls->construct = cst_text_construct_i;
-  lcls->layout = cst_text_relayout_i;
 }

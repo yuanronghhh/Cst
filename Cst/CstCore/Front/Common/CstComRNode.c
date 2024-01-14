@@ -25,5 +25,5 @@ static void cst_com_rnode_init(CstComRNode *self) {
   CstRenderNode *rnode = CST_RENDER_NODE(self);
   CstRenderContext *rctx = cst_lbox_context_new_I();
 
-  cst_render_node_set_render_ctx(rnode, rctx);
+  cst_render_node_set_rctx(rnode, rctx);
 }

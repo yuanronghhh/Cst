@@ -26,6 +26,12 @@ SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
   SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item));
 
 
+void cst_render_node_set_rctx(CstRenderNode *self, CstRenderContext* rctx) {
+  sys_return_if_fail(self != NULL);
+
+  self->rctx = rctx;
+}
+
 CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -105,7 +111,14 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
 }
 
 const FRRect *cst_render_node_get_bound(CstRenderNode *self) {
+
   return cst_layout_node_get_bound(CST_LAYOUT_NODE(self));
+}
+
+CstNode* cst_render_node_get_node(CstRenderNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->node;
 }
 
 void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {

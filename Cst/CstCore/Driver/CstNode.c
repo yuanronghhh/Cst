@@ -361,16 +361,6 @@ void cst_node_teardown(void) {
   sys_clear_pointer(&body_node, cst_node_unlink_node_r);
 }
 
-static void cst_node_construct_i (CstNode* self, CstNodeBuilder* builder) {
-  if (builder->v_id) {
-    self->id = sys_strdup(builder->v_id);
-  } else {
-    self->id = cst_module_new_node_id(builder->v_module);
-  }
-
-  self->name = sys_strdup(builder->v_name);
-}
-
 /* sys object api */
 CstNode* cst_node_new(void) {
   return sys_object_new(CST_TYPE_NODE, NULL);

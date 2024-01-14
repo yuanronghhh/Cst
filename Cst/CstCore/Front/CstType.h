@@ -18,6 +18,9 @@ typedef struct _CstTextClass CstTextClass;
 typedef struct _CstLBox CstLBox;
 typedef struct _CstLBoxClass CstLBoxClass;
 
+typedef struct _CstTextContext CstTextContext;
+typedef struct _CstTextContextClass CstTextContextClass;
+
 typedef struct _CstLDiv CstLDiv;
 typedef struct _CstLDivClass CstLDivClass;
 

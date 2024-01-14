@@ -30,6 +30,7 @@ void cst_text_set_font_desc(CstText *self, const SysChar * font_desc);
 void cst_text_set_text(CstText* self, const SysChar *text);
 void cst_text_set_font_size(CstText *text, SysInt font_size);
 SysInt cst_text_get_font_size(CstText *text);
+void cst_text_get_size(CstRenderNode *o, SysInt *width, SysInt *height);
 
 SYS_END_DECLS
 

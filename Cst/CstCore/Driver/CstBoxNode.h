@@ -42,6 +42,9 @@ CstBoxNode* cst_box_node_children(CstBoxNode *self);
 CstBoxNode* cst_box_node_next(CstBoxNode *self);
 CstBoxNode* cst_box_node_parent(CstBoxNode *self);
 
+void cst_box_node_repaint_children(CstBoxNode *self, CstLayout *layout);
+void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout);
+
 SYS_END_DECLS
 
 #endif

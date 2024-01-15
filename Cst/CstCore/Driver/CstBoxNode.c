@@ -67,10 +67,10 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
   cst_box_node_set_last_child(parent, box_node);
 }
 
-static void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
+void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
 }
 
-static void cst_box_node_repaint_children(CstBoxNode *self, CstLayout *layout) {
+void cst_box_node_repaint_children(CstBoxNode *self, CstLayout *layout) {
 }
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
@@ -79,29 +79,30 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   return sys_hnode_has_one_child(BOX_NODE_TO_HNODE(self));
 }
 
-void cst_box_node_repaint_node(CstLayerNode* o, CstLayout* layout) {
+void cst_box_node_repaint_node_i(CstLayerNode* o, CstLayout* layout) {
   CstRenderNode *rnode = cst_layer_node_get_render_node(o);
 
   cst_render_node_paint_self(rnode, layout);
 }
 
 void cst_box_node_repaint_recursive(CstBoxNode* self, CstLayout* layout) {
-  CstBoxNode *bnode;
-  CstRenderNode *rnode = cst_layer_node_get_render_node(o);
+  CstLayerNode *bnode;
+  CstLayerNode *lnode = CST_LAYER_NODE(self);
+  CstRenderNode *rnode = cst_layer_node_get_render_node(lnode);
 
   cst_render_node_render_enter(rnode, layout);
 
-  cst_render_node_paint_self(rnode, layout);
-  bnode = cst_box_node_children(self);
+  cst_layer_node_repaint_node(lnode, layout);
+  bnode = (CstLayerNode *)cst_box_node_children(self);
   if(bnode) {
 
-    cst_box_node_repaint_node(bnode, layout);
+    cst_render_node_paint_self(rnode, layout);
   }
 
-  bnode = cst_box_node_next(self);
+  bnode = (CstLayerNode *)cst_box_node_next(self);
   if(bnode) {
 
-    cst_box_node_paint_self(rnode, layout);
+    cst_layer_node_repaint_node(bnode, layout);
   }
 
   cst_render_node_render_leave(rnode, layout);
@@ -257,7 +258,7 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
   ocls->dispose = cst_box_node_dispose;
   lcls->construct = cst_box_node_construct;
   lcls->relayout_node = cst_box_node_relayout_node;
-  lcls->repaint_node = cst_box_node_repaint_node;
+  lcls->repaint_node = cst_box_node_repaint_node_i;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

@@ -199,15 +199,6 @@ void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode
   cls->layout_self(self, rnode, layout);
 }
 
-void cst_render_context_paint_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *paint) {
-  sys_return_if_fail(self != NULL);
-
-  CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
-  sys_return_if_fail(cls->paint_self != NULL);
-
-  cls->paint_self(self, rnode, paint);
-}
-
 void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
   SysInt w, h;
 

@@ -36,8 +36,6 @@ struct _CstRenderContext {
 
 struct _CstRenderContextClass {
   SysObjectClass parent;
-
-  void (*layout_self) (CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 };
 
 SysType cst_render_context_get_type(void);

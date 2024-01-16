@@ -80,9 +80,8 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
 }
 
 void cst_box_node_repaint_node_i(CstLayerNode* o, CstLayout* layout) {
-  CstRenderNode *rnode = cst_layer_node_get_render_node(o);
 
-  cst_render_node_paint_self(rnode, layout);
+  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->repaint_node(o);
 }
 
 void cst_box_node_repaint_recursive(CstBoxNode* self, CstLayout* layout) {

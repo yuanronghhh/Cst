@@ -190,15 +190,6 @@ void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, 
   }
 }
 
-void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstRenderContextClass* cls = CST_RENDER_CONTEXT_GET_CLASS(self);
-  sys_return_if_fail(cls->layout_self != NULL);
-
-  cls->layout_self(self, rnode, layout);
-}
-
 void cst_render_context_layout_self_i(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout) {
   SysInt w, h;
 

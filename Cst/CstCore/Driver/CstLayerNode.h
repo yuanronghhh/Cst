@@ -25,8 +25,11 @@ struct _CstLayerNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayerNode *o, CstLayer *layer, CstNode *node);
-  void (*relayout_node) (CstLayerNode *o, CstLayout* layout);
-  void (*repaint_node) (CstLayerNode *o, CstLayout* layout);
+};
+
+struct _CstLayerNodeInterface {
+  void (*relayout_node) (CstRenderNode *o, CstLayout* layout);
+  void (*repaint_node) (CstRenderNode *o, CstLayout* layout);
 };
 
 SysType cst_layer_node_get_type(void);

@@ -28,10 +28,6 @@ SysType cst_box_layer_get_type(void);
 CstLayer* cst_box_layer_new(void);
 CstLayer * cst_box_layer_new_I(void);
 
-void cst_box_layer_check(CstLayer *layer, CstLayout *layout);
-void cst_box_layer_layout(CstLayer*self, CstLayout *layout);
-void cst_box_layer_render(CstLayer*self, CstLayout *layout);
-
 CstLayerNode *cst_box_layer_get_root(CstBoxLayer *self);
 void cst_box_layer_set_root (CstBoxLayer *self, CstLayerNode *root);
 

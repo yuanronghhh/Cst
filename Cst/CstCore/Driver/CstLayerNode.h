@@ -27,11 +27,6 @@ struct _CstLayerNodeClass {
   void (*construct) (CstLayerNode *o, CstLayer *layer, CstNode *node);
 };
 
-struct _CstLayerNodeInterface {
-  void (*relayout_node) (CstRenderNode *o, CstLayout* layout);
-  void (*repaint_node) (CstRenderNode *o, CstLayout* layout);
-};
-
 SysType cst_layer_node_get_type(void);
 CstLayerNode *cst_layer_node_new(void);
 CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);

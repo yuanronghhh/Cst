@@ -56,9 +56,9 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   layer = self->box_layer;
   cst_layout_begin_layout(layout, layer);
 
-  cst_box_layer_check(layer, layout);
-  cst_box_layer_layout(layer, layout);
-  cst_box_layer_render(layer, layout);
+  cst_layer_check(layer, layout);
+  cst_layer_layout(layer, layout);
+  cst_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);
 }
@@ -94,8 +94,8 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   cst_render_realize(self, v_module);
   cst_layout_begin_layout(layout, layer);
 
-  cst_box_layer_layout(layer, layout);
-  cst_box_layer_render(layer, layout);
+  cst_layer_layout(layer, layout);
+  cst_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);
   fr_region_destroy(region);

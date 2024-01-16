@@ -66,7 +66,7 @@ static void box_layer_mark_one(CstLayerNode* lnode, BoxLayerPass *ctx) {
   cst_layer_queue_draw_node(self, rnode);
 }
 
-void cst_box_layer_check(CstLayer *o, CstLayout *layout) {
+static void cst_box_layer_check_i(CstLayer *o, CstLayout *layout) {
   CstBoxLayer* self = CST_BOX_LAYER(o);
   sys_return_if_fail(self->tree != NULL);
 
@@ -76,7 +76,7 @@ void cst_box_layer_check(CstLayer *o, CstLayout *layout) {
   cst_box_node_bfs_handle(CST_BOX_NODE(self->tree), (CstLayerNodeFunc)box_layer_mark_one, &ctx);
 }
 
-void cst_box_layer_render(CstLayer*o, CstLayout *layout) {
+static void cst_box_layer_render_i(CstLayer*o, CstLayout *layout) {
   CstBoxLayer* self = CST_BOX_LAYER(o);
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->tree != NULL);
@@ -84,7 +84,7 @@ void cst_box_layer_render(CstLayer*o, CstLayout *layout) {
   cst_box_node_repaint_children(CST_BOX_NODE(self->tree), layout);
 }
 
-void cst_box_layer_layout(CstLayer* o, CstLayout* layout) {
+static void cst_box_layer_layout_i(CstLayer* o, CstLayout* layout) {
   CstBoxLayer* self = CST_BOX_LAYER(o);
 
   sys_return_if_fail(self != NULL);
@@ -147,6 +147,9 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   ocls->dispose = cst_box_layer_dispose;
 
   lcls->new_node = cst_box_layer_new_node_i;
+  lcls->check = cst_box_layer_check_i;
+  lcls->layout = cst_box_layer_layout_i;
+  lcls->render = cst_box_layer_render_i;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

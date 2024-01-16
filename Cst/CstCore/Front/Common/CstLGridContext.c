@@ -16,7 +16,6 @@ CstRenderContext* cst_lgrid_context_new_I(void) {
   return o;
 }
 
-
 static void cst_lgrid_context_init(CstLGridContext *o) {
 }
 

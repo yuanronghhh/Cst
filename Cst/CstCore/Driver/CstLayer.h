@@ -23,7 +23,14 @@ struct _CstLayerClass {
   SysObjectClass parent;
 
   CstLayerNode* (*new_node) (CstLayer *layer, CstLayerNode *parent, CstNode *node);
+  void (*check) (CstLayer *o, CstLayout *layout);
+  void (*layout) (CstLayer* o, CstLayout* layout);
+  void (*render) (CstLayer* o, CstLayout* layout);
 };
+
+void cst_layer_check (CstLayer  *self, CstLayout *layout);
+void cst_layer_layout (CstLayer *self, CstLayout *layout);
+void cst_layer_render (CstLayer *self, CstLayout *layout);
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);

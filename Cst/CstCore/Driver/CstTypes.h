@@ -128,7 +128,6 @@ typedef struct _CstModuleClass CstModuleClass;
 typedef struct _CstRender CstRender;
 typedef struct _CstRenderClass CstRenderClass;
 
-typedef struct _CstLayerNodeInterface CstLayerNodeInterface;
 typedef struct _CstLayerNode CstLayerNode;
 typedef struct _CstLayerNodeClass CstLayerNodeClass;
 typedef struct _CstLayer CstLayer;

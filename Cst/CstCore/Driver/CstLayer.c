@@ -44,6 +44,33 @@ CstLayerNode* cst_layer_new_node_i(CstLayer *self, CstLayerNode *parent, CstNode
   return cst_layer_node_new_I(self, node);
 }
 
+void cst_layer_check (CstLayer *self, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
+  sys_return_if_fail(lcls->check != NULL);
+
+  lcls->check(self, layout);
+}
+
+void cst_layer_layout (CstLayer *self, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
+  sys_return_if_fail(lcls->layout != NULL);
+
+  lcls->layout(self, layout);
+}
+
+void cst_layer_render (CstLayer *self, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
+  sys_return_if_fail(lcls->render != NULL);
+
+  lcls->render(self, layout);
+}
+
 /* object api */
 static void cst_layer_dispose(SysObject* o) {
   CstLayer *self = CST_LAYER(o);

@@ -79,9 +79,10 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   return sys_hnode_has_one_child(BOX_NODE_TO_HNODE(self));
 }
 
-void cst_box_node_repaint_node_i(CstLayerNode* o, CstLayout* layout) {
+void cst_box_node_repaint_node(CstLayerNode* o, CstLayout* layout) {
+  CstRenderNode *rnode = cst_layer_node_get_render_node(o);
 
-  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->repaint_node(o);
+  cst_render_node_paint_self(rnode, layout);
 }
 
 void cst_box_node_repaint_recursive(CstBoxNode* self, CstLayout* layout) {
@@ -106,7 +107,6 @@ void cst_box_node_repaint_recursive(CstBoxNode* self, CstLayout* layout) {
 
   cst_render_node_render_leave(rnode, layout);
 }
-
 
 static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
   sys_return_if_fail(o != NULL);
@@ -256,8 +256,6 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
 
   ocls->dispose = cst_box_node_dispose;
   lcls->construct = cst_box_node_construct;
-  lcls->relayout_node = cst_box_node_relayout_node;
-  lcls->repaint_node = cst_box_node_repaint_node_i;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

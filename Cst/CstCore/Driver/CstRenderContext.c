@@ -287,6 +287,4 @@ static void cst_render_context_class_init(CstRenderContextClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_render_context_dispose;
-
-  cls->layout_self = cst_render_context_layout_self_i;
 }

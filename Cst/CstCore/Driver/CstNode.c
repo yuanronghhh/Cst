@@ -11,6 +11,7 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
+#include <CstCore/Driver/CstBoxNode.h>
 
 
 
@@ -63,7 +64,7 @@ SysBool node_unlink_one(CstNode *self, SysPointer user_data) {
 void cst_node_unlink_node_r(CstNode *self) {
   sys_return_if_fail(self != NULL);
 
-  cst_node_handle_node_ft_r(self, node_unlink_one, NULL);
+  cst_node_handle_node_ft_r(self, (CstNodeFunc)node_unlink_one, NULL);
 }
 
 void cst_node_add_awatch(CstNode *self, FRAWatch* o) {
@@ -223,16 +224,18 @@ void cst_node_set_id(CstNode *self, const SysChar * id) {
   self->id = sys_strdup(id);
 }
 
-void cst_node_print_node(CstNode* node, SysPointer user_data) {
-  sys_return_if_fail(node != NULL);
+SysBool cst_node_print_node(CstNode* node, SysPointer user_data) {
+  sys_return_val_if_fail(node != NULL, false);
 
   sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
+
+  return true;
 }
 
 void cst_node_print_r(CstNode* node, SysPointer user_data) {
   sys_return_if_fail(node != NULL);
 
-  cst_node_handle_node_ft_r(node, cst_node_print_node, user_data);
+  cst_node_handle_node_ft_r(node, (CstNodeFunc)cst_node_print_node, user_data);
 }
 
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
@@ -327,10 +330,12 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   CstNode *co, *no;
   lnode = cst_node_realize(self, v_parent, com_node);
 
+  cst_box_node_print_r(CST_BOX_NODE(cst_layer_node_get_body()), NULL);
+
   co = cst_node_get_children(self);
   if (co) {
 
-    cst_node_realize_r(co, v_parent, com_node);
+    cst_node_realize_r(co, lnode, com_node);
   }
 
   no = cst_node_get_next(self);

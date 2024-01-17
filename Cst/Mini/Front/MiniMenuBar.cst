@@ -23,7 +23,8 @@ Component<id: "mini-menubar", base: "mini-menubase">: {
 
   Layout: {
     LBox<id: "ma0", "@mouse_release": "{{ @press }}">: {
-      Text<id: "ma1", value: "{{ value }}", label: "{{ value }}">: null
+      Text<id: "ma1", value: "{{ value }}", label: "{{ value }}">: null,
+      Text<id: "ma2", value: "abc", label: "text2-label">: null
     }
   }
 }

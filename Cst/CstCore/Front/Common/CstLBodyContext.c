@@ -8,7 +8,7 @@
 SYS_DEFINE_TYPE(CstLBodyContext, cst_lbody_context, CST_TYPE_RENDER_CONTEXT);
 
 
-static void cst_lbody_layout_self_i (CstRenderContext *o, CstRenderNode *rnode, CstLayout *layout) {
+static void cst_lbody_context_layout_self_i (CstRenderContext *o, CstRenderNode *rnode, CstLayout *layout) {
   SysInt width, height;
 
   cst_layout_get_buffer_size(layout, &width, &height);
@@ -43,4 +43,5 @@ static void cst_lbody_context_class_init(CstLBodyContextClass* cls) {
   CstRenderContextClass *rcls = CST_RENDER_CONTEXT_CLASS(cls);
 
   ocls->dispose = cst_lbody_context_dispose;
+  rcls->layout_self = cst_lbody_context_layout_self_i;
 }

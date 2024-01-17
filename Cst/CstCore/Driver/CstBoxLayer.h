@@ -16,7 +16,7 @@ struct _CstBoxLayer {
   CstLayer parent;
 
   /* <private> */
-  CstLayerNode *tree;
+  CstBoxNode *tree;
   SysList *gap_nodes;
 };
 
@@ -28,8 +28,7 @@ SysType cst_box_layer_get_type(void);
 CstLayer* cst_box_layer_new(void);
 CstLayer * cst_box_layer_new_I(void);
 
-CstLayerNode *cst_box_layer_get_root(CstBoxLayer *self);
-void cst_box_layer_set_root (CstBoxLayer *self, CstLayerNode *root);
+void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root);
 
 void cst_box_layer_print_tree(CstBoxLayer* self);
 

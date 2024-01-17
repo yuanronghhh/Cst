@@ -310,8 +310,6 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
 
         ast_iter_jobject(body_node, (AstJNodeFunc)ast_component_parse_layout_func, &npass);
         cst_node_append(pass->pnode, self->layout_node);
-
-        cst_node_print_r(self->layout_node, NULL);
       }
       break;
 

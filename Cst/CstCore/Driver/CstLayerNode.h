@@ -32,6 +32,8 @@ CstLayerNode *cst_layer_node_new(void);
 CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);
 
 void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout);
+void cst_layer_node_realize_body (void);
+CstLayerNode *cst_layer_node_get_body(void);
 
 void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode * render_node);
 CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self);

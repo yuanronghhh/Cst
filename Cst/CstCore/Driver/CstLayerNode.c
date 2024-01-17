@@ -1,9 +1,13 @@
 #include <CstCore/Driver/CstLayerNode.h>
 
 #include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstNode.h>
 
 
 SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
+
+
+static CstLayerNode *body_node = NULL;
 
 void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode * render_node) {
   sys_return_if_fail(self != NULL);
@@ -19,6 +23,17 @@ CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self) {
 
 void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout) {
   cst_render_node_paint_self(self->render_node, layout);
+}
+
+void cst_layer_node_realize_body(void) {
+  CstNode *bnode = cst_node_get_body_node();
+  body_node = cst_node_realize(bnode, NULL, NULL);
+}
+
+CstLayerNode* cst_layer_node_get_body(void) {
+  sys_return_val_if_fail(body_node != NULL, NULL);
+
+  return body_node;
 }
 
 /* object api */

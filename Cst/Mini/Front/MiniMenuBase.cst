@@ -18,7 +18,8 @@ Component<id: "mini-menubase">: {
 
   Layout: {
     LBox: {
-      Text<value: "{{ id }}">: null
+      Text<value: "{{ id }}">: null,
+      Text<value: "text2">: null
     }
   }
 }

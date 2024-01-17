@@ -37,6 +37,13 @@ struct _CstNodeClass {
   CstLayerNode* (*realize) (CstNode* self, CstLayerNode *v_parent, CstComNode *com_node);
 };
 
+#define cst_node_get_next(o) (CstNode *)fr_node_get_next(FR_NODE(o))
+#define cst_node_get_prev(o) (CstNode*)fr_node_get_prev(FR_NODE(o))
+#define cst_node_get_children(o) (CstNode*)fr_node_get_children(FR_NODE(o))
+#define cst_node_get_parent(o) (CstNode*)fr_node_get_parent(FR_NODE(o))
+#define cst_node_append(p, o) fr_node_append(FR_NODE(p), FR_NODE(o))
+#define cst_node_handle_node_ft_r(o, func, user_data) fr_node_handle_node_ft_r(FR_NODE(o), (FRNodeFunc)func, user_data);
+
 CstNode* cst_node_new(void);
 SysType cst_node_get_type(void);
 

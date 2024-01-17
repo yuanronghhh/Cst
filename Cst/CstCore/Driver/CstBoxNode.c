@@ -67,12 +67,6 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
   cst_box_node_set_last_child(parent, box_node);
 }
 
-void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout) {
-}
-
-void cst_box_node_repaint_children(CstBoxNode *self, CstLayout *layout) {
-}
-
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   sys_return_val_if_fail(self != NULL, false);
 
@@ -85,7 +79,7 @@ void cst_box_node_repaint_node(CstLayerNode* o, CstLayout* layout) {
   cst_render_node_paint_self(rnode, layout);
 }
 
-void cst_box_node_repaint_recursive(CstBoxNode* self, CstLayout* layout) {
+void cst_box_node_repaint_r(CstBoxNode* self, CstLayout* layout) {
   CstLayerNode *bnode;
   CstLayerNode *lnode = CST_LAYER_NODE(self);
   CstRenderNode *rnode = cst_layer_node_get_render_node(lnode);
@@ -108,7 +102,7 @@ void cst_box_node_repaint_recursive(CstBoxNode* self, CstLayout* layout) {
   cst_render_node_render_leave(rnode, layout);
 }
 
-static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
+void cst_box_node_relayout_r(CstLayerNode* o, CstLayout* layout) {
   sys_return_if_fail(o != NULL);
   CstBoxNode *child, *self, *bnode;
   CstRenderNode* rnode, *rcnode;
@@ -134,11 +128,11 @@ static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
     if (cst_box_node_has_one_child(self)) {
 
       cst_render_node_inherit(rcnode, rnode, layout);
-      cst_box_node_relayout_node(CST_LAYER_NODE(child), layout);
+      cst_box_node_relayout_r(CST_LAYER_NODE(child), layout);
     } else {
 
       for (bnode = child; bnode; bnode = cst_box_node_next(bnode)) {
-        cst_box_node_relayout_node(CST_LAYER_NODE(bnode), layout);
+        cst_box_node_relayout_r(CST_LAYER_NODE(bnode), layout);
       }
     }
   }
@@ -146,14 +140,11 @@ static void cst_box_node_relayout_node(CstLayerNode* o, CstLayout* layout) {
   bnode = cst_box_node_next(self);
   if (bnode) {
 
-    cst_box_node_relayout_node(CST_LAYER_NODE(bnode), layout);
+    cst_box_node_relayout_r(CST_LAYER_NODE(bnode), layout);
   }
 
   cst_render_node_render_leave(rnode, layout);
   cst_render_node_set_need_layout(rnode, false);
-}
-
-void cst_box_node_paint(CstBoxNode *self, CstLayout *layout) {
 }
 
 CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
@@ -169,7 +160,7 @@ void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout) {
   CstLayoutNode *lynode = cst_box_node_get_layout_node(self);
   const FRRect *bound = cst_layout_node_get_bound(lynode);
 
-  fr_draw_fill_rectangle(draw, bound);
+  fr_draw_fill_bound(draw, bound);
 }
 
 SysBool box_node_cb(SysHNode *node, SysPointer user_data) {
@@ -204,7 +195,13 @@ void cst_box_node_print(CstBoxNode* self, SysPointer user_data) {
 
   cst_render_node_print(
     cst_layer_node_get_render_node(lnode),
-    cst_layer_node_get_render_node(pnode));
+    pnode ? cst_layer_node_get_render_node(pnode) : NULL);
+}
+
+void cst_box_node_print_r(CstBoxNode* self, SysPointer user_data) {
+  sys_return_if_fail(self != NULL);
+
+  cst_box_node_handle_r(self, (CstLayerNodeFunc)cst_box_node_print, NULL);
 }
 
 CstBoxNode* cst_box_node_children(CstBoxNode *self) {

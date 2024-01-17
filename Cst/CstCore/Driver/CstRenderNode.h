@@ -39,6 +39,7 @@ struct _CstRenderNodeClass {
   CstLayoutNodeClass parent;
 
   void (*construct) (CstRenderNode *self, CstNode* node);
+  void (*paint_self) (CstRenderNode *self, CstLayout *layout);
 };
 
 SysType cst_render_node_get_type(void);
@@ -56,6 +57,8 @@ void cst_render_node_teardown(void);
 #define cst_render_node_get_size(o, w, h) cst_layout_node_get_size(CST_LAYOUT_NODE(o), (w), (h))
 #define cst_render_node_set_width(o, w) cst_layout_node_set_width(CST_LAYOUT_NODE(o), (w))
 #define cst_render_node_set_height(o, h) cst_layout_node_set_height(CST_LAYOUT_NODE(o), (h))
+#define cst_render_node_get_bound(o) cst_layout_node_get_bound(CST_LAYOUT_NODE(o))
+#define cst_render_node_get_margin(o) cst_layout_node_get_margin(CST_LAYOUT_NODE(o))
 
 #define cst_render_node_set_paint(o, v) cst_render_context_set_paint(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)
@@ -64,7 +67,6 @@ void cst_render_node_teardown(void);
 #define cst_render_node_set_need_layout(o, v) cst_render_context_set_need_relayout(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_is_dirty(o) cst_render_context_is_dirty(CST_RENDER_NODE_RCTX(o))
 #define cst_render_node_layout_self(o, layout) cst_render_context_layout_self(CST_RENDER_NODE_RCTX(o), o, layout)
-#define cst_render_node_paint_self(o, layout) cst_render_context_paint_self(CST_RENDER_NODE_RCTX(o), o, layout)
 #define cst_render_node_inherit(o, p, layout) cst_render_context_inherit(CST_RENDER_NODE_RCTX(o), CST_RENDER_NODE_RCTX(p), layout)
 
 /* css */
@@ -77,6 +79,7 @@ CstNode* cst_render_node_get_node(CstRenderNode *self);
 SysType cst_render_node_get_node_type(CstRenderNode *self);
 
 void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer);
+void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout);
 
 void cst_render_node_ref_awatch(CstRenderNode *self, FRAWatch *o);
 SysList * cst_render_node_get_awatch_list(CstRenderNode *self);
@@ -95,8 +98,6 @@ const SysChar* cst_render_node_get_id(CstRenderNode *self);
 
 void cst_render_node_set_layer_node(CstRenderNode *self, CstLayerNode * layer_node);
 CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self);
-
-const FRRect *cst_render_node_get_bound(CstRenderNode *self);
 
 void cst_render_node_set_rctx(CstRenderNode *self, CstRenderContext* rctx);
 CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self);

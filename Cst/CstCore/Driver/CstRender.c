@@ -25,6 +25,7 @@ void cst_render_teardown(void) {
 
 CstRender *cst_render_get_g_render(void) {
   sys_assert(g_render && "cst_render_setup need called before get");
+
   return g_render;
 }
 
@@ -78,6 +79,7 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
   fr_region_destroy(region);
 
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), body);
+  cst_box_layer_print_tree(CST_BOX_LAYER(self->box_layer));
 }
 
 void cst_render_render(CstRender *self, CstModule *v_module) {

@@ -67,6 +67,7 @@ SysInt cst_application_run(CstApplication* self, const SysChar *main_path) {
   sys_return_val_if_fail(self != NULL, 1);
 
   self->main_module = cst_module_load_path(NULL, main_path);
+
   sys_object_ref(self->main_module);
 
   cst_application_active(self);

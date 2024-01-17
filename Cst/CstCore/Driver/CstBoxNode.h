@@ -36,14 +36,16 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self);
 void cst_box_node_bfs_handle(CstBoxNode* self, CstLayerNodeFunc func, SysPointer user_data);
 void cst_box_node_handle_r(CstBoxNode *self, CstLayerNodeFunc func, SysPointer user_data);
 CstBoxNode* cst_box_node_get_parent(CstBoxNode* o);
+
 void cst_box_node_print(CstBoxNode * self, SysPointer user_data);
+void cst_box_node_print_r(CstBoxNode* self, SysPointer user_data);
 
 CstBoxNode* cst_box_node_children(CstBoxNode *self);
 CstBoxNode* cst_box_node_next(CstBoxNode *self);
 CstBoxNode* cst_box_node_parent(CstBoxNode *self);
 
-void cst_box_node_repaint_children(CstBoxNode *self, CstLayout *layout);
-void cst_box_node_relayout_children(CstBoxNode *self, CstLayout *layout);
+void cst_box_node_relayout_r(CstLayerNode* o, CstLayout* layout);
+void cst_box_node_repaint_r(CstBoxNode* self, CstLayout* layout);
 
 SYS_END_DECLS
 

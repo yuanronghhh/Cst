@@ -83,7 +83,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   CstRenderNode *nself = CST_RENDER_NODE(n);
   CstRenderNode *oself = CST_RENDER_NODE(o);
 
-  *nself->rctx = *oself->rctx;
+  nself->rctx = (CstRenderContext *)sys_object_dclone(oself->rctx);
   nself->layer_node = NULL;
 
   nself->node = oself->node;
@@ -110,11 +110,6 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   return n;
 }
 
-const FRRect *cst_render_node_get_bound(CstRenderNode *self) {
-
-  return cst_layout_node_get_bound(CST_LAYOUT_NODE(self));
-}
-
 CstNode* cst_render_node_get_node(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -127,7 +122,7 @@ void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   const FRRect* bound = cst_render_node_get_bound(self);
 
   if (prnode) {
-    sys_debug_N("%s,%s<%d,%d,%d,%d>",
+    sys_debug_N("%s,%s,<%d,%d,%d,%d>",
       cst_render_node_get_name(prnode),
       cst_render_node_get_name(self),
       bound->x, bound->y, bound->width, bound->height);
@@ -268,11 +263,27 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
   return self->layer_node;
 }
 
+static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
+  FRDraw *draw = cst_layout_get_draw(layout);
+  const FRRect *bound = cst_render_node_get_bound(rnode);
+
+  fr_draw_fill_bound(draw, bound);
+}
+
+void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstRenderNodeClass* lcls = CST_RENDER_NODE_GET_CLASS(self);
+  sys_return_if_fail(lcls->paint_self != NULL);
+
+  lcls->paint_self(self, layout);
+}
+
 /* object api */
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
 
-  sys_clear_pointer(self->rctx, _sys_object_unref);
+  sys_clear_pointer(&self->rctx, _sys_object_unref);
   sys_clear_pointer(&self->v_css_list, sys_ptr_array_unref);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
@@ -300,6 +311,7 @@ static void cst_render_node_class_init(CstRenderNodeClass* cls) {
 
   ocls->dispose = cst_render_node_dispose;
   cls->construct = cst_render_node_construct;
+  cls->paint_self = cst_render_node_paint_self_i;
 }
 
 static void cst_render_node_init(CstRenderNode *self) {

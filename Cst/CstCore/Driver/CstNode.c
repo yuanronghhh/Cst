@@ -53,8 +53,8 @@ SysType cst_node_get_rnode_type(CstNode *self) {
   return self->rnode_type;
 }
 
-SysBool node_unlink_one(FRNode *self, SysPointer user_data) {
-  sys_return_val_if_fail(SYS_HNODE(&self->tree), false);
+SysBool node_unlink_one(CstNode *self, SysPointer user_data) {
+  sys_return_val_if_fail(self != NULL, false);
 
   sys_object_unref(self);
   return true;
@@ -63,7 +63,7 @@ SysBool node_unlink_one(FRNode *self, SysPointer user_data) {
 void cst_node_unlink_node_r(CstNode *self) {
   sys_return_if_fail(self != NULL);
 
-  fr_node_handle_node_ft_r(FR_NODE(self), node_unlink_one, NULL);
+  cst_node_handle_node_ft_r(self, node_unlink_one, NULL);
 }
 
 void cst_node_add_awatch(CstNode *self, FRAWatch* o) {
@@ -232,7 +232,7 @@ void cst_node_print_node(CstNode* node, SysPointer user_data) {
 void cst_node_print_r(CstNode* node, SysPointer user_data) {
   sys_return_if_fail(node != NULL);
 
-  fr_node_handle_node_ft_r(FR_NODE(node), (FRNodeFunc)cst_node_print_node, user_data);
+  cst_node_handle_node_ft_r(node, cst_node_print_node, user_data);
 }
 
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
@@ -324,22 +324,19 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstLayerNode *lnode;
-  FRNode *o, *co, *no;
-
-  o = FR_NODE(self);
-
+  CstNode *co, *no;
   lnode = cst_node_realize(self, v_parent, com_node);
-  
-  co = fr_node_get_children(o);
+
+  co = cst_node_get_children(self);
   if (co) {
 
-    cst_node_realize_r(CST_NODE(co), v_parent, com_node);
+    cst_node_realize_r(co, v_parent, com_node);
   }
-  
-  no = fr_node_get_next(o);
+
+  no = cst_node_get_next(self);
   if (no) {
 
-    cst_node_realize_r(CST_NODE(no), v_parent, com_node);
+    cst_node_realize_r(no, v_parent, com_node);
   }
 
   return lnode;

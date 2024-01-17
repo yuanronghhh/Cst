@@ -1,6 +1,7 @@
 #include <CstCore/Driver/CstComponent.h>
 
 #include <CstCore/Parser/Ast.h>
+#include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstLayer.h>
@@ -72,20 +73,7 @@ CstComponent* cst_component_new(void) {
   return sys_object_new(CST_TYPE_COMPONENT, NULL);
 }
 
-void cst_component_set_layout_node(CstComponent *self, CstNode *node) {
-  sys_return_if_fail(self != NULL);
-
-  self->layout_node = node;
-}
-
-CstNode *cst_component_get_layout_node(CstComponent *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->layout_node;
-}
-
-static SysBool component_print(FRNode *o, SysPointer user_data) {
-  CstNode *node = CST_NODE(o);
+static SysBool component_print(CstNode *node, SysPointer user_data) {
   CstComponent *self = user_data;
 
   sys_debug_N("%s,%s,%s", cst_component_get_id(self), cst_node_get_name(node), cst_node_get_id(node));
@@ -96,7 +84,7 @@ static SysBool component_print(FRNode *o, SysPointer user_data) {
 void cst_component_print(CstComponent* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_node_handle_bfs_r(FR_NODE(self->layout_node), component_print, self);
+  cst_node_handle_node_ft_r(self->layout_node, component_print, self);
 }
 
 void cst_component_set_id(CstComponent* self, const SysChar *id) {
@@ -225,7 +213,7 @@ static void cst_component_construct_i(CstComponent *self, CstComponentContext *c
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
   FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_pcomponent));
 
-  self->layout_node = cst_node_new_tree_node(v_module);
+  self->layout_node = NULL;
 }
 
 static void cst_component_class_init(CstComponentClass* cls) {

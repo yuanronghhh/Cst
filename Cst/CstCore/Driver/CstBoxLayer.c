@@ -81,7 +81,7 @@ static void cst_box_layer_render_i(CstLayer*o, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->tree != NULL);
 
-  cst_box_node_repaint_children(CST_BOX_NODE(self->tree), layout);
+  cst_box_node_repaint_r(CST_BOX_NODE(self->tree), layout);
 }
 
 static void cst_box_layer_layout_i(CstLayer* o, CstLayout* layout) {
@@ -90,7 +90,7 @@ static void cst_box_layer_layout_i(CstLayer* o, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->tree != NULL);
 
-  cst_layer_node_relayout_node(self->tree, layout);
+  cst_box_node_relayout_r(self->tree, layout);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {

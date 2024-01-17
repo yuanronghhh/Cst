@@ -77,18 +77,16 @@ static void cst_text_construct_i(CstRenderNode *o, CstNode *node) {
   CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, node);
 }
 
-#if 0
-static void cst_text_repaint_i(CstRenderNode *rnode, CstLayout *layout) {
+static void cst_text_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   CstText *self = CST_TEXT(rnode);
 
   FRDrawLayout *playout = self->playout;
   FRDraw *draw = cst_layout_get_draw(layout);
-  const FRRect *bound = cst_node_get_bound(rnode);
-  const FRSInt4 *m4 = cst_node_get_margin(rnode);
+  const FRRect *bound = cst_render_node_get_bound(rnode);
+  const FRSInt4 *m4 = cst_render_node_get_margin(rnode);
 
   fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
-#endif
 
 void cst_text_get_size(CstRenderNode *o, SysInt *width, SysInt *height) {
   sys_return_if_fail(o != NULL);
@@ -139,4 +137,5 @@ static void cst_text_class_init(CstTextClass* cls) {
   ocls->dclone = cst_text_dclone_i;
 
   ncls->construct = cst_text_construct_i;
+  ncls->paint_self = cst_text_paint_self_i;
 }

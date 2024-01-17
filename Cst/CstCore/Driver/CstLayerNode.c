@@ -17,6 +17,10 @@ CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self) {
   return self->render_node;
 }
 
+void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout) {
+  cst_render_node_paint_self(self->render_node, layout);
+}
+
 /* object api */
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);

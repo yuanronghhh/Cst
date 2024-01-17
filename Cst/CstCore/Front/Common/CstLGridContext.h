@@ -18,6 +18,7 @@ struct _CstLGridContext {
   /* <private> */
   CstCssClosure* child_width_calc;
   CstCssClosure* child_height_calc;
+  SysInt max_width;
 };
 
 struct _CstLGridContextClass {

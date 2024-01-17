@@ -40,6 +40,7 @@ FRNode * fr_node_get_parent(FRNode *self);
 
 FRNode* fr_node_get_children(FRNode* self);
 FRNode* fr_node_get_next(FRNode* self);
+FRNode* fr_node_get_prev(FRNode* self);
 
 SYS_END_DECLS
 

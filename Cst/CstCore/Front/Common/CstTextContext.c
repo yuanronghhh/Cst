@@ -51,6 +51,4 @@ static void cst_text_context_class_init(CstTextContextClass* cls) {
   CstRenderContextClass* rcls = CST_RENDER_CONTEXT_CLASS(cls);
 
   ocls->dispose = cst_text_context_dispose;
-
-  rcls->layout_self = cst_text_relayout_i;
 }

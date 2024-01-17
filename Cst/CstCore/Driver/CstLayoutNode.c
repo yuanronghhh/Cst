@@ -176,7 +176,7 @@ void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout) {
   const FRRect* bound = &self->bound;
   FRDraw* draw = cst_layout_get_draw(layout);
 
-  fr_draw_fill_rectangle(draw, bound);
+  fr_draw_fill_bound(draw, bound);
 }
 
 void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout) {

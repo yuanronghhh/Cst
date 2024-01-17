@@ -34,7 +34,7 @@ SYS_API void fr_draw_frame_begin(FRDraw *self, FRRegion *region);
 SYS_API void fr_draw_frame_end(FRDraw *self, FRRegion *region);
 SYS_API SysBool fr_draw_frame_need_draw(FRDraw *self);
 void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, const FRSInt4* p4);
-void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound);
+void fr_draw_fill_bound(FRDraw* self, const FRRect *bound);
 
 /* text render */
 void fr_draw_show_text(FRDraw * self, FRDrawLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);

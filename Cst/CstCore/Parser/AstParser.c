@@ -261,7 +261,7 @@ static SysBool ast_component_parse_layout_func(JNode *jnode, AstNodePass *pass) 
   count = cst_module_get_count(v_module);
   cst_module_set_count(v_module, ++count);
 
-  fr_node_append(FR_NODE(pnode), FR_NODE(v_node));
+  cst_node_append(pnode, v_node);
 
   njnode = ast_jnode_jnode(pair->value);
   if (ast_jnode_get_type(njnode) == AstJNull) {
@@ -290,6 +290,7 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
   JNode *body_node;
 
   CST_COMPONENT_BODY_ENUM bd = cst_component_body_get_by_name(pair->v.v_pair->key);
+  CstComponent *self = pass->parser->v_component;
 
   switch (bd) {
     case CST_COMPONENT_BDATA:
@@ -304,10 +305,13 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
         body_node = ast_component_body_value(pair);
 
         AstNodePass npass = { 0 };
-        npass.pnode = pass->pnode;
         npass.parser = pass->parser;
+        npass.pnode = self->layout_node;
 
         ast_iter_jobject(body_node, (AstJNodeFunc)ast_component_parse_layout_func, &npass);
+        cst_node_append(pass->pnode, self->layout_node);
+
+        cst_node_print_r(self->layout_node, NULL);
       }
       break;
 

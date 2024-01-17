@@ -38,7 +38,7 @@ void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, con
   cairo_stroke(cr);
 }
 
-void fr_draw_fill_rectangle(FRDraw* self, const FRRect *bound) {
+void fr_draw_fill_bound(FRDraw* self, const FRRect *bound) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(bound != NULL);
 

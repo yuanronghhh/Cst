@@ -60,9 +60,6 @@ void cst_component_set_id(CstComponent* self, const SysChar *id);
 void cst_component_set_css(CstComponent* self, CstCssGroup *g);
 SysBool cst_component_remove_css(CstComponent * self, CstCssGroup * g);
 
-void cst_component_set_layout_node(CstComponent *self, CstNode *node);
-CstNode * cst_component_get_layout_node(CstComponent * self);
-
 void cst_component_set_value_maps_env(CstComponent *self, FREnv * value_maps_env);
 FREnv * cst_component_get_value_maps_env(CstComponent *self);
 

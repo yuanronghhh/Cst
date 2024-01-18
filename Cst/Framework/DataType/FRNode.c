@@ -34,7 +34,7 @@ void fr_node_handle_node_ff_r(FRNode *self, FRNodeFunc func, SysPointer user_dat
   sys_hnode_handle_ff_r(&self->tree, (SysHNodeFunc)hnode_handle, &pass);
 }
 
-void fr_node_handle_node_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data) {
+void fr_node_handle_ft_r(FRNode *self, FRNodeFunc func, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   HNodePass pass = { .func = func, .user_data = user_data };
 

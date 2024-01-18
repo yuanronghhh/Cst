@@ -17,7 +17,8 @@ struct _CstRenderNode {
   CstLayoutNode parent;
 
   /* < private > */
-  CstNode *node;
+  SysChar* name;
+  SysChar* id;
 
   /* FRAWatch */
   SysList *awatch_list;
@@ -33,6 +34,8 @@ struct _CstRenderNode {
 
   /* render context */
   CstRenderContext *rctx;
+
+  CstNode* node;
 };
 
 struct _CstRenderNodeClass {

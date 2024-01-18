@@ -29,12 +29,30 @@ CstModule* cst_module_load_path(
   CstModule *mod, *old;
   CstParser *ps;
   CstParserContext* ctx;
-  CstNode *pnode = cst_node_get_body_node();
+  CstNode* pnode = NULL;
+  SysBool is_tree_node = false;
+
+  if (parent) {
+    if (cst_module_is_loaded(parent)) {
+
+      pnode = cst_module_get_root_node(parent);
+    } else {
+
+      pnode = cst_node_new_tree_node(sys_path_basename(path));
+      is_tree_node = true;
+    }
+
+  } else {
+
+    pnode = cst_node_get_body_node();
+    sys_object_ref(pnode);
+  }
+
 
   old = cst_module_get_g_module(path);
   if(old != NULL) {
     if(!old->loaded) {
-      sys_error_N("module load cycle in %s: %s",
+      sys_error_N("module load circular in %s: %s",
           cst_module_get_path(parent),
           cst_module_get_path(old));
 
@@ -64,6 +82,12 @@ CstModule* cst_module_load_path(
   }
   sys_object_unref(ps);
   mod->loaded = true;
+
+  if (is_tree_node) {
+
+    cst_node_set_id(pnode, cst_module_new_node_id(mod));
+  }
+  cst_module_set_root_node(mod, pnode);
 
   return mod;
 
@@ -215,13 +239,13 @@ FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_n
   return func;
 }
 
-SysBool cst_module_realize(CstModule *self, CstLayerNode *v_parent) {
+CstLayerNode* cst_module_realize(CstModule *self, CstLayerNode *v_parent) {
   sys_return_val_if_fail(self != NULL, false);
 
   CstComponent *comp = self->root_component;
-  cst_component_realize(comp, v_parent, NULL);
+  CstLayerNode *lnode = cst_component_realize(comp, v_parent, NULL);
 
-  return true;
+  return lnode;
 }
 
 CstModule* cst_module_get_g_module(const SysChar *name) {

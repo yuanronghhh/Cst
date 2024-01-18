@@ -69,6 +69,9 @@ FREnv * cst_component_get_css_env(CstComponent *self);
 void cst_component_set_parent(CstComponent *self, CstComponent * parent);
 CstComponent * cst_component_get_parent(CstComponent *self);
 
+void cst_component_set_layout_node(CstComponent *self, CstNode * layout_node);
+CstNode * cst_component_get_layout_node(CstComponent *self);
+
 SYS_END_DECLS
 
 #endif

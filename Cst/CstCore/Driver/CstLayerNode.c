@@ -25,9 +25,8 @@ void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout) {
   cst_render_node_paint_self(self->render_node, layout);
 }
 
-void cst_layer_node_realize_body(void) {
-  CstNode *bnode = cst_node_get_body_node();
-  body_node = cst_node_realize(bnode, NULL, NULL);
+void cst_layer_node_set_body(CstLayerNode *body) {
+  body_node = body;
 }
 
 CstLayerNode* cst_layer_node_get_body(void) {
@@ -44,7 +43,7 @@ static void cst_layer_node_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->render_node, _sys_object_unref);
   }
-  sys_clear_pointer(&self->node, _sys_object_unref);
+  // sys_clear_pointer(&self->node, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_layer_node_parent_class)->dispose(o);
 }

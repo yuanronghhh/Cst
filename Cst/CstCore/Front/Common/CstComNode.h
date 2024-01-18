@@ -26,7 +26,6 @@ struct _CstComNodeClass {
 SysType cst_com_node_get_type(void);
 CstNode* cst_com_node_new(void);
 CstNode* cst_com_node_new_I(CstComponent *comp);
-CstComponent* cst_com_node_get_component(CstComNode * self);
 
 CstNodeMap* cst_com_node_get_node_map(CstComNode* self, const SysChar *key);
 void cst_com_node_set_node_map(CstComNode* self, CstNodeMap *map);

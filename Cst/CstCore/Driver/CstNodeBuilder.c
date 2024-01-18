@@ -1,6 +1,7 @@
 #include <CstCore/Driver/CstNodeBuilder.h>
 
 #include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/Common/CstComNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstNode.h>
@@ -119,8 +120,9 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
 void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *cnode) {
   sys_return_if_fail(self != NULL);
   CstNode *node = CST_NODE(cnode);
+  CstComponent* comp = cst_com_node_get_component(cnode);
 
-  self->v_name = sys_strdup_printf("<%s>", cst_component_get_id(self->v_component));
+  self->v_name = sys_strdup_printf("<%s>", cst_component_get_id(comp));
   cst_node_builder_build_node(self, node);
 }
 

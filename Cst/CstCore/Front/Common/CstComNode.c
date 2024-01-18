@@ -18,8 +18,6 @@ void cst_com_node_set_component(CstComNode *self, CstComponent * component) {
 CstComponent * cst_com_node_get_component(CstComNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  sys_assert(self->component == NULL);
-
   return self->component;
 }
 

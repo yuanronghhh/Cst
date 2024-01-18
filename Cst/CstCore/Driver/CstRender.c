@@ -68,20 +68,12 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstLayerNode* body;
-  FRRegion* region;
   FRRect bound = { 0 };
 
-  fr_window_get_framebuffer_size(self->window, &(bound.width), &(bound.height));
-  region = fr_region_create_rectangle(&bound);
-
-  cst_layer_node_realize_body ();
-  body = cst_layer_node_get_body();
-
-  cst_module_realize(v_module, body);
-  fr_region_destroy(region);
+  body = cst_module_realize(v_module, NULL);
+  cst_layer_node_set_body(body);
 
   cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
-  cst_box_layer_print_tree(CST_BOX_LAYER(self->box_layer));
 }
 
 void cst_render_render(CstRender *self, CstModule *v_module) {

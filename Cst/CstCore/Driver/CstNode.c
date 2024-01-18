@@ -64,7 +64,7 @@ SysBool node_unlink_one(CstNode *self, SysPointer user_data) {
 void cst_node_unlink_node_r(CstNode *self) {
   sys_return_if_fail(self != NULL);
 
-  cst_node_handle_node_ft_r(self, (CstNodeFunc)node_unlink_one, NULL);
+  cst_node_handle_ft_r(self, (CstNodeFunc)node_unlink_one, NULL);
 }
 
 void cst_node_add_awatch(CstNode *self, FRAWatch* o) {
@@ -173,12 +173,11 @@ SysInt cst_node_get_v_z_index(CstNode *self) {
   return self->v_z_index;
 }
 
-CstNode* cst_node_new_tree_node(CstModule *v_module) {
+CstNode* cst_node_new_tree_node(const SysChar* name) {
   CstNode *layout;
 
   layout = cst_node_new();
-  cst_node_set_name(layout, "<tree-node>");
-  layout->id = cst_module_new_node_id(v_module);
+  cst_node_set_name(layout, name);
   cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
 
   return layout;
@@ -226,8 +225,17 @@ void cst_node_set_id(CstNode *self, const SysChar * id) {
 
 SysBool cst_node_print_node(CstNode* node, SysPointer user_data) {
   sys_return_val_if_fail(node != NULL, false);
+  CstNode* pnode = cst_node_get_parent(node);
+  
+  if (pnode) {
+    sys_debug_N("<%s,%s> <%s,%s>", 
+      cst_node_get_name(pnode), cst_node_get_id(pnode),
+      cst_node_get_name(node), cst_node_get_id(node));
 
-  sys_debug_N("<%s,%s>", cst_node_get_name(node), cst_node_get_id(node));
+  } else {
+    sys_debug_N("<%s,%s>",
+      cst_node_get_name(node), cst_node_get_id(node));
+  }
 
   return true;
 }
@@ -235,7 +243,7 @@ SysBool cst_node_print_node(CstNode* node, SysPointer user_data) {
 void cst_node_print_r(CstNode* node, SysPointer user_data) {
   sys_return_if_fail(node != NULL);
 
-  cst_node_handle_node_ft_r(node, (CstNodeFunc)cst_node_print_node, user_data);
+  cst_node_handle_bfs_r(node, (CstNodeFunc)cst_node_print_node, user_data);
 }
 
 CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
@@ -329,8 +337,6 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
   CstLayerNode *lnode;
   CstNode *co, *no;
   lnode = cst_node_realize(self, v_parent, com_node);
-
-  cst_box_node_print_r(CST_BOX_NODE(cst_layer_node_get_body()), NULL);
 
   co = cst_node_get_children(self);
   if (co) {

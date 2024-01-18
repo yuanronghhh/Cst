@@ -44,7 +44,8 @@ typedef FRNodeFunc CstNodeFunc;
 #define cst_node_get_children(o) (CstNode*)fr_node_get_children(FR_NODE(o))
 #define cst_node_get_parent(o) (CstNode*)fr_node_get_parent(FR_NODE(o))
 #define cst_node_append(p, o) fr_node_append(FR_NODE(p), FR_NODE(o))
-#define cst_node_handle_node_ft_r(o, func, user_data) fr_node_handle_node_ft_r(FR_NODE(o), func, user_data);
+#define cst_node_handle_ft_r(o, func, user_data) fr_node_handle_ft_r(FR_NODE(o), func, user_data);
+#define cst_node_handle_bfs_r(o, func, user_data) fr_node_handle_bfs_r(FR_NODE(o), func, user_data);
 
 CstNode* cst_node_new(void);
 SysType cst_node_get_type(void);
@@ -57,7 +58,7 @@ const SysChar *cst_node_get_name(CstNode *node);
 void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
 
-CstNode* cst_node_new_tree_node(CstModule* v_module);
+CstNode* cst_node_new_tree_node(const SysChar* name);
 CstNode *cst_node_new_body(void);
 
 SysBool cst_node_print_node(CstNode* node, SysPointer user_data);

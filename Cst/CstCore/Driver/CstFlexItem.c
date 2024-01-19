@@ -7,5 +7,8 @@ SYS_DEFINE_INTERFACE(CstFlexItem, cst_flex_item, SYS_TYPE_OBJECT);
 void cst_flex_item_default_init(CstFlexItemInterface* iface) {
 }
 
-void cst_flex_item_layout(CstFlexItem *item) {
+SysInt cst_flex_item_get_width (CstFlexItem *item) {
+  sys_return_val_if_fail(item != NULL, -1);
+
+  return CST_FLEX_ITEM_GET_IFACE(item)->get_width(item);
 }

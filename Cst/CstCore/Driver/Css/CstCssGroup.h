@@ -15,8 +15,8 @@ struct _CstCssGroup {
   SysObject parent;
 
   /* < private > */
-  SysPtrArray* base;
-  SysPtrArray* pairs;
+  SysHArray* base;
+  SysHArray* pairs;
   SysChar* id;
 };
 
@@ -28,17 +28,17 @@ SysType cst_css_group_get_type(void);
 CstCssGroup *cst_css_group_new(void);
 CstCssGroup *cst_css_group_new_I(const SysChar *id);
 
-SysPtrArray* cst_css_group_get_base(CstCssGroup *g);
+SysHArray* cst_css_group_get_base(CstCssGroup *g);
 void cst_css_group_pair_add(CstCssGroup *g, CstCssPair *pair);
 SysBool cst_css_group_set_base_r(CstCssGroup *g, CstCssGroup *ng);
-SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *g);
-SysBool cst_css_group_set_by_id(SysPtrArray *ptr, FREnv *env, const SysChar *id);
+SysBool cst_css_group_set_r(SysHArray *ptr, CstCssGroup *g);
+SysBool cst_css_group_set_by_id(SysHArray *ptr, FREnv *env, const SysChar *id);
 const SysChar* cst_css_group_get_id(CstCssGroup *g);
 void cst_css_group_add_pair(CstCssGroup *g, CstCssPair *pair);
 
-SysPtrArray *cst_css_group_list_new(void);
-void cst_css_group_list_render(SysPtrArray *gs, CstRenderNode *render_node, CstLayout *layout);
-SysBool cst_css_group_list_exists(SysPtrArray *css_list, CstCssGroup *g);
+SysHArray *cst_css_group_list_new(void);
+void cst_css_group_list_render(SysHArray *gs, CstRenderNode *render_node, CstLayout *layout);
+SysBool cst_css_group_list_exists(SysHArray *css_list, CstCssGroup *g);
 
 
 SYS_END_DECLS

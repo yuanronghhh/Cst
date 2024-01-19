@@ -91,7 +91,7 @@ void cst_node_builder_add_awatch(CstNodeBuilder *self, FRAWatch* map) {
   self->v_awatch_list = sys_list_prepend(self->v_awatch_list, map);
 }
 
-void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysPtrArray * v_css_list) {
+void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysHArray * v_css_list) {
   sys_return_if_fail(self != NULL);
 
   self->v_css_list = v_css_list;
@@ -142,7 +142,7 @@ static void cst_node_builder_dispose(SysObject* o) {
 
   if (self->v_css_list) {
 
-    sys_ptr_array_free(self->v_css_list, true);
+    sys_harray_free(self->v_css_list, true);
   }
 
   if (self->v_tag) {

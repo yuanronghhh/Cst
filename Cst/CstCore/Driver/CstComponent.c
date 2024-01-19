@@ -182,8 +182,8 @@ CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, 
   return root;
 }
 
-SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *base[], SysUInt len) {
-  SysPtrArray * list;
+SysHArray *cst_component_parse_base(CstComponent *self, const SysChar *base[], SysUInt len) {
+  SysHArray * list;
   const SysChar *pname;
   CstCssGroup *ng;
 

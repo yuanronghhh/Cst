@@ -20,7 +20,7 @@ struct _CstNodeBuilder {
   /* < private > */
   SysList *v_awatch_list;
   SysList *v_nodemap_list;
-  SysPtrArray *v_css_list;
+  SysHArray *v_css_list;
 
   const SysChar* v_name;
   const SysChar* v_id;
@@ -45,7 +45,7 @@ void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *cnode);
 void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map);
 void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);
 void cst_node_builder_set_v_layer(CstNodeBuilder *self, CstLayer* v_layer);
-void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysPtrArray * v_css_list);
+void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysHArray * v_css_list);
 void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id);
 void cst_node_builder_set_v_label(CstNodeBuilder *self, const SysChar *v_label);
 void cst_node_builder_add_awatch(CstNodeBuilder *self, FRAWatch* map);

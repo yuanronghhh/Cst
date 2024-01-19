@@ -14,19 +14,11 @@ GStyle: {
  * 测试 comment
  */
 Component<id: "app-component">: {
-  Function: {%
-    // generate in module env
-    CST_ANODE_FUNC(app_btn_clicked) {
-      sys_debug_N("%s", "hello key up");
-    }
-  %},
-
   Style: {
-    text1: {
+    box1: {
       margin: [10,10,10,10],
       padding: [10,10,10,10],
-      color: "#0000ff",
-      font-size: 30
+      color: "#0000ff"
     }
   },
 

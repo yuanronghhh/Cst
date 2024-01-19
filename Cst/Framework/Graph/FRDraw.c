@@ -140,7 +140,7 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   sys_assert(self->cr == NULL && "draw cr should be NULL when fr_draw_frame_begin, missing fr_draw_frame_end ?");
 
   self->cr = cairo_create(self->paint_surface);
-  fr_context_fill_background(self->cr, fbw, fbh);
+  // fr_context_fill_background(self->cr, fbw, fbh);
 
   self->is_painting = true;
 }

@@ -1,5 +1,6 @@
 #include <CstCore/Driver/CstRenderContext.h>
 
+#include <CstCore/Driver/CstFlexLine.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCss.h>
@@ -106,6 +107,10 @@ SysBool cst_render_context_get_wrap(CstRenderContext *self) {
   return self->wrap;
 }
 
+static SysPointer elem_copy(const CstFlexLine* src, SysPointer data) {
+  return (SysPointer)cst_flex_line_dclone(src);
+}
+
 SysObject* cst_render_context_dclone_i(SysObject* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysObject* n = SYS_OBJECT_CLASS(cst_render_context_parent_class)->dclone(o);
@@ -118,7 +123,7 @@ SysObject* cst_render_context_dclone_i(SysObject* o) {
   nself->is_visible = oself->is_visible;
   nself->wrap = oself->wrap;
   nself->line_space = oself->line_space;
-  nself->child_count = oself->child_count;
+  sys_harray_copy(&nself->lines, &oself->lines, elem_copy, NULL);
   nself->mbp = oself->mbp;
   nself->prefer_height = oself->prefer_height;
   nself->prefer_width = oself->prefer_width;
@@ -215,6 +220,17 @@ void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode
   lcls->layout_self(self, rnode, layout);
 }
 
+/* flex layout algorithm*/
+static void layout_horizontal(CstRenderContext* ctx, CstRenderNode* rnode, CstLayout* layout) {
+  for (SysUInt i = 0; i < ctx->lines.len; i++) {
+    CstFlexLine* line = ctx->lines.pdata[i];
+  }
+}
+
+void cst_render_context_flex_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
+  layout_horizontal(self, rnode, layout);
+}
+
 /* constraint */
 void cst_render_context_constraint_width(CstRenderContext* self, CstRenderContext* pctx, SysInt* width) {
 
@@ -279,6 +295,8 @@ static void cst_render_context_init(CstRenderContext *self) {
   self->wrap = false;
   self->need_relayout = true;
   self->need_repaint = true;
+
+  sys_harray_init_with_free_func(&self->lines, cst_flex_line_free);
 }
 
 static void cst_render_context_dispose(SysObject* o) {

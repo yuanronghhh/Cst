@@ -23,7 +23,8 @@ struct _CstRenderContext {
   SysBool wrap;
   SysInt16 line_space;
 
-  SysInt child_count;
+  /* flexline */
+  SysHArray lines;
   FRSInt4 mbp;
 
   SysInt prefer_height;

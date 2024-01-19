@@ -6,8 +6,8 @@
 SYS_DEFINE_TYPE(CstCssGroup, cst_css_group, SYS_TYPE_OBJECT);
 
 /* CstCssGroup */
-SysPtrArray *css_group_base_new(void) {
-  SysPtrArray *base = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
+SysHArray *css_group_base_new(void) {
+  SysHArray *base = sys_harray_new_with_free_func((SysDestroyFunc)_sys_object_unref);
   return base;
 }
 
@@ -23,7 +23,7 @@ SysObject *cst_css_group_dclone_i(SysObject *o) {
 
   for(SysUInt i = 0; i < oself->pairs->len; i++) {
     CstCssPair *pair = (CstCssPair *)sys_object_dclone(oself->pairs->pdata[i]);
-    sys_ptr_array_add(nself->pairs, pair);
+    sys_harray_add(nself->pairs, pair);
   }
 
   if (oself->base != NULL) {
@@ -32,14 +32,14 @@ SysObject *cst_css_group_dclone_i(SysObject *o) {
     for (SysUInt i = 0; i < oself->base->len; i++) {
       CstCssGroup *base = (CstCssGroup *)sys_object_dclone(oself->base->pdata[i]);
 
-      sys_ptr_array_add(nself->base, base);
+      sys_harray_add(nself->base, base);
     }
   }
 
   return n;
 }
 
-static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
+static SysBool cst_css_exists(SysHArray *ptr, CstCssGroup *ng) {
   if (ptr->len == 0) {
     return false;
   }
@@ -56,7 +56,7 @@ static SysBool cst_css_exists(SysPtrArray *ptr, CstCssGroup *ng) {
   return false;
 }
 
-SysBool cst_css_group_set_by_id(SysPtrArray *ptr, FREnv *env, const SysChar *id) {
+SysBool cst_css_group_set_by_id(SysHArray *ptr, FREnv *env, const SysChar *id) {
   sys_return_val_if_fail(ptr != NULL, false);
   sys_return_val_if_fail(id != NULL, false);
 
@@ -69,7 +69,7 @@ SysBool cst_css_group_set_by_id(SysPtrArray *ptr, FREnv *env, const SysChar *id)
   return cst_css_group_set_r(ptr, self);
 }
 
-SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *ng) {
+SysBool cst_css_group_set_r(SysHArray *ptr, CstCssGroup *ng) {
   sys_return_val_if_fail(ptr != NULL, false);
   sys_return_val_if_fail(ng != NULL, false);
   sys_return_val_if_fail(ng->id != NULL, false);
@@ -79,7 +79,7 @@ SysBool cst_css_group_set_r(SysPtrArray *ptr, CstCssGroup *ng) {
   }
 
   sys_object_ref(ng);
-  sys_ptr_array_add(ptr, ng);
+  sys_harray_add(ptr, ng);
 
   if (ng->base == NULL || ng->base->len == 0) {
     return true;
@@ -100,7 +100,7 @@ void cst_css_group_pair_add(CstCssGroup *self, CstCssPair *pair) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(pair != NULL);
 
-  sys_ptr_array_add(self->pairs, pair);
+  sys_harray_add(self->pairs, pair);
 }
 
 SysBool cst_css_group_set_base_r(CstCssGroup *self, CstCssGroup *ng) {
@@ -117,7 +117,7 @@ SysBool cst_css_group_set_base_r(CstCssGroup *self, CstCssGroup *ng) {
 void cst_css_group_add_pair(CstCssGroup *self, CstCssPair *pair) {
   sys_return_if_fail(self != NULL);
 
-  sys_ptr_array_add(self->pairs, pair);
+  sys_harray_add(self->pairs, pair);
 }
 
 const SysChar* cst_css_group_get_id(CstCssGroup *self) {
@@ -126,14 +126,14 @@ const SysChar* cst_css_group_get_id(CstCssGroup *self) {
   return self->id;
 }
 
-SysPtrArray *cst_css_group_get_base(CstCssGroup *self) {
+SysHArray *cst_css_group_get_base(CstCssGroup *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->base;
 }
 
 /* cst_css_group_list */
-void cst_css_group_list_render(SysPtrArray *gs, CstRenderNode *render_node, CstLayout *layout) {
+void cst_css_group_list_render(SysHArray *gs, CstRenderNode *render_node, CstLayout *layout) {
   sys_return_if_fail(render_node != NULL);
   sys_return_if_fail(gs != NULL);
 
@@ -154,7 +154,7 @@ void cst_css_group_list_render(SysPtrArray *gs, CstRenderNode *render_node, CstL
   }
 }
 
-SysBool cst_css_group_list_exists(SysPtrArray *css_list, CstCssGroup *g) {
+SysBool cst_css_group_list_exists(SysHArray *css_list, CstCssGroup *g) {
   sys_return_val_if_fail(css_list != NULL, false);
 
   if (css_list->len == 0) { return false; }
@@ -171,9 +171,9 @@ SysBool cst_css_group_list_exists(SysPtrArray *css_list, CstCssGroup *g) {
   return false;
 }
 
-SysPtrArray *cst_css_group_list_new(void) {
+SysHArray *cst_css_group_list_new(void) {
 
-  return sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
+  return sys_harray_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 }
 
 /* object api */
@@ -201,10 +201,10 @@ static void cst_css_group_dispose(SysObject* o) {
   CstCssGroup *self = CST_CSS_GROUP(o);
 
   if (self->base != NULL) {
-    sys_clear_pointer(&self->base, sys_ptr_array_unref);
+    sys_clear_pointer(&self->base, sys_harray_unref);
   }
 
-  sys_clear_pointer(&self->pairs, sys_ptr_array_unref);
+  sys_clear_pointer(&self->pairs, sys_harray_unref);
   sys_clear_pointer(&self->id, sys_free);
 
   SYS_OBJECT_CLASS(cst_css_group_parent_class)->dispose(o);
@@ -219,6 +219,6 @@ static void cst_css_group_class_init(CstCssGroupClass* cls) {
 
 void cst_css_group_init(CstCssGroup *self) {
 
-  self->pairs = sys_ptr_array_new_with_free_func((SysDestroyFunc)_sys_object_unref);
+  self->pairs = sys_harray_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 }
 

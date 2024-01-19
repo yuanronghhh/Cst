@@ -144,6 +144,8 @@ typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
+
+typedef struct _CstFlexLine CstFlexLine;
 typedef struct _CstLayoutFlex CstLayoutFlex;
 typedef struct _CstLayoutFlexClass CstLayoutFlexClass;
 

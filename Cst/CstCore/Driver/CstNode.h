@@ -21,7 +21,7 @@ struct _CstNode {
   /* property */
   SysList *v_awatch_list;
   SysList *v_nodemap_list;
-  SysPtrArray *v_css_list;
+  SysHArray *v_css_list;
 
   const SysChar *v_tag;
 
@@ -39,10 +39,10 @@ struct _CstNodeClass {
 
 typedef FRNodeFunc CstNodeFunc;
 
-#define cst_node_get_next(o) (CstNode *)fr_node_get_next(FR_NODE(o))
-#define cst_node_get_prev(o) (CstNode*)fr_node_get_prev(FR_NODE(o))
-#define cst_node_get_children(o) (CstNode*)fr_node_get_children(FR_NODE(o))
-#define cst_node_get_parent(o) (CstNode*)fr_node_get_parent(FR_NODE(o))
+#define cst_node_get_next(o) ((CstNode *)fr_node_get_next(FR_NODE(o)))
+#define cst_node_get_prev(o) ((CstNode*)fr_node_get_prev(FR_NODE(o)))
+#define cst_node_get_children(o) ((CstNode*)fr_node_get_children(FR_NODE(o)))
+#define cst_node_get_parent(o) ((CstNode*)fr_node_get_parent(FR_NODE(o)))
 #define cst_node_append(p, o) fr_node_append(FR_NODE(p), FR_NODE(o))
 #define cst_node_handle_ft_r(o, func, user_data) fr_node_handle_ft_r(FR_NODE(o), func, user_data);
 #define cst_node_handle_bfs_r(o, func, user_data) fr_node_handle_bfs_r(FR_NODE(o), func, user_data);
@@ -81,8 +81,8 @@ void cst_node_teardown(void);
 void cst_node_add_awatch(CstNode *self, FRAWatch* o);
 void cst_node_add_nodemap(CstNode *self, CstNodeMap* o);
 
-void cst_node_set_v_css_list(CstNode *self, SysPtrArray * v_css_list);
-SysPtrArray * cst_node_get_v_css_list(CstNode *self);
+void cst_node_set_v_css_list(CstNode *self, SysHArray * v_css_list);
+SysHArray * cst_node_get_v_css_list(CstNode *self);
 
 void cst_node_set_v_value(CstNode *self, const SysChar * v_value);
 SysChar * cst_node_get_v_value(CstNode *self);

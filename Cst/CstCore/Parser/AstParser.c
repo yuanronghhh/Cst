@@ -751,7 +751,7 @@ SysBool ast_node_parse_base(CstComponent *v_component, CstNodeBuilder *o, const 
   sys_return_val_if_fail(o != NULL, false);
   sys_return_val_if_fail(v_component != NULL, false);
 
-  SysPtrArray *css_list;
+  SysHArray *css_list;
 
   css_list = cst_component_parse_base(v_component, base, len);
   cst_node_builder_set_v_css_list(o, css_list);

@@ -10,7 +10,6 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Driver/CstBoxNode.h>
 
 
@@ -93,13 +92,13 @@ SysList * cst_node_get_v_nodemap_list(CstNode *self) {
   return self->v_nodemap_list;
 }
 
-void cst_node_set_v_css_list(CstNode *self, SysPtrArray * v_css_list) {
+void cst_node_set_v_css_list(CstNode *self, SysHArray * v_css_list) {
   sys_return_if_fail(self != NULL);
 
   self->v_css_list = v_css_list;
 }
 
-SysPtrArray * cst_node_get_v_css_list(CstNode *self) {
+SysHArray * cst_node_get_v_css_list(CstNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v_css_list;

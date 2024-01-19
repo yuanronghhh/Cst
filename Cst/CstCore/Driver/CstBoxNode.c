@@ -120,7 +120,6 @@ void cst_box_node_relayout_r(CstBoxNode* self, CstLayout* layout) {
 
   cst_render_node_layout_self(rnode, layout);
 
-
   child = cst_box_node_children(self);
   if (child) {
     rcnode = cst_layer_node_get_render_node(CST_LAYER_NODE(child));
@@ -130,7 +129,7 @@ void cst_box_node_relayout_r(CstBoxNode* self, CstLayout* layout) {
       cst_render_node_inherit(rcnode, rnode, layout);
       cst_box_node_relayout_r(child, layout);
     } else {
-      cst_flex_item_layout(CST_FLEX_ITEM(rnode));
+      cst_render_node_layout_self(rnode, layout);
 
       for (bnode = child; bnode; bnode = cst_box_node_next(bnode)) {
         cst_box_node_relayout_r(bnode, layout);

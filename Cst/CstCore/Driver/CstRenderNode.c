@@ -38,7 +38,10 @@ CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self) {
   return self->rctx;
 }
 
-void render_node_get_width (CstFlexItem *item) {
+SysInt render_node_get_width (CstFlexItem *item) {
+  CstRenderNode* self = CST_RENDER_NODE(item);
+
+  return cst_render_node_get_width(self);
 }
 
 void cst_render_node_flex_item(CstFlexItemInterface *iface) {
@@ -62,6 +65,9 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
 
   fr_draw_save(draw);
   cst_render_node_prepare(self, layout);
+
+  sys_assert(self->v_css_list->len > 0);
+
   cst_css_group_list_render(self->v_css_list, self, layout);
   cst_render_context_calc_size(self->rctx, layout, self);
 }
@@ -92,7 +98,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   for(SysUInt i = 0; i < oself->v_css_list->len; i++) {
     CstCssGroup *g = (CstCssGroup *)sys_object_dclone(oself->v_css_list->pdata[i]);
 
-    sys_ptr_array_add(nself->v_css_list, g);
+    sys_harray_add(nself->v_css_list, g);
   }
 
   sys_list_foreach(oself->awatch_list, item) {
@@ -181,7 +187,7 @@ SysList * cst_render_node_get_nodemap_list(CstRenderNode *self) {
 void cst_render_node_add_v_css(CstRenderNode *self, CstCssGroup* o) {
   sys_return_if_fail(self != NULL);
 
-  sys_ptr_array_add(self->v_css_list, (SysPointer)o);
+  sys_harray_add(self->v_css_list, (SysPointer)o);
 }
 
 SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self) {
@@ -269,8 +275,10 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
 static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   FRDraw *draw = cst_layout_get_draw(layout);
   const FRRect *bound = cst_render_node_get_bound(rnode);
+  const FRSInt4* m4 = cst_render_node_get_margin(rnode);
+  const FRSInt4* p4 = cst_render_node_get_padding(rnode);
 
-  fr_draw_fill_bound(draw, bound);
+  fr_draw_stroke_mp(draw, bound, m4, p4);
 }
 
 void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {
@@ -287,7 +295,7 @@ static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
 
   sys_clear_pointer(&self->rctx, _sys_object_unref);
-  sys_clear_pointer(&self->v_css_list, sys_ptr_array_unref);
+  sys_clear_pointer(&self->v_css_list, sys_harray_free);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
@@ -297,6 +305,7 @@ void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
 
   self->id = sys_strdup(cst_node_get_id(node));
   self->name = sys_strdup(cst_node_get_name(node));
+
   sys_object_ref(node);
 }
 

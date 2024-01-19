@@ -27,7 +27,7 @@ struct _CstRenderNode {
   SysList *nodemap_list;
 
   /* CstCssGroup */
-  SysPtrArray* v_css_list;
+  SysHArray* v_css_list;
 
   /* CST_NODE_LAYER_ENUM */
   CstLayerNode *layer_node;
@@ -59,9 +59,11 @@ void cst_render_node_teardown(void);
 #define cst_render_node_set_size(o, w, h) cst_layout_node_set_size(CST_LAYOUT_NODE(o), (w), (h))
 #define cst_render_node_get_size(o, w, h) cst_layout_node_get_size(CST_LAYOUT_NODE(o), (w), (h))
 #define cst_render_node_set_width(o, w) cst_layout_node_set_width(CST_LAYOUT_NODE(o), (w))
+#define cst_render_node_get_width(o) cst_layout_node_get_width(CST_LAYOUT_NODE(o))
 #define cst_render_node_set_height(o, h) cst_layout_node_set_height(CST_LAYOUT_NODE(o), (h))
 #define cst_render_node_get_bound(o) cst_layout_node_get_bound(CST_LAYOUT_NODE(o))
 #define cst_render_node_get_margin(o) cst_layout_node_get_margin(CST_LAYOUT_NODE(o))
+#define cst_render_node_get_padding(o) cst_layout_node_get_padding(CST_LAYOUT_NODE(o))
 
 #define cst_render_node_set_paint(o, v) cst_render_context_set_paint(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)

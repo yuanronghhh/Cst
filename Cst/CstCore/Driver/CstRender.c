@@ -91,6 +91,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   cst_layout_begin_layout(layout, layer);
 
   cst_layer_layout(layer, layout);
+
   cst_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);

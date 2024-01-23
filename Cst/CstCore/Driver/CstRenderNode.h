@@ -93,7 +93,7 @@ void cst_render_node_ref_nodemap(CstRenderNode *self, CstNodeMap *o);
 SysList * cst_render_node_get_nodemap_list(CstRenderNode *self);
 
 void cst_render_node_add_v_css(CstRenderNode *self, CstCssGroup* g);
-SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self);
+SysHArray* cst_render_node_get_v_css_list(CstRenderNode *self);
 
 void cst_render_node_set_name(CstRenderNode *self, const SysChar* name);
 const SysChar* cst_render_node_get_name(CstRenderNode *self);

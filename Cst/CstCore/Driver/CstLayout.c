@@ -61,13 +61,13 @@ void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) 
   fr_window_get_framebuffer_size(window, width, height);
 }
 
-void cst_layout_set_state(CstLayout *self, SysInt state) {
+void cst_layout_set_state(CstLayout *self, CST_RENDER_STATE_ENUM state) {
   sys_return_if_fail(self != NULL);
 
   self->state = state;
 }
 
-SysInt cst_layout_get_state(CstLayout *self) {
+CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
   return self->state;

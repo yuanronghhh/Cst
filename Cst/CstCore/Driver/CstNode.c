@@ -3,6 +3,7 @@
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLBox.h>
 #include <CstCore/Front/Common/CstComNode.h>
+#include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstLayerNode.h>
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
@@ -186,9 +187,12 @@ CstNode *cst_node_new_body(void) {
   CstNode *node;
 
   node = cst_node_new();
+  node->v_css_list = cst_css_group_list_new();
+
   cst_node_set_id(node, "<body-id>");
-  cst_node_set_name(node, "body");
+  cst_node_set_name(node, "LBody");
   cst_node_set_rnode_type(node, CST_TYPE_LBODY);
+  cst_css_group_set_by_name(node->v_css_list, node->name);
 
   return node;
 }

@@ -3,17 +3,19 @@
 #include <CstCore/Parser/CstParserCore.h>
 #include <CstCore/Driver/CstNode.h>
 
-#define CST_GCSS_LOCK
-#define CST_GCSS_UNLOCK
+
+static SysRecMutex gcss_lock;
+#define GCSS_LOCK sys_rec_mutex_lock(&gcss_lock)
+#define GCSS_UNLOCK sys_rec_mutex_unlock(&gcss_lock)
 
 static FREnv *gcss_env = NULL;
 
 void cst_css_env_set_gcss_env(FREnv * new_gcss_env) {
   sys_return_if_fail(new_gcss_env != NULL);
 
-  CST_GCSS_LOCK;
+  GCSS_LOCK;
   gcss_env = new_gcss_env;
-  CST_GCSS_UNLOCK;
+  GCSS_UNLOCK;
 }
 
 FREnv * cst_css_env_get_gcss_env(void) {
@@ -21,9 +23,9 @@ FREnv * cst_css_env_get_gcss_env(void) {
 
   FREnv * css;
 
-  CST_GCSS_LOCK;
+  GCSS_LOCK;
   css = gcss_env;
-  CST_GCSS_UNLOCK;
+  GCSS_UNLOCK;
 
   return css;
 }
@@ -43,6 +45,8 @@ void cst_css_env_setup(void) {
   CstParser* ps;
   CstParserContext *ctx;
   SysChar *buildin_css_path;
+
+  sys_rec_mutex_init(&gcss_lock);
 
   buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
   gcss_env = cst_css_env_new_I(NULL);
@@ -71,4 +75,5 @@ void cst_css_env_teardown(void) {
   sys_assert(gcss_env != NULL && "css env should be destroyed only once.");
 
   sys_object_unref(gcss_env);
+  sys_rec_mutex_clear(&gcss_lock);
 }

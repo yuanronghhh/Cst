@@ -41,11 +41,11 @@ static SysBool box_layer_mark_one(CstBoxNode* lnode, BoxLayerPass *ctx) {
     return false;
   }
 
-  if (cst_render_node_is_dirty(rnode)) {
+  if (!cst_render_node_is_visible(rnode)) {
     return false;
   }
 
-  if (!cst_render_node_is_visible(rnode)) {
+  if (cst_render_node_is_dirty(rnode)) {
     return false;
   }
 

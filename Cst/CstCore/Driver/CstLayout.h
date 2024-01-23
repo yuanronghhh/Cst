@@ -54,8 +54,8 @@ void cst_layout_end_layout(CstLayout * self);
 void cst_layout_begin_node(CstLayout* self);
 void cst_layout_end_node(CstLayout* self);
 
-void cst_layout_set_state(CstLayout *self, SysInt state);
-SysInt cst_layout_get_state(CstLayout *self);
+void cst_layout_set_state(CstLayout *self, CST_RENDER_STATE_ENUM state);
+CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
 
 void cst_layout_set_layer(CstLayout *self, CstLayer * layer);
 CstLayer * cst_layout_get_layer(CstLayout *self);

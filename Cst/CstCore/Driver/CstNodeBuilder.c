@@ -10,7 +10,7 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <Framework/Event/Action/FRAWatch.h>
+#include <CstCore/Driver/Css/CstCssEnv.h>
 
 
 SYS_DEFINE_TYPE(CstNodeBuilder, cst_node_builder, SYS_TYPE_OBJECT);
@@ -99,8 +99,12 @@ void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysHArray * v_css_lis
 
 void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
   sys_return_if_fail(self != NULL);
+  sys_return_if_fail(self->v_name != NULL);
 
   CstModule *v_module = self->v_module;
+  CstComponent *v_component = self->v_component;
+  FREnv *env = cst_component_get_css_env(v_component);
+  CstCssGroup* g;
 
   cst_node_set_name(node, self->v_name);
 
@@ -115,6 +119,26 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
 
   cst_node_set_v_nodemap_list(node, self->v_nodemap_list);
   self->v_nodemap_list = NULL;
+
+  /* set css */
+  g = cst_css_group_get_by_id(env, self->v_id);
+  if (g != NULL) {
+
+    cst_css_group_set_r(self->v_css_list, g);
+  }
+
+  if (*self->v_name != '<') {
+    g = cst_css_group_get_by_id(cst_css_env_get_gcss_env(), self->v_name);
+    if (g == NULL) {
+
+      sys_warning_N("set system css failed, config maybe not correct: %s", self->v_name);
+    }
+    
+    cst_css_group_set_r(self->v_css_list, g);
+  }
+  cst_node_set_v_css_list(node, self->v_css_list);
+
+  self->v_css_list = NULL;
 }
 
 void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *cnode) {
@@ -141,8 +165,8 @@ static void cst_node_builder_dispose(SysObject* o) {
   }
 
   if (self->v_css_list) {
-
-    sys_harray_free(self->v_css_list, true);
+    
+    sys_clear_pointer(&self->v_css_list, sys_harray_unref);
   }
 
   if (self->v_tag) {
@@ -179,4 +203,5 @@ static void cst_node_builder_class_init(CstNodeBuilderClass* cls) {
 }
 
 static void cst_node_builder_init(CstNodeBuilder *self) {
+  self->v_css_list = cst_css_group_list_new();
 }

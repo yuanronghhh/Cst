@@ -24,6 +24,8 @@ struct _CstCssGroupClass {
   SysObjectClass parent;
 };
 
+#define cst_css_group_get_by_id(env, id) ((CstCssGroup *)fr_env_get_r(FR_ENV(env), id))
+
 SysType cst_css_group_get_type(void);
 CstCssGroup *cst_css_group_new(void);
 CstCssGroup *cst_css_group_new_I(const SysChar *id);
@@ -33,6 +35,7 @@ void cst_css_group_pair_add(CstCssGroup *g, CstCssPair *pair);
 SysBool cst_css_group_set_base_r(CstCssGroup *g, CstCssGroup *ng);
 SysBool cst_css_group_set_r(SysHArray *ptr, CstCssGroup *g);
 SysBool cst_css_group_set_by_id(SysHArray *ptr, FREnv *env, const SysChar *id);
+SysBool cst_css_group_set_by_name(SysHArray* ptr, const SysChar* name);
 const SysChar* cst_css_group_get_id(CstCssGroup *g);
 void cst_css_group_add_pair(CstCssGroup *g, CstCssPair *pair);
 

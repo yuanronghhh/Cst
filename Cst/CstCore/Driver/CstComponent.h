@@ -45,7 +45,7 @@ void cst_component_set_value_map(CstComponent * self, CstValueMap * map);
 void cst_component_construct(CstComponent *self, CstComponentContext *c);
 
 void cst_component_print(CstComponent * self);
-SysPtrArray *cst_component_parse_base(CstComponent *self, const SysChar *v_base[], SysUInt len);
+SysHArray *cst_component_parse_base(CstComponent *self, const SysChar *base[], SysUInt len);
 
 CstCssGroup *cst_component_get_css_r(CstComponent* self, const SysChar *key);
 CstCssGroup *cst_component_get_css(CstComponent* self, const SysChar *key);

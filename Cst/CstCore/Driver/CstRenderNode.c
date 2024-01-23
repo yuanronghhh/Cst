@@ -66,7 +66,7 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   fr_draw_save(draw);
   cst_render_node_prepare(self, layout);
 
-  sys_assert(self->v_css_list->len > 0);
+  // sys_assert(self->v_css_list->len > 0 && "node must have one css node at least.");
 
   cst_css_group_list_render(self->v_css_list, self, layout);
   cst_render_context_calc_size(self->rctx, layout, self);
@@ -190,7 +190,7 @@ void cst_render_node_add_v_css(CstRenderNode *self, CstCssGroup* o) {
   sys_harray_add(self->v_css_list, (SysPointer)o);
 }
 
-SysPtrArray* cst_render_node_get_v_css_list(CstRenderNode *self) {
+SysHArray* cst_render_node_get_v_css_list(CstRenderNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v_css_list;
@@ -275,10 +275,10 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
 static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   FRDraw *draw = cst_layout_get_draw(layout);
   const FRRect *bound = cst_render_node_get_bound(rnode);
-  const FRSInt4* m4 = cst_render_node_get_margin(rnode);
-  const FRSInt4* p4 = cst_render_node_get_padding(rnode);
+  // const FRSInt4* m4 = cst_render_node_get_margin(rnode);
+  // const FRSInt4* p4 = cst_render_node_get_padding(rnode);
 
-  fr_draw_stroke_mp(draw, bound, m4, p4);
+  fr_draw_fill_bound(draw, bound);
 }
 
 void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {

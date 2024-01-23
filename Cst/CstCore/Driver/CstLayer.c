@@ -59,6 +59,7 @@ void cst_layer_layout (CstLayer *self, CstLayout *layout) {
   CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
   sys_return_if_fail(lcls->layout != NULL);
 
+  cst_layout_set_state(layout, CST_RENDER_STATE_LAYOUT);
   lcls->layout(self, layout);
 }
 
@@ -68,6 +69,7 @@ void cst_layer_render (CstLayer *self, CstLayout *layout) {
   CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
   sys_return_if_fail(lcls->render != NULL);
 
+  cst_layout_set_state(layout, CST_RENDER_STATE_PAINT);
   lcls->render(self, layout);
 }
 

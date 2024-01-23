@@ -48,8 +48,8 @@ if(WIN32)
   # )
 
 set(GLIB_FILE
-  "brotlicommon.dll"
-  "brotlidec.dll"
+  # "brotlicommon.dll"
+  # "brotlidec.dll"
   # "brotlienc.dll"
   "bz2.dll"
   "charset-1.dll"

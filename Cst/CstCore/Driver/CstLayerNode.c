@@ -35,6 +35,17 @@ CstLayerNode* cst_layer_node_get_body(void) {
   return body_node;
 }
 
+void cst_layer_node_relayout(CstLayerNode * o, CstLayout * layout) {
+  CstLayerNodeClass* cls = CST_LAYER_NODE_GET_CLASS(o);
+
+  sys_return_if_fail(cls->relayout != NULL);
+
+  cls->relayout(o, layout);
+}
+
+static void cst_layer_node_relayout_i(CstLayerNode * o, CstLayout * layout) {
+}
+
 /* object api */
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);
@@ -72,6 +83,7 @@ static void cst_layer_node_class_init(CstLayerNodeClass* cls) {
 
   ocls->dispose = cst_layer_node_dispose;
   cls->construct = cst_layer_node_construct;
+  cls->relayout = cst_layer_node_relayout_i;
 }
 
 static void cst_layer_node_init(CstLayerNode *self) {

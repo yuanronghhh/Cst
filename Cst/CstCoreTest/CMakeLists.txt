@@ -96,7 +96,7 @@ target_copy_files(CstCoreTest
   "${VLD_FILES}"
   "${CAIRO_FILES}"
   "${PANGO_FILES}"
-  "${GLIB_FILES}"
+  # "${GLIB_FILES}"
   "${PTHREAD_FILES}"
   "${VKVG_FILES}"
   "${VULKAN_FILES}"

@@ -22,16 +22,18 @@ void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root) {
   self->tree = root;
 }
 
-static SysBool box_layer_mark_one(CstBoxNode* lnode, BoxLayerPass *ctx) {
-  CstRenderNode *rnode;
+static SysBool box_layer_mark_one(CstBoxNode* boxnode, BoxLayerPass *ctx) {
+  CstRenderNode* rnode;
+  CstLayerNode *lnode;
   CstLayer* self;
   FRRegion* region;
   const FRRect *bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;
+  lnode = CST_LAYER_NODE(boxnode);
 
-  rnode = cst_layer_node_get_render_node(CST_LAYER_NODE(lnode));
+  rnode = cst_layer_node_get_render_node(lnode);
   bound = cst_render_node_get_bound(rnode);
 
   sys_return_val_if_fail(region != NULL, false);
@@ -56,8 +58,8 @@ static SysBool box_layer_mark_one(CstBoxNode* lnode, BoxLayerPass *ctx) {
 
   sys_assert(bound->width != -1 && "width should be set before check dirty.");
 
-  cst_render_node_set_paint(rnode, true);
-  cst_layer_queue_draw_node(self, rnode);
+  cst_render_node_set_need_paint(rnode, true);
+  cst_layer_queue_draw_node(self, lnode);
 
   return true;
 }

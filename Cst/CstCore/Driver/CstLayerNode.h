@@ -24,7 +24,8 @@ struct _CstLayerNode {
 struct _CstLayerNodeClass {
   SysObjectClass parent;
 
-  void (*construct) (CstLayerNode *o, CstLayer *layer, CstNode *node);
+  void (*construct) (CstLayerNode* o, CstLayer* layer, CstNode* node);
+  void (*relayout) (CstLayerNode *o, CstLayout *layout);
 };
 
 SysType cst_layer_node_get_type(void);
@@ -34,6 +35,7 @@ CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);
 void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout);
 CstLayerNode *cst_layer_node_get_body(void);
 void cst_layer_node_set_body(CstLayerNode* body);
+void cst_layer_node_relayout(CstLayerNode * o, CstLayout * layout);
 
 void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode * render_node);
 CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self);

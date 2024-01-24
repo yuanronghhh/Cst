@@ -76,7 +76,7 @@ target_copy_files(Mini
   "${CAIRO_FILES}"
   "${GLFW3_FILES}"
   "${FREETYPE_FILES}"
-  "${GLIB_FILES}"
+  # "${GLIB_FILES}"
   "${PNG_FILES}"
   "${HARFBUZZ_FILES}"
   "${FRIBIDI_FILES}"

@@ -22,11 +22,11 @@ void cst_layer_set_name(CstLayer *self, const SysChar* name) {
   self->name = sys_strdup(name);
 }
 
-void cst_layer_queue_draw_node(CstLayer *self, CstRenderNode *rnode) {
+void cst_layer_queue_draw_node(CstLayer *self, CstLayerNode *lnode) {
   sys_return_if_fail(self != NULL);
 
-  sys_object_ref(rnode);
-  sys_queue_push_tail(self->draw_queue, rnode);
+  sys_object_ref(lnode);
+  sys_queue_push_tail(self->draw_queue, lnode);
 }
 
 CstLayerNode* cst_layer_new_node(CstLayer *self, CstLayerNode *parent, CstNode *node) {
@@ -51,6 +51,15 @@ void cst_layer_check (CstLayer *self, CstLayout *layout) {
   sys_return_if_fail(lcls->check != NULL);
 
   lcls->check(self, layout);
+}
+
+void cst_layer_relayout(CstLayer* self, CstLayout* layout) {
+  CstLayerNode* lnode;
+
+  sys_queue_foreach(self->draw_queue, node) {
+    lnode = node->data;
+    cst_layer_node_relayout(lnode, layout);
+  }
 }
 
 void cst_layer_layout (CstLayer *self, CstLayout *layout) {

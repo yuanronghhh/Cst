@@ -65,11 +65,11 @@ void cst_render_node_teardown(void);
 #define cst_render_node_get_margin(o) cst_layout_node_get_margin(CST_LAYOUT_NODE(o))
 #define cst_render_node_get_padding(o) cst_layout_node_get_padding(CST_LAYOUT_NODE(o))
 
-#define cst_render_node_set_paint(o, v) cst_render_context_set_paint(CST_RENDER_NODE_RCTX(o), v)
+#define cst_render_node_set_need_paint(o, v) cst_render_context_set_need_paint(CST_RENDER_NODE_RCTX(o), v)
+#define cst_render_node_set_need_layout(o, v) cst_render_context_set_need_layout(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_is_visible(o) cst_render_context_get_is_visible(CST_RENDER_NODE_RCTX(o))
 #define cst_render_node_need_layout(o) cst_render_context_need_layout(CST_RENDER_NODE_RCTX(o))
-#define cst_render_node_set_need_layout(o, v) cst_render_context_set_need_relayout(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_is_dirty(o) cst_render_context_is_dirty(CST_RENDER_NODE_RCTX(o))
 #define cst_render_node_layout_self(o, layout) cst_render_context_layout_self(CST_RENDER_NODE_RCTX(o), o, layout)
 #define cst_render_node_inherit(o, p, layout) cst_render_context_inherit(CST_RENDER_NODE_RCTX(o), CST_RENDER_NODE_RCTX(p), layout)

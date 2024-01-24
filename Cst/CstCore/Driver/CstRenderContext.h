@@ -55,7 +55,7 @@ void cst_render_context_set_prefer_size(CstRenderContext* self, SysInt width, Sy
 void cst_render_context_get_prefer_size(CstRenderContext* self, SysInt* width, SysInt* height);
 
 SysBool cst_render_context_need_layout(CstRenderContext* self);
-void cst_render_context_set_layout(CstRenderContext *self, SysBool bvalue);
+void cst_render_context_set_need_layout(CstRenderContext *self, SysBool bvalue);
 
 void cst_render_context_calc_width(CstRenderContext * self, CstLayout * layout, CstRenderNode * lnode);
 void cst_render_context_calc_height(CstRenderContext * self, CstLayout * layout, CstRenderNode * lnode);
@@ -66,7 +66,7 @@ void cst_render_context_constraint_width(CstRenderContext *self, CstRenderContex
 
 /* paint */
 SysBool cst_render_context_need_paint(CstRenderContext *self);
-void cst_render_context_set_paint(CstRenderContext *self, SysBool bvalue);
+void cst_render_context_set_need_paint(CstRenderContext *self, SysBool bvalue);
 
 void cst_render_context_setup(void);
 void cst_render_context_teardown(void);

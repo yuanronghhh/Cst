@@ -71,7 +71,7 @@ SysBool cst_render_context_need_layout(CstRenderContext *self) {
   return self->need_relayout;
 }
 
-void cst_render_context_set_layout(CstRenderContext *self, SysBool bvalue) {
+void cst_render_context_set_need_layout(CstRenderContext *self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
 
   self->need_relayout = bvalue;
@@ -257,7 +257,7 @@ SysBool cst_render_context_need_paint(CstRenderContext* self) {
   return self->need_repaint;
 }
 
-void cst_render_context_set_paint(CstRenderContext* self, SysBool bvalue) {
+void cst_render_context_set_need_paint(CstRenderContext* self, SysBool bvalue) {
   sys_return_if_fail(self != NULL);
 
   self->need_repaint = bvalue;

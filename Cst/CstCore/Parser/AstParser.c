@@ -290,7 +290,7 @@ static SysBool component_body_func(JNode *pair, AstComponentPass *pass) {
   JNode *body_node;
 
   CST_COMPONENT_BODY_ENUM bd = cst_component_body_get_by_name(pair->v.v_pair->key);
-  CstComponent *self = pass->parser->v_component;
+  // CstComponent *self = pass->parser->v_component;
 
   switch (bd) {
     case CST_COMPONENT_BDATA:

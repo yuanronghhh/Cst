@@ -21,7 +21,7 @@ CstElement *cst_element_new_I(void) {
 }
 
 static void cst_element_dispose(SysObject* o) {
-  CstElement *self = CST_ELEMENT(o);
+  // CstElement *self = CST_ELEMENT(o);
 
   SYS_OBJECT_CLASS(cst_element_parent_class)->dispose(o);
 }

@@ -68,7 +68,7 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstLayerNode* body;
-  FRRect bound = { 0 };
+  // FRRect bound = { 0 };
 
   body = cst_module_realize(v_module, NULL);
   cst_layer_node_set_body(body);

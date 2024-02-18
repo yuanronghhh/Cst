@@ -27,7 +27,7 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${VS_ENV}
 
 build-all: config
-	@cmake --build "$(BUILD_DIR)" --config ${BUILD_TYPE}
+	@${MAKE} -C "$(BUILD_DIR)" -s -j8
 
 config:
 	@${CMAKE_CONFIG}
@@ -53,7 +53,7 @@ run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --remote-send ':Termdebug --args ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}<cr>'
+	@gvim --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	@gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}

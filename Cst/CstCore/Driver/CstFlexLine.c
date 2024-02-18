@@ -4,7 +4,7 @@
 CstFlexLine *cst_flex_line_new(void) {
   CstFlexLine *self = sys_new0_N(CstFlexLine, 1);
 
-  sys_harray_init_with_free_func(&self->items, _sys_object_unref);
+  sys_harray_init_with_free_func(&self->items, (SysDestroyFunc)_sys_object_unref);
 
   return self;
 }

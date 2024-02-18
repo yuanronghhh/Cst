@@ -123,7 +123,7 @@ SysObject* cst_render_context_dclone_i(SysObject* o) {
   nself->is_visible = oself->is_visible;
   nself->wrap = oself->wrap;
   nself->line_space = oself->line_space;
-  sys_harray_copy(&nself->lines, &oself->lines, elem_copy, NULL);
+  sys_harray_copy(&nself->lines, &oself->lines, (SysCopyFunc)elem_copy, NULL);
   nself->mbp = oself->mbp;
   nself->prefer_height = oself->prefer_height;
   nself->prefer_width = oself->prefer_width;
@@ -296,7 +296,7 @@ static void cst_render_context_init(CstRenderContext *self) {
   self->need_relayout = true;
   self->need_repaint = true;
 
-  sys_harray_init_with_free_func(&self->lines, cst_flex_line_free);
+  sys_harray_init_with_free_func(&self->lines, (SysDestroyFunc)cst_flex_line_free);
 }
 
 static void cst_render_context_dispose(SysObject* o) {

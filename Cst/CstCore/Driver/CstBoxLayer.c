@@ -58,7 +58,7 @@ static SysBool box_layer_mark_one(CstBoxNode* boxnode, BoxLayerPass *ctx) {
 
   sys_assert(bound->width != -1 && "width should be set before check dirty.");
 
-  cst_render_node_set_need_paint(rnode, true);
+  cst_render_node_set_need_layout(rnode, true);
   cst_layer_queue_draw_node(self, lnode);
 
   return true;

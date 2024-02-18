@@ -16,11 +16,11 @@ struct _CstRenderContext {
   /* < private > */
   SysBool need_relayout;
   SysBool need_repaint;
+  SysBool is_visible;
+  SysBool wrap;
 
   /* CST_DIRECTION_ENUM */
   SysInt direction;
-  SysBool is_visible;
-  SysBool wrap;
   SysInt16 line_space;
 
   /* flexline */

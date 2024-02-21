@@ -20,9 +20,9 @@ h_template = """\
 
 SYS_BEGIN_DECLS
 
-#define ${TYPE_NAME}_TYPE (${type_name}_get_type())
-#define ${TYPE_NAME}(o) ((${TypeName}* )sys_object_cast_check(o, ${TYPE_NAME}_TYPE))
-#define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)sys_class_cast_check(o, ${TYPE_NAME}_TYPE))
+#define ${FN_TYPE_NAME} (${type_name}_get_type())
+#define ${TYPE_NAME}(o) ((${TypeName}* )sys_object_cast_check(o, ${FN_TYPE_NAME})
+#define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)sys_class_cast_check(o, ${FN_TYPE_NAME})
 #define ${TYPE_NAME}_GET_CLASS(o) sys_instance_get_class(o, ${TypeName}Class)
 
 typedef struct _${TypeName} ${TypeName};
@@ -53,7 +53,7 @@ static void ${type_name}_construct(${TypeName} *self) {
 }
 
 ${TypeName}* ${type_name}_new(void) {
-  return sys_object_new(${TYPE_NAME}_TYPE, NULL);
+  return sys_object_new(${FN_TYPE_NAME}, NULL);
 }
 
 ${TypeName} *${type_name}_new_I(void) {
@@ -223,6 +223,12 @@ class TemplateInfo:
             return ""
         return "%s%s" % (self.p_Fn, self.p_Name)
 
+    def get_FN_TYPE_NAME(self):
+        if not self.pinfo:
+            return ""
+
+        return "%s_TYPE_%s" % (self.FN, self.NAME)
+
     def get_TYPE_PARENT(self):
         if not self.pinfo:
             return ""
@@ -236,6 +242,7 @@ class TemplateGenerator:
 
     def gen_with_tpl(self, tpl, info):
         r = tpl.replace("${TYPE_NAME}", info.get_TYPE_NAME())\
+                .replace("${FN_TYPE_NAME}", info.get_FN_TYPE_NAME())\
                 .replace("${PARENT_TYPE}", info.get_PARENT_TYPE())\
                 .replace("${TYPE_PARENT}", info.get_TYPE_PARENT())\
                 .replace("${ParentType}", info.get_ParentType())\

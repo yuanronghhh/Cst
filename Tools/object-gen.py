@@ -5,9 +5,12 @@ import argparse
 import os
 import re
 import sys
+import logging
 
 from AppJsonEncoder import Serializer
+from pathlib import Path
 
+logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 
 h_template = """\
 #ifndef __${TYPE_NAME}_H__
@@ -79,13 +82,20 @@ void ${type_name}_init(${TypeName}* self) {
 """
 
 template_struct = """
-struct _CstElement {
-  SysObject unowned;
+struct _SysSocket {
+  SysObject parent;
+  /* < private > */
+#if SYS_OS_WIN32
+  SOCKET fd;
+#elif SYS_OS_UNIX
+  SysInt fd;
+#endif
 
-  /* <private> */
-  CstNode *node;
-  CstRenderNode *rnode;
-  CstLayerNode *lnode;
+  SysBool noblocking;
+
+#if USE_OPENSSL
+  SSL *ssl;
+#endif
 };
 """
 
@@ -115,16 +125,23 @@ class TemplateInfo:
         self.props = self.parse_props(self.tpl[2:-1])
 
         self.pinfo = self.parse_pinfo(self.tpl[2]);
-        self.p_Fn = self.parse_Prefix(self.pinfo.type)
-        self.p_FN = self.p_Fn.upper()
-        self.p_fn = "%s%s" % (self.p_Fn[0].lower(), self.p_Fn[1:])
+        if not self.pinfo:
+            logging.error("struct not parse parent info: %s", self.name)
+            sys.exit(-1)
+        else:
+            self.p_Fn = self.parse_Prefix(self.pinfo.type)
+            self.p_FN = self.p_Fn.upper()
+            self.p_fn = "%s%s" % (self.p_Fn[0].lower(), self.p_Fn[1:])
 
-        self.p_Name = self.parse_struct_name(self.p_Fn, self.pinfo.type)
-        self.p_name = "%s%s" % (self.p_Name[0].lower(), self.p_Name[1:])
-        self.p_NAME = self.p_Name.upper()
+            self.p_Name = self.parse_struct_name(self.p_Fn, self.pinfo.type)
+            self.p_name = "%s%s" % (self.p_Name[0].lower(), self.p_Name[1:])
+            self.p_NAME = self.p_Name.upper()
 
     def parse_prop(self, line):
         prop = Props()
+        if line.startswith("#"):
+            return None
+
         match = TemplateInfo.type_re.findall(line)
         if not match:
             return None
@@ -140,6 +157,8 @@ class TemplateInfo:
 
     def parse_pinfo(self, first_str):
         props = self.parse_props([first_str])
+        if not props:
+            return None
         return props[0]
 
     def parse_props(self, lines):
@@ -194,12 +213,20 @@ class TemplateInfo:
         return "%s_%s" % (self.FN, self.NAME)
 
     def get_PARENT_TYPE(self):
+        if not self.pinfo:
+            return ""
+
         return "%s_%s" % (self.p_FN, self.p_NAME)
 
     def get_ParentType(self):
+        if not self.pinfo:
+            return ""
         return "%s%s" % (self.p_Fn, self.p_Name)
 
     def get_TYPE_PARENT(self):
+        if not self.pinfo:
+            return ""
+
         return "%s_TYPE_%s" % (self.p_FN, self.p_NAME)
 
 class TemplateGenerator:
@@ -221,8 +248,8 @@ class TemplateGenerator:
 
     def generate_file(self):
         info = self.sInfo
-        h_file = self.dstDir + info.get_TypeName() + ".h"
-        c_file = self.dstDir + info.get_TypeName() + ".c"
+        h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
+        c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
 
         result = self.gen_with_tpl(h_template, info)
         fp = open(h_file, "w+")
@@ -235,8 +262,7 @@ class TemplateGenerator:
         fp.close()
 
 def main():
-    dst = os.getcwd() + "/Cst/CstCore/Driver/"
-    dst = dst.replace("\\", "/")
+    dst = Path(".").absolute().as_posix()
 
     gen = TemplateGenerator(template_struct, None, dst)
     gen.generate_file()

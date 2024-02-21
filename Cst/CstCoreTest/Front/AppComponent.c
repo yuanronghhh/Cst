@@ -4,11 +4,7 @@
 
 #include "AppComponent.h"
 
-struct _AppComponentPrivate {
-  SysChar reserved;
-};
-
-SYS_DEFINE_TYPE_WITH_PRIVATE(AppComponent, app_component, CST_TYPE_COMPONENT);
+SYS_DEFINE_TYPE(AppComponent, app_component, CST_TYPE_COMPONENT);
 
 /* user api */
 AppComponent* app_component_new(void) {
@@ -16,8 +12,6 @@ AppComponent* app_component_new(void) {
 }
 
 static void app_component_init(AppComponent *self) {
-  self->priv = app_component_get_private(self);
-
 }
 
 static void app_component_class_init(AppComponentClass *cls) {

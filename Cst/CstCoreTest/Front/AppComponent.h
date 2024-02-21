@@ -17,11 +17,9 @@ SYS_BEGIN_DECLS
 
 typedef struct _AppComponent AppComponent;
 typedef struct _AppComponentClass AppComponentClass;
-typedef struct _AppComponentPrivate AppComponentPrivate;
 
 struct _AppComponent {
   CstComponent parent;
-  AppComponentPrivate *priv;
 };
 
 struct _AppComponentClass {

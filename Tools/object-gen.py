@@ -81,24 +81,6 @@ void ${type_name}_init(${TypeName}* self) {
 
 """
 
-template_struct = """
-struct _SysSocket {
-  SysObject parent;
-  /* < private > */
-#if SYS_OS_WIN32
-  SOCKET fd;
-#elif SYS_OS_UNIX
-  SysInt fd;
-#endif
-
-  SysBool noblocking;
-
-#if USE_OPENSSL
-  SSL *ssl;
-#endif
-};
-"""
-
 class Props:
     def __init__(self):
         self.type = None
@@ -120,7 +102,7 @@ class TemplateInfo:
         self.fn = "%s%s" % (self.Fn[0].lower(), self.Fn[1:])
 
         self.Name = self.parse_struct_name(self.Fn, self.struct)
-        self.name = "%s%s" % (self.Name[0].lower(), self.Name[1:])
+        self.name = "%s%s" % (self.Name[0].lower(), self.Name[1:].lower())
         self.NAME = self.Name.upper()
         self.props = self.parse_props(self.tpl[2:-1])
 
@@ -268,8 +250,17 @@ class TemplateGenerator:
         fp.write(result)
         fp.close()
 
+
+template_struct = """
+struct _CstPdeParser {
+  SysObject parent;
+
+  /* <private> */
+};
+"""
+
 def main():
-    dst = Path(".").absolute().as_posix()
+    dst = Path("D:/GreyHound/PRIVATE/Git/CstDemo/Cst/CstDemo").absolute().as_posix()
 
     gen = TemplateGenerator(template_struct, None, dst)
     gen.generate_file()

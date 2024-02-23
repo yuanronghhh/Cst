@@ -21,7 +21,7 @@ h_template = """\
 SYS_BEGIN_DECLS
 
 #define ${FN_TYPE_NAME} (${type_name}_get_type())
-#define ${TYPE_NAME}(o) ((${TypeName}* )sys_object_cast_check(o, ${FN_TYPE_NAME})
+#define ${TYPE_NAME}(o) ((${TypeName}* )sys_object_cast_check(o, ${FN_TYPE_NAME}))
 #define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)sys_class_cast_check(o, ${FN_TYPE_NAME})
 #define ${TYPE_NAME}_GET_CLASS(o) sys_instance_get_class(o, ${TypeName}Class)
 
@@ -252,15 +252,15 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _CstPdeParser {
-  SysObject parent;
+struct _CstDrawNode {
+  CstLayoutNode parent;
 
   /* <private> */
 };
 """
 
 def main():
-    dst = Path("D:/GreyHound/PRIVATE/Git/CstDemo/Cst/CstDemo").absolute().as_posix()
+    dst = Path("D:/GreyHound/PRIVATE/Git/Cst/Cst/CstCore/Driver").absolute().as_posix()
 
     gen = TemplateGenerator(template_struct, None, dst)
     gen.generate_file()

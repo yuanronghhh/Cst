@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstDrawNode.h>
 
-SYS_DEFINE_TYPE(CstDrawNode, cst_drawnode, CST_TYPE_LAYOUTNODE);
+SYS_DEFINE_TYPE(CstDrawNode, cst_drawnode, CST_TYPE_LAYOUT_NODE);
 
 
 /* object api */

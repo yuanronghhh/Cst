@@ -42,7 +42,7 @@ struct _CstRenderNodeClass {
   CstLayoutNodeClass parent;
 
   void (*construct) (CstRenderNode *self, CstNode* node);
-  void (*paint_self) (CstRenderNode *self, CstLayout *layout);
+  void (*paint_self) (CstRenderNode* self, CstLayout* layout);
 };
 
 SysType cst_render_node_get_type(void);
@@ -65,6 +65,8 @@ void cst_render_node_teardown(void);
 #define cst_render_node_get_margin(o) cst_layout_node_get_margin(CST_LAYOUT_NODE(o))
 #define cst_render_node_get_padding(o) cst_layout_node_get_padding(CST_LAYOUT_NODE(o))
 
+#define cst_render_node_set_prefer_size(o, w, h) cst_render_context_set_prefer_size(CST_RENDER_NODE_RCTX(o), (w), (h))
+#define cst_render_node_get_prefer_size(o, w, h) cst_render_context_get_prefer_size(CST_RENDER_NODE_RCTX(o), (w), (h))
 #define cst_render_node_set_need_paint(o, v) cst_render_context_set_need_paint(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_need_layout(o, v) cst_render_context_set_need_layout(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)

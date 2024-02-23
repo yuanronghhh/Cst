@@ -34,7 +34,9 @@ FREnv *cst_css_env_new_I(FREnv *parent) {
   SysHashTable *ht;
 
   if(parent == NULL) {
+    GCSS_LOCK;
     parent = gcss_env;
+    GCSS_UNLOCK;
   }
 
   ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);

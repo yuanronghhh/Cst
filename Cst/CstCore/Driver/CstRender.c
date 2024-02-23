@@ -13,20 +13,37 @@ SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
 
 static CstRender *g_render = NULL;
+static SysMutex g_render_lock;
+
 
 void cst_render_setup(void) {
   g_render = cst_render_new_I(false);
+  sys_mutex_init(&g_render_lock);
 }
 
 void cst_render_teardown(void) {
+  sys_mutex_clear(&g_render_lock);
 
   sys_clear_pointer(&g_render, _sys_object_unref);
 }
 
+static void init_body_layout_info(CstBoxNode* bnode, CstLayout* layout) {
+  SysInt width, height;
+  CstRenderNode* rnode = cst_layer_node_get_render_node(CST_LAYER_NODE(bnode));
+
+  cst_layout_get_buffer_size(layout, &width, &height);
+  cst_render_node_set_prefer_size(rnode, width, height);
+}
+
 CstRender *cst_render_get_g_render(void) {
   sys_assert(g_render && "cst_render_setup need called before get");
+  CstRender* lv;
 
-  return g_render;
+  sys_mutex_lock(&g_render_lock);
+  lv = g_render;
+  sys_mutex_unlock(&g_render_lock);
+
+  return lv;
 }
 
 CstRender *cst_render_new(void) {
@@ -53,9 +70,14 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstLayer *layer;
+  CstBoxNode* bnode;
 
   layer = self->box_layer;
+  bnode = cst_box_layer_get_root(CST_BOX_LAYER(layer));
+
   cst_layout_begin_layout(layout, layer);
+
+  init_body_layout_info(bnode, layout);
 
   cst_layer_check(layer, layout);
   cst_layer_layout(layer, layout);
@@ -82,12 +104,18 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   CstLayer *layer;
   FRRegion *region;
   CstLayout* layout;
+  CstBoxNode* bnode;
+  FRRect rect = { 0 };
 
   region = render_create_region(self->window);
   layout = cst_layout_new_I(self, region);
   layer = self->box_layer;
 
   cst_render_realize(self, v_module);
+
+  bnode = cst_box_layer_get_root(CST_BOX_LAYER(layer));
+
+  init_body_layout_info(bnode, layout);
   cst_layout_begin_layout(layout, layer);
 
   cst_layer_layout(layer, layout);

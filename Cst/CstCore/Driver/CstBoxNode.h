@@ -36,7 +36,6 @@ void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout);
 
 SysBool cst_box_node_has_one_child(CstBoxNode* self);
 void cst_box_node_bfs_handle(CstBoxNode* self, CstBoxNodeFunc func, SysPointer user_data);
-void cst_box_node_handle_r(CstBoxNode *self, CstBoxNodeFunc func, SysPointer user_data);
 void cst_box_node_handle_ft_r(CstBoxNode *self, CstBoxNodeFunc func, SysPointer user_data);
 CstBoxNode* cst_box_node_get_parent(CstBoxNode* o);
 

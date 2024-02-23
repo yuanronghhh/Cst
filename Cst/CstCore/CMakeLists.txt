@@ -106,6 +106,8 @@ set(SRC
   ./Driver/CstRenderContext.c
   ./Driver/CstRenderNode.h
   ./Driver/CstRenderNode.c
+  ./Driver/CstDrawNode.h
+  ./Driver/CstDrawNode.c
   ./Driver/CstBoxNode.h
   ./Driver/CstBoxNode.c
   ./Driver/CstRow.h

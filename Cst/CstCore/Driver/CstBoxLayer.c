@@ -16,10 +16,17 @@ struct _BoxLayerPass {
 
 SYS_DEFINE_TYPE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER);
 
+
 void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root) {
   sys_return_if_fail(self != NULL);
 
   self->tree = root;
+}
+
+CstBoxNode* cst_box_layer_get_root(CstBoxLayer* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->tree;
 }
 
 static SysBool box_layer_mark_one(CstBoxNode* boxnode, BoxLayerPass *ctx) {

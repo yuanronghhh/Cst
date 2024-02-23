@@ -21,6 +21,7 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
 };
 
 static CstNode *body_node = NULL;
+static SysMutex body_node_lock;
 
 SYS_DEFINE_TYPE(CstNode, cst_node, FR_TYPE_NODE);
 
@@ -357,17 +358,25 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
 }
 
 CstNode *cst_node_get_body_node(void) {
+  CstNode* lv;
 
-  return body_node;
+  sys_mutex_lock(&body_node_lock);
+  lv = body_node;
+  sys_mutex_unlock(&body_node_lock);
+
+  return lv;
 }
 
 void cst_node_setup(void) {
   sys_assert(body_node == NULL);
 
+  sys_mutex_init(&body_node_lock);
+
   body_node = cst_node_new_body();
 }
 
 void cst_node_teardown(void) {
+  sys_mutex_clear(&body_node_lock);
 
   sys_clear_pointer(&body_node, cst_node_unlink_node_r);
 }

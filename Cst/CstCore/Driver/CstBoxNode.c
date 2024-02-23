@@ -119,8 +119,6 @@ void cst_box_node_relayout_r(CstBoxNode* self, CstLayout* layout) {
     return;
   }
 
-  cst_render_node_layout_self(rnode, layout);
-
   child = cst_box_node_children(self);
   if (child) {
     rcnode = cst_layer_node_get_render_node(CST_LAYER_NODE(child));

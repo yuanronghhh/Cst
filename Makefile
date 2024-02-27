@@ -27,7 +27,7 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${VS_ENV}
 
 build-all: config
-	@${MAKE} -C "$(BUILD_DIR)" -s -j8
+	@make build-${PLATFORM}
 
 config:
 	@${CMAKE_CONFIG}
@@ -37,6 +37,9 @@ build-linux: config
 
 build-win32: config
 	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
+
+build-win32-prj: config
+	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} --target ${PROJ_NAME}
 
 re-config:
 	@/usr/bin/rm -rf build/CMakeCache.txt
@@ -85,7 +88,7 @@ check-linux:
 
 # -------------------- core start --------------------
 cst-test-build:
-	@make PROJ_NAME="CstCoreTest" build-${PLATFORM}
+	@make PROJ_NAME="CstCoreTest" build-${PLATFORM}-prj
 
 cst-test-debug: cst-test-build
 	@make PROJ_NAME="CstCoreTest" debug-${PLATFORM}
@@ -97,7 +100,7 @@ cst-test-check: cst-test-build
 	@make PROJ_NAME="CstCoreTest" check-${PLATFORM}
 
 system:
-	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}
+	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}-prj
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:
@@ -112,7 +115,7 @@ cst-cli-check: cst-cli-build
 	@make PROJ_NAME="CstCli" check-${PLATFORM}
 
 cst-cli-build:
-	@make PROJ_NAME="CstCli" build-${PLATFORM}
+	@make PROJ_NAME="CstCli" build-${PLATFORM}-prj
 
 cst-cli-debug: cst-cli-build
 	@make PROJ_NAME="CstCli" PROJ_NAME_FILE=${BUILD_DIR}/CstCli/CstCli debug-${PLATFORM}
@@ -121,7 +124,7 @@ cst-cli: cst-cli-build
 	@make PROJ_NAME="CstCli" run-${PLATFORM}
 
 mini-build:
-	@make PROJ_NAME="Mini" build-${PLATFORM}
+	@make PROJ_NAME="Mini" build-${PLATFORM}-prj
 
 mini-debug: mini-build
 	@make PROJ_NAME="Mini" debug-${PLATFORM}

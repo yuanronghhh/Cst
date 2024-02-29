@@ -65,8 +65,10 @@ SysObject* cst_text_dclone_i(SysObject *o) {
   ntext = CST_TEXT(n);
   otext = CST_TEXT(o);
 
-  ntext->playout = otext->playout ? pango_layout_copy(otext->playout) : NULL;
-  ntext->font_desc = otext->font_desc ? pango_font_description_copy(otext->font_desc) : NULL;
+  ntext->playout = otext->playout 
+    ? pango_layout_copy(otext->playout) : NULL;
+  ntext->font_desc = otext->font_desc 
+    ? pango_font_description_copy(otext->font_desc) : NULL;
 
   return n;
 }

@@ -7,8 +7,6 @@
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/CstComponent.h>
 
-static SysHashTable* g_module_ht;
-
 typedef struct _CstModuleContext CstModuleContext;
 
 struct _CstModuleContext {
@@ -17,6 +15,7 @@ struct _CstModuleContext {
   CstNode *v_pnode;
 };
 
+static SysHashTable* g_module_ht;
 
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
 

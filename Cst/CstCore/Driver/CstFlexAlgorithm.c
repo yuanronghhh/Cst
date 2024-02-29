@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstFlexAlgorithm.h>
 
-SYS_DEFINE_TYPE(CstFlexAlgorithm, cst_flex_algorithm, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstFlexAlgorithm, cst_flex_algorithm, CST_TYPE_ALGORITHM);
 
 
 /* object api */

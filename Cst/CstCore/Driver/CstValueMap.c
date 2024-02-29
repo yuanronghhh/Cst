@@ -21,7 +21,9 @@ SysInt cst_value_map_prop_data_type(CstValueMap *self) {
 }
 
 FREnv *cst_value_map_new_env(FREnv *parent) {
-  SysHashTable *ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+  SysHashTable *ht = sys_hash_table_new_full(sys_str_hash, 
+    (SysEqualFunc)sys_str_equal, NULL, 
+    (SysDestroyFunc)_sys_object_unref);
 
   return fr_env_new_I(ht, parent);
 }
@@ -30,7 +32,10 @@ FREnv *cst_value_map_new_env(FREnv *parent) {
 static void cst_value_map_init(CstValueMap *self) {
 }
 
-static void cst_value_map_construct(CstValueMap* self, const SysChar *key, SYS_VALUE_ENUM data_type) {
+static void cst_value_map_construct(CstValueMap* self, 
+  const SysChar *key, 
+  SYS_VALUE_ENUM data_type) {
+
   self->key = sys_strdup(key);
   self->data_type = data_type;
 }
@@ -66,7 +71,9 @@ SysInt cst_value_map_parse_type(const SysChar* type_str) {
   }
 }
 
-CstValueMap * cst_value_map_new_I(const SysChar * key, SYS_VALUE_ENUM data_type) {
+CstValueMap * cst_value_map_new_I(const SysChar * key, 
+  SYS_VALUE_ENUM data_type) {
+
   CstValueMap* map = cst_value_map_new();
 
   cst_value_map_construct(map, key, data_type);

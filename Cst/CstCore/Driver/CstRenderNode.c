@@ -220,7 +220,8 @@ void cst_render_node_setup(void) {
   sys_mutex_init(&gnode_meta_lock);
   cst_render_context_setup();
 
-  g_node_meta_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
+  g_node_meta_ht = sys_hash_table_new_full(sys_str_hash, 
+    (SysEqualFunc)sys_str_equal, sys_free, NULL);
 
   cst_render_node_set_meta("LBox", CST_TYPE_LBOX);
   cst_render_node_set_meta("LGrid", CST_TYPE_LGRID);

@@ -29,10 +29,12 @@ typedef struct _${TypeName} ${TypeName};
 typedef struct _${TypeName}Class ${TypeName}Class;
 
 struct _${TypeName}Class {
-  SysObjectClass parent;
+  ${ParentType}Class parent;
 };
 ${struct_str}
 SYS_API SysType ${type_name}_get_type(void);
+SYS_API ${TypeName} *${type_name}_new(void);
+
 SYS_API ${TypeName} *${type_name}_new_I(void);
 
 SYS_END_DECLS
@@ -268,7 +270,7 @@ class TemplateGenerator:
 
 template_struct = """
 struct _CstFlexAlgorithm {
-  SysObject parent;
+  CstAlgorithm parent;
 
   /* <private> */
 };

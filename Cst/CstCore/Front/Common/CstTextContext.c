@@ -9,7 +9,10 @@
 SYS_DEFINE_TYPE(CstTextContext, cst_text_context, CST_TYPE_RENDER_CONTEXT);
 
 
-static void cst_text_context_relayout_i(CstRenderContext *ctx, CstRenderNode *o, CstLayout *layout) {
+static void cst_text_context_relayout_i(
+  CstRenderContext *ctx, 
+  CstRenderNode *o, 
+  CstLayout *layout) {
   CstText *text = CST_TEXT(o);
 
   FRDraw *draw;

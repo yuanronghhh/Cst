@@ -18,6 +18,7 @@ struct _CstAlgorithm {
   SysObject parent;
 
   /* <private> */
+  void (*layout) (CstRenderNode *rnode, CstLayout *layout);
 };
 
 SYS_API SysType cst_algorithm_get_type(void);

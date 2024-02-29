@@ -146,6 +146,9 @@ typedef struct _CstDrawNodeClass CstDrawNodeClass;
 typedef struct _CstAlgorithm CstAlgorithm;
 typedef struct _CstAlgorithmClass CstAlgorithmClass;
 
+typedef struct _CstFlexAlgorithm CstFlexAlgorithm;
+typedef struct _CstFlexAlgorithmClass CstFlexAlgorithmClass;
+
 typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 typedef struct _CstRenderContext CstRenderContext;

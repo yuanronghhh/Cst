@@ -7,7 +7,7 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRenderContext.h>
-
+#include <CstCore/Driver/CstFlexAlgorithm.h>
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
@@ -113,6 +113,10 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   layer = self->box_layer;
 
   cst_render_realize(self, v_module);
+
+  CstAlgorithm* algorithm = cst_flex_algorithm_new();
+
+  cst_algorithm_layout(algorithm, layout);
 
   bnode = cst_box_layer_get_root(CST_BOX_LAYER(layer));
 

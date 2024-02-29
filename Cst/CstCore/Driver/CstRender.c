@@ -33,6 +33,7 @@ static void init_body_layout_info(CstBoxNode* bnode, CstLayout* layout) {
 
   cst_layout_get_buffer_size(layout, &width, &height);
   cst_render_node_set_prefer_size(rnode, width, height);
+  cst_render_node_set_size(rnode, width, height);
 }
 
 CstRender *cst_render_get_g_render(void) {

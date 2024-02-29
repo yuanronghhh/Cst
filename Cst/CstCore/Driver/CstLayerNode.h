@@ -25,6 +25,7 @@ struct _CstLayerNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayerNode* o, CstLayer* layer, CstNode* node);
+  void (*relayout_prepare) (CstLayerNode *o, CstLayout *layout);
   void (*relayout) (CstLayerNode *o, CstLayout *layout);
 };
 

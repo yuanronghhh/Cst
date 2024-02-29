@@ -91,33 +91,20 @@ class TemplateInfo:
     type_re = re.compile(r"^\s+([a-zA-Z0-9]+\s*\*{0,1})")
     prop_re = re.compile(r"([a-zA-Z0-9_]+)\s*;")
 
-    def __init__(self, struct_str, Prefix):
+    def __init__(self, struct_str):
         self.struct_str = struct_str
         self.tpl = struct_str.strip(" ").split("\n")
+
         self.struct = self.parse_struct(self.tpl[1])
-        Prefix = Prefix if Prefix else self.parse_Prefix(self.struct)
-
-        self.Fn = Prefix
-        self.FN = self.Fn.upper()
-        self.fn = "%s%s" % (self.Fn[0].lower(), self.Fn[1:])
-
-        self.Name = self.parse_struct_name(self.Fn, self.struct)
-        self.name = "%s%s" % (self.Name[0].lower(), self.Name[1:].lower())
-        self.NAME = self.Name.upper()
+        self.sep_struct = self.seperate_struct(self.struct)
         self.props = self.parse_props(self.tpl[2:-1])
 
         self.pinfo = self.parse_pinfo(self.tpl[2]);
         if not self.pinfo:
-            logging.error("struct not parse parent info: %s", self.name)
+            logging.error("struct not parse parent info: %s", self.tpl[2])
             sys.exit(-1)
         else:
-            self.p_Fn = self.parse_Prefix(self.pinfo.type)
-            self.p_FN = self.p_Fn.upper()
-            self.p_fn = "%s%s" % (self.p_Fn[0].lower(), self.p_Fn[1:])
-
-            self.p_Name = self.parse_struct_name(self.p_Fn, self.pinfo.type)
-            self.p_name = "%s%s" % (self.p_Name[0].lower(), self.p_Name[1:])
-            self.p_NAME = self.p_Name.upper()
+            self.p_sep_struct = self.seperate_struct(self.pinfo.type)
 
     def parse_prop(self, line):
         prop = Props()
@@ -164,62 +151,90 @@ class TemplateInfo:
     def parse_struct_name(self, prefix, struct):
         return struct.replace(prefix, "")
 
-    def parse_Prefix(self, struct_name):
-        p = 0
-        first = True
+    def is_satify(self, b, i, c, nc):
+        if not nc:
+            return True
 
-        for i in struct_name:
-            p += 1
-            if i > 'A' and i < 'Z':
-                if first:
-                    first = False
+        if i <= b:
+            return False
+
+        return True
+
+    def seperate_struct(self, struct_name):
+        b = 0
+        data = []
+        slen = len(struct_name)
+
+        for i in range(0, slen):
+            c = struct_name[i]
+
+            if i < slen-1:
+                if not c.isupper():
                     continue
-                else:
-                    break
 
-        return struct_name[0: p-1]
+            nc = None
+            if i+1 < slen:
+                nc = struct_name[i+1]
+
+            if self.is_satify(b, i, c, nc):
+                if nc:
+                    data.append(struct_name[b:i])
+                else:
+                    data.append(struct_name[b:i+1])
+
+                b = i
+
+        return data
+
+    def parse_Prefix(self, struct_name):
+        data = self.seperate_struct(struct_name)
+        if not data:
+            return None
+
+        return data[0]
 
     def get_TypeName(self):
-        return "%s%s" % (self.Fn, self.Name)
+        return "".join(self.sep_struct)
 
     def get_typename(self):
-        return "%s%s" % (self.Fn, self.name)
+        return "".join(self.sep_struct).lower()
 
     def get_type_name(self):
-        return "%s_%s" % (self.fn, self.name)
+        return "_".join(self.sep_struct).lower()
 
     def get_struct_str(self):
         return self.struct_str
 
     def get_TYPE_NAME(self):
-        return "%s_%s" % (self.FN, self.NAME)
+        return "_".join(self.sep_struct).upper()
 
     def get_PARENT_TYPE(self):
         if not self.pinfo:
             return ""
 
-        return "%s_%s" % (self.p_FN, self.p_NAME)
+        return "_".join(self.p_sep_struct).upper()
 
     def get_ParentType(self):
         if not self.pinfo:
             return ""
-        return "%s%s" % (self.p_Fn, self.p_Name)
+
+        return "".join(self.p_sep_struct)
 
     def get_FN_TYPE_NAME(self):
         if not self.pinfo:
             return ""
 
-        return "%s_TYPE_%s" % (self.FN, self.NAME)
+        return ("%s_TYPE_%s" % (self.sep_struct[0], "_".join(self.sep_struct[1:]))).upper()
 
     def get_TYPE_PARENT(self):
         if not self.pinfo:
             return ""
 
-        return "%s_TYPE_%s" % (self.p_FN, self.p_NAME)
+        return ("%s_TYPE_%s" % (self.p_sep_struct[0], "_".join(self.p_sep_struct[1:]))).upper()
 
 class TemplateGenerator:
-    def __init__(self, structStr, Prefix, dstDir):
-        self.sInfo = TemplateInfo(structStr, Prefix)
+    def __init__(self, structStr, dstDir):
+        self.sInfo = TemplateInfo(structStr)
         self.dstDir = dstDir
 
     def gen_with_tpl(self, tpl, info):
@@ -252,8 +267,8 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _CstDrawNode {
-  CstLayoutNode parent;
+struct _CstFlexAlgorithm {
+  SysObject parent;
 
   /* <private> */
 };
@@ -262,7 +277,7 @@ struct _CstDrawNode {
 def main():
     dst = Path("D:/GreyHound/PRIVATE/Git/Cst/Cst/CstCore/Driver").absolute().as_posix()
 
-    gen = TemplateGenerator(template_struct, None, dst)
+    gen = TemplateGenerator(template_struct, dst)
     gen.generate_file()
 
 if __name__ == '__main__':

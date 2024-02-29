@@ -150,6 +150,10 @@ static void cst_box_node_relayout_i(CstLayerNode* self, CstLayout* layout) {
   cst_box_node_relayout_r(CST_BOX_NODE(self), layout);
 }
 
+static void cst_box_node_relayout_prepare_i(CstLayerNode* self, CstLayout* layout) {
+  cst_box_node_relayout_r(CST_BOX_NODE(self), layout);
+}
+
 CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
   CstLayerNode *lnode = CST_LAYER_NODE(self);
   CstRenderNode *rnode = cst_layer_node_get_render_node(lnode);
@@ -259,6 +263,7 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
 
   ocls->dispose = cst_box_node_dispose;
   lcls->construct = cst_box_node_construct;
+  lcls->relayout_prepare = cst_box_node_relayout_prepare_i;
   lcls->relayout = cst_box_node_relayout_i;
 }
 

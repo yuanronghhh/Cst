@@ -94,6 +94,10 @@ set(SRC
 
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
+  ./Driver/CstAlgorithm.h
+  ./Driver/CstAlgorithm.c
+  ./Driver/CstFlexAlgorithm.h
+  ./Driver/CstFlexAlgorithm.c
   ./Driver/CstFlexLine.h
   ./Driver/CstFlexLine.c
   ./Driver/CstFlexItem.h

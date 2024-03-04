@@ -269,15 +269,15 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _CstFlexAlgorithm {
-  CstAlgorithm parent;
+struct _CstDrawNode {
+  SysObject parent;
 
   /* <private> */
 };
 """
 
 def main():
-    dst = Path("D:/GreyHound/PRIVATE/Git/Cst/Cst/CstCore/Driver").absolute().as_posix()
+    dst = Path("./Cst/CstCore/Driver").absolute().as_posix()
 
     gen = TemplateGenerator(template_struct, dst)
     gen.generate_file()

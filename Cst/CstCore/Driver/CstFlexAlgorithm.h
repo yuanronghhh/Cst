@@ -23,7 +23,7 @@ struct _CstFlexAlgorithm {
 SYS_API SysType cst_flex_algorithm_get_type(void);
 SYS_API CstFlexAlgorithm *cst_flex_algorithm_new(void);
 
-SYS_API CstFlexAlgorithm *cst_flex_algorithm_new_I(void);
+SYS_API CstFlexAlgorithm* cst_flex_algorithm_new_I(void);
 
 SYS_END_DECLS
 

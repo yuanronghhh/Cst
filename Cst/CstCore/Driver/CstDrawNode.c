@@ -1,37 +1,37 @@
 #include <CstCore/Driver/CstDrawNode.h>
 
-SYS_DEFINE_TYPE(CstDrawNode, cst_drawnode, CST_TYPE_LAYOUT_NODE);
+SYS_DEFINE_TYPE(CstDrawNode, cst_draw_node, SYS_TYPE_OBJECT);
 
 
 /* object api */
-static void cst_drawnode_construct(CstDrawNode *self) {
+static void cst_draw_node_construct(CstDrawNode *self) {
 
 }
 
-CstDrawNode* cst_drawnode_new(void) {
-  return sys_object_new(CST_TYPE_DRAWNODE, NULL);
+CstDrawNode* cst_draw_node_new(void) {
+  return sys_object_new(CST_TYPE_DRAW_NODE, NULL);
 }
 
-CstDrawNode *cst_drawnode_new_I(void) {
-  CstDrawNode *o = cst_drawnode_new();
+CstDrawNode *cst_draw_node_new_I(void) {
+  CstDrawNode *o = cst_draw_node_new();
 
-  cst_drawnode_construct(o);
+  cst_draw_node_construct(o);
 
   return o;
 }
 
-static void cst_drawnode_dispose(SysObject* o) {
-  CstDrawNode *self = CST_DRAWNODE(o);
+static void cst_draw_node_dispose(SysObject* o) {
+  CstDrawNode *self = CST_DRAW_NODE(o);
 
-  SYS_OBJECT_CLASS(cst_drawnode_parent_class)->dispose(o);
+  SYS_OBJECT_CLASS(cst_draw_node_parent_class)->dispose(o);
 }
 
-static void cst_drawnode_class_init(CstDrawNodeClass* cls) {
+static void cst_draw_node_class_init(CstDrawNodeClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  ocls->dispose = cst_drawnode_dispose;
+  ocls->dispose = cst_draw_node_dispose;
 }
 
-void cst_drawnode_init(CstDrawNode* self) {
+void cst_draw_node_init(CstDrawNode* self) {
 }
 

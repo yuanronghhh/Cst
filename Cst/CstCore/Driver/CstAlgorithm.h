@@ -12,17 +12,19 @@ SYS_BEGIN_DECLS
 
 struct _CstAlgorithmClass {
   SysObjectClass parent;
+
+  void (*layout) (CstAlgorithm *self, CstRenderNode* rnode, CstLayout* layout);
 };
 
 struct _CstAlgorithm {
   SysObject parent;
 
   /* <private> */
-  void (*layout) (CstRenderNode *rnode, CstLayout *layout);
 };
 
 SYS_API SysType cst_algorithm_get_type(void);
-SYS_API CstAlgorithm *cst_algorithm_new_I(void);
+SYS_API CstAlgorithm* cst_algorithm_new_I(void);
+SYS_API void cst_algorithm_layout(CstAlgorithm *self, CstRenderNode * rnode, CstLayout * layout);
 
 SYS_END_DECLS
 

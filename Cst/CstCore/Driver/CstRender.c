@@ -106,6 +106,8 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   FRRegion *region;
   CstLayout* layout;
   CstBoxNode* bnode;
+  CstAlgorithm* alg;
+
   FRRect rect = { 0 };
 
   region = render_create_region(self->window);
@@ -114,15 +116,14 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
 
   cst_render_realize(self, v_module);
 
-  CstAlgorithm* algorithm = cst_flex_algorithm_new();
-
-  cst_algorithm_layout(algorithm, layout);
+  alg = cst_flex_algorithm_new();
 
   bnode = cst_box_layer_get_root(CST_BOX_LAYER(layer));
 
   init_body_layout_info(bnode, layout);
   cst_layout_begin_layout(layout, layer);
 
+  cst_algorithm_layout(alg, bnode, layout);
   cst_layer_layout(layer, layout);
 
   cst_layer_render(layer, layout);

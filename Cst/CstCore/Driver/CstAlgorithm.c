@@ -3,6 +3,18 @@
 SYS_DEFINE_TYPE(CstAlgorithm, cst_algorithm, SYS_TYPE_OBJECT);
 
 
+void cst_algorithm_layout(CstAlgorithm *self, CstRenderNode * rnode, CstLayout * layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstAlgorithmClass *cls = CST_ALGORITHM_GET_CLASS(self);
+  sys_return_if_fail(cls->layout != NULL);
+
+  cls->layout(self, rnode, layout);
+}
+
+static void cst_algorithm_layout_i(CstAlgorithm* self, CstRenderNode * rnode, CstLayout * layout) {
+}
+
 /* object api */
 static void cst_algorithm_construct(CstAlgorithm *self) {
 
@@ -30,6 +42,8 @@ static void cst_algorithm_class_init(CstAlgorithmClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_algorithm_dispose;
+
+  cls->layout = cst_algorithm_layout_i;
 }
 
 void cst_algorithm_init(CstAlgorithm* self) {

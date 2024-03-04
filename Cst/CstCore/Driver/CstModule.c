@@ -238,11 +238,11 @@ FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_n
   return func;
 }
 
-CstLayerNode* cst_module_realize(CstModule *self, CstLayerNode *v_parent) {
+CstRenderNode* cst_module_realize(CstModule *self, CstRenderNode *v_parent) {
   sys_return_val_if_fail(self != NULL, false);
 
   CstComponent *comp = self->root_component;
-  CstLayerNode *lnode = cst_component_realize(comp, v_parent, NULL);
+  CstRenderNode *lnode = cst_component_realize(comp, v_parent, NULL);
 
   return lnode;
 }

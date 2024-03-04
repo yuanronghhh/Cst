@@ -17,16 +17,19 @@ struct _BoxLayerPass {
 SYS_DEFINE_TYPE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER);
 
 
-void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root) {
-  sys_return_if_fail(self != NULL);
+static void cst_box_layer_set_root_i (CstLayer *o, CstLayerNode *root) {
+  sys_return_if_fail(o != NULL);
+  CstBoxLayer *self = CST_BOX_LAYER(o);
+  CstBoxNode *bnode = CST_BOX_NODE(root);
 
-  self->tree = root;
+  self->tree = bnode;
 }
 
-CstBoxNode* cst_box_layer_get_root(CstBoxLayer* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+CstLayerNode* cst_box_layer_get_root_i(CstLayer* o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+  CstBoxLayer *self = CST_BOX_LAYER(o);
 
-  return self->tree;
+  return CST_LAYER_NODE(self->tree);
 }
 
 static SysBool box_layer_mark_one(CstBoxNode* boxnode, BoxLayerPass *ctx) {
@@ -89,15 +92,6 @@ static void cst_box_layer_render_i(CstLayer*o, CstLayout *layout) {
   cst_box_node_repaint_r(self->tree, layout);
 }
 
-static void cst_box_layer_layout_i(CstLayer* o, CstLayout* layout) {
-  CstBoxLayer* self = CST_BOX_LAYER(o);
-
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(self->tree != NULL);
-
-  cst_box_node_relayout_r(self->tree, layout);
-}
-
 void cst_box_layer_print_tree(CstBoxLayer *self) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->tree != NULL);
@@ -153,8 +147,9 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
 
   lcls->new_node = cst_box_layer_new_node_i;
   lcls->check = cst_box_layer_check_i;
-  lcls->layout = cst_box_layer_layout_i;
   lcls->render = cst_box_layer_render_i;
+  lcls->get_root = cst_box_layer_get_root_i;
+  lcls->set_root = cst_box_layer_set_root_i;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

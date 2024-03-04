@@ -25,6 +25,7 @@ struct _CstRender {
 
   CstLayer *box_layer;
   CstLayer *abs_layer;
+  CstRenderNode *body_rnode;
 };
 
 SysType cst_render_get_type(void);

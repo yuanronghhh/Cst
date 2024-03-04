@@ -4,16 +4,15 @@ SYS_DEFINE_TYPE(CstFlexAlgorithm, cst_flex_algorithm, CST_TYPE_ALGORITHM);
 
 
 /* object api */
-static void cst_flex_algorithm_construct(CstFlexAlgorithm *self) {
-
+static void cst_flex_algorithm_construct(CstAlgorithm *self) {
 }
 
-CstFlexAlgorithm* cst_flex_algorithm_new(void) {
+CstAlgorithm* cst_flex_algorithm_new(void) {
   return sys_object_new(CST_TYPE_FLEX_ALGORITHM, NULL);
 }
 
-CstFlexAlgorithm *cst_flex_algorithm_new_I(void) {
-  CstFlexAlgorithm *o = cst_flex_algorithm_new();
+CstAlgorithm* cst_flex_algorithm_new_I(void) {
+  CstAlgorithm *o = cst_flex_algorithm_new();
 
   cst_flex_algorithm_construct(o);
 

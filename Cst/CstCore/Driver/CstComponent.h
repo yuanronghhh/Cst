@@ -52,7 +52,7 @@ CstCssGroup *cst_component_get_css(CstComponent* self, const SysChar *key);
 
 CST_COMPONENT_BODY_ENUM cst_component_body_get_by_name(const SysChar* name);
 CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name);
-CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, CstComNode *com_node);
+CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode *v_parent, CstComNode *com_node);
 
 const SysChar* cst_component_get_id(CstComponent* self);
 void cst_component_set_id(CstComponent* self, const SysChar *id);

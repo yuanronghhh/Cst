@@ -250,7 +250,7 @@ void cst_node_print_r(CstNode* node, SysPointer user_data) {
   cst_node_handle_bfs_r(node, (CstNodeFunc)cst_node_print_node, user_data);
 }
 
-CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
+CstRenderNode* cst_node_realize(CstNode *self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstNodeClass* ncls = CST_NODE_GET_CLASS(self);
@@ -294,7 +294,7 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
   return rnode;
 }
 
-static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode *v_parent, CstComNode *com_node) {
+static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstLayer *layer;
@@ -302,15 +302,22 @@ static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode *v_parent, C
   CstNodeMap *nmap;
   CstRenderNode *rnode;
   CstLayerNode *lnode;
+  CstLayerNode *lpnode;
 
   layer = self->v_layer;
   sys_return_val_if_fail(layer != NULL, NULL);
-
-  lnode = cst_layer_new_node(layer, v_parent, self);
   rnode = cst_node_new_render_node(self);
 
+  lpnode = v_parent ? cst_render_node_get_layer_node(v_parent) : NULL;
+  lnode = cst_layer_new_node(layer, lpnode, self);
   cst_render_node_set_layer_node(rnode, lnode);
+
+  // layernode owned by layer
+  sys_object_ref(lnode);
+
+#if 0
   cst_layer_node_set_render_node(lnode, rnode);
+#endif
 
   sys_list_foreach(self->v_awatch_list, item) {
     awatch =  FR_AWATCH(item->data);
@@ -332,20 +339,20 @@ static CstLayerNode* cst_node_realize_i(CstNode* self, CstLayerNode *v_parent, C
     }
   }
 
-  return lnode;
+  return rnode;
 }
 
-CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node) {
+CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstLayerNode *lnode;
+  CstRenderNode *rnode;
   CstNode *co, *no;
-  lnode = cst_node_realize(self, v_parent, com_node);
+  rnode = cst_node_realize(self, v_parent, com_node);
 
   co = cst_node_get_children(self);
   if (co) {
 
-    cst_node_realize_r(co, lnode, com_node);
+    cst_node_realize_r(co, rnode, com_node);
   }
 
   no = cst_node_get_next(self);
@@ -354,7 +361,7 @@ CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNo
     cst_node_realize_r(no, v_parent, com_node);
   }
 
-  return lnode;
+  return rnode;
 }
 
 CstNode *cst_node_get_body_node(void) {

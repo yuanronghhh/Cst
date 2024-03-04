@@ -276,8 +276,6 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
 static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   FRDraw *draw = cst_layout_get_draw(layout);
   const FRRect *bound = cst_render_node_get_bound(rnode);
-  // const FRSInt4* m4 = cst_render_node_get_margin(rnode);
-  // const FRSInt4* p4 = cst_render_node_get_padding(rnode);
 
   fr_draw_fill_bound(draw, bound);
 }
@@ -297,6 +295,7 @@ static void cst_render_node_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->rctx, _sys_object_unref);
   sys_clear_pointer(&self->v_css_list, sys_harray_free);
+  sys_clear_pointer(&self->layer_node, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }

@@ -29,7 +29,6 @@ CstLayer* cst_box_layer_new(void);
 CstLayer * cst_box_layer_new_I(void);
 
 void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root);
-CstBoxNode* cst_box_layer_get_root(CstBoxLayer* self);
 void cst_box_layer_print_tree(CstBoxLayer* self);
 
 SYS_END_DECLS

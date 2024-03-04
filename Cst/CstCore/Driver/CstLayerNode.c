@@ -7,8 +7,6 @@
 SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
 
 
-static CstLayerNode *body_node = NULL;
-
 void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode * render_node) {
   sys_return_if_fail(self != NULL);
 
@@ -23,16 +21,6 @@ CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self) {
 
 void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout) {
   cst_render_node_paint_self(self->render_node, layout);
-}
-
-void cst_layer_node_set_body(CstLayerNode *body) {
-  body_node = body;
-}
-
-CstLayerNode* cst_layer_node_get_body(void) {
-  sys_return_val_if_fail(body_node != NULL, NULL);
-
-  return body_node;
 }
 
 void cst_layer_node_relayout(CstLayerNode * o, CstLayout * layout) {

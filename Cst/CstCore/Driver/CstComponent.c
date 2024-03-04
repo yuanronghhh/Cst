@@ -174,10 +174,10 @@ void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   fr_env_set(self->value_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
-CstLayerNode* cst_component_realize(CstComponent *self, CstLayerNode *v_parent, CstComNode *com_node) {
+CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstLayerNode *root = cst_node_realize_r(self->layout_node, v_parent, com_node);
+  CstRenderNode *root = cst_node_realize_r(self->layout_node, v_parent, com_node);
 
   return root;
 }

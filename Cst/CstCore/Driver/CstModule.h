@@ -46,7 +46,7 @@ void cst_module_teardown(void);
 
 FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
 
-CstLayerNode* cst_module_realize(CstModule* self, CstLayerNode* v_parent);
+CstRenderNode* cst_module_realize(CstModule* self, CstRenderNode* v_parent);
 
 void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);

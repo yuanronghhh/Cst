@@ -15,6 +15,25 @@ CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name) {
   return fr_get_type_by_name(CST_NODE_LAYER_NAMES, ARRAY_SIZE(CST_NODE_LAYER_NAMES), name);
 }
 
+CstLayerNode* cst_layer_get_root(CstLayer *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
+  sys_return_val_if_fail(lcls->get_root != NULL, NULL);
+
+  return lcls->get_root(self);
+}
+
+void cst_layer_set_root(CstLayer *self, CstLayerNode* root) {
+  sys_return_if_fail(self != NULL);
+
+  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
+  sys_return_if_fail(lcls->set_root != NULL);
+
+  lcls->set_root(self, root);
+}
+
+
 void cst_layer_set_name(CstLayer *self, const SysChar* name) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(name != NULL);
@@ -60,16 +79,6 @@ void cst_layer_relayout(CstLayer* self, CstLayout* layout) {
     lnode = node->data;
     cst_layer_node_relayout(lnode, layout);
   }
-}
-
-void cst_layer_layout (CstLayer *self, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
-  sys_return_if_fail(lcls->layout != NULL);
-
-  cst_layout_set_state(layout, CST_RENDER_STATE_LAYOUT);
-  lcls->layout(self, layout);
 }
 
 void cst_layer_render (CstLayer *self, CstLayout *layout) {

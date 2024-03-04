@@ -36,12 +36,15 @@ struct _CstRenderNode {
   CstRenderContext *rctx;
 
   CstNode* node;
+
+  CstLayerNode *lnode;
 };
 
 struct _CstRenderNodeClass {
   CstLayoutNodeClass parent;
 
   void (*construct) (CstRenderNode *self, CstNode* node);
+  void (*layout_self) (CstRenderNode* self, CstLayout* layout);
   void (*paint_self) (CstRenderNode* self, CstLayout* layout);
 };
 

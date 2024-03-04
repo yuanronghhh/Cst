@@ -24,17 +24,21 @@ struct _CstLayerClass {
 
   CstLayerNode* (*new_node) (CstLayer *layer, CstLayerNode *parent, CstNode *node);
   void (*check) (CstLayer *o, CstLayout *layout);
-  void (*layout) (CstLayer* o, CstLayout* layout);
   void (*render) (CstLayer* o, CstLayout* layout);
+  CstLayerNode* (*get_root) (CstLayer* layer);
+  void (*set_root) (CstLayer *o, CstLayerNode *root);
 };
 
 void cst_layer_check (CstLayer  *self, CstLayout *layout);
-void cst_layer_layout (CstLayer *self, CstLayout *layout);
 void cst_layer_render (CstLayer *self, CstLayout *layout);
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
-SYS_API void cst_layer_set_name(CstLayer *self, const SysChar* name);
+
+CstLayerNode* cst_layer_get_root(CstLayer *self);
+void cst_layer_set_root(CstLayer *self, CstLayerNode* root);
+
+void cst_layer_set_name(CstLayer *self, const SysChar* name);
 CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name);
 CstLayerNode* cst_layer_new_node(CstLayer *o, CstLayerNode *v_parent, CstNode *node);
 void cst_layer_queue_draw_node(CstLayer* self, CstLayerNode* lnode);

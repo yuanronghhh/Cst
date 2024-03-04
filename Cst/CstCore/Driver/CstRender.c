@@ -27,9 +27,8 @@ void cst_render_teardown(void) {
   sys_clear_pointer(&g_render, _sys_object_unref);
 }
 
-static void init_body_layout_info(CstBoxNode* bnode, CstLayout* layout) {
+static void init_body_layout_info(CstRenderNode* rnode, CstLayout* layout) {
   SysInt width, height;
-  CstRenderNode* rnode = cst_layer_node_get_render_node(CST_LAYER_NODE(bnode));
 
   cst_layout_get_buffer_size(layout, &width, &height);
   cst_render_node_set_prefer_size(rnode, width, height);
@@ -71,17 +70,18 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstLayer *layer;
-  CstBoxNode* bnode;
+  CstLayerNode* lnode;
+  CstRenderNode *rnode;
 
   layer = self->box_layer;
-  bnode = cst_box_layer_get_root(CST_BOX_LAYER(layer));
+  lnode = cst_layer_get_root(layer);
+  rnode = cst_layer_node_get_render_node(lnode);
 
   cst_layout_begin_layout(layout, layer);
 
-  init_body_layout_info(bnode, layout);
+  init_body_layout_info(rnode, layout);
 
   cst_layer_check(layer, layout);
-  cst_layer_layout(layer, layout);
   cst_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);
@@ -90,13 +90,15 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
 void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
-  CstLayerNode* body;
-  // FRRect bound = { 0 };
+  CstRenderNode* body;
+  CstLayerNode* lnode;
 
   body = cst_module_realize(v_module, NULL);
-  cst_layer_node_set_body(body);
+  lnode = cst_render_node_get_layer_node(body);
 
-  cst_box_layer_set_root(CST_BOX_LAYER(self->box_layer), CST_BOX_NODE(body));
+  self->body_rnode = body;
+
+  cst_layer_set_root(self->box_layer, lnode);
 }
 
 void cst_render_render(CstRender *self, CstModule *v_module) {
@@ -105,8 +107,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   CstLayer *layer;
   FRRegion *region;
   CstLayout* layout;
-  CstBoxNode* bnode;
-  CstAlgorithm* alg;
+  CstRenderNode *rnode;
 
   FRRect rect = { 0 };
 
@@ -115,15 +116,12 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   layer = self->box_layer;
 
   cst_render_realize(self, v_module);
+  rnode = self->body_rnode;
 
-  alg = cst_flex_algorithm_new();
+  init_body_layout_info(rnode, layout);
 
-  bnode = cst_box_layer_get_root(CST_BOX_LAYER(layer));
-
-  init_body_layout_info(bnode, layout);
   cst_layout_begin_layout(layout, layer);
 
-  cst_algorithm_layout(alg, bnode, layout);
   cst_layer_layout(layer, layout);
 
   cst_layer_render(layer, layout);

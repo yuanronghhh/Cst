@@ -112,11 +112,11 @@ CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt
   return NULL;
 }
 
-static CstLayerNode* cst_com_node_realize_i(CstNode* o, CstLayerNode *v_parent, CstComNode *com_node) {
+static CstRenderNode* cst_com_node_realize_i(CstNode* o, CstRenderNode *v_parent, CstComNode *com_node) {
   CstComNode *self = CST_COM_NODE(o);
-  CstLayerNode* lnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, v_parent, self);
+  CstRenderNode* rnode = CST_NODE_CLASS(cst_com_node_parent_class)->realize(o, v_parent, self);
 
-  return cst_component_realize(self->component, lnode, self);
+  return cst_component_realize(self->component, rnode, self);
 }
 
 static void cst_com_node_construct(CstComNode *self, CstComponent *comp) {

@@ -34,7 +34,7 @@ struct _CstNode {
 struct _CstNodeClass {
   FRNodeClass parent;
 
-  CstLayerNode* (*realize) (CstNode* self, CstLayerNode *v_parent, CstComNode *com_node);
+  CstRenderNode* (*realize) (CstNode* self, CstRenderNode *v_parent, CstComNode *com_node);
 };
 
 typedef FRNodeFunc CstNodeFunc;
@@ -64,8 +64,8 @@ CstNode *cst_node_new_body(void);
 SysBool cst_node_print_node(CstNode* node, SysPointer user_data);
 void cst_node_print_r(CstNode* node, SysPointer user_data);
 
-CstLayerNode* cst_node_realize(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
-CstLayerNode* cst_node_realize_r(CstNode *self, CstLayerNode *v_parent, CstComNode *com_node);
+CstRenderNode* cst_node_realize(CstNode *self, CstRenderNode *v_parent, CstComNode *com_node);
+CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *v_parent, CstComNode *com_node);
 
 void cst_node_set_rnode_type(CstNode *self, SysType rnode_type);
 SysType cst_node_get_rnode_type(CstNode *self);

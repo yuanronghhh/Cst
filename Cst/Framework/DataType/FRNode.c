@@ -57,6 +57,8 @@ FRNode* fr_node_insert_after (FRNode *parent, FRNode *sibling, FRNode *node) {
 
 void fr_node_set_last_child(FRNode *self, FRNode * last_child) {
   sys_return_if_fail(self != NULL);
+
+  sys_hnode_set_last_child(&self->tree, &last_child->tree);
 }
 
 FRNode * fr_node_get_last_child(FRNode *self) {

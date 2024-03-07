@@ -16,11 +16,17 @@ typedef struct _CstFlexItemInterface CstFlexItemInterface;
 struct _CstFlexItemInterface {
   SysTypeInterface parent;
 
-  SysInt (*get_width) (CstFlexItem *item);
+  const FRSInt4 *(*get_padding) (CstFlexItem *self);
+  const FRSInt4 *(*get_bound) (CstFlexItem *self);
+  SysInt (*get_width) (CstFlexItem *self);
+  SysInt (*get_direction) (CstFlexItem *self);
 };
 
 SysType cst_flex_item_get_type(void);
 SysInt cst_flex_item_get_width (CstFlexItem *item);
+const FRSInt4 *cst_flex_item_get_padding (CstFlexItem *item);
+const FRSInt4 *cst_flex_item_get_bound (CstFlexItem *item);
+SysInt cst_flex_item_get_direction (CstFlexItem *item);
 
 SYS_END_DECLS
 

@@ -113,6 +113,13 @@ typedef enum _CST_NODE_LAYER_ENUM {
   CST_NODE_LAYER_MASK = (1 << 4) - 1
 } CST_NODE_LAYER_ENUM;
 
+typedef enum _FLEX_DIRECTION_ENUM {
+  FLEX_DIRECTION_ROW,
+  FLEX_DIRECTION_ROW_REVERSE,
+  FLEX_DIRECTION_COLUMN,
+  FLEX_DIRECTION_COLUMN_REVERSE
+} FLEX_DIRECTION_ENUM;
+
 typedef struct _CstContext CstContext;
 
 typedef struct _CstApplication CstApplication;
@@ -146,15 +153,15 @@ typedef struct _CstDrawNodeClass CstDrawNodeClass;
 typedef struct _CstAlgorithm CstAlgorithm;
 typedef struct _CstAlgorithmClass CstAlgorithmClass;
 
-typedef struct _CstFlexAlgorithm CstFlexAlgorithm;
-typedef struct _CstFlexAlgorithmClass CstFlexAlgorithmClass;
-
 typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
 
+typedef struct _CstFlexAlgorithm CstFlexAlgorithm;
+typedef struct _CstFlexAlgorithmClass CstFlexAlgorithmClass;
 typedef struct _CstFlexLine CstFlexLine;
+typedef struct _CstFlexLineClass CstFlexLineClass;
 typedef struct _CstLayoutFlex CstLayoutFlex;
 typedef struct _CstLayoutFlexClass CstLayoutFlexClass;
 

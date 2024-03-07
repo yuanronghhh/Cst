@@ -70,6 +70,8 @@ void cst_render_node_teardown(void);
 
 #define cst_render_node_set_prefer_size(o, w, h) cst_render_context_set_prefer_size(CST_RENDER_NODE_RCTX(o), (w), (h))
 #define cst_render_node_get_prefer_size(o, w, h) cst_render_context_get_prefer_size(CST_RENDER_NODE_RCTX(o), (w), (h))
+#define cst_render_node_get_direction(o) cst_render_context_get_direction(CST_RENDER_NODE_RCTX(o))
+#define cst_render_node_set_direction(o, d) cst_render_context_set_direction(CST_RENDER_NODE_RCTX(o), d)
 #define cst_render_node_set_need_paint(o, v) cst_render_context_set_need_paint(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_need_layout(o, v) cst_render_context_set_need_layout(CST_RENDER_NODE_RCTX(o), v)
 #define cst_render_node_set_wrap(o, v) cst_render_context_set_wrap(CST_RENDER_NODE_RCTX(o), v)

@@ -220,13 +220,6 @@ void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode
   lcls->layout_self(self, rnode, layout);
 }
 
-/* flex layout algorithm*/
-static void layout_horizontal(CstRenderContext* ctx, CstRenderNode* rnode, CstLayout* layout) {
-  for (SysUInt i = 0; i < ctx->lines.len; i++) {
-    CstFlexLine* line = ctx->lines.pdata[i];
-  }
-}
-
 void cst_render_context_flex_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
   layout_horizontal(self, rnode, layout);
 }

@@ -7,7 +7,7 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRenderContext.h>
-#include <CstCore/Driver/CstFlexAlgorithm.h>
+#include <CstCore/Driver/Flex/CstFlexAlgorithm.h>
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
@@ -121,8 +121,6 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   init_body_layout_info(rnode, layout);
 
   cst_layout_begin_layout(layout, layer);
-
-  cst_layer_layout(layer, layout);
 
   cst_layer_render(layer, layout);
 

@@ -84,24 +84,25 @@ set(SRC
   ./Driver/Css/CstCssEnv.h
   ./Driver/Css/CstCss.c
   ./Driver/Css/CstCss.h
-
   ./Driver/Css/CstCssValue.c
   ./Driver/Css/CstCssValue.h
   ./Driver/Css/CstCssParser.c
   ./Driver/Css/CstCssParser.h
-
   ./Driver/Css/CstCssCore.h
+
+  ./Driver/Flex/CstFlexAlgorithm.h
+  ./Driver/Flex/CstFlexAlgorithm.c
+  ./Driver/Flex/CstFlexLine.h
+  ./Driver/Flex/CstFlexLine.c
+  ./Driver/Flex/CstFlexItem.h
+  ./Driver/Flex/CstFlexItem.c
+  ./Driver/Flex/CstFlexBox.h
+  ./Driver/Flex/CstFlexBox.c
 
   ./Driver/CstLayout.h
   ./Driver/CstLayout.c
   ./Driver/CstAlgorithm.h
   ./Driver/CstAlgorithm.c
-  ./Driver/CstFlexAlgorithm.h
-  ./Driver/CstFlexAlgorithm.c
-  ./Driver/CstFlexLine.h
-  ./Driver/CstFlexLine.c
-  ./Driver/CstFlexItem.h
-  ./Driver/CstFlexItem.c
   ./Driver/CstElement.h
   ./Driver/CstElement.c
   ./Driver/CstLayoutNode.h

@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstRenderContext.h>
 
-#include <CstCore/Driver/CstFlexLine.h>
+#include <CstCore/Driver/Flex/CstFlexLine.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/Css/CstCss.h>
@@ -108,7 +108,7 @@ SysBool cst_render_context_get_wrap(CstRenderContext *self) {
 }
 
 static SysPointer elem_copy(const CstFlexLine* src, SysPointer data) {
-  return (SysPointer)cst_flex_line_dclone(src);
+  return (SysPointer)sys_object_dclone(src);
 }
 
 SysObject* cst_render_context_dclone_i(SysObject* o) {
@@ -220,10 +220,6 @@ void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode
   lcls->layout_self(self, rnode, layout);
 }
 
-void cst_render_context_flex_i(CstRenderContext* self, CstRenderNode* rnode, CstLayout* layout) {
-  layout_horizontal(self, rnode, layout);
-}
-
 /* constraint */
 void cst_render_context_constraint_width(CstRenderContext* self, CstRenderContext* pctx, SysInt* width) {
 
@@ -289,7 +285,7 @@ static void cst_render_context_init(CstRenderContext *self) {
   self->need_relayout = true;
   self->need_repaint = true;
 
-  sys_harray_init_with_free_func(&self->lines, (SysDestroyFunc)cst_flex_line_free);
+  sys_harray_init_with_free_func(&self->lines, (SysDestroyFunc)_sys_object_unref);
 }
 
 static void cst_render_context_dispose(SysObject* o) {

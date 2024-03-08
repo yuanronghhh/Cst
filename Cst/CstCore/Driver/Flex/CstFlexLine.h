@@ -10,9 +10,6 @@ SYS_BEGIN_DECLS
 #define CST_FLEX_LINE_CLASS(o) ((CstFlexLineClass *)sys_class_cast_check(o, CST_TYPE_FLEX_LINE)
 #define CST_FLEX_LINE_GET_CLASS(o) sys_instance_get_class(o, CstFlexLineClass)
 
-typedef struct _CstFlexLine CstFlexLine;
-typedef struct _CstFlexLineClass CstFlexLineClass;
-
 struct _CstFlexLineClass {
   SysObjectClass parent;
 };

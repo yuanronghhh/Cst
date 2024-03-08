@@ -158,6 +158,9 @@ typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
 
+typedef struct _CstFlexItem CstFlexItem;
+typedef struct _CstFlexItemInterface CstFlexItemInterface;
+
 typedef struct _CstFlexAlgorithm CstFlexAlgorithm;
 typedef struct _CstFlexAlgorithmClass CstFlexAlgorithmClass;
 typedef struct _CstFlexLine CstFlexLine;

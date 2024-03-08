@@ -1,5 +1,7 @@
 #include <CstCore/Driver/Flex/CstFlexBox.h>
 
+#include <CstCore/Driver/Flex/CstFlexLine.h>
+
 SYS_DEFINE_TYPE(CstFlexBox, cst_flex_box, SYS_TYPE_OBJECT);
 
 
@@ -10,7 +12,7 @@ void layout_horizontal(CstFlexBox* self, CstLayout* layout, bool isRtl) {
     // measure
 
     // layout
-    for(SysUInt j = 0; j < line->pdata[i]; i++) {
+    for(SysUInt j = 0; j < line->items.len; i++) {
     }
   }
 }

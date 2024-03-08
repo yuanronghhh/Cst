@@ -4,7 +4,7 @@
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
-#include <CstCore/Driver/CstFlexItem.h>
+#include <CstCore/Driver/Flex/CstFlexItem.h>
 
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>

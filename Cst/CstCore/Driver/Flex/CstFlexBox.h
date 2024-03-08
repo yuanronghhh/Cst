@@ -22,6 +22,7 @@ struct _CstFlexBox {
 
   /* <private> */
   SysInt direction;
+  SysHArray lines;
 };
 
 SYS_API SysType cst_flex_box_get_type(void);

@@ -10,9 +10,6 @@ SYS_BEGIN_DECLS
 #define CST_FLEX_ITEM(o) ((CstFlexItem* )sys_object_cast_check(o, CST_TYPE_FLEX_ITEM))
 #define CST_FLEX_ITEM_GET_IFACE(o) ((CstFlexItemInterface *)SYS_TYPE_GET_INTERFACE(o, CST_TYPE_FLEX_ITEM))
 
-typedef struct _CstFlexItem CstFlexItem;
-typedef struct _CstFlexItemInterface CstFlexItemInterface;
-
 struct _CstFlexItemInterface {
   SysTypeInterface parent;
 

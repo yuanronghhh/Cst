@@ -45,7 +45,7 @@ static void cst_flex_line_class_init(CstFlexLineClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_flex_line_dispose;
-  ocls->dclone = cst_flex_line_dclone_i;
+  ocls->dclone = (SysCloneFunc)cst_flex_line_dclone_i;
 }
 
 void cst_flex_line_init(CstFlexLine* self) {

@@ -26,8 +26,7 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -B"$(BUILD_DIR)" \
                       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${VS_ENV}
 
-build-all: config
-	@make build-${PLATFORM}
+build-all: build-${PLATFORM}
 
 config:
 	@${CMAKE_CONFIG}
@@ -40,6 +39,9 @@ build-win32: config
 
 build-win32-prj: config
 	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} --target ${PROJ_NAME}
+
+build-linux-prj: config
+	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
 
 re-config:
 	@/usr/bin/rm -rf build/CMakeCache.txt
@@ -56,7 +58,7 @@ run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --servername GVIM3 --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	# @gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}
@@ -84,7 +86,7 @@ check-linux:
 		--show-reachable=no \
 		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
 		--suppressions=cst.supp  \
-		$(BUILD_DIR)/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
+		./build/Cst/System/TestSuite/SystemTestSuite ${ARGS}
 
 # -------------------- core start --------------------
 cst-test-build:
@@ -101,6 +103,9 @@ cst-test-check: cst-test-build
 
 system:
 	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}-prj
+
+system-debug: system
+	@gvim --servername GVIM3 --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:

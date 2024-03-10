@@ -70,19 +70,16 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
   CstLayer *layer;
-  CstLayerNode* lnode;
   CstRenderNode *rnode;
 
   layer = self->box_layer;
-  lnode = cst_layer_get_root(layer);
-  rnode = cst_layer_node_get_render_node(lnode);
+  rnode = self->body_rnode;
 
   cst_layout_begin_layout(layout, layer);
 
   init_body_layout_info(rnode, layout);
 
   cst_layer_check(layer, layout);
-  cst_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);
 }
@@ -109,8 +106,6 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   CstLayout* layout;
   CstRenderNode *rnode;
 
-  FRRect rect = { 0 };
-
   region = render_create_region(self->window);
   layout = cst_layout_new_I(self, region);
   layer = self->box_layer;
@@ -122,7 +117,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
 
   cst_layout_begin_layout(layout, layer);
 
-  cst_layer_render(layer, layout);
+  // cst_layer_render(layer, layout);
 
   cst_layout_end_layout(layout);
   fr_region_destroy(region);

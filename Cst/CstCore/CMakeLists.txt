@@ -103,8 +103,6 @@ set(SRC
   ./Driver/CstLayout.c
   ./Driver/CstAlgorithm.h
   ./Driver/CstAlgorithm.c
-  ./Driver/CstElement.h
-  ./Driver/CstElement.c
   ./Driver/CstLayoutNode.h
   ./Driver/CstLayoutNode.c
   ./Driver/CstRenderContext.h

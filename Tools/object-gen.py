@@ -235,9 +235,8 @@ class TemplateInfo:
         return ("%s_TYPE_%s" % (self.p_sep_struct[0], "_".join(self.p_sep_struct[1:]))).upper()
 
 class TemplateGenerator:
-    def __init__(self, structStr, dstDir):
+    def __init__(self, structStr):
         self.sInfo = TemplateInfo(structStr)
-        self.dstDir = dstDir
 
     def gen_with_tpl(self, tpl, info):
         r = tpl.replace("${TYPE_NAME}", info.get_TYPE_NAME())\
@@ -252,10 +251,10 @@ class TemplateGenerator:
 
         return r
 
-    def generate_file(self):
+    def generate_file(self, dstDir):
         info = self.sInfo
-        h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
-        c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
+        h_file = dstDir + "/" + info.get_TypeName() + ".h"
+        c_file = dstDir + "/" + info.get_TypeName() + ".c"
 
         result = self.gen_with_tpl(h_template, info)
         fp = open(h_file, "w+")
@@ -267,20 +266,37 @@ class TemplateGenerator:
         fp.write(result)
         fp.close()
 
+    def generate_field(self):
+        props = self.sInfo.props
+        info = self.sInfo
+
+        #define sys_object_add_property(TYPE, TypeName, full_type, field_type, field_name) \
+        tpl = "sys_object_add_property(%s, %s, \"%s\", -1, %s);"
+
+        for p in props:
+            print(tpl % (
+                info.get_FN_TYPE_NAME(),
+                info.get_TypeName(),
+                p.type,
+                p.name))
+
 
 template_struct = """
-struct _CstDrawNode {
+struct _SysTestImpl {
   SysObject parent;
-
-  /* <private> */
+  /* < private > */
+  SysInt width;
+  SysInt height;
 };
 """
 
 def main():
-    dst = Path("./Cst/CstCore/Driver").absolute().as_posix()
+    # /home/greyhound/Git/Cst/Cst/System/DataTypes/SysTypes.c
+    dst = Path("./Cst/System/DataTypes").absolute().as_posix()
 
-    gen = TemplateGenerator(template_struct, dst)
-    gen.generate_file()
+    gen = TemplateGenerator(template_struct)
+    gen.generate_field()
+    # gen.generate_file(dst)
 
 if __name__ == '__main__':
     main()

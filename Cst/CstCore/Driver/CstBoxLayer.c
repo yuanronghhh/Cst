@@ -32,18 +32,15 @@ CstLayerNode* cst_box_layer_get_root_i(CstLayer* o) {
   return CST_LAYER_NODE(self->tree);
 }
 
-static SysBool box_layer_mark_one(CstBoxNode* boxnode, BoxLayerPass *ctx) {
-  CstRenderNode* rnode;
-  CstLayerNode *lnode;
+static SysBool box_layer_mark_one(CstRenderNode* rnode, BoxLayerPass* ctx) {
+  CstLayerNode* lnode;
   CstLayer* self;
   FRRegion* region;
-  const FRRect *bound;
+  const FRRect* bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;
-  lnode = CST_LAYER_NODE(boxnode);
-
-  rnode = cst_layer_node_get_render_node(lnode);
+  lnode = rnode->layer_node;
   bound = cst_render_node_get_bound(rnode);
 
   sys_return_val_if_fail(region != NULL, false);
@@ -82,14 +79,6 @@ static void cst_box_layer_check_i(CstLayer *o, CstLayout *layout) {
   BoxLayerPass ctx = { o, region };
 
   cst_box_node_bfs_handle(self->tree, (CstBoxNodeFunc)box_layer_mark_one, &ctx);
-}
-
-static void cst_box_layer_render_i(CstLayer*o, CstLayout *layout) {
-  CstBoxLayer* self = CST_BOX_LAYER(o);
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(self->tree != NULL);
-
-  cst_box_node_repaint_r(self->tree, layout);
 }
 
 void cst_box_layer_print_tree(CstBoxLayer *self) {
@@ -147,7 +136,6 @@ static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
 
   lcls->new_node = cst_box_layer_new_node_i;
   lcls->check = cst_box_layer_check_i;
-  lcls->render = cst_box_layer_render_i;
   lcls->get_root = cst_box_layer_get_root_i;
   lcls->set_root = cst_box_layer_set_root_i;
 }

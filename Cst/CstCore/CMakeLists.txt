@@ -55,11 +55,15 @@ set(SRC
   ./Driver/CstContext.h
   ./Driver/CstRender.c
   ./Driver/CstRender.h
+  ./Driver/CstSurface.c
+  ./Driver/CstSurface.h
 
   ./Driver/CstLayer.c
   ./Driver/CstLayer.h
   ./Driver/CstLayerNode.c
   ./Driver/CstLayerNode.h
+  ./Driver/CstILayerNode.c
+  ./Driver/CstILayerNode.h
   ./Driver/CstBoxLayer.c
   ./Driver/CstBoxLayer.h
   ./Driver/CstAbsLayer.c

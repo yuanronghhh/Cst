@@ -19,20 +19,14 @@ struct _CstLayout {
   /* CST_RENDER_STATE_ENUM */
   SysInt state;
 
-  /* CST_RENDER_MODE_ENUM */
-  SysInt mode;
-
-  /* CST_RENDER_STAGE_ENUM */
-  SysInt stage;
-
   /* CST_LAYER_ENUM */
   CstLayer* layer;
-
   FRRegion *region;
-
-  CstRender* render;
-
   FRDraw *draw;
+  FRWindow* window;
+
+  /* CstSurface */
+  SysHArray surfaces;
 };
 
 struct _CstLayoutClass {
@@ -41,27 +35,21 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(CstRender *render, FRRegion *region);
+CstLayout *cst_layout_new_I(FRWindow *window, FRRegion *region);
 
 SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FRRegion *cst_layout_get_region(CstLayout* self);
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
 
-void cst_layout_begin_layout(CstLayout* self, CstLayer *layer);
+void cst_layout_begin_layout(CstLayout* self);
 void cst_layout_end_layout(CstLayout * self);
-
-void cst_layout_begin_node(CstLayout* self);
-void cst_layout_end_node(CstLayout* self);
 
 void cst_layout_set_state(CstLayout *self, CST_RENDER_STATE_ENUM state);
 CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
 
 void cst_layout_set_layer(CstLayout *self, CstLayer * layer);
 CstLayer * cst_layout_get_layer(CstLayout *self);
-
-void cst_layout_set_render(CstLayout *self, CstRender * render);
-CstRender * cst_layout_get_render(CstLayout *self);
 
 void cst_layout_set_draw(CstLayout *self, FRDraw * draw);
 FRDraw * cst_layout_get_draw(CstLayout *self);

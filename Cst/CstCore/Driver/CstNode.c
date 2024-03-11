@@ -12,6 +12,7 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
+#include <CstCore/Driver/CstSurface.h>
 
 
 
@@ -294,10 +295,24 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
   return rnode;
 }
 
+void cst_node_set_surface_and_layer(CstNode* self,
+  CstLayerNode* parent,
+  SysInt surf_idx,
+  SysInt layer_idx) {
+
+  CstRender* render = cst_render_get_g_render();
+  CstSurface* surface = cst_render_get_surface(render, surf_idx);
+  if (surface == NULL) { return; }
+
+  CstLayer* layer = cst_surface_get_layer_by_type(render, layer_idx);
+  if (layer == NULL) { return; }
+
+}
+
 static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  CstLayer *layer;
+  SysInt layer;
   FRAWatch *awatch;
   CstNodeMap *nmap;
   CstRenderNode *rnode;

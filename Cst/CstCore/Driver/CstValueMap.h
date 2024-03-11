@@ -17,7 +17,7 @@ struct _CstValueMap {
   SysObject parent;
 
   /* <private> */
-  SysChar* key;
+  SysChar *key;
 
   /* SYS_VALUE_ENUM */
   SysInt data_type;

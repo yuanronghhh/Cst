@@ -81,16 +81,6 @@ typedef enum _CST_RENDER_STATE_ENUM {
   CST_RENDER_STATE_REPAINT = 1 << 3,
 } CST_RENDER_STATE_ENUM;
 
-typedef enum _CST_RENDER_STAGE_ENUM {
-  CST_RENDER_STAGE_FIRST = 1 << 0,
-  CST_RENDER_STAGE_SECOND = 1 << 1,
-} CST_RENDER_STAGE_ENUM;
-
-typedef enum _CST_RENDER_MODE_ENUM {
-  CST_RENDER_MODE_OUT_TO_IN = 1 << 0,
-  CST_RENDER_MODE_IN_TO_OUT = 1 << 1,
-} CST_RENDER_MODE_ENUM;
-
 typedef enum _CST_DIRTY_STATE_ENUM {
   CST_DIRTY_RELAYOUT = 1 << 0,
   CST_DIRTY_REREPAINT = 1 << 1,
@@ -135,12 +125,18 @@ typedef struct _CstModuleClass CstModuleClass;
 typedef struct _CstRender CstRender;
 typedef struct _CstRenderClass CstRenderClass;
 
+typedef struct _CstILayerNode CstILayerNode;
+typedef struct _CstILayerNodeInterface CstILayerNodeInterface;
+
 typedef struct _CstLayerNode CstLayerNode;
 typedef struct _CstLayerNodeClass CstLayerNodeClass;
+
 typedef struct _CstLayer CstLayer;
 typedef struct _CstLayerClass CstLayerClass;
+
 typedef struct _CstBoxLayer CstBoxLayer;
 typedef struct _CstBoxLayerClass CstBoxLayerClass;
+
 typedef struct _CstAbsLayer CstAbsLayer;
 typedef struct _CstAbsLayerClass CstAbsLayerClass;
 
@@ -170,6 +166,9 @@ typedef struct _CstLayoutFlexClass CstLayoutFlexClass;
 
 typedef struct _CstLayout CstLayout;
 typedef struct _CstLayoutClass CstLayoutClass;
+
+typedef struct _CstSurface CstSurface;
+typedef struct _CstSurfaceClass CstSurfaceClass;
 
 typedef struct _CstRenderNode CstRenderNode;
 typedef struct _CstRenderNodeClass CstRenderNodeClass;

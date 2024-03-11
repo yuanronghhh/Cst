@@ -72,25 +72,6 @@ void cst_layer_check (CstLayer *self, CstLayout *layout) {
   lcls->check(self, layout);
 }
 
-void cst_layer_relayout(CstLayer* self, CstLayout* layout) {
-  CstLayerNode* lnode;
-
-  sys_queue_foreach(self->draw_queue, node) {
-    lnode = node->data;
-    cst_layer_node_relayout(lnode, layout);
-  }
-}
-
-void cst_layer_render (CstLayer *self, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
-  sys_return_if_fail(lcls->render != NULL);
-
-  cst_layout_set_state(layout, CST_RENDER_STATE_PAINT);
-  lcls->render(self, layout);
-}
-
 /* object api */
 static void cst_layer_dispose(SysObject* o) {
   CstLayer *self = CST_LAYER(o);

@@ -2,10 +2,12 @@
 
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
+#include <CstCore/Driver/Flex/CstFlexItem.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
-#include <CstCore/Driver/Flex/CstFlexItem.h>
-
+#include <CstCore/Driver/CstLayer.h>
+#include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstSurface.h>
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLGrid.h>
@@ -20,11 +22,14 @@
 static SysMutex gnode_meta_lock;
 static SysHashTable* g_node_meta_ht = NULL;
 
-void cst_render_node_flex_item(CstFlexItemInterface* item);
+void cst_render_node_flex_item_imp(CstFlexItemInterface* item);
+void cst_render_node_layer_imp(CstILayerNodeInterface* item);
+
 
 SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
-  SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item));
-
+  SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item_imp)
+  SYS_IMPLEMENT_INTERFACE(CST_TYPE_LAYER, cst_render_node_layer_imp)
+);
 
 void cst_render_node_set_rctx(CstRenderNode *self, CstRenderContext* rctx) {
   sys_return_if_fail(self != NULL);
@@ -44,9 +49,12 @@ SysInt render_node_get_width (CstFlexItem *item) {
   return cst_render_node_get_width(self);
 }
 
-void cst_render_node_flex_item(CstFlexItemInterface *iface) {
+void cst_render_node_flex_item_imp(CstFlexItemInterface *iface) {
 
   iface->get_width = render_node_get_width;
+}
+
+void cst_render_node_layer_imp(CstILayerNodeInterface* iface) {
 }
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
@@ -289,6 +297,18 @@ void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {
   lcls->paint_self(self, layout);
 }
 
+void cst_render_node_set_algorithm(CstRenderNode *self, CstAlgorithm * algorithm) {
+  sys_return_if_fail(self != NULL);
+
+  self->algorithm = algorithm;
+}
+
+CstAlgorithm * cst_render_node_get_algorithm(CstRenderNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->algorithm;
+}
+
 /* object api */
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
@@ -300,11 +320,12 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-void cst_render_node_construct(CstRenderNode* self, CstNode *node) {
+void cst_render_node_construct(CstRenderNode* self, CstLayerNode *lnode, CstNode *node) {
   self->node = node;
 
   self->id = sys_strdup(cst_node_get_id(node));
   self->name = sys_strdup(cst_node_get_name(node));
+  self->lnode = lnode;
 
   sys_object_ref(node);
 }
@@ -313,10 +334,10 @@ CstRenderNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstNode *node) {
+CstRenderNode *cst_render_node_new_I(CstLayerNode *lnode, CstNode *node) {
   CstRenderNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, node);
+  cst_render_node_construct(o, lnode,  node);
 
   return o;
 }

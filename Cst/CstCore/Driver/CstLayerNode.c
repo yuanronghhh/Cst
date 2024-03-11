@@ -2,29 +2,21 @@
 
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstILayerNode.h>
+
+static void cst_ilayer_node_imp(CstILayerNodeInterface* iface);
+
+SYS_DEFINE_WITH_CODE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT,
+    SYS_IMPLEMENT_INTERFACE(CST_TYPE_ILAYER_NODE, cst_ilayer_node_imp));
 
 
-SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
-
+static void cst_ilayer_node_imp(CstILayerNodeInterface* iface) {
+}
 
 CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return CST_RENDER_NODE(self);
-}
-
-void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout) {
-}
-
-void cst_layer_node_relayout(CstLayerNode * o, CstLayout * layout) {
-  CstLayerNodeClass* cls = CST_LAYER_NODE_GET_CLASS(o);
-
-  sys_return_if_fail(cls->relayout != NULL);
-
-  cls->relayout(o, layout);
-}
-
-static void cst_layer_node_relayout_i(CstLayerNode * o, CstLayout * layout) {
 }
 
 /* object api */
@@ -58,7 +50,6 @@ static void cst_layer_node_class_init(CstLayerNodeClass* cls) {
 
   ocls->dispose = cst_layer_node_dispose;
   cls->construct = cst_layer_node_construct;
-  cls->relayout = cst_layer_node_relayout_i;
 }
 
 static void cst_layer_node_init(CstLayerNode *self) {

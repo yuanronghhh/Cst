@@ -38,6 +38,9 @@ struct _CstRenderNode {
   CstNode* node;
 
   CstLayerNode *lnode;
+
+  /* CstAlgorithm ref */
+  CstAlgorithm* algorithm;
 };
 
 struct _CstRenderNodeClass {
@@ -50,8 +53,8 @@ struct _CstRenderNodeClass {
 
 SysType cst_render_node_get_type(void);
 CstRenderNode *cst_render_node_new(void);
-CstRenderNode *cst_render_node_new_I(CstNode *node);
-void cst_render_node_construct (CstRenderNode *self, CstNode* node);
+CstRenderNode *cst_render_node_new_I(CstLayerNode *lnode, CstNode *node);
+void cst_render_node_construct (CstRenderNode *self, CstLayerNode* lnode, CstNode* node);
 
 void cst_render_node_set_meta(const SysChar* name, SysType stype);
 SysType cst_render_node_get_meta(const SysChar* name);
@@ -113,6 +116,9 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self);
 
 void cst_render_node_set_rctx(CstRenderNode *self, CstRenderContext* rctx);
 CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self);
+
+void cst_render_node_set_algorithm(CstRenderNode *self, CstAlgorithm * algorithm);
+CstAlgorithm * cst_render_node_get_algorithm(CstRenderNode *self);
 
 SYS_END_DECLS
 

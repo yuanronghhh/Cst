@@ -1,11 +1,13 @@
 #include <CstCore/Driver/Css/CstCssPair.h>
+
 #include <CstCore/Front/Common/CstText.h>
-#include <CstCore/Driver/Css/CstCssValue.h>
-#include <CstCore/Driver/Css/CstCssClosure.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstSurface.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/Css/CstCssValue.h>
+#include <CstCore/Driver/Css/CstCssClosure.h>
 #include <CstCore/Driver/Css/CstCssNode.h>
 
 
@@ -102,14 +104,13 @@ void cst_css_pair_set_layer(CstRenderNode* rnode, CstLayout *layout, SysPointer 
   sys_return_if_fail(self != NULL);
 
   CstLayer *tolayer;
-  CstRender *v_render;
+  CstSurface *surface;
   SysInt v;
 
   v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
-
-  v_render = cst_layout_get_render(layout);
-  tolayer = cst_render_get_layer_by_type(v_render, v);
+  
+  tolayer = cst_render_get_layer_by_type(surface, v);
 
   cst_render_node_change_to_layer(rnode, tolayer);
 }

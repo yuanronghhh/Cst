@@ -86,7 +86,7 @@ void cst_box_node_repaint_r(CstBoxNode* self, CstLayout* layout) {
 
   cst_render_node_render_enter(rnode, layout);
 
-  cst_layer_node_repaint_node(lnode, layout);
+  // cst_layer_node_repaint_node(lnode, layout);
   bnode = (CstLayerNode *)cst_box_node_children(self);
   if(bnode) {
 
@@ -96,7 +96,7 @@ void cst_box_node_repaint_r(CstBoxNode* self, CstLayout* layout) {
   bnode = (CstLayerNode *)cst_box_node_next(self);
   if(bnode) {
 
-    cst_layer_node_repaint_node(bnode, layout);
+    // cst_layer_node_repaint_node(bnode, layout);
   }
 
   cst_render_node_set_need_paint(rnode, false);
@@ -144,14 +144,6 @@ void cst_box_node_relayout_r(CstBoxNode* self, CstLayout* layout) {
 
   cst_render_node_render_leave(rnode, layout);
   cst_render_node_set_need_layout(rnode, false);
-}
-
-static void cst_box_node_relayout_i(CstLayerNode* self, CstLayout* layout) {
-  cst_box_node_relayout_r(CST_BOX_NODE(self), layout);
-}
-
-static void cst_box_node_relayout_prepare_i(CstLayerNode* self, CstLayout* layout) {
-  cst_box_node_relayout_r(CST_BOX_NODE(self), layout);
 }
 
 CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
@@ -263,8 +255,6 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
 
   ocls->dispose = cst_box_node_dispose;
   lcls->construct = cst_box_node_construct;
-  lcls->relayout_prepare = cst_box_node_relayout_prepare_i;
-  lcls->relayout = cst_box_node_relayout_i;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

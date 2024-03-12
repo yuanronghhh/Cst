@@ -266,37 +266,66 @@ class TemplateGenerator:
         fp.write(result)
         fp.close()
 
+    def match_type(self, type_str):
+        internal_type = {
+                         "SysInt": "SYS_TYPE_INT",
+                         "SysDouble": "SYS_TYPE_DOUBLE",
+                         "SysChar *": "SYS_TYPE_STRING",
+                         "SysChar*": "SYS_TYPE_STRING",
+                         "SysObject *": "SYS_TYPE_OBJECT",
+                         "SysBool": "SYS_TYPE_BOOL",
+                         "SysFloat": "SYS_TYPE_FLOAT",
+                         "SysPointer": "SYS_TYPE_POINTER"
+                         }
+
+        if type_str.endswith("Func"):
+            return "SYS_TYPE_POINTER"
+
+        if type_str in internal_type:
+            return internal_type[type_str]
+
+        if type_str.endswith("*"):
+            return "SYS_TYPE_OBJECT?"
+
+        return -1
+
     def generate_field(self):
         props = self.sInfo.props
         info = self.sInfo
 
         #define sys_object_add_property(TYPE, TypeName, full_type, field_type, field_name) \
-        tpl = "sys_object_add_property(%s, %s, \"%s\", -1, %s);"
+        tpl = "sys_object_add_property(%s, %s, \"%s\", %s, %s);"
 
         for p in props:
+            if p.name == "parent" or p.name == "unowned":
+                continue
+
+            data_type = self.match_type(p.type)
+
             print(tpl % (
                 info.get_FN_TYPE_NAME(),
                 info.get_TypeName(),
                 p.type,
+                data_type,
                 p.name))
 
 
 template_struct = """
-struct _SysTestImpl {
+struct _CstSurface {
   SysObject parent;
-  /* < private > */
-  SysInt width;
-  SysInt height;
+
+  /* <private> */
+  FRSurface *surface;
 };
 """
 
 def main():
     # /home/greyhound/Git/Cst/Cst/System/DataTypes/SysTypes.c
-    dst = Path("./Cst/System/DataTypes").absolute().as_posix()
+    dst = Path("./Cst/CstCore/Driver").absolute().as_posix()
 
     gen = TemplateGenerator(template_struct)
-    gen.generate_field()
-    # gen.generate_file(dst)
+    # gen.generate_field()
+    gen.generate_file(dst)
 
 if __name__ == '__main__':
     main()

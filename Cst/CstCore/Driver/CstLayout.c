@@ -11,14 +11,13 @@ CstLayout* cst_layout_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, CstRender *render, FRRegion *region) {
+static void cst_layout_construct(CstLayout* self, FRWindow * window, FRRegion *region) {
   FRWindow *window;
 
   self->state = 0;
   self->region = region;
-  self->render = render;
 
-  window = cst_render_get_default_window(render);
+  self->window = window;
   self->draw = fr_draw_new_I(window);
 }
 
@@ -28,10 +27,10 @@ SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   return self->state & state;
 }
 
-CstLayout *cst_layout_new_I(CstRender *render, FRRegion *region) {
+CstLayout *cst_layout_new_I(FRWindow *window, FRRegion *region) {
   CstLayout *o = cst_layout_new();
 
-  cst_layout_construct(o, render, region);
+  cst_layout_construct(o, window, region);
 
   return o;
 }
@@ -56,9 +55,9 @@ FRDraw * cst_layout_get_draw(CstLayout *self) {
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
-  FRWindow *window = cst_render_get_default_window(self->render);
+  sys_return_if_fail(self->window != NULL);
 
-  fr_window_get_framebuffer_size(window, width, height);
+  fr_window_get_framebuffer_size(self->window, width, height);
 }
 
 void cst_layout_set_state(CstLayout *self, CST_RENDER_STATE_ENUM state) {
@@ -85,23 +84,8 @@ CstLayer * cst_layout_get_layer(CstLayout *self) {
   return self->layer;
 }
 
-void cst_layout_set_render(CstLayout *self, CstRender * render) {
-  sys_return_if_fail(self != NULL);
-
-  self->render = render;
-}
-
-CstRender * cst_layout_get_render(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->render;
-}
-
-void cst_layout_begin_layout(CstLayout* self, CstLayer *layer) {
+void cst_layout_begin_layout(CstLayout* self) {
   self->state = CST_RENDER_STATE_LAYOUT;
-  self->stage = CST_RENDER_STAGE_FIRST;
-  self->mode = CST_RENDER_MODE_OUT_TO_IN;
-  self->layer = layer;
 
   fr_draw_frame_begin(self->draw, self->region);
 }
@@ -109,14 +93,6 @@ void cst_layout_begin_layout(CstLayout* self, CstLayer *layer) {
 void cst_layout_end_layout(CstLayout* self) {
 
   fr_draw_frame_end(self->draw, self->region);
-}
-
-void cst_layout_begin_node(CstLayout* self) {
-
-}
-
-void cst_layout_end_node(CstLayout* self) {
-
 }
 
 /* object api */

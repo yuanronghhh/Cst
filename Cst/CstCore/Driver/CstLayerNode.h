@@ -15,26 +15,19 @@ struct _CstLayerNode {
   SysObject parent;
 
   /* < private > */
-  CstLayer *layer;
-
-  // CstNode *node;
-  // CstRenderNode *render_node;
+  CstLayer* layer;
+  CstSurface *surface;
 };
 
 struct _CstLayerNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayerNode* o, CstLayer* layer, CstNode* node);
-  void (*relayout_prepare) (CstLayerNode *o, CstLayout *layout);
-  void (*relayout) (CstLayerNode *o, CstLayout *layout);
 };
 
 SysType cst_layer_node_get_type(void);
 CstLayerNode *cst_layer_node_new(void);
 CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);
-
-void cst_layer_node_repaint_node (CstLayerNode *self, CstLayout *layout);
-void cst_layer_node_relayout(CstLayerNode * o, CstLayout * layout);
 
 CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self);
 

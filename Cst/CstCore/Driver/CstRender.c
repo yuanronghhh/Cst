@@ -3,6 +3,7 @@
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstSurface.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
@@ -33,6 +34,18 @@ static void init_body_layout_info(CstRenderNode* rnode, CstLayout* layout) {
   cst_layout_get_buffer_size(layout, &width, &height);
   cst_render_node_set_prefer_size(rnode, width, height);
   cst_render_node_set_size(rnode, width, height);
+}
+
+CstSurface *cst_render_get_surface(CstRender *self, SysInt surf_idx) {
+  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(surf_idx > 0, NULL);
+
+  if (surf_idx >= self->surfaces.len) {
+    sys_warning_N("surface index not correct: %d", surf_idx);
+    return NULL;
+  }
+
+  return self->surfaces.pdata[surf_idx];
 }
 
 CstRender *cst_render_get_g_render(void) {
@@ -66,21 +79,25 @@ FRRegion *render_create_region(FRWindow *window) {
   return region;
 }
 
+static void render_layout_surfaces(SysHArray *surfs, CstRenderNode *rnode, CstLayout *layout) {
+  for (SysUInt i = 0; i < surfs->len; i++) {
+    CstSurface *s = surfs->pdata[i];
+
+    cst_surface_layout_r(s, rnode, layout);
+  }
+}
+
+
 void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  CstLayer *layer;
   CstRenderNode *rnode;
 
-  layer = self->box_layer;
   rnode = self->body_rnode;
 
-  cst_layout_begin_layout(layout, layer);
-
+  cst_layout_begin_layout(layout);
   init_body_layout_info(rnode, layout);
-
-  cst_layer_check(layer, layout);
-
+  render_layout_surfaces(&self->surfaces, rnode, layout);
   cst_layout_end_layout(layout);
 }
 
@@ -90,12 +107,10 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
   CstRenderNode* body;
   CstLayerNode* lnode;
 
-  body = cst_module_realize(v_module, NULL);
+  cst_module_realize(self, v_module, NULL);
   lnode = cst_render_node_get_layer_node(body);
 
   self->body_rnode = body;
-
-  cst_layer_set_root(self->box_layer, lnode);
 }
 
 void cst_render_render(CstRender *self, CstModule *v_module) {
@@ -105,21 +120,20 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   FRRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
-
-  region = render_create_region(self->window);
-  layout = cst_layout_new_I(self, region);
-  layer = self->box_layer;
+  CstAlgorithm* alg;
+  FRWindow* window;
 
   cst_render_realize(self, v_module);
+
+  window = cst_render_get_default_window(self);
+  region = render_create_region(window);
+  layout = cst_layout_new_I(window, region);
+  layer = self->box_layer;
   rnode = self->body_rnode;
 
   init_body_layout_info(rnode, layout);
+  render_node_layout_r(rnode, layout);
 
-  cst_layout_begin_layout(layout, layer);
-
-  // cst_layer_render(layer, layout);
-
-  cst_layout_end_layout(layout);
   fr_region_destroy(region);
 
   sys_object_unref(layout);
@@ -155,27 +169,18 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 }
 
 CstLayer *cst_render_get_default_layer(void) {
-  CstRender *self = g_render;
+  CstSurface* surface;
 
-  return cst_render_get_layer_by_type(self, CST_NODE_LAYER_BOX);
-}
+  sys_mutex_lock(&g_render_lock);
 
-CstLayer *cst_render_get_layer_by_type(CstRender *self, SysInt layer_type) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  switch(layer_type) {
-    case CST_NODE_LAYER_BOX:
-      return self->box_layer;
-    case CST_NODE_LAYER_ABS:
-      return self->abs_layer;
-    case CST_NODE_LAYER_PASS:
-      sys_warning_N("layer not implement: %d", layer_type);
-      break;
-    default:
-      break;
+  if (g_render->surfaces.len == 0) {
+    return NULL;
   }
+  surface = g_render->surfaces.pdata[0];
 
-  return NULL;
+  sys_mutex_unlock(&g_render_lock);
+
+  return cst_surface_get_layer_by_type(surface, CST_NODE_LAYER_BOX);
 }
 
 /* object api */
@@ -189,9 +194,6 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
     self->display = fr_display_new_I();
     self->window = fr_window_top_new(self->display);
   }
-
-  self->box_layer = cst_box_layer_new_I();
-  self->abs_layer = cst_abs_layer_new_I();
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {
@@ -203,15 +205,13 @@ CstRender* cst_render_new_I(SysBool is_offscreen) {
 }
 
 static void cst_render_init(CstRender *self) {
+  sys_harray_init_with_free_func(&self->surfaces, (SysDestroyFunc)_sys_object_unref);
 }
 
 static void cst_render_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
   CstRender *self = CST_RENDER(o);
-
-  sys_clear_pointer(&self->box_layer, _sys_object_unref);
-  sys_clear_pointer(&self->abs_layer, _sys_object_unref);
 
   if (self->window) {
     sys_object_unref(self->window);

@@ -25,7 +25,7 @@ struct _CstNode {
 
   const SysChar *v_tag;
 
-  CstLayer *v_layer;
+  SysInt v_layer;
   SysChar *v_value;
   SysChar *v_label;
   SysInt  v_z_index;

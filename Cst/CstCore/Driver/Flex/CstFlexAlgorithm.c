@@ -2,6 +2,11 @@
 
 SYS_DEFINE_TYPE(CstFlexAlgorithm, cst_flex_algorithm, CST_TYPE_ALGORITHM);
 
+
+static void cst_flex_algorithm_layout_i(CstAlgorithm* self, CstRenderNode* rnode, CstLayout* layout) {
+
+}
+
 /* object api */
 static void cst_flex_algorithm_construct(CstAlgorithm *self) {
 }
@@ -26,8 +31,10 @@ static void cst_flex_algorithm_dispose(SysObject* o) {
 
 static void cst_flex_algorithm_class_init(CstFlexAlgorithmClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  CstAlgorithmClass* acls = CST_ALGORITHM_CLASS(cls);
 
   ocls->dispose = cst_flex_algorithm_dispose;
+  acls->layout = cst_flex_algorithm_layout_i;
 }
 
 void cst_flex_algorithm_init(CstFlexAlgorithm* self) {

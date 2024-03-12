@@ -101,11 +101,14 @@ cst-test: cst-test-build
 cst-test-check: cst-test-build
 	@make PROJ_NAME="CstCoreTest" check-${PLATFORM}
 
-system:
+system-build:
 	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}-prj
 
-system-debug: system
-	@gvim --servername GVIM3 --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
+system: system-build
+	@./build/Cst/System/TestSuite/SystemTestSuite
+
+system-debug: system-build
+	@gvim --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:

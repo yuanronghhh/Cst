@@ -25,7 +25,7 @@ struct _CstNode {
 
   const SysChar *v_tag;
 
-  SysInt v_layer;
+  SysInt v_layer_idx;
   SysChar *v_value;
   SysChar *v_label;
   SysInt  v_z_index;
@@ -93,14 +93,14 @@ SysChar * cst_node_get_v_label(CstNode *self);
 void cst_node_set_v_z_index(CstNode *self, SysInt v_z_index);
 SysInt cst_node_get_v_z_index(CstNode *self);
 
-void cst_node_set_v_layer(CstNode *self, CstLayer* v_layer);
-CstLayer* cst_node_get_v_layer(CstNode *self);
-
 void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list);
 SysList * cst_node_get_v_awatch_list(CstNode *self);
 
 void cst_node_set_v_nodemap_list(CstNode *self, SysList * v_nodemap_list);
 SysList * cst_node_get_v_nodemap_list(CstNode *self);
+
+void cst_node_set_v_layer_idx(CstNode *self, SysInt v_layer_idx);
+SysInt cst_node_get_v_layer_idx(CstNode *self);
 
 SYS_END_DECLS
 

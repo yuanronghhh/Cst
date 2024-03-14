@@ -22,14 +22,12 @@ struct _CstLayerNode {
 struct _CstLayerNodeClass {
   SysObjectClass parent;
 
-  void (*construct) (CstLayerNode* o, CstLayer* layer, CstNode* node);
+  void (*construct) (CstLayerNode* o, CstLayer* layer);
 };
 
 SysType cst_layer_node_get_type(void);
 CstLayerNode *cst_layer_node_new(void);
-CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node);
-
-CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self);
+CstLayerNode *cst_layer_node_new_I(CstLayer *layer);
 
 SYS_END_DECLS
 

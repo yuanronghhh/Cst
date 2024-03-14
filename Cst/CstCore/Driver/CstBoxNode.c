@@ -74,9 +74,7 @@ SysBool cst_box_node_has_one_child(CstBoxNode* self) {
 }
 
 void cst_box_node_repaint_node(CstLayerNode* o, CstLayout* layout) {
-  CstRenderNode *rnode = cst_layer_node_get_render_node(o);
 
-  cst_render_node_paint_self(rnode, layout);
 }
 
 void cst_box_node_repaint_r(CstBoxNode* self, CstLayout* layout) {
@@ -234,17 +232,15 @@ static void cst_box_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
 }
 
-static void cst_box_node_construct(CstLayerNode* o, CstLayer *layer, CstNode *node) {
+static void cst_box_node_construct(CstLayerNode* o, CstLayer *layer) {
 
-  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->construct(o, layer, node);
+  CST_LAYER_NODE_CLASS(cst_box_node_parent_class)->construct(o, layer);
 }
 
-CstLayerNode *cst_box_node_new_I(CstNode *node) {
+CstLayerNode *cst_box_node_new_I(CstLayer *layer) {
   CstLayerNode *o = cst_box_node_new();
-  CstRender *render = cst_render_get_g_render();
-  CstLayer *box_layer = cst_render_get_layer_by_type(render, CST_NODE_LAYER_BOX);
 
-  cst_box_node_construct(o, box_layer, node);
+  cst_box_node_construct(o, layer);
 
   return o;
 }

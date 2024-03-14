@@ -36,9 +36,8 @@ static void init_body_layout_info(CstRenderNode* rnode, CstLayout* layout) {
   cst_render_node_set_size(rnode, width, height);
 }
 
-CstSurface *cst_render_get_surface(CstRender *self, SysInt surf_idx) {
+CstSurface *cst_render_get_surface(CstRender *self, SysUInt surf_idx) {
   sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(surf_idx > 0, NULL);
 
   if (surf_idx >= self->surfaces.len) {
     sys_warning_N("surface index not correct: %d", surf_idx);
@@ -105,10 +104,8 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
   CstRenderNode* body;
-  CstLayerNode* lnode;
 
-  cst_module_realize(self, v_module, NULL);
-  lnode = cst_render_node_get_layer_node(body);
+  body = cst_module_realize(v_module, NULL);
 
   self->body_rnode = body;
 }
@@ -116,23 +113,22 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
-  CstLayer *layer;
   FRRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
-  CstAlgorithm* alg;
   FRWindow* window;
+  FRDraw* draw;
 
   cst_render_realize(self, v_module);
 
   window = cst_render_get_default_window(self);
   region = render_create_region(window);
-  layout = cst_layout_new_I(window, region);
-  layer = self->box_layer;
+  draw = fr_draw_new_I(window);
+  layout = cst_layout_new_I(window, draw, region);
   rnode = self->body_rnode;
 
   init_body_layout_info(rnode, layout);
-  render_node_layout_r(rnode, layout);
+  // render_node_layout_r(rnode, layout);
 
   fr_region_destroy(region);
 
@@ -155,20 +151,25 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
 
   FRRegion *region;
   FRRect bound = { 0 };
+  FRDraw* draw;
+  CstLayout* layout;
+  FRWindow* window;
 
   bound.width = width;
   bound.height = height;
 
   region = fr_region_create_rectangle(&bound);
+  draw = fr_draw_new_I(self->window);
+  window = cst_render_get_default_window(self);
 
-  CstLayout* layout = cst_layout_new_I(self, region);
+  layout = cst_layout_new_I(window, draw, region);
   cst_render_rerender(self, region, layout);
 
   sys_object_unref(layout);
   fr_region_destroy(region);
 }
 
-CstLayer *cst_render_get_default_layer(void) {
+CstSurface* cst_render_get_default_surface(void) {
   CstSurface* surface;
 
   sys_mutex_lock(&g_render_lock);
@@ -180,7 +181,7 @@ CstLayer *cst_render_get_default_layer(void) {
 
   sys_mutex_unlock(&g_render_lock);
 
-  return cst_surface_get_layer_by_type(surface, CST_NODE_LAYER_BOX);
+  return surface;
 }
 
 /* object api */

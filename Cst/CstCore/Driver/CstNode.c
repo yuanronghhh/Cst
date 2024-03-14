@@ -107,16 +107,16 @@ SysHArray * cst_node_get_v_css_list(CstNode *self) {
   return self->v_css_list;
 }
 
-void cst_node_set_v_layer(CstNode *self, CstLayer* v_layer) {
+void cst_node_set_v_layer_idx(CstNode *self, SysInt v_layer_idx) {
   sys_return_if_fail(self != NULL);
 
-  self->v_layer = v_layer;
+  self->v_layer_idx = v_layer_idx;
 }
 
-CstLayer* cst_node_get_v_layer(CstNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+SysInt cst_node_get_v_layer_idx(CstNode *self) {
+  sys_return_val_if_fail(self != NULL, -1);
 
-  return self->v_layer;
+  return self->v_layer_idx;
 }
 
 void cst_node_set_v_awatch_list(CstNode *self, SysList * v_awatch_list) {
@@ -286,44 +286,54 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
   SysType tp;
   CstRenderNode *rnode;
 
-  tp = self->rnode_type;
-  sys_assert(tp != 0 && "node should be set render node type before realize.");
+  if(self->rnode_type == 0) {
+    sys_warning_N("%s", "node must be set render_node type before realize.");
+    return NULL;
+  }
 
+  tp = self->rnode_type;
   rnode = sys_object_new(tp, NULL);
-  cst_render_node_construct(rnode, self);
+  cst_render_node_construct(rnode, NULL, self);
 
   return rnode;
 }
 
-void cst_node_set_surface_and_layer(CstNode* self,
+SysBool cst_node_set_surface_and_layer(CstNode* self,
   CstLayerNode* parent,
   SysInt surf_idx,
   SysInt layer_idx) {
 
   CstRender* render = cst_render_get_g_render();
   CstSurface* surface = cst_render_get_surface(render, surf_idx);
-  if (surface == NULL) { return; }
+  if (surface == NULL) { return false; }
 
-  CstLayer* layer = cst_surface_get_layer_by_type(render, layer_idx);
-  if (layer == NULL) { return; }
+  CstLayer* layer = cst_surface_get_layer_by_type(surface, layer_idx);
+  if (layer == NULL) { return false; }
 
+  return true;
 }
 
 static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self->v_layer_idx != 0, NULL);
 
-  SysInt layer;
+  SysInt layer_idx;
+  CstLayer *layer;
   FRAWatch *awatch;
   CstNodeMap *nmap;
   CstRenderNode *rnode;
   CstLayerNode *lnode;
   CstLayerNode *lpnode;
+  CstSurface* surface;
+  CstRender* g_render;
 
-  layer = self->v_layer;
-  sys_return_val_if_fail(layer != NULL, NULL);
+  layer_idx = self->v_layer_idx;
+  surface = cst_render_get_default_surface();
+
   rnode = cst_node_new_render_node(self);
-
   lpnode = v_parent ? cst_render_node_get_layer_node(v_parent) : NULL;
+  layer = cst_surface_get_layer_by_type(surface, layer_idx);
+
   lnode = cst_layer_new_node(layer, lpnode, self);
   cst_render_node_set_layer_node(rnode, lnode);
 
@@ -433,9 +443,7 @@ static void cst_node_dispose(SysObject* o) {
 }
 
 static void cst_node_init(CstNode *self) {
-  CstLayer *layer = cst_render_get_default_layer();
-
   self->id = NULL;
-  self->v_layer = layer;
+  self->v_layer_idx = CST_NODE_LAYER_BOX;
 }
 

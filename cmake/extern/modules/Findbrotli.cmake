@@ -1,0 +1,52 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(BROTLI_INCLUDE_DIR
+  NAMES brotli/types.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES brotli/include
+)
+
+FIND_LIBRARY(BROTLI_LIBRARY
+  NAMES brotlicommon
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib brotli/lib
+)
+
+set(BROTLI_FILES "")
+IF(WIN32)
+  set(BROTLI_FILE
+    "brotlicommon.dll"
+    "brotlidec.dll"
+    "brotlienc.dll"
+  )
+  FOREACH(COMPONENT ${BROTLI_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+
+    FIND_FILE(BROTLI_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES brotli/bin
+    )
+
+    LIST(APPEND BROTLI_FILES "${BROTLI_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(BROTLI DEFAULT_MSG
+  BROTLI_LIBRARY BROTLI_INCLUDE_DIR)
+
+IF(BROTLI_FOUND)
+  SET(BROTLI_LIBRARIES ${BROTLI_LIBRARY})
+  SET(BROTLI_INCLUDE_DIRS ${BROTLI_INCLUDE_DIR})
+ENDIF(BROTLI_FOUND)
+
+MARK_AS_ADVANCED(
+  BROTLI_INCLUDE_DIR
+  BROTLI_LIBRARY
+)

@@ -109,8 +109,8 @@ void cst_css_pair_set_layer(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 
   v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
-  
-  tolayer = cst_render_get_layer_by_type(surface, v);
+  surface = cst_layout_get_surface(layout);
+  tolayer = cst_surface_get_layer_by_type(surface, v);
 
   cst_render_node_change_to_layer(rnode, tolayer);
 }

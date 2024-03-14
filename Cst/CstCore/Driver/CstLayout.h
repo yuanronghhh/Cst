@@ -26,7 +26,7 @@ struct _CstLayout {
   FRWindow* window;
 
   /* CstSurface */
-  SysHArray surfaces;
+  CstSurface *surface;
 };
 
 struct _CstLayoutClass {
@@ -35,7 +35,7 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(FRWindow *window, FRRegion *region);
+CstLayout *cst_layout_new_I(FRWindow *window, FRDraw *draw, FRRegion *region);
 
 SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FRRegion *cst_layout_get_region(CstLayout* self);
@@ -53,6 +53,9 @@ CstLayer * cst_layout_get_layer(CstLayout *self);
 
 void cst_layout_set_draw(CstLayout *self, FRDraw * draw);
 FRDraw * cst_layout_get_draw(CstLayout *self);
+
+void cst_layout_set_surface(CstLayout *self, CstSurface * surface);
+CstSurface * cst_layout_get_surface(CstLayout *self);
 
 SYS_END_DECLS
 

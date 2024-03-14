@@ -12,7 +12,6 @@ SYS_DEFINE_TYPE(CstSurface, cst_surface, SYS_TYPE_OBJECT);
 
 void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* layout) {
   CstAlgorithm* alg;
-  CstLayer* layer;
 
   cst_layout_set_layer(layout, self->box_layer);
   cst_layout_begin_layout(layout);

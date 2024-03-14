@@ -13,12 +13,6 @@ SYS_DEFINE_WITH_CODE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT,
 static void cst_ilayer_node_imp(CstILayerNodeInterface* iface) {
 }
 
-CstRenderNode * cst_layer_node_get_render_node(CstLayerNode *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return CST_RENDER_NODE(self);
-}
-
 /* object api */
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);
@@ -26,21 +20,18 @@ static void cst_layer_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_layer_node_parent_class)->dispose(o);
 }
 
-static void cst_layer_node_construct(CstLayerNode* self, CstLayer *layer, CstNode *node) {
-  // self->node = node;
+static void cst_layer_node_construct(CstLayerNode* self, CstLayer *layer) {
   self->layer = layer;
-
-  sys_object_ref(node);
 }
 
 CstLayerNode *cst_layer_node_new(void) {
   return sys_object_new(CST_TYPE_LAYER_NODE, NULL);
 }
 
-CstLayerNode *cst_layer_node_new_I(CstLayer *layer, CstNode *node) {
+CstLayerNode *cst_layer_node_new_I(CstLayer *layer) {
   CstLayerNode *o = cst_layer_node_new();
 
-  cst_layer_node_construct(o, layer, node);
+  cst_layer_node_construct(o, layer);
 
   return o;
 }

@@ -1,0 +1,55 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(LZO_INCLUDE_DIR
+  NAMES lzo/lzo1f.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lzo/include
+)
+
+FIND_LIBRARY(LZO_LIBRARY
+  NAMES lzo2.lib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib lzo/lib
+)
+
+set(LZO_FILES "")
+IF(WIN32)
+  set(LZO_FILE
+    "lzo2.dll"
+  )
+  FOREACH(COMPONENT ${LZO_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+
+    FIND_FILE(LZO_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES lzo/bin
+    )
+
+    LIST(APPEND LZO_FILES "${LZO_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
+
+set(LZO_DEPS
+)
+add_dep_for_libray_N(lzo "${LZO_DEPS}")
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(LZO DEFAULT_MSG
+  LZO_LIBRARY LZO_INCLUDE_DIR)
+
+IF(LZO_FOUND)
+  SET(LZO_LIBRARIES ${LZO_LIBRARY})
+  SET(LZO_INCLUDE_DIRS ${LZO_INCLUDE_DIR})
+ENDIF(LZO_FOUND)
+
+MARK_AS_ADVANCED(
+  LZO_INCLUDE_DIR
+  LZO_LIBRARY
+)
+

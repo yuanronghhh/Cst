@@ -2,48 +2,53 @@ set(search_dirs
   ${LIBDIR}
   /usr/local
   /usr
-  /usr/lib/x86_64-linux-gnu
+)
+
+FIND_PATH(PANGO_INCLUDE_DIR
+  NAMES pango/pangowin32.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES pango/include/pango-1.0
+)
+
+FIND_LIBRARY(PANGO_LIBRARY
+  NAMES pangoft2-1.0.lib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib pango/lib
 )
 
 set(PANGO_FILES "")
+IF(WIN32)
+  set(PANGO_FILE
+    "pangoft2-1.0-0.dll"
+    "pangocairo-1.0-0.dll"
+    "pangowin32-1.0-0.dll"
+    "pango-1.0-0.dll"
+  )
+  FOREACH(COMPONENT ${PANGO_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
 
-FIND_PATH(PANGO_INCLUDE_DIR
-  NAMES pango/pango.h
-  HINTS ${search_dirs}
-  PATH_SUFFIXES include/pango-1.0 pango2/include pango/include/pango-1.0
-)
 
-set(PANGO_COMPONENTS
-  "pango"
-  "pangocairo"
-  "pangoft2")
-
-if(WIN32)
-  LIST(APPEND PANGO_COMPONENTS "pangowin32")
-endif()
-
-FOREACH(COMPONENT ${PANGO_COMPONENTS})
-  STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
-
-  FIND_LIBRARY(PANGO_${UPPERCOMPONENT}_LIBRARY
-    NAMES "${COMPONENT}-1.0"
-    HINTS ${search_dirs}
-    PATH_SUFFIXES lib64 lib pango/lib)
-
-  if(WIN32)
-    FIND_FILE(PANGO_${UPPERCOMPONENT}_FILE
-      NAMES "${COMPONENT}-1.0-0.dll"
+    FIND_FILE(PANGO_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
       HINTS ${search_dirs}
-      PATH_SUFFIXES pango/bin)
-  endif()
+      PATH_SUFFIXES pango/bin
+    )
 
-  LIST(APPEND PANGO_FILES "${PANGO_${UPPERCOMPONENT}_FILE}")
-  LIST(APPEND PANGO_LIBRARY "${PANGO_${UPPERCOMPONENT}_LIBRARY}")
-ENDFOREACH()
+    LIST(APPEND PANGO_FILES "${PANGO_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
 
-LIST(APPEND PANGO_INCLUDE_DIR "${FRIBIDI_INCLUDE_DIR}/fribidi")
-LIST(APPEND PANGO_FILES "${HARFBUZZ_FILES}")
-LIST(APPEND PANGO_FILES "${FRIBIDI_FILES}")
+set(PANGO_DEPS
+  cairo
+  fontconfig
+  freetype
+  fribidi
+  gettext
+  glib
+  harfbuzz
+  vcpkg-tool-meson
+)
+add_dep_for_libray_N(pango "${PANGO_DEPS}")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(PANGO DEFAULT_MSG
@@ -52,11 +57,9 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(PANGO DEFAULT_MSG
 IF(PANGO_FOUND)
   SET(PANGO_LIBRARIES ${PANGO_LIBRARY})
   SET(PANGO_INCLUDE_DIRS ${PANGO_INCLUDE_DIR})
-  SET(PANGO_FILES ${PANGO_FILES})
 ENDIF(PANGO_FOUND)
 
 MARK_AS_ADVANCED(
   PANGO_INCLUDE_DIR
   PANGO_LIBRARY
-  PANGO_FILES
 )

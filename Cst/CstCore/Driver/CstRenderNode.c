@@ -160,10 +160,6 @@ SysType cst_render_node_get_node_type(CstRenderNode *self) {
 }
 
 void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer) {
-  // if (self->layer == tolayer) { return; }
-
-  // cst_layer_remove_node(self->layer, tolayer);
-  // cst_layer_add_node(tolayer, self);
 }
 
 void cst_render_node_ref_awatch(CstRenderNode *self, FRAWatch *awatch) {
@@ -320,24 +316,23 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-void cst_render_node_construct(CstRenderNode* self, CstLayerNode *lnode, CstNode *node) {
-  self->node = node;
+void cst_render_node_construct(CstRenderNode* self, 
+  const SysChar* id,
+  const SysChar *name
+) {
 
-  self->id = sys_strdup(cst_node_get_id(node));
-  self->name = sys_strdup(cst_node_get_name(node));
-  self->lnode = lnode;
-
-  sys_object_ref(node);
+  self->id = sys_strdup(id);
+  self->name = sys_strdup(name);
 }
 
 CstRenderNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstLayerNode *lnode, CstNode *node) {
+CstRenderNode *cst_render_node_new_I(CstNode *node) {
   CstRenderNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, lnode,  node);
+  cst_render_node_construct(o, node);
 
   return o;
 }

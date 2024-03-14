@@ -16,22 +16,8 @@ FIND_LIBRARY(GTK_LIBRARY
 
 if(WIN32)
   set(GTK_FILE_COMPONENTS
-    "lzma.dll"
-    "lzo2.dll"
-    "zlib1.dll"
-    "atk-1.0-0.dll"
-    "tiff.dll"
-    "jpeg62.dll"
-    "epoxy-0.dll"
-    "gdk_pixbuf-2.0-0.dll"
-    "gio-2.0-0.dll"
-    "glib-2.0-0.dll"
-    "gmodule-2.0-0.dll"
-    "gobject-2.0-0.dll"
-    "graphene-1.0-0.dll"
-    "gthread-2.0-0.dll"
     "gtk-4-1.dll"
-    "intl-8.dll")
+  )
 
   FOREACH(COMPONENT ${GTK_FILE_COMPONENTS})
     STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
@@ -45,18 +31,27 @@ if(WIN32)
   ENDFOREACH()
 endif()
 
-LIST(APPEND GTK_INCLUDE_DIR "${CAIRO_INCLUDE_DIR}/cairo")
-LIST(APPEND GTK_INCLUDE_DIR "${PANGO_INCLUDE_DIRS}")
-LIST(APPEND GTK_INCLUDE_DIR "${PIXMAN_INCLUDE_DIRS}")
-LIST(APPEND GTK_INCLUDE_DIR "${FREETYPE_INCLUDE_DIRS}")
-LIST(APPEND GTK_INCLUDE_DIR "${PTHREAD_INCLUDE_DIRS}")
-LIST(APPEND GTK_INCLUDE_DIR "${HARFBUZZ_INCLUDE_DIRS}")
-LIST(APPEND GTK_INCLUDE_DIR "${LIBDIR}/gtk/include/gdk-pixbuf-2.0/")
-LIST(APPEND GTK_INCLUDE_DIR "${LIBDIR}/gtk/include/graphene-1.0/")
-LIST(APPEND GTK_INCLUDE_DIR "${LIBDIR}/gtk/include/gsk/")
-
-LIST(APPEND GTK_FILE "${PANGO_FILES}")
-LIST(APPEND GTK_FILE "${CAIRO_FILES}")
+set(GTK_DEPS
+  "brotli"
+  "lzo"
+  "lzma"
+  "pixman"
+  "pcre2"
+  "jpegturbo"
+  "tiff"
+  "png"
+  "pango"
+  "epoxy"
+  "glib"
+  "cairo"
+  "pixman"
+  "graphene"
+  "freetype"
+  "pthread"
+  "harfbuzz"
+  "gdkpixbuf"
+)
+add_dep_for_libray_N(gtk "${GTK_DEPS}")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(GTK DEFAULT_MSG

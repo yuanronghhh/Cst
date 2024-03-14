@@ -53,7 +53,7 @@ struct _CstRenderNodeClass {
 
 SysType cst_render_node_get_type(void);
 CstRenderNode *cst_render_node_new(void);
-CstRenderNode *cst_render_node_new_I(CstLayerNode *lnode, CstNode *node);
+CstRenderNode *cst_render_node_new_I(CstNode *node);
 void cst_render_node_construct (CstRenderNode *self, CstLayerNode* lnode, CstNode* node);
 
 void cst_render_node_set_meta(const SysChar* name, SysType stype);

@@ -88,8 +88,8 @@ void cst_box_layer_print_tree(CstBoxLayer *self) {
   cst_box_node_bfs_handle(self->tree, cst_box_node_print, NULL);
 }
 
-CstLayerNode *cst_box_layer_new_node_i(CstLayer *layer, CstLayerNode *parent, CstNode *node) {
-  CstLayerNode *lnode = cst_box_node_new_I(node);
+CstLayerNode *cst_box_layer_new_node_i(CstLayer *layer, CstLayerNode *parent) {
+  CstLayerNode *lnode = cst_box_node_new_I();
 
   if (parent) {
 

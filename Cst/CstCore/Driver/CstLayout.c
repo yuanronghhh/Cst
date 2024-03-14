@@ -11,14 +11,12 @@ CstLayout* cst_layout_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, FRWindow * window, FRRegion *region) {
-  FRWindow *window;
-
+static void cst_layout_construct(CstLayout* self, FRWindow * window, FRDraw *draw, FRRegion *region) {
   self->state = 0;
   self->region = region;
 
   self->window = window;
-  self->draw = fr_draw_new_I(window);
+  self->draw = draw;
 }
 
 SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
@@ -27,10 +25,10 @@ SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   return self->state & state;
 }
 
-CstLayout *cst_layout_new_I(FRWindow *window, FRRegion *region) {
+CstLayout *cst_layout_new_I(FRWindow *window, FRDraw *draw, FRRegion *region) {
   CstLayout *o = cst_layout_new();
 
-  cst_layout_construct(o, window, region);
+  cst_layout_construct(o, window, draw, region);
 
   return o;
 }
@@ -51,6 +49,19 @@ FRDraw * cst_layout_get_draw(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->draw;
+}
+
+void cst_layout_set_surface(CstLayout *self, CstSurface * surface) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(surface != NULL);
+
+  self->surface = surface;
+}
+
+CstSurface * cst_layout_get_surface(CstLayout *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->surface;
 }
 
 void cst_layout_get_buffer_size(CstLayout* self, SysInt *width, SysInt *height) {

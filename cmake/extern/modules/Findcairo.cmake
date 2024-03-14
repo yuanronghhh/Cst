@@ -4,57 +4,53 @@ set(search_dirs
   /usr
 )
 
-set(CAIRO_FILES "")
 FIND_PATH(CAIRO_INCLUDE_DIR
-  NAMES cairo/cairo.h
+  NAMES cairo/cairo.h cairo.h
   HINTS ${search_dirs}
-  PATH_SUFFIXES include cairo/include
+  PATH_SUFFIXES cairo/include
+)
+list(APPEND CAIRO_INCLUDE_DIR
+  "${CAIRO_INCLUDE_DIR}/cairo"
 )
 
-set(CAIRO_COMPONENTS
-  cairo-gobject
-  cairo-script-interpreter
-  cairo
+FIND_LIBRARY(CAIRO_LIBRARY
+  NAMES cairo.lib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib cairo/lib
 )
 
-FOREACH(COMPONENT ${CAIRO_COMPONENTS})
-  STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
-
-  FIND_LIBRARY(CAIRO_${UPPERCOMPONENT}_LIBRARY
-    NAMES ${COMPONENT}
-    HINTS ${search_dirs}
-    PATH_SUFFIXES lib64 lib cairo/lib
+set(CAIRO_FILES "")
+IF(WIN32)
+  set(CAIRO_FILE
+    "cairo-2.dll"
+    "cairo-script-interpreter-2.dll"
+    "cairo-gobject-2.dll"
   )
-
-  LIST(APPEND CAIRO_LIBRARY "${CAIRO_${UPPERCOMPONENT}_LIBRARY}")
-ENDFOREACH()
-
-set(CAIRO_FILE_COMPONENTS
-  "cairo-2.dll"
-  "cairo-gobject-2.dll"
-  "cairo-script-interpreter-2.dll")
-
-if(WIN32)
-  FOREACH(COMPONENT ${CAIRO_FILE_COMPONENTS})
+  FOREACH(COMPONENT ${CAIRO_FILE})
     STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
 
     FIND_FILE(CAIRO_${COMPONENT}_FILE
       NAMES ${COMPONENT}
       HINTS ${search_dirs}
-      PATH_SUFFIXES cairo/bin expat/bin glib/bin/ fontconfig/bin libpng/bin freetype/bin
+      PATH_SUFFIXES cairo/bin
     )
 
     LIST(APPEND CAIRO_FILES "${CAIRO_${COMPONENT}_FILE}")
   ENDFOREACH()
-endif()
+ENDIF()
 
-LIST(APPEND CAIRO_INCLUDE_DIR "${CAIRO_INCLUDE_DIR}/cairo")
-LIST(APPEND CAIRO_INCLUDE_DIR "${PANGO_INCLUDE_DIRS}")
-LIST(APPEND CAIRO_INCLUDE_DIR "${PIXMAN_INCLUDE_DIRS}")
-LIST(APPEND CAIRO_INCLUDE_DIR "${FREETYPE_INCLUDE_DIRS}")
-LIST(APPEND CAIRO_INCLUDE_DIR "${PTHREAD_INCLUDE_DIRS}")
-LIST(APPEND CAIRO_INCLUDE_DIR "${HARFBUZZ_INCLUDE_DIRS}")
-LIST(APPEND CAIRO_FILES "${PANGO_FILES}")
+set(CAIRO_DEPS
+  dirent
+  expat
+  libpng
+  lzo
+  pixman
+  pthread
+  vcpkg-tool-meson
+  zlib
+)
+add_dep_for_libray_N(cairo "${CAIRO_DEPS}")
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(CAIRO DEFAULT_MSG
@@ -69,3 +65,4 @@ MARK_AS_ADVANCED(
   CAIRO_INCLUDE_DIR
   CAIRO_LIBRARY
 )
+

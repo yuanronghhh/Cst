@@ -1,0 +1,56 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(TIFF_INCLUDE_DIR
+  NAMES tiffconf.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES tiff/include
+)
+
+FIND_LIBRARY(TIFF_LIBRARY
+  NAMES tiff.lib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib tiff/lib
+)
+
+set(TIFF_FILES "")
+IF(WIN32)
+  set(TIFF_FILE
+    "tiff.dll"
+  )
+  FOREACH(COMPONENT ${TIFF_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+
+    FIND_FILE(TIFF_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES tiff/bin
+    )
+
+    LIST(APPEND TIFF_FILES "${TIFF_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
+
+set(TIFF_DEPS
+)
+add_dep_for_libray_N(tiff "${TIFF_DEPS}")
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(TIFF DEFAULT_MSG
+  TIFF_LIBRARY TIFF_INCLUDE_DIR)
+
+IF(TIFF_FOUND)
+  SET(TIFF_LIBRARIES ${TIFF_LIBRARY})
+  SET(TIFF_INCLUDE_DIRS ${TIFF_INCLUDE_DIR})
+ENDIF(TIFF_FOUND)
+
+MARK_AS_ADVANCED(
+  TIFF_INCLUDE_DIR
+  TIFF_LIBRARY
+)
+
+

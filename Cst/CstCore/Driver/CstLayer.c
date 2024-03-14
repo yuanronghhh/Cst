@@ -48,19 +48,19 @@ void cst_layer_queue_draw_node(CstLayer *self, CstLayerNode *lnode) {
   sys_queue_push_tail(self->draw_queue, lnode);
 }
 
-CstLayerNode* cst_layer_new_node(CstLayer *self, CstLayerNode *parent, CstNode *node) {
+CstLayerNode* cst_layer_new_node(CstLayer *self, CstLayerNode *parent) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
   sys_return_val_if_fail(lcls->new_node != NULL, NULL);
 
-  return lcls->new_node(self, parent, node);
+  return lcls->new_node(self, parent);
 }
 
-CstLayerNode* cst_layer_new_node_i(CstLayer *self, CstLayerNode *parent, CstNode *node) {
+CstLayerNode* cst_layer_new_node_i(CstLayer *self, CstLayerNode *parent) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return cst_layer_node_new_I(self, node);
+  return cst_layer_node_new_I(self);
 }
 
 void cst_layer_check (CstLayer *self, CstLayout *layout) {

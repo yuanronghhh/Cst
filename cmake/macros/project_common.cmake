@@ -10,6 +10,60 @@ function(list_assert_duplicates
   list(REMOVE_DUPLICATES list_id)
 endfunction()
 
+macro(add_dep_for_libray_N name
+    external_libs
+)
+  string(TOUPPER ${name} _UPPER_NAME)
+
+  foreach(_LIB ${external_libs})
+    string(TOUPPER ${_LIB} _UPPER_LIB)
+    list(APPEND ${_UPPER_NAME}_INCLUDE_DIR "${${_UPPER_LIB}_INCLUDE_DIRS}")
+    list(APPEND ${_UPPER_NAME}_LIBRARY "${${_UPPER_LIB}_LIBRARIES}")
+    list(APPEND ${_UPPER_NAME}_FILE "${${_UPPER_LIB}_FILES}")
+  endforeach()
+endmacro()
+
+function(add_deps_N
+    app_name
+    INNER_INCS
+    INNER_LIBS
+    EXTERNAL_INCS
+    EXTERNAL_LIBS
+  )
+  set(_INCS "")
+  set(_LIBS "")
+  set(_FILES "")
+
+  foreach(_LIB ${EXTERNAL_LIBS})
+    string(TOUPPER ${_LIB} _UPPER_LIB)
+    set(_DIR_VAR ${${_UPPER_LIB}_INCLUDE_DIRS})
+
+    list(APPEND _INCS "${_DIR_VAR}")
+    list(APPEND _LIBS "${${_UPPER_LIB}_LIBRARIES}")
+    list(APPEND _FILES "${${_UPPER_LIB}_FILES}")
+  endforeach()
+
+  foreach(_LIB ${INNER_INCS})
+    get_filename_component(_ABS_INC ${_LIB} ABSOLUTE)
+
+    list(APPEND _INCS "${_ABS_INC}")
+  endforeach()
+
+  foreach(_LIB ${INNER_LIBS})
+    list(APPEND _LIBS "${_LIB}")
+  endforeach()
+
+  list(REMOVE_DUPLICATES _INCS)
+  list(REMOVE_DUPLICATES _LIBS)
+
+  include_directories(${_INCS})
+  IF ("${INNER_LIBS}" STREQUAL "")
+  else()
+  endif()
+  target_link_libraries(${app_name} ${_LIBS})
+  target_copy_files(${app_name} ${_FILES})
+endfunction()
+
 function(include_dep_dirs
     includes
 )
@@ -181,3 +235,4 @@ macro(found_module
     LIST(APPEND ${PREFIX_NAME}_LIBRARY "${PREFIX_NAME}_${COMPONENT_NAME}_LIBRARY")
   ENDFOREACH()
 endmacro()
+

@@ -23,6 +23,9 @@ struct _CstRender {
   FRDisplay *display;
   FRWindow *window;
   CstRenderNode *body_rnode;
+
+  /* FRSurface */
+  SysHArray surfaces;
 };
 
 SysType cst_render_get_type(void);
@@ -32,12 +35,12 @@ void cst_render_setup(void);
 void cst_render_teardown(void);
 CstRender *cst_render_get_g_render(void);
 
-CstSurface* cst_render_get_surface(CstRender* self, SysInt surf_idx);
+CstSurface *cst_render_get_surface(CstRender *self, SysUInt surf_idx);
 FRWindow *cst_render_get_default_window(CstRender *self);
 void cst_render_resize_window(CstRender *self);
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
 void cst_render_rerender(CstRender *self, FRRegion *region, CstLayout *layout);
-CstLayer *cst_render_get_default_layer(void);
+CstSurface* cst_render_get_default_surface(void);
 
 void cst_render_render(CstRender *self, CstModule *v_module);
 

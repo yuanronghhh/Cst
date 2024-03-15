@@ -87,6 +87,7 @@ add_definitions("/MP")
 add_definitions("/W3")
 add_definitions("/WX")
 add_definitions("/wd\"4100\" /wd\"4206\" /wd\"4201\" /wd\"4996\"")
+SET(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
 
 if(USE_SANITIZER)
   add_definitions("/fsanitize=address")

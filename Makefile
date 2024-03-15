@@ -19,8 +19,7 @@ else
 	SURFIX=.exe
 endif
 
-
-BUILD_CMAKE_ARGS:=$(BUILD_CMAKE_ARGS) -C "${PROJECT_DIR}/cmake/config/build_option.cmake"
+BUILD_CMAKE_ARGS:=$(BUILD_CMAKE_ARGS)
 CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -H"$(PROJECT_DIR)" \
                       -B"$(BUILD_DIR)" \

@@ -26,6 +26,7 @@ IF(WIN32)
     "cairo-script-interpreter-2.dll"
     "cairo-gobject-2.dll"
   )
+
   FOREACH(COMPONENT ${CAIRO_FILE})
     STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
 

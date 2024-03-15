@@ -7,8 +7,8 @@ else()
 endif()
 
 include(cmake/init.cmake)
+include(cmake/config/build_option.cmake)
 
-SET(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
 if(USE_MONO)
   set(CMAKE_Csharp_COMPILER "C:/Program Files/Mono/bin/mcs.bat")
   project(Cst LANGUAGES C CSharp)

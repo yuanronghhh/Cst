@@ -19,7 +19,7 @@ macro(add_dep_for_libray_N name
     string(TOUPPER ${_LIB} _UPPER_LIB)
     list(APPEND ${_UPPER_NAME}_INCLUDE_DIR "${${_UPPER_LIB}_INCLUDE_DIRS}")
     list(APPEND ${_UPPER_NAME}_LIBRARY "${${_UPPER_LIB}_LIBRARIES}")
-    list(APPEND ${_UPPER_NAME}_FILE "${${_UPPER_LIB}_FILES}")
+    list(APPEND ${_UPPER_NAME}_FILES "${${_UPPER_LIB}_FILES}")
   endforeach()
 endmacro()
 

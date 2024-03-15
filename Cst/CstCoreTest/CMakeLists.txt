@@ -68,7 +68,8 @@ add_executable(CstCoreTest "${SRC}")
 set_property(TARGET CstCoreTest PROPERTY FOLDER CstProject)
 
 LIST(APPEND CST_TEST_INNER_LIBS ${SYSTEM_LIBRARIES})
-log("${PANGO_LIBRARIES}")
+
+log("${CAIRO_FILES}")
 add_deps_N(CstCoreTest
   "${CST_TEST_INC}"
   "${CST_TEST_INNER_LIBS}"

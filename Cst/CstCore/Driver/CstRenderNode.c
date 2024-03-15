@@ -316,23 +316,19 @@ static void cst_render_node_dispose(SysObject* o) {
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }
 
-void cst_render_node_construct(CstRenderNode* self, 
-  const SysChar* id,
-  const SysChar *name
-) {
-
-  self->id = sys_strdup(id);
-  self->name = sys_strdup(name);
+void cst_render_node_construct(CstRenderNode* self, CstRenderNodeParam *param) {
+  self->id = sys_strdup(param->id);
+  self->name = sys_strdup(param->name);
 }
 
 CstRenderNode *cst_render_node_new(void) {
   return sys_object_new(CST_TYPE_RENDER_NODE, NULL);
 }
 
-CstRenderNode *cst_render_node_new_I(CstNode *node) {
+CstRenderNode *cst_render_node_new_I(CstNode *node, CstRenderNodeParam *param) {
   CstRenderNode *o = cst_render_node_new();
 
-  cst_render_node_construct(o, node);
+  cst_render_node_construct(o, param);
 
   return o;
 }

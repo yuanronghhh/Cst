@@ -26,7 +26,7 @@ typedef SysBool (*CstBoxNodeFunc) (CstBoxNode *lnode, SysPointer user_data);
 
 SysType cst_box_node_get_type(void);
 CstLayerNode* cst_box_node_new(void);
-CstLayerNode* cst_box_node_new_I(CstNode* node);
+CstLayerNode *cst_box_node_new_I(CstLayer *layer);
 
 CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node);
 void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node);

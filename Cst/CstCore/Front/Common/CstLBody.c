@@ -21,9 +21,9 @@ CstRenderNode* cst_lbody_new(void) {
   return sys_object_new(CST_TYPE_LBODY, NULL);
 }
 
-void cst_lbody_construct(CstRenderNode *o, CstNode *node) {
+void cst_lbody_construct(CstRenderNode *o, CstRenderNodeParam *param) {
   sys_return_if_fail(o != NULL);
-  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(o, node);
+  CST_RENDER_NODE_CLASS(cst_lbody_parent_class)->construct(o, param);
 
   cst_render_node_set_id(o, "id.body.0");
 }

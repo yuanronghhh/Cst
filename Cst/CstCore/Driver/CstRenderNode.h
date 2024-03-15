@@ -13,6 +13,8 @@ SYS_BEGIN_DECLS
 
 #define CST_RENDER_NODE_RCTX(o) cst_render_node_get_rctx(o)
 
+typedef struct _CstRenderNodeParam CstRenderNodeParam;
+
 struct _CstRenderNode {
   CstLayoutNode parent;
 
@@ -46,16 +48,20 @@ struct _CstRenderNode {
 struct _CstRenderNodeClass {
   CstLayoutNodeClass parent;
 
-  void (*construct) (CstRenderNode *self, CstNode* node);
+  void (*construct)(CstRenderNode* self, CstRenderNodeParam *param);
   void (*layout_self) (CstRenderNode* self, CstLayout* layout);
   void (*paint_self) (CstRenderNode* self, CstLayout* layout);
 };
 
+struct _CstRenderNodeParam {
+  SysChar* id;
+  SysChar *name;
+};
+
 SysType cst_render_node_get_type(void);
 CstRenderNode *cst_render_node_new(void);
-CstRenderNode *cst_render_node_new_I(CstNode *node);
-void cst_render_node_construct (CstRenderNode *self, CstLayerNode* lnode, CstNode* node);
-
+CstRenderNode *cst_render_node_new_I(CstNode *node, CstRenderNodeParam *param);
+void cst_render_node_construct(CstRenderNode* self, CstRenderNodeParam *param);
 void cst_render_node_set_meta(const SysChar* name, SysType stype);
 SysType cst_render_node_get_meta(const SysChar* name);
 

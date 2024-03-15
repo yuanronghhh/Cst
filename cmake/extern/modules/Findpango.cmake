@@ -11,9 +11,15 @@ FIND_PATH(PANGO_INCLUDE_DIR
 )
 
 FIND_LIBRARY(PANGO_LIBRARY
-  NAMES pangoft2-1.0.lib
+  NAMES pango-1.0.lib
   HINTS ${search_dirs}
   PATH_SUFFIXES lib64 lib pango/lib
+)
+
+list(APPEND PANGO_LIBRARY
+  "${LIBDIR}/pango/lib/pangocairo-1.0.lib"
+  "${LIBDIR}/pango/lib/pangoft2-1.0.lib"
+  "${LIBDIR}/pango/lib/pangowin32-1.0.lib"
 )
 
 set(PANGO_FILES "")

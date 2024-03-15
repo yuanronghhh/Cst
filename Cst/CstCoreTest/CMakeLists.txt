@@ -1,23 +1,23 @@
-include_dep_dirs(
+set(CST_TEST_INC
   ../
+)
 
-  ${GLIB_INCLUDE_DIRS}
-  ${FONTCONFIG_INCLUDE_DIRS}
-  ${FREETYPE_INCLUDE_DIRS}
-  ${PNG_INCLUDE_DIRS}
-  ${VLD_INCLUDE_DIRS}
-  ${PTHREAD_INCLUDE_DIRS}
-  ${VKVG_INCLUDE_DIRS}
-  ${VULKAN_INCLUDE_DIRS}
-  ${PANGO_INCLUDE_DIRS}
-  ${CAIRO_INCLUDE_DIRS}
-  ${GLAD_INCLUDE_DIRS}
-  ${GLFW3_INCLUDE_DIRS}
-  ${PIXMAN_INCLUDE_DIRS}
-  ${UNITY_INCLUDE_DIRS}
-  ${MONO_INCLUDE_DIRS}
-  ${TINYEXPR_INCLUDE_DIRS}
-  ${OPENSSL_INCLUDE_DIRS}
+set(CST_TEST_EXTERNAL_LIBS
+  "unity"
+  "pthread"
+  "openssl"
+  "vld"
+  "pango"
+  "pangocairo"
+  "cairo"
+  "glad"
+  "glfw3"
+)
+
+set(CST_TEST_INNER_LIBS
+  "FRFramework"
+  "System"
+  "CstCore"
 )
 
 set(SRC
@@ -64,44 +64,14 @@ set(SRC
 configure_file(${CMAKE_CURRENT_LIST_DIR}/TestConfig.h.in
                ${CMAKE_CURRENT_LIST_DIR}/TestConfig.h)
 
-
 add_executable(CstCoreTest "${SRC}")
 set_property(TARGET CstCoreTest PROPERTY FOLDER CstProject)
 
-target_link_libraries(CstCoreTest
-  CstCore
-  System
-  ${OPENSSL_LIBRARIES}
-  ${MONO_LIBRARIES}
-  ${PIXMAN_LIBRARIES}
-  ${VLD_LIBRARIES}
-  ${PTHREAD_LIBRARIES}
-  ${VKVG_LIBRARIES}
-  ${VULKAN_LIBRARIES}
-  ${CAIRO_LIBRARIES}
-  ${SYSTEM_LIBRARIES}
-  ${GLFW3_LIBRARIES}
-  ${FREETYPE_LIBRARIES}
-  ${FONTCONFIG_LIBRARIES}
-  ${PNG_LIBRARIES}
-  ${UNITY_LIBRARIES}
-  ${TINYEXPR_LIBRARIES}
-  ${GLIB_LIBRARIES}
-  ${PANGO_LIBRARIES}
-  ${PANGOCAIRO_LIBRARIES}
-)
-
-target_copy_files(CstCoreTest
-  "${OPENSSL_FILES}"
-  "${VLD_FILES}"
-  "${CAIRO_FILES}"
-  "${PANGO_FILES}"
-  # "${GLIB_FILES}"
-  "${PTHREAD_FILES}"
-  "${VKVG_FILES}"
-  "${VULKAN_FILES}"
-  "${GLFW3_FILES}"
-  "${FREETYPE_FILES}"
-  "${PNG_FILES}"
-  "${PIXMAN_FILES}"
+LIST(APPEND CST_TEST_INNER_LIBS ${SYSTEM_LIBRARIES})
+log("${PANGO_LIBRARIES}")
+add_deps_N(CstCoreTest
+  "${CST_TEST_INC}"
+  "${CST_TEST_INNER_LIBS}"
+  ""
+  "${CST_TEST_EXTERNAL_LIBS}"
 )

@@ -293,7 +293,12 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
 
   tp = self->rnode_type;
   rnode = sys_object_new(tp, NULL);
-  cst_render_node_construct(rnode, NULL, self);
+
+  CstRenderNodeParam param = {0};
+  param.id = self->id;
+  param.name = self->name;
+
+  cst_render_node_construct(rnode, &param);
 
   return rnode;
 }
@@ -325,7 +330,6 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
   CstLayerNode *lnode;
   CstLayerNode *lpnode;
   CstSurface* surface;
-  CstRender* g_render;
 
   layer_idx = self->v_layer_idx;
   surface = cst_render_get_default_surface();
@@ -334,7 +338,7 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
   lpnode = v_parent ? cst_render_node_get_layer_node(v_parent) : NULL;
   layer = cst_surface_get_layer_by_type(surface, layer_idx);
 
-  lnode = cst_layer_new_node(layer, lpnode, self);
+  lnode = cst_layer_new_node(layer, lpnode);
   cst_render_node_set_layer_node(rnode, lnode);
 
   // layernode owned by layer

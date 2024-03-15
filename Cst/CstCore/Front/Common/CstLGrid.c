@@ -6,21 +6,13 @@
 SYS_DEFINE_TYPE(CstLGrid, cst_lgrid, CST_TYPE_RENDER_NODE);
 
 
-static void cst_lgrid_construct_i(CstRenderNode *o, CstNode* node) {
+static void cst_lgrid_construct_i(CstRenderNode *o, CstRenderNodeParam *param) {
 
-  CST_RENDER_NODE_CLASS(cst_lgrid_parent_class)->construct(o, node);
+  CST_RENDER_NODE_CLASS(cst_lgrid_parent_class)->construct(o, param);
 }
 
 CstRenderNode* cst_lgrid_new(void) {
   return sys_object_new(CST_TYPE_LGRID, NULL);
-}
-
-CstRenderNode* cst_lgrid_new_I(CstNode *node) {
-  CstRenderNode* o = cst_lgrid_new();
-
-  cst_lgrid_construct_i(o, node);
-
-  return o;
 }
 
 static void cst_lgrid_init(CstLGrid *self) {

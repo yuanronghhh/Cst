@@ -13,6 +13,7 @@
 #include <CstCore/Driver/CstComponent.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstSurface.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 
 
@@ -701,17 +702,18 @@ SysBool ast_node_parse_layer_name(CstNodeBuilder *o, const SysChar *pstr) {
   sys_return_val_if_fail(o != NULL, false);
   sys_return_val_if_fail(pstr != NULL, false);
   CstLayer *layer;
+  CstSurface *surface;
 
-  CstRender *render = cst_render_get_g_render();
-  sys_return_val_if_fail(render == NULL, false);
-
-  SysInt layer_type = cst_layer_get_by_prop(pstr);
-  if(layer_type == -1) {
-    sys_warning_N("node o layer_type not correct: %s", pstr);
+  SysInt layer_idx = cst_layer_get_by_prop(pstr);
+  if(layer_idx == -1) {
+    sys_warning_N("node o layer_idx not correct: %s", pstr);
     return false;
   }
 
-  layer = cst_render_get_layer_by_type(render, layer_type);
+  surface = cst_render_get_default_surface();
+  sys_return_val_if_fail(surface == NULL, false);
+
+  layer = cst_surface_get_layer_by_type(surface, layer_idx);
   sys_return_val_if_fail(layer == NULL, false);
 
   cst_node_builder_set_v_layer(o, layer);

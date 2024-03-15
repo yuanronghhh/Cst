@@ -60,13 +60,11 @@ FRMonitor* fr_get_primary_monitor(void) {
 void fr_window_get_framebuffer_size(FRWindow *self, SysInt *width, SysInt * height) {
   sys_return_if_fail(self != NULL);
 
-
   glfwGetFramebufferSize(self->gwindow, width, height);
 }
 
 void fr_window_set_size(FRWindow *self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
-
 
   glfwSetWindowSize(self->gwindow, width, height);
 }

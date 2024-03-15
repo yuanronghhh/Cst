@@ -48,6 +48,20 @@ CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type) {
   return NULL;
 }
 
+CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
+  FRSurface *fsur = fr_draw_create_image_surface(width, height);
+  CstSurface* sur = cst_surface_new_I(fsur);
+
+  return sur;
+}
+
+CstSurface* cst_surface_create_surface(FRWindow *window, SysInt width, SysInt height) {
+  FRSurface* fsur = fr_window_create_surface(window, width, height);
+  CstSurface* sur = cst_surface_new_I(fsur);
+
+  return sur;
+}
+
 /* object api */
 static void cst_surface_construct(CstSurface *self, FRSurface* surface) {
   self->surface = surface;

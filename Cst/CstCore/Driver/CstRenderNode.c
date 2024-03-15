@@ -8,6 +8,7 @@
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstSurface.h>
+#include <CstCore/Driver/CstILayerNode.h>
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLGrid.h>
@@ -23,12 +24,12 @@ static SysMutex gnode_meta_lock;
 static SysHashTable* g_node_meta_ht = NULL;
 
 void cst_render_node_flex_item_imp(CstFlexItemInterface* item);
-void cst_render_node_layer_imp(CstILayerNodeInterface* item);
+void cst_render_node_layer_node_imp(CstILayerNodeInterface* item);
 
 
 SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
   SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, cst_render_node_flex_item_imp)
-  SYS_IMPLEMENT_INTERFACE(CST_TYPE_LAYER, cst_render_node_layer_imp)
+  SYS_IMPLEMENT_INTERFACE(CST_TYPE_ILAYER_NODE, cst_render_node_layer_node_imp)
 );
 
 void cst_render_node_set_rctx(CstRenderNode *self, CstRenderContext* rctx) {
@@ -54,7 +55,7 @@ void cst_render_node_flex_item_imp(CstFlexItemInterface *iface) {
   iface->get_width = render_node_get_width;
 }
 
-void cst_render_node_layer_imp(CstILayerNodeInterface* iface) {
+void cst_render_node_layer_node_imp(CstILayerNodeInterface* iface) {
 }
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {

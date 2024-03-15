@@ -66,45 +66,46 @@ FRSurface *fr_draw_get_surface(FRDraw *self) {
   return self->paint_surface;
 }
 
-static FRSurface* create_surface(FRWindow *window, SysInt width, SysInt height) {
-  FRSurface *surface;
+FRSurface* fr_draw_create_image_surface(SysInt width, SysInt height) {
+  return cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+}
 
-  if (window == NULL) {
-    surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
+FRSurface* fr_draw_create_surface(FRWindow* window, SysInt width, SysInt height) {
+  sys_return_val_if_fail(window != NULL, NULL);
 
-  } else {
+  FRSurface* surface;
 
 #if SYS_OS_WIN32
-    HWND hwd = fr_window_get_win32_window(window);
-    HDC hdc = GetDC(hwd);
-    surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+  HWND hwd = fr_window_get_win32_window(window);
+  HDC hdc = GetDC(hwd);
+  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 
-    cairo_t *cr = cairo_create(surface);
-    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-    cairo_paint(cr);
-    cairo_destroy(cr);
+  cairo_t* cr = cairo_create(surface);
+  cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+  cairo_paint(cr);
+  cairo_destroy(cr);
 
 #elif SYS_OS_UNIX
-    FRDisplay *display = fr_window_get_display(window);
-    Window xwindow = fr_window_get_x11_window(window);
-    Display *ndisplay = fr_display_get_x11_display(display);
-    int nscreen = DefaultScreen(ndisplay);
-    Visual *nvisual = DefaultVisual(ndisplay, nscreen);
+  FRDisplay* display = fr_window_get_display(window);
+  Window xwindow = fr_window_get_x11_window(window);
+  Display* ndisplay = fr_display_get_x11_display(display);
+  int nscreen = DefaultScreen(ndisplay);
+  Visual* nvisual = DefaultVisual(ndisplay, nscreen);
 
-    surface = cairo_xlib_surface_create(ndisplay,
-        xwindow,
-        nvisual,
-        width, height);
+  surface = cairo_xlib_surface_create(ndisplay,
+    xwindow,
+    nvisual,
+    width, height);
 #endif
-
-  }
 
   return surface;
 }
 
-static  FRSurface* create_image_surface_from_surface(FRSurface *surface, SysInt width, SysInt height) {
-  FRSurface * nsur = cairo_surface_create_similar_image(surface, CAIRO_FORMAT_ARGB32, 
-    width, height);
+FRSurface* fr_draw_create_image_surface_from_surface(FRSurface *surface, SysInt width, SysInt height) {
+  FRSurface * nsur = cairo_surface_create_similar_image(surface, 
+      CAIRO_FORMAT_ARGB32,
+      width,
+      height);
 
   return nsur;
 }
@@ -134,8 +135,8 @@ void fr_draw_frame_begin(FRDraw *self, FRRegion *region) {
   SysInt fbw = 0, fbh = 0;
   fr_window_get_framebuffer_size(self->window, &fbw, &fbh);
 
-  self->window_surface = create_surface(self->window, fbw, fbh);
-  self->paint_surface = create_image_surface_from_surface(self->window_surface, fbw, fbh);
+  self->window_surface = fr_draw_create_surface(self->window, fbw, fbh);
+  self->paint_surface = fr_draw_create_image_surface_from_surface(self->window_surface, fbw, fbh);
 
   sys_assert(self->cr == NULL && "draw cr should be NULL when fr_draw_frame_begin, missing fr_draw_frame_end ?");
 

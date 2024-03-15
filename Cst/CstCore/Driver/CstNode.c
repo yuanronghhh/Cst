@@ -333,6 +333,7 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
 
   layer_idx = self->v_layer_idx;
   surface = cst_render_get_default_surface();
+  sys_return_val_if_fail(surface != NULL && "default surface get failed", NULL);
 
   rnode = cst_node_new_render_node(self);
   lpnode = v_parent ? cst_render_node_get_layer_node(v_parent) : NULL;

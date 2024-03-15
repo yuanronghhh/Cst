@@ -186,15 +186,22 @@ CstSurface* cst_render_get_default_surface(void) {
 
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
+  CstSurface* surf;
+  SysInt width = 0, height = 0;
 
   if (is_offscreen) {
-
     self->window = NULL;
+    surf = cst_surface_create_image_surface(800, 600);
   } else {
 
     self->display = fr_display_new_I();
     self->window = fr_window_top_new(self->display);
+
+    fr_window_get_framebuffer_size(self->window, &width, &height);
+    surf = fr_draw_create_surface(self->window, width, height);
   }
+
+  sys_harray_add(&self->surfaces, surf);
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

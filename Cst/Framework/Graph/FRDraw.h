@@ -33,17 +33,20 @@ SYS_API FRDraw* fr_draw_new_I(FRWindow *window);
 SYS_API void fr_draw_frame_begin(FRDraw *self, FRRegion *region);
 SYS_API void fr_draw_frame_end(FRDraw *self, FRRegion *region);
 SYS_API SysBool fr_draw_frame_need_draw(FRDraw *self);
-void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, const FRSInt4* p4);
-void fr_draw_fill_bound(FRDraw* self, const FRRect *bound);
+SYS_API void fr_draw_stroke_mp(FRDraw* self, const FRRect *bound, const FRSInt4* m4, const FRSInt4* p4);
+SYS_API void fr_draw_fill_bound(FRDraw* self, const FRRect *bound);
+SYS_API FRSurface* fr_draw_create_image_surface(SysInt width, SysInt height);
+SYS_API FRSurface* fr_draw_create_surface(FRWindow* window, SysInt width, SysInt height);
+SYS_API FRSurface* fr_draw_create_image_surface_from_surface(FRSurface *surface, SysInt width, SysInt height);
 
 /* text render */
-void fr_draw_show_text(FRDraw * self, FRDrawLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);
-void fr_draw_set_color(FRDraw *self, FRColor *color);
-void fr_draw_layout_layout(FRDraw * self, FRDrawLayout * layout);
+SYS_API void fr_draw_show_text(FRDraw * self, FRDrawLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);
+SYS_API void fr_draw_set_color(FRDraw *self, FRColor *color);
+SYS_API void fr_draw_layout_layout(FRDraw * self, FRDrawLayout * layout);
 
 /* context */
-void fr_draw_save(FRDraw* self);
-void fr_draw_restore(FRDraw* self);
+SYS_API void fr_draw_save(FRDraw* self);
+SYS_API void fr_draw_restore(FRDraw* self);
 
 
 SYS_END_DECLS

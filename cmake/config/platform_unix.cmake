@@ -38,7 +38,6 @@ find_package(cglm REQUIRED)
 
 set(MPG123_LIBRARIES "mpg123")
 
-log("${GTK_LIBRARIES}")
 set(GTK_LIBRARIES
   "/media/greyhound/Storage/Debian/gtk-4.6.3/_build/gtk/libgtk-4.so"
   "/media/greyhound/Storage/Git/glib/_build/glib/libglib-2.0.so"

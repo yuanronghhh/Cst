@@ -4,6 +4,7 @@
 
 SYS_DEFINE_TYPE(FRDisplay, fr_display, SYS_TYPE_OBJECT);
 
+
 /* object api */
 FRDisplay* fr_display_new(void) {
   return sys_object_new(FR_TYPE_DISPLAY, NULL);

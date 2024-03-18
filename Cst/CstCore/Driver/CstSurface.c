@@ -55,8 +55,8 @@ CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
   return sur;
 }
 
-CstSurface* cst_surface_create_surface(FRWindow *window, SysInt width, SysInt height) {
-  FRSurface* fsur = fr_window_create_surface(window, width, height);
+CstSurface* cst_surface_create_by_window(FRWindow *window, SysInt width, SysInt height) {
+  FRSurface* fsur = fr_draw_create_surface(window, width, height);
   CstSurface* sur = cst_surface_new_I(fsur);
 
   return sur;

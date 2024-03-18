@@ -26,10 +26,10 @@ struct _CstSurface {
 SysType cst_surface_get_type(void);
 CstSurface *cst_surface_new(void);
 
-CstSurface* cst_surface_new_I(FRSurface* surface);
+CstSurface *cst_surface_new_I(FRSurface *fsurf);
 CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type);
 void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* layout);
-CstSurface* cst_surface_create_surface(FRWindow* window, SysInt width, SysInt height);
+CstSurface* cst_surface_create_by_window(FRWindow *window, SysInt width, SysInt height);
 CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height);
 
 SYS_END_DECLS

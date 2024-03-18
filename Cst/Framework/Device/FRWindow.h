@@ -52,17 +52,17 @@ SYS_API SysInt fr_window_get_key (FRWindow *window, SysInt key);
 SYS_API const SysChar* fr_key_get_name(SysInt key, SysInt scancode);
 
 #if SYS_OS_WIN32
-  HWND fr_window_get_win32_window(FRWindow* window);
+  SYS_API HWND fr_window_get_win32_window(FRWindow* window);
 #elif SYS_OS_UNIX
   SYS_API Window fr_window_get_x11_window(FRWindow* window);
 #endif
 
 #if defined(VK_VERSION_1_0)
-void fr_window_create_vk_surface(FRWindow* window, VkInstance instance, VkSurfaceKHR* surfacekhr);
+SYS_API void fr_window_create_vk_surface(FRWindow* window, VkInstance instance, VkSurfaceKHR* surfacekhr);
 #endif
 
 void fr_window_set_gwindow(FRWindow *self, GLFWwindow * gwindow);
-GLFWwindow * fr_window_get_gwindow(FRWindow *self);
+SYS_API GLFWwindow * fr_window_get_gwindow(FRWindow *self);
 
 SYS_END_DECLS
 

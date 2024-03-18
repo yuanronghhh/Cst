@@ -198,7 +198,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
     self->window = fr_window_top_new(self->display);
 
     fr_window_get_framebuffer_size(self->window, &width, &height);
-    surf = fr_draw_create_surface(self->window, width, height);
+    surf = cst_surface_create_by_window(self->window, width, height);
   }
 
   sys_harray_add(&self->surfaces, surf);

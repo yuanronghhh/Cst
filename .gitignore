@@ -18,3 +18,4 @@ tags
 
 compile_commands.json
 *Config.h
+__pycache__/

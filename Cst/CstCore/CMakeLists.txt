@@ -96,6 +96,8 @@ set(SRC
 
   ./Driver/Flex/CstFlexAlgorithm.h
   ./Driver/Flex/CstFlexAlgorithm.c
+  ./Driver/Flex/CstFlexContext.h
+  ./Driver/Flex/CstFlexContext.c
   ./Driver/Flex/CstFlexLine.h
   ./Driver/Flex/CstFlexLine.c
   ./Driver/Flex/CstFlexItem.h

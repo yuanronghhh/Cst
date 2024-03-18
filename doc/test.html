@@ -10,9 +10,15 @@ body {
   margin: 0px;
 }
 #box {
-  font-size: 18px;
-  margin: 0px;
-  overflow-wrap: break-word;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+}
+#box>div {
+  width: 460px;
+  height: 40px;
+  margin: 50px;
 }
 #bold-text {
   font-size: 50px;
@@ -23,12 +29,11 @@ body {
   </style>
   <body>
     <div id="box">
-      cabc abcabcabbca bcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbccabcabcabcabcabcabcabcabcabcabcabcabcbccabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbccabcabcabcabcabcabcabcabcabcabcabcabcbc
-      <span id="bold-text">aabcab cabcab</span><span id="small-text">mak</span>
-      cabc abcabcabbca bcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbcbcabcabcabcabcabcabcabcabcabcabcabcabcbccabcabcabcabcabcabcabcabcabcabcabcabcbc
+      <div id="div1">div1</div>
+      <div id="div2">div2</div>
+      <div id="div3">div3</div>
     </div>
     <div id="box2">
-      box2
     </div>
   </body>
 </html>

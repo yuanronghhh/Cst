@@ -185,8 +185,17 @@ void fr_draw_restore(FRDraw* self) {
   cairo_restore(self->cr);
 }
 
+void fr_draw_draw_text(FRDraw* self, FRDrawLayout* layout,
+  SysInt x, SysInt y) {
+  FRContext* cr = self->cr;
+
+  cairo_move_to(cr, x, y);
+  pango_cairo_show_layout(cr, layout);
+}
+
 /* text render */
-void fr_draw_show_text(FRDraw* self, FRDrawLayout *layout, SysInt x, SysInt y, SysInt m1, SysInt m0) {
+void fr_draw_show_text(FRDraw* self, FRDrawLayout *layout, 
+  SysInt x, SysInt y, SysInt m1, SysInt m0) {
   FRContext* cr = self->cr;
 
   cairo_move_to(cr, x + m1, y + m0);

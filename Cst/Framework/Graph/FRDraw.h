@@ -40,6 +40,7 @@ SYS_API FRSurface* fr_draw_create_surface(FRWindow* window, SysInt width, SysInt
 SYS_API FRSurface* fr_draw_create_image_surface_from_surface(FRSurface *surface, SysInt width, SysInt height);
 
 /* text render */
+SYS_API void fr_draw_draw_text(FRDraw* self, FRDrawLayout* layout, SysInt x, SysInt y);
 SYS_API void fr_draw_show_text(FRDraw * self, FRDrawLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);
 SYS_API void fr_draw_set_color(FRDraw *self, FRColor *color);
 SYS_API void fr_draw_layout_layout(FRDraw * self, FRDrawLayout * layout);

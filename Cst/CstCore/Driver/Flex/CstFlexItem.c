@@ -13,6 +13,12 @@ SysInt cst_flex_item_get_width (CstFlexItem *item) {
   return CST_FLEX_ITEM_GET_IFACE(item)->get_width(item);
 }
 
+const SysChar* cst_flex_item_get_name (CstFlexItem *item) {
+  sys_return_val_if_fail(item != NULL, NULL);
+
+  return CST_FLEX_ITEM_GET_IFACE(item)->get_name(item);
+}
+
 SysInt cst_flex_item_get_direction (CstFlexItem *item) {
   sys_return_val_if_fail(item != NULL, -1);
 

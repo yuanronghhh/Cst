@@ -40,8 +40,10 @@ typedef enum _CST_CSS_VALUE_ENUM {
 } CST_CSS_VALUE_ENUM;
 
 typedef enum _CST_DIRECTION_ENUM {
-  CST_DIRECTION_VERTICAL,
   CST_DIRECTION_HORIZONTAL,
+  CST_DIRECTION_HORIZONTAL_REVERSE,
+  CST_DIRECTION_VERTICAL,
+  CST_DIRECTION_VERTICAL_REVERSE,
 } CST_DIRECTION_ENUM;
 
 typedef enum _CST_AWATCH_ENUM {
@@ -153,6 +155,9 @@ typedef struct _CstLayoutNode CstLayoutNode;
 typedef struct _CstLayoutNodeClass CstLayoutNodeClass;
 typedef struct _CstRenderContext CstRenderContext;
 typedef struct _CstRenderContextClass CstRenderContextClass;
+
+typedef struct _CstFlexContext CstFlexContext;
+typedef struct _CstFlexContextClass CstFlexContextClass;
 
 typedef struct _CstFlexItem CstFlexItem;
 typedef struct _CstFlexItemInterface CstFlexItemInterface;

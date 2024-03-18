@@ -13,6 +13,7 @@ SYS_BEGIN_DECLS
 struct _CstFlexItemInterface {
   SysTypeInterface parent;
 
+  const SysChar *(*get_name) (CstFlexItem *self);
   const FRSInt4 *(*get_padding) (CstFlexItem *self);
   const FRSInt4 *(*get_bound) (CstFlexItem *self);
   SysInt (*get_width) (CstFlexItem *self);
@@ -21,6 +22,7 @@ struct _CstFlexItemInterface {
 
 SysType cst_flex_item_get_type(void);
 SysInt cst_flex_item_get_width (CstFlexItem *item);
+const SysChar* cst_flex_item_get_name (CstFlexItem *item);
 const FRSInt4 *cst_flex_item_get_padding (CstFlexItem *item);
 const FRSInt4 *cst_flex_item_get_bound (CstFlexItem *item);
 SysInt cst_flex_item_get_direction (CstFlexItem *item);

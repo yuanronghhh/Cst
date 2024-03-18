@@ -16,9 +16,9 @@ struct _CstFlexLineClass {
 
 struct _CstFlexLine {
   SysObject parent;
+  SysHArray items;
 
   /* <private> */
-  SysHArray items;
   SysInt cross_size;
 };
 

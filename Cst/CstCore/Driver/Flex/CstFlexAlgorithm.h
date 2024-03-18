@@ -1,6 +1,7 @@
 #ifndef __CST_FLEX_ALGORITHM_H__
 #define __CST_FLEX_ALGORITHM_H__
 
+#include <CstCore/Driver/Flex/CstFlexItem.h>
 #include <CstCore/Driver/CstAlgorithm.h>
 
 SYS_BEGIN_DECLS

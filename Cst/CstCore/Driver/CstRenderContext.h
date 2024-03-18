@@ -24,7 +24,6 @@ struct _CstRenderContext {
   SysInt16 line_space;
 
   /* flexline */
-  SysHArray lines;
   FRSInt4 mbp;
 
   SysInt prefer_height;

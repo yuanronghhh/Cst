@@ -1,10 +1,52 @@
 #include <CstCore/Driver/Flex/CstFlexAlgorithm.h>
 
+#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/Flex/CstFlexLine.h>
+#include <CstCore/Driver/Flex/CstFlexContext.h>
+
 SYS_DEFINE_TYPE(CstFlexAlgorithm, cst_flex_algorithm, CST_TYPE_ALGORITHM);
 
 
-static void cst_flex_algorithm_layout_i(CstAlgorithm* self, CstRenderNode* rnode, CstLayout* layout) {
+static void layout_horizonal(CstAlgorithm* self,
+    CstFlexItem* rnode,
+    CstFlexContext* ctx) {
 
+  SysHArray* lines = cst_flex_context_get_lines(ctx);
+  CstFlexItem *item;
+
+  for(SysUInt i = 0; i < lines->len; i++) {
+    CstFlexLine *line = lines->pdata[i];
+
+    for (SysUInt j = 0; j < line->items.len; j++) {
+      item = line->items.pdata[j];
+
+      sys_debug_N("%s", cst_flex_item_get_name(item));
+    }
+  }
+}
+
+static void cst_flex_algorithm_layout_i(CstAlgorithm* self,
+    CstRenderNode* rnode,
+    CstLayout* layout) {
+
+  CstFlexItem *item = CST_FLEX_ITEM(rnode);
+  CstFlexContext *ctx = CST_FLEX_CONTEXT(layout);
+  CST_DIRECTION_ENUM dr = cst_flex_item_get_direction(rnode);
+
+  switch (dr)
+  {
+    case CST_DIRECTION_HORIZONTAL:
+      layout_horizonal(self, item, ctx);
+      break;
+    case CST_DIRECTION_HORIZONTAL_REVERSE:
+      break;
+    case CST_DIRECTION_VERTICAL:
+      break;
+    case CST_DIRECTION_VERTICAL_REVERSE:
+      break;
+    default:
+      break;
+  }
 }
 
 /* object api */

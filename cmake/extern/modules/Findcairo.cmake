@@ -42,14 +42,16 @@ IF(WIN32)
 ENDIF()
 
 set(CAIRO_DEPS
+  brotli
+  freetype
   dirent
   expat
-  libpng
+  png
   lzo
   pixman
   pthread
-  vcpkg-tool-meson
   zlib
+  bzip2
 )
 add_dep_for_libray_N(cairo "${CAIRO_DEPS}")
 

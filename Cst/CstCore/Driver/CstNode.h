@@ -51,15 +51,13 @@ CstNode* cst_node_new(void);
 SysType cst_node_get_type(void);
 
 CST_NODE_PROP_ENUM cst_node_prop_get_by_name(const SysChar *name);
+CstNode* cst_node_new_with_rnode_type(const SysChar* name, SysType rnode_type);
 
 void cst_node_set_name(CstNode *node, const SysChar *name);
 const SysChar *cst_node_get_name(CstNode *node);
 
 void cst_node_set_id(CstNode *node, const SysChar *id);
 const SysChar *cst_node_get_id(CstNode *node);
-
-CstNode* cst_node_new_tree_node(const SysChar* name);
-CstNode *cst_node_new_body(void);
 
 SysBool cst_node_print_node(CstNode* node, SysPointer user_data);
 void cst_node_print_r(CstNode* node, SysPointer user_data);
@@ -73,7 +71,6 @@ SysType cst_node_get_rnode_type(CstNode *self);
 CstRenderNode *cst_node_new_render_node(CstNode* self);
 void cst_node_unlink_node_r(CstNode *self);
 
-CstNode *cst_node_get_body_node(void);
 void cst_node_setup(void);
 void cst_node_teardown(void);
 

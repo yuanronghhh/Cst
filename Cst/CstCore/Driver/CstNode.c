@@ -21,8 +21,6 @@ static const SysChar* CST_NODE_PROP_NAMES[] = {
   "key_up","key_down",
 };
 
-static CstNode *body_node = NULL;
-static SysMutex body_node_lock;
 
 SYS_DEFINE_TYPE(CstNode, cst_node, FR_TYPE_NODE);
 
@@ -175,28 +173,15 @@ SysInt cst_node_get_v_z_index(CstNode *self) {
   return self->v_z_index;
 }
 
-CstNode* cst_node_new_tree_node(const SysChar* name) {
-  CstNode *layout;
+CstNode* cst_node_new_with_rnode_type(const SysChar* name, SysType rnode_type) {
+  CstNode* self;
 
-  layout = cst_node_new();
-  cst_node_set_name(layout, name);
-  cst_node_set_rnode_type(layout, CST_TYPE_LBOX);
+  self = cst_node_new();
+  self->name = sys_strdup(name);
+  self->rnode_type = rnode_type;
+  self->v_css_list = NULL;
 
-  return layout;
-}
-
-CstNode *cst_node_new_body(void) {
-  CstNode *node;
-
-  node = cst_node_new();
-  node->v_css_list = cst_css_group_list_new();
-
-  cst_node_set_id(node, "<body-id>");
-  cst_node_set_name(node, "LBody");
-  cst_node_set_rnode_type(node, CST_TYPE_LBODY);
-  cst_css_group_set_by_name(node->v_css_list, node->name);
-
-  return node;
+  return self;
 }
 
 /* api */
@@ -345,10 +330,6 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
   // layernode owned by layer
   sys_object_ref(lnode);
 
-#if 0
-  cst_layer_node_set_render_node(lnode, rnode);
-#endif
-
   sys_list_foreach(self->v_awatch_list, item) {
     awatch =  FR_AWATCH(item->data);
     fr_awatch_bind(awatch, rnode);
@@ -394,28 +375,10 @@ CstRenderNode* cst_node_realize_r(CstNode *self, CstRenderNode *v_parent, CstCom
   return rnode;
 }
 
-CstNode *cst_node_get_body_node(void) {
-  CstNode* lv;
-
-  sys_mutex_lock(&body_node_lock);
-  lv = body_node;
-  sys_mutex_unlock(&body_node_lock);
-
-  return lv;
-}
-
 void cst_node_setup(void) {
-  sys_assert(body_node == NULL);
-
-  sys_mutex_init(&body_node_lock);
-
-  body_node = cst_node_new_body();
 }
 
 void cst_node_teardown(void) {
-  sys_mutex_clear(&body_node_lock);
-
-  sys_clear_pointer(&body_node, cst_node_unlink_node_r);
 }
 
 /* sys object api */
@@ -440,6 +403,11 @@ static void cst_node_dispose(SysObject* o) {
 
   sys_list_free_full(self->v_nodemap_list, (SysDestroyFunc)_sys_object_unref);
   self->v_nodemap_list = NULL;
+
+  if (self->v_css_list) {
+    sys_harray_free(self->v_css_list, true);
+    self->v_css_list = NULL;
+  }
 
   sys_clear_pointer(&self->id, sys_free);
   sys_clear_pointer(&self->name, sys_free);

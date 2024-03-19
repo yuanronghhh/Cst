@@ -24,7 +24,7 @@ static void test_layout_box_workflow(SysChar *entry, TestLayoutFunc func) {
 
   cst_render_render(v_render, v_module);
 
-  root = cst_node_get_body_node();
+  root = cst_module_get_root_node(v_module);
 
   func(root);
 

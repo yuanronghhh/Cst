@@ -149,8 +149,6 @@ set(SRC
 
   ./Parser/CstParser.c
   ./Parser/CstParser.h
-  ./Parser/CstParserContext.c
-  ./Parser/CstParserContext.h
   ./Parser/CstParserCommon.h
   ./Parser/CstParserTypes.h
   ./Parser/CstParserCore.h

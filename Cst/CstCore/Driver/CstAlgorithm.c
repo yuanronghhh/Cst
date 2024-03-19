@@ -3,6 +3,15 @@
 SYS_DEFINE_TYPE(CstAlgorithm, cst_algorithm, SYS_TYPE_OBJECT);
 
 
+void cst_algorithm_measure(CstAlgorithm *self, CstRenderNode * rnode, CstLayout * layout) {
+  sys_return_if_fail(self != NULL);
+
+  CstAlgorithmClass *cls = CST_ALGORITHM_GET_CLASS(self);
+  sys_return_if_fail(cls->measure != NULL);
+
+  cls->measure(self, rnode, layout);
+}
+
 void cst_algorithm_layout(CstAlgorithm *self, CstRenderNode * rnode, CstLayout * layout) {
   sys_return_if_fail(self != NULL);
 

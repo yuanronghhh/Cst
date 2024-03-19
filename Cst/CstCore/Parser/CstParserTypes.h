@@ -55,11 +55,9 @@ typedef SysPointer JPointer;
 
 typedef struct _SConst SConst;
 
+typedef struct _CstParserRContext CstParserRContext;
 typedef struct _CstParser CstParser;
 typedef struct _CstParserClass CstParserClass;
-
-typedef struct _CstParserContext CstParserContext;
-typedef struct _CstParserContextClass CstParserContextClass;
 
 typedef struct _AstParser AstParser;
 typedef struct _AstParserClass AstParserClass;

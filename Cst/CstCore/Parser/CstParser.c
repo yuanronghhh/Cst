@@ -5,18 +5,6 @@
 SYS_DEFINE_TYPE(CstParser, cst_parser, SYS_TYPE_OBJECT);
 
 /* parser */
-void cst_parser_set_ctx(CstParser *self, CstParserContext * ctx) {
-  sys_return_if_fail(self != NULL);
-
-  self->ctx = ctx;
-}
-
-CstParserContext * cst_parser_get_ctx(CstParser *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->ctx;
-}
-
 void cst_parser_error(CstParser* self, const SysChar* format, ...) {
   sys_return_if_fail(self != NULL);
 
@@ -29,8 +17,12 @@ const SysChar* cst_parser_get_filename(CstParser* self) {
   return self->filename;
 }
 
-SysBool cst_parser_parse(CstParser* self) {
+SysBool cst_parser_parse(CstParser* self, CstParserRContext *ctx) {
   sys_return_val_if_fail(self != NULL, false);
+
+  self->import_func = ctx->import_func;
+  self->user_data = ctx->user_data;
+  self->realize_func = ctx->realize_func;
 
   YYSTYPE* udata = &self->udata;
 
@@ -46,6 +38,20 @@ yyscan_t cst_parser_get_scanner(CstParser* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->scanner;
+}
+
+SysBool cst_parser_realize(CstParser* self, AstNode* ast) {
+  sys_return_val_if_fail(self != NULL, false);
+  if (!self->realize_func) { return false; }
+
+  return self->realize_func(ast, self->user_data);
+}
+
+SysBool cst_parser_import(CstParser* self, AstNode* ast) {
+  sys_return_val_if_fail(self != NULL, false);
+  if (!self->import_func) { return false; }
+
+  return self->import_func(ast, self->user_data);
 }
 
 /* object api */
@@ -68,11 +74,6 @@ static void cst_parser_dispose(SysObject* o) {
   sys_clear_pointer(&self->scanner, yylex_destroy);
   sys_clear_pointer(&self->fp, sys_fclose);
   sys_clear_pointer(&self->filename, sys_free);
-
-  if (self->ctx) {
-
-    sys_clear_pointer(&self->ctx, _sys_object_unref);
-  }
 
   SYS_OBJECT_CLASS(cst_parser_parent_class)->dispose(o);
 }

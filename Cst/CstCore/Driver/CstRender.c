@@ -90,6 +90,7 @@ static void render_layout_surfaces(SysHArray *surfs, CstRenderNode *rnode, CstLa
 void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
+#if 0
   CstRenderNode *rnode;
 
   rnode = self->body_rnode;
@@ -98,6 +99,7 @@ void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
   init_body_layout_info(rnode, layout);
   render_layout_surfaces(&self->surfaces, rnode, layout);
   cst_layout_end_layout(layout);
+#endif
 }
 
 void cst_render_realize(CstRender *self, CstModule *v_module) {
@@ -113,26 +115,25 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
+  cst_render_realize(self, v_module);
+
+#if 0
   FRRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
   FRWindow* window;
   FRDraw* draw;
 
-  cst_render_realize(self, v_module);
-
   window = cst_render_get_default_window(self);
   region = render_create_region(window);
   draw = fr_draw_new_I(window);
   layout = cst_layout_new_I(window, draw, region);
   rnode = self->body_rnode;
-
   init_body_layout_info(rnode, layout);
-  // render_node_layout_r(rnode, layout);
 
   fr_region_destroy(region);
-
   sys_object_unref(layout);
+#endif
 }
 
 void cst_render_resize_window(CstRender *self) {
@@ -225,6 +226,8 @@ static void cst_render_dispose(SysObject* o) {
     sys_object_unref(self->window);
     sys_object_unref(self->display);
   }
+
+  sys_harray_destroy(&self->surfaces);
 
   SYS_OBJECT_CLASS(cst_render_parent_class)->dispose(o);
 }

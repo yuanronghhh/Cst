@@ -45,7 +45,6 @@ FREnv *cst_css_env_new_I(FREnv *parent) {
 
 void cst_css_env_setup(void) {
   CstParser* ps;
-  CstParserContext *ctx;
   SysChar *buildin_css_path;
 
   sys_rec_mutex_init(&gcss_lock);
@@ -54,18 +53,17 @@ void cst_css_env_setup(void) {
   gcss_env = cst_css_env_new_I(NULL);
 
   ps = ast_parser_new_for_gcss(buildin_css_path);
-  ctx = cst_parser_context_new();
-  ctx->realize_func = (AstNodeFunc)ast_parser_root_gstyle_handle;
-  ctx->user_data = (SysPointer)ps;
 
-  cst_parser_set_ctx(ps, ctx);
+  CstParserRContext ctx = { 0 };
+  ctx.realize_func = (AstNodeFunc)ast_parser_root_gstyle_handle;
+  ctx.user_data = (SysPointer)ps;
 
   if (ps == NULL) {
     sys_abort_N(SYS_("Failed to load base style in path: %s"), buildin_css_path);
     return;
   }
 
-  if (!cst_parser_parse(ps)) {
+  if (!cst_parser_parse(ps, &ctx)) {
     sys_abort_N(SYS_("Failed to load base style in path: %s"), buildin_css_path);
     return;
   }

@@ -1,4 +1,4 @@
-#include <CstCore/Driver/CstFlexContext.h>
+#include <CstCore/Driver/Flex/CstFlexContext.h>
 
 SYS_DEFINE_TYPE(CstFlexContext, cst_flex_context, SYS_TYPE_OBJECT);
 
@@ -20,7 +20,7 @@ CstFlexContext* cst_flex_context_new(void) {
   return sys_object_new(CST_TYPE_FLEX_CONTEXT, NULL);
 }
 
-CstFlexContext *cst_flex_context_new_I(SysHArray *lines) {
+CstFlexContext *cst_flex_context_new_I(void) {
   CstFlexContext *o = cst_flex_context_new();
 
   cst_flex_context_construct(o);

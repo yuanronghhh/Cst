@@ -14,14 +14,13 @@ struct _CstAlgorithmClass {
   SysObjectClass parent;
 
   void (*layout) (CstAlgorithm *self, CstRenderNode* rnode, CstLayout* layout);
+  void (*measure) (CstAlgorithm *self, CstRenderNode * rnode, CstLayout *layout);
 };
 
 struct _CstAlgorithm {
   SysObject parent;
 
   /* <private> */
-  void (*measure) (CstAlgorithm *self, CstRenderNode * rnode, CstLayout *layout);
-  void (*layout) (CstAlgorithm *self, CstRenderNode * rnode, CstLayout *layout);
 };
 
 SYS_API SysType cst_algorithm_get_type(void);

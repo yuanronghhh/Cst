@@ -61,8 +61,7 @@ program_unit : unit_list
                 AstNode *root = ast_for_root($1);
                 $$ = root;
 
-                CstParserContext *ctx = cst_parser_get_ctx(ps);
-                cst_parser_context_realize(ctx, root);
+                cst_parser_realize(ps, root);
                 ast_node_free(root);
              }
              ;
@@ -98,8 +97,7 @@ import  : import_token id_list from_token string_token ';'
         {
             $$ = ast_for_import($2, $4);
 
-            CstParserContext *ctx = cst_parser_get_ctx(ps);
-            cst_parser_context_import(ctx, $$);
+            cst_parser_import(ps, $$);
         }
         ;
 source  : source_token

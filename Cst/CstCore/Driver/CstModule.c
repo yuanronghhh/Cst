@@ -3,9 +3,11 @@
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
+#include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
-#include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Front/Common/CstLBox.h>
 
 typedef struct _CstModuleContext CstModuleContext;
 
@@ -20,46 +22,90 @@ static SysHashTable* g_module_ht;
 SYS_DEFINE_TYPE(CstModule, cst_module, FR_TYPE_ENV);
 
 
-CstModule* cst_module_load_path(
-    CstModule *parent,
-    const SysChar* path) {
-  sys_return_val_if_fail(path != NULL, NULL);
+SysInt module_check_g_module(const SysChar *path, CstModule **v_module) {
+  sys_return_val_if_fail(path != NULL, -1);
+  sys_return_val_if_fail(*v_module == NULL, -1);
 
-  CstModule *mod, *old;
-  CstParser *ps;
-  CstParserContext* ctx;
-  CstNode* pnode = NULL;
-  SysBool is_tree_node = false;
-
-  if (parent) {
-    if (cst_module_is_loaded(parent)) {
-
-      pnode = cst_module_get_root_node(parent);
-    } else {
-
-      pnode = cst_node_new_tree_node(sys_path_basename(path));
-      is_tree_node = true;
-    }
-
-  } else {
-
-    pnode = cst_node_get_body_node();
-    sys_object_ref(pnode);
-  }
-
+  CstModule *old;
 
   old = cst_module_get_g_module(path);
   if(old != NULL) {
+    *v_module = old;
+
     if(!old->loaded) {
-      sys_error_N("module load circular in %s: %s",
-          cst_module_get_path(parent),
-          cst_module_get_path(old));
-
-      return NULL;
+      /* module is loading, maybe load circular? */
+      return -2;
     } else {
-
-      return old;
+      return 1;
     }
+  }
+
+  /* not found module. */
+  return 0;
+}
+
+CstNode* cst_module_new_pnode(CstModule* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  const SysChar* bname;
+
+  bname = sys_path_basename(self->path);
+  return cst_node_new_with_rnode_type(bname, CST_TYPE_LBOX);
+}
+
+SysBool cst_module_new_load(CstModule *self, CstNode *pnode) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(pnode != NULL, false);
+
+  CstParser* ps;
+  CstModule* old = NULL;
+
+  ps = ast_parser_new_I(self->path, self, pnode);
+
+  CstParserRContext ctx = { 0 };
+  ctx.import_func = (AstNodeFunc)ast_parser_import_handle;
+  ctx.realize_func = (AstNodeFunc)ast_parser_module_handle;
+  ctx.user_data = ps;
+
+  if(!cst_parser_parse(ps, &ctx)) {
+    goto fail;
+  }
+  sys_clear_pointer(&ps, _sys_object_unref);
+  self->loaded = true;
+
+  cst_module_set_root_node(self, pnode);
+
+  return self;
+
+fail:
+  cst_module_remove_g_module(self->path);
+  return false;
+}
+
+CstModule* cst_module_load_path(CstModule *parent, const SysChar *path) {
+  sys_return_val_if_fail(path != NULL, NULL);
+
+  SysInt r;
+  CstNode* pnode;
+  SysChar* id;
+  CstModule* old = NULL;
+  CstModule* mod;
+
+  if(!sys_path_exists(path)) {
+    sys_warning_N("module path not exists: %s", path);
+    return NULL;
+  }
+
+  r = module_check_g_module(path, &old);
+  if (r == -2) {
+    sys_error_N("module load circular: %s %s",
+      parent ? cst_module_get_path(parent) : "",
+      cst_module_get_path(old));
+    return NULL;
+  }
+
+  if (r == 1) {
+    return old;
   }
 
   mod = cst_module_new_I(parent, path);
@@ -68,30 +114,21 @@ CstModule* cst_module_load_path(
   }
   cst_module_set_g_module(mod);
 
-  ctx = cst_parser_context_new();
-  ps = ast_parser_new_I(path, mod, pnode);
-
-  ctx->import_func = (AstNodeFunc)ast_parser_import_handle;
-  ctx->realize_func = (AstNodeFunc)ast_parser_module_handle;
-  ctx->user_data = ps;
-  cst_parser_set_ctx(ps, ctx);
-
-  if(!cst_parser_parse(ps)) {
+  pnode = cst_module_new_pnode(mod);
+  if (!cst_module_new_load(mod, pnode)) {
     goto fail;
   }
-  sys_object_unref(ps);
-  mod->loaded = true;
 
-  if (is_tree_node) {
-
-    cst_node_set_id(pnode, cst_module_new_node_id(mod));
-  }
-  cst_module_set_root_node(mod, pnode);
+  id = cst_module_new_node_id(mod);
+  cst_node_set_id(pnode, id);
 
   return mod;
-
 fail:
-  cst_module_remove_g_module(path);
+  if (pnode != NULL) {
+    sys_clear_pointer(&pnode, _sys_object_unref);
+  }
+
+  sys_clear_pointer(&mod, _sys_object_unref);
   return NULL;
 }
 
@@ -292,15 +329,10 @@ static void cst_module_construct(CstModule *self, CstModule *pmodule, const SysC
 
   self->function_env = fr_env_new_I(ht, NULL);
   self->root_component = NULL;
-  self->pmodule = pmodule;
+  self->v_pmodule = pmodule;
 }
 
 CstModule* cst_module_new_I(CstModule *v_pmodule, const SysChar* path) {
-  if(!sys_path_exists(path)) {
-    sys_warning_N("module path not exists: %s", path);
-    return NULL;
-  }
-
   CstModule* self = cst_module_new();
 
   cst_module_construct(self, v_pmodule, path);

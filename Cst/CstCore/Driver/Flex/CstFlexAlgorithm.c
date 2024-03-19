@@ -31,7 +31,7 @@ static void cst_flex_algorithm_layout_i(CstAlgorithm* self,
 
   CstFlexItem *item = CST_FLEX_ITEM(rnode);
   CstFlexContext *ctx = CST_FLEX_CONTEXT(layout);
-  CST_DIRECTION_ENUM dr = cst_flex_item_get_direction(rnode);
+  CST_DIRECTION_ENUM dr = cst_flex_item_get_direction(item);
 
   switch (dr)
   {

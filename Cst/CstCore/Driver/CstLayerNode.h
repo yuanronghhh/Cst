@@ -16,7 +16,6 @@ struct _CstLayerNode {
 
   /* < private > */
   CstLayer* layer;
-  CstSurface *surface;
 };
 
 struct _CstLayerNodeClass {

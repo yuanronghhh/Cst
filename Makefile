@@ -85,7 +85,7 @@ check-linux:
 		--show-reachable=no \
 		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
 		--suppressions=cst.supp  \
-		./build/Cst/System/TestSuite/SystemTestSuite ${ARGS}
+		${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
 
 # -------------------- core start --------------------
 cst-test-build:

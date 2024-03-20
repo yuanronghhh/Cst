@@ -1,4 +1,6 @@
 #include <CstCore/Driver/CstILayer.h>
+#include <CstCore/Driver/CstLayer.h>
+
 
 SYS_DEFINE_INTERFACE(CstILayer, cst_i_layer, SYS_TYPE_OBJECT);
 
@@ -36,11 +38,13 @@ void cst_i_layer_new_node (CstLayer* self) {
   CST_I_LAYER_GET_IFACE(self)->new_node(self);
 }
 
-void cst_i_layer_iterate_node (CstLayer* self, 
-  CstLayerNode *lnode, 
+void cst_i_layer_iterate_node (CstLayer* self,
+  CstLayerNode *lnode,
   CstLayerNodeFunc func,
   SysPointer user_data) {
-  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(CST_LAYER(self));
+  sys_return_if_fail(lnode != NULL);
+  sys_return_if_fail(func != NULL);
 
   CST_I_LAYER_GET_IFACE(self)->iterate_node(self, lnode, func, user_data);
 }

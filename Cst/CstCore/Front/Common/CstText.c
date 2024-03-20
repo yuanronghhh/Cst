@@ -121,10 +121,12 @@ static void cst_text_dispose(SysObject* o) {
   CstText *self = CST_TEXT(o);
 
   if(self->font_desc) {
+
     pango_font_description_free(self->font_desc);
   }
 
   if (self->playout) {
+
     sys_clear_pointer(&self->playout, g_object_unref);
   }
 

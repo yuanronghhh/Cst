@@ -29,11 +29,13 @@ CstRenderNode* cst_layer_node_get_render_node(CstLayerNode *self) {
 static void cst_layer_node_dispose(SysObject* o) {
   CstLayerNode *self = CST_LAYER_NODE(o);
 
+  sys_clear_pointer(&self->layer, _sys_object_unref);
+
   SYS_OBJECT_CLASS(cst_layer_node_parent_class)->dispose(o);
 }
 
 static void cst_layer_node_construct(CstLayerNode* self, CstLayer *layer) {
-  self->layer = layer;
+  self->layer = sys_object_ref(layer);
 }
 
 CstLayerNode *cst_layer_node_new(void) {

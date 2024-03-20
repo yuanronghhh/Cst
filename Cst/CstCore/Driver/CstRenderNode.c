@@ -224,7 +224,9 @@ void cst_render_node_unlink_node_r(CstRenderNode* self) {
   sys_return_if_fail(self != NULL);
   CstLayerNode* lnode = self->layer_node;
   CstLayer* layer = cst_layer_node_get_layer(lnode);
-  
+
+  sys_assert(CST_LAYER(layer) != NULL);
+
   cst_i_layer_iterate_node(layer, lnode, (CstLayerNodeFunc)node_unlink_one, NULL);
 }
 

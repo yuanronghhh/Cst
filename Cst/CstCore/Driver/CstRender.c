@@ -26,6 +26,8 @@ void cst_render_setup(void) {
 void cst_render_teardown(void) {
   sys_mutex_clear(&g_render_lock);
 
+  sys_assert(g_render != NULL);
+
   sys_clear_pointer(&g_render, _sys_object_unref);
 }
 

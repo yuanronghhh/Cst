@@ -28,7 +28,6 @@ SysType cst_box_layer_get_type(void);
 CstLayer* cst_box_layer_new(void);
 CstLayer * cst_box_layer_new_I(void);
 
-void cst_box_layer_set_root (CstBoxLayer *self, CstBoxNode *root);
 void cst_box_layer_print_tree(CstBoxLayer* self);
 
 SYS_END_DECLS

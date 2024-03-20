@@ -6,6 +6,7 @@
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstLayout.h>
+#include <CstCore/Driver/CstILayer.h>
 
 typedef struct _BoxLayerPass BoxLayerPass;
 
@@ -14,7 +15,10 @@ struct _BoxLayerPass {
   FRRegion* v_region;
 };
 
-SYS_DEFINE_TYPE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER);
+static void i_layer_imp(CstILayerInterface *iface);
+
+SYS_DEFINE_WITH_CODE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER,
+    SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_LAYER, i_layer_imp));
 
 
 static void cst_box_layer_set_root_i (CstLayer *o, CstLayerNode *root) {
@@ -25,7 +29,7 @@ static void cst_box_layer_set_root_i (CstLayer *o, CstLayerNode *root) {
   self->tree = bnode;
 }
 
-CstLayerNode* cst_box_layer_get_root_i(CstLayer* o) {
+static CstLayerNode* cst_box_layer_get_root_i(CstLayer* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   CstBoxLayer *self = CST_BOX_LAYER(o);
 
@@ -88,15 +92,30 @@ void cst_box_layer_print_tree(CstBoxLayer *self) {
   cst_box_node_bfs_handle(self->tree, cst_box_node_print, NULL);
 }
 
-CstLayerNode *cst_box_layer_new_node_i(CstLayer *layer, CstLayerNode *parent) {
-  CstLayerNode *lnode = cst_box_node_new_I(layer);
+static CstLayerNode *cst_box_layer_new_node_i(CstLayer *layer) {
+  return cst_box_node_new_I(layer);
+}
 
-  if (parent) {
+static void cst_box_layer_append_node_i(CstLayer *layer, CstLayerNode* parent, CstLayerNode* children) {
 
-    cst_box_node_append(CST_BOX_NODE(parent), CST_BOX_NODE(lnode));
-  }
+  cst_box_node_append(CST_BOX_NODE(parent), CST_BOX_NODE(children));
+}
 
-  return lnode;
+static void cst_box_layer_iterate_node_i (CstLayer* self, 
+    CstLayerNode *lnode,  
+    CstLayerNodeFunc func,  
+    SysPointer user_data) {
+
+  cst_box_node_handle_ft_r(CST_BOX_NODE(lnode), (CstBoxNodeFunc)func, user_data);
+}
+
+static void i_layer_imp(CstILayerInterface *iface) {
+  iface->check = cst_box_layer_check_i;
+  iface->get_root = cst_box_layer_get_root_i;
+  iface->set_root = cst_box_layer_set_root_i;
+  iface->new_node = cst_box_layer_new_node_i;
+  iface->append_node = cst_box_layer_append_node_i;
+  iface->iterate_node = cst_box_layer_iterate_node_i;
 }
 
 /* object api */
@@ -130,14 +149,8 @@ CstLayer *cst_box_layer_new_I(void) {
 
 static void cst_box_layer_class_init(CstBoxLayerClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstLayerClass *lcls = CST_LAYER_CLASS(cls);
 
   ocls->dispose = cst_box_layer_dispose;
-
-  lcls->new_node = cst_box_layer_new_node_i;
-  lcls->check = cst_box_layer_check_i;
-  lcls->get_root = cst_box_layer_get_root_i;
-  lcls->set_root = cst_box_layer_set_root_i;
 }
 
 static void cst_box_layer_init(CstBoxLayer *self) {

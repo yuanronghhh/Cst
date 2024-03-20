@@ -15,25 +15,6 @@ CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name) {
   return fr_get_type_by_name(CST_NODE_LAYER_NAMES, ARRAY_SIZE(CST_NODE_LAYER_NAMES), name);
 }
 
-CstLayerNode* cst_layer_get_root(CstLayer *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
-  sys_return_val_if_fail(lcls->get_root != NULL, NULL);
-
-  return lcls->get_root(self);
-}
-
-void cst_layer_set_root(CstLayer *self, CstLayerNode* root) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
-  sys_return_if_fail(lcls->set_root != NULL);
-
-  lcls->set_root(self, root);
-}
-
-
 void cst_layer_set_name(CstLayer *self, const SysChar* name) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(name != NULL);
@@ -46,30 +27,6 @@ void cst_layer_queue_draw_node(CstLayer *self, CstLayerNode *lnode) {
 
   sys_object_ref(lnode);
   sys_queue_push_tail(self->draw_queue, lnode);
-}
-
-CstLayerNode* cst_layer_new_node(CstLayer *self, CstLayerNode *parent) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
-  sys_return_val_if_fail(lcls->new_node != NULL, NULL);
-
-  return lcls->new_node(self, parent);
-}
-
-CstLayerNode* cst_layer_new_node_i(CstLayer *self, CstLayerNode *parent) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return cst_layer_node_new_I(self);
-}
-
-void cst_layer_check (CstLayer *self, CstLayout *layout) {
-  sys_return_if_fail(self != NULL);
-
-  CstLayerClass* lcls = CST_LAYER_GET_CLASS(self);
-  sys_return_if_fail(lcls->check != NULL);
-
-  lcls->check(self, layout);
 }
 
 /* object api */
@@ -90,7 +47,6 @@ static void cst_layer_class_init(CstLayerClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_layer_dispose;
-  cls->new_node = cst_layer_new_node_i;
 }
 
 static void cst_layer_init(CstLayer *self) {

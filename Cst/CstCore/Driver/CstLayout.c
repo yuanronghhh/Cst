@@ -15,7 +15,7 @@ static void cst_layout_construct(CstLayout* self, FRWindow * window, FRDraw *dra
   self->state = 0;
   self->region = region;
 
-  self->window = sys_object_ref(window);
+  self->window = window;
   self->draw = draw;
 }
 

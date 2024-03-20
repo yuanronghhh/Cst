@@ -21,24 +21,13 @@ struct _CstLayer {
 
 struct _CstLayerClass {
   SysObjectClass parent;
-
-  CstLayerNode* (*new_node) (CstLayer *layer, CstLayerNode *parent);
-  void (*check) (CstLayer *o, CstLayout *layout);
-  CstLayerNode* (*get_root) (CstLayer* layer);
-  void (*set_root) (CstLayer *o, CstLayerNode *root);
 };
-
-void cst_layer_check (CstLayer  *self, CstLayout *layout);
 
 SYS_API SysType cst_layer_get_type(void);
 SYS_API CstLayer *cst_layer_new(void);
 
-CstLayerNode* cst_layer_get_root(CstLayer *self);
-void cst_layer_set_root(CstLayer *self, CstLayerNode* root);
-
 void cst_layer_set_name(CstLayer *self, const SysChar* name);
 CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name);
-CstLayerNode* cst_layer_new_node(CstLayer *o, CstLayerNode *v_parent);
 void cst_layer_queue_draw_node(CstLayer* self, CstLayerNode* lnode);
 
 SYS_END_DECLS

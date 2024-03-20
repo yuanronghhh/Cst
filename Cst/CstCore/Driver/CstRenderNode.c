@@ -9,6 +9,8 @@
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstSurface.h>
 #include <CstCore/Driver/CstILayerNode.h>
+#include <CstCore/Driver/CstILayer.h>
+#include <CstCore/Driver/CstLayerNode.h>
 #include <CstCore/Front/Common/CstText.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLGrid.h>
@@ -25,13 +27,11 @@ static SysMutex gnode_meta_lock;
 static SysHashTable* g_node_meta_ht = NULL;
 
 static void render_node_flex_item_imp(CstFlexItemInterface* item);
-static void render_node_layer_node_imp(CstILayerNodeInterface* item);
 static void render_node_i_com_node_imp(CstIComNodeInterface* item);
 
 
 SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
   SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, render_node_flex_item_imp)
-  SYS_IMPLEMENT_INTERFACE(CST_TYPE_ILAYER_NODE, render_node_layer_node_imp)
   SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_COM_NODE, render_node_i_com_node_imp)
 );
 
@@ -59,9 +59,6 @@ static void render_node_i_com_node_imp(CstIComNodeInterface* iface) {
 static void render_node_flex_item_imp(CstFlexItemInterface *iface) {
 
   iface->get_width = render_node_get_width;
-}
-
-static void render_node_layer_node_imp(CstILayerNodeInterface* iface) {
 }
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
@@ -215,6 +212,22 @@ SysType cst_render_node_get_meta(const SysChar* name) {
   return tp;
 }
 
+static SysBool node_unlink_one(CstLayerNode* self, SysPointer user_data) {
+  sys_return_val_if_fail(self != NULL, false);
+  CstRenderNode* rnode = cst_layer_node_get_render_node(self);
+
+  sys_object_unref(rnode);
+  return true;
+}
+
+void cst_render_node_unlink_node_r(CstRenderNode* self) {
+  sys_return_if_fail(self != NULL);
+  CstLayerNode* lnode = self->layer_node;
+  CstLayer* layer = cst_layer_node_get_layer(lnode);
+  
+  cst_i_layer_iterate_node(layer, lnode, (CstLayerNodeFunc)node_unlink_one, NULL);
+}
+
 void cst_render_node_setup(void) {
   sys_assert(g_node_meta_ht == NULL);
 
@@ -308,7 +321,19 @@ static void cst_render_node_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->rctx, _sys_object_unref);
   sys_clear_pointer(&self->v_css_list, sys_harray_free);
+
+  if (self->awatch_list) {
+
+    sys_list_free_full(self->awatch_list, (SysDestroyFunc)_sys_object_unref);
+    self->awatch_list = NULL;
+  }
+
   sys_clear_pointer(&self->layer_node, _sys_object_unref);
+  if (self->id) {
+
+    sys_clear_pointer(&self->id, sys_free);
+  }
+  sys_clear_pointer(&self->name, sys_free);
 
   SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
 }

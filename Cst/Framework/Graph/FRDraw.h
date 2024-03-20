@@ -23,7 +23,7 @@ struct _FRDraw {
   /* <private> */
   FRContext *cr;
   FRSurface *window_surface;
-  FRSurface * paint_surface;
+  FRSurface *paint_surface;
   FRWindow* window;
   SysBool is_painting;
 };

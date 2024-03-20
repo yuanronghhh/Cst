@@ -6,6 +6,7 @@
 #include <CstCore/Driver/CstSurface.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstComponent.h>
+#include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/Flex/CstFlexAlgorithm.h>
@@ -228,6 +229,7 @@ static void cst_render_dispose(SysObject* o) {
   }
 
   sys_harray_destroy(&self->surfaces);
+  sys_clear_pointer(&self->body_rnode, cst_render_node_unlink_node_r);
 
   SYS_OBJECT_CLASS(cst_render_parent_class)->dispose(o);
 }

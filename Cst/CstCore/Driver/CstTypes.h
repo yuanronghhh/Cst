@@ -133,6 +133,9 @@ typedef struct _CstILayerNodeInterface CstILayerNodeInterface;
 typedef struct _CstLayerNode CstLayerNode;
 typedef struct _CstLayerNodeClass CstLayerNodeClass;
 
+typedef struct _CstILayer CstILayer;
+typedef struct _CstILayerInterface CstILayerInterface;
+
 typedef struct _CstLayer CstLayer;
 typedef struct _CstLayerClass CstLayerClass;
 
@@ -222,7 +225,7 @@ typedef void (*CstNodeMapFunc) (CstNode *node, CstNodeMap *map);
 typedef void (*CstRNodeMapFunc) (CstRenderNode *rnode, CstNodeMap *map);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef SysBool (*CstLayerNodeFunc) (CstLayerNode *lnode, SysPointer user_data);
-typedef void (*CstRenderNodeFunc) (CstRenderNode *lnode, SysPointer user_data);
+typedef void (*CstRenderNodeFunc) (CstRenderNode *rnode, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *rnode, CstLayout *layout, SysPointer user_data);
 typedef void (*CstNodeRealizeFunc) (CstNode *self, CstLayerNode* parent, CstModule *v_module, CstComNode *v_com_node, CstLayout *layout);
 

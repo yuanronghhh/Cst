@@ -12,12 +12,9 @@ SYS_BEGIN_DECLS
 
 struct _CstILayerNodeInterface {
   SysTypeInterface parent;
-
-  CstILayerNode *(*get_children) (CstILayerNode *self);
 };
 
 SysType cst_ilayer_node_get_type(void);
-CstILayerNode* cst_ilayer_node_get_children (CstILayerNode *item);
 
 SYS_END_DECLS
 

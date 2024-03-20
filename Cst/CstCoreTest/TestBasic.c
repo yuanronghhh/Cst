@@ -8,6 +8,8 @@ static void test_leak(void) {
 
   v_module = cst_module_load_path(NULL, entry);
   TEST_ASSERT_NOT_NULL(v_module);
+
+  cst_module_unload(v_module);
 }
 
 void test_basic_init(int argc, SysChar * argv[]) {

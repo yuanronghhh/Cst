@@ -37,8 +37,6 @@ struct _CstRenderNode {
   /* render context */
   CstRenderContext *rctx;
 
-  CstLayerNode *lnode;
-
   /* CstAlgorithm ref */
   CstAlgorithm* algorithm;
 };
@@ -60,8 +58,6 @@ SysType cst_render_node_get_type(void);
 CstRenderNode *cst_render_node_new(void);
 CstRenderNode *cst_render_node_new_I(CstNode *node, CstRenderNodeContext *param);
 void cst_render_node_construct(CstRenderNode* self, CstRenderNodeContext *param);
-void cst_render_node_set_meta(const SysChar* name, SysType stype);
-SysType cst_render_node_get_meta(const SysChar* name);
 
 void cst_render_node_setup(void);
 void cst_render_node_teardown(void);
@@ -87,6 +83,10 @@ void cst_render_node_teardown(void);
 #define cst_render_node_is_dirty(o) cst_render_context_is_dirty(CST_RENDER_NODE_RCTX(o))
 #define cst_render_node_layout_self(o, layout) cst_render_context_layout_self(CST_RENDER_NODE_RCTX(o), o, layout)
 #define cst_render_node_inherit(o, p, layout) cst_render_context_inherit(CST_RENDER_NODE_RCTX(o), CST_RENDER_NODE_RCTX(p), layout)
+
+void cst_render_node_unlink_node_r(CstRenderNode* self);
+void cst_render_node_set_meta(const SysChar* name, SysType stype);
+SysType cst_render_node_get_meta(const SysChar* name);
 
 /* css */
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout);

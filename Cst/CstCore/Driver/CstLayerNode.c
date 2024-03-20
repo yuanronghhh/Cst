@@ -4,13 +4,25 @@
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstILayerNode.h>
 
-static void cst_ilayer_node_imp(CstILayerNodeInterface* iface);
-
-SYS_DEFINE_WITH_CODE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT,
-    SYS_IMPLEMENT_INTERFACE(CST_TYPE_ILAYER_NODE, cst_ilayer_node_imp));
+SYS_DEFINE_TYPE(CstLayerNode, cst_layer_node, SYS_TYPE_OBJECT);
 
 
-static void cst_ilayer_node_imp(CstILayerNodeInterface* iface) {
+CstLayer* cst_layer_node_get_layer(CstLayerNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->layer;
+}
+
+void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode* render_node) {
+  sys_return_if_fail(self != NULL);
+
+  self->render_node = render_node;
+}
+
+CstRenderNode* cst_layer_node_get_render_node(CstLayerNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->render_node;
 }
 
 /* object api */

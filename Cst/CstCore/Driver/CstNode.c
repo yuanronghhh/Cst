@@ -13,6 +13,7 @@
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstSurface.h>
+#include <CstCore/Driver/CstILayer.h>
 
 
 
@@ -315,6 +316,7 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
   CstLayerNode *lnode;
   CstLayerNode *lpnode;
   CstSurface* surface;
+  CstILayerInterface *layer_iface;
 
   layer_idx = self->v_layer_idx;
   surface = cst_render_get_default_surface();
@@ -323,12 +325,11 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
   rnode = cst_node_new_render_node(self);
   lpnode = v_parent ? cst_render_node_get_layer_node(v_parent) : NULL;
   layer = cst_surface_get_layer_by_type(surface, layer_idx);
+  layer_iface = CST_I_LAYER_GET_IFACE(layer);
 
-  lnode = cst_layer_new_node(layer, lpnode);
+  lnode = layer_iface->new_node(layer);
   cst_render_node_set_layer_node(rnode, lnode);
-
-  // layernode owned by layer
-  sys_object_ref(lnode);
+  cst_layer_node_set_render_node(lnode, rnode);
 
   sys_list_foreach(self->v_awatch_list, item) {
     awatch =  FR_AWATCH(item->data);
@@ -348,6 +349,11 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
 
       cst_render_node_add_v_css(rnode, n);
     }
+  }
+
+  if (lpnode) {
+
+    layer_iface->append_node(layer, lpnode, lnode);
   }
 
   return rnode;

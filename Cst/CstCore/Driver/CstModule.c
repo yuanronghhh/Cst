@@ -53,7 +53,7 @@ CstNode* cst_module_new_pnode(CstModule* self) {
   return cst_node_new_with_rnode_type(bname, CST_TYPE_LBOX);
 }
 
-SysBool cst_module_new_load(CstModule *self, CstNode *pnode) {
+static SysBool cst_module_new_load(CstModule *self, CstNode *pnode) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(pnode != NULL, false);
 
@@ -80,6 +80,12 @@ SysBool cst_module_new_load(CstModule *self, CstNode *pnode) {
 fail:
   cst_module_remove_g_module(self->path);
   return false;
+}
+
+SysBool cst_module_unload(CstModule* self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return cst_module_remove_g_module(self->path);
 }
 
 CstModule* cst_module_load_path(CstModule *parent, const SysChar *path) {
@@ -121,6 +127,7 @@ CstModule* cst_module_load_path(CstModule *parent, const SysChar *path) {
 
   id = cst_module_new_node_id(mod);
   cst_node_set_id(pnode, id);
+  sys_clear_pointer(&id, sys_free);
 
   return mod;
 fail:
@@ -244,18 +251,14 @@ void cst_module_remove_awatch(CstModule *self, SysList *awatch_link) {
 }
 
 SysChar *cst_module_new_node_id(CstModule *self) {
-  SysChar *nid = NULL;
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  SysChar *nid;
   SysUInt mid;
   SysUInt ccount = 0;
 
-  if (self) {
-    mid = cst_module_get_hashcode(self);
-    ccount = cst_module_get_count(self);
-
-  } else {
-
-    mid = sys_str_hash((SysPointer)"root-node");
-  }
+  mid = cst_module_get_hashcode(self);
+  ccount = cst_module_get_count(self);
 
   nid = sys_strdup_printf("id.%u.%u", mid, ccount);
 

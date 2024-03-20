@@ -37,6 +37,7 @@ SysInt cst_module_get_hashcode(CstModule* self);
 const SysChar *cst_module_get_path(CstModule* self);
 SysBool cst_module_is_loaded(CstModule *self);
 
+SysBool cst_module_unload(CstModule* self);
 CstModule* cst_module_load_path(CstModule* parent, const SysChar* path);
 
 void cst_module_setup(void);

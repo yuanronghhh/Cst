@@ -64,7 +64,7 @@ interface_func_return_template = """\
 ${func_return} ${type_name}_${func_name} (${func_args}) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return ${TYPE_NAME}_GET_IFACE(item)->${func_name}(${func_args_name});
+  return ${TYPE_NAME}_GET_IFACE(self)->${func_name}(${func_args_name});
 }
 """
 
@@ -72,7 +72,7 @@ interface_func_template = """\
 void ${type_name}_${func_name} (${func_args}) {
   sys_return_if_fail(self != NULL);
 
-  ${TYPE_NAME}_GET_IFACE(item)->${func_name}(${func_args_name});
+  ${TYPE_NAME}_GET_IFACE(self)->${func_name}(${func_args_name});
 }
 """
 
@@ -517,17 +517,21 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _CstIComNodeInterface {
+struct _CstILayerInterface {
   SysTypeInterface parent;
 
   /* <private> */
-  void (*set_node_map) (CstIComNode *self, CstNodeMap* map);
+  CstLayerNode* (*get_root) (CstLayer* self);
+  void (*check) (CstLayer *self, CstLayout *layout);
+  void (*set_root) (CstLayer *self, CstLayerNode *root);
+  void (*append_node) (CstLayer* self, CstLayerNode *parent, CstLayerNode* node);
+  CstLayerNode *(*new_node) (CstLayer* self);
 };
 """
 
 def main():
-    dst = "./Cst/CstCore/Front/Common"
-    header_path = "CstCore/Front/Common"
+    dst = "./Cst/CstCore/Driver"
+    header_path = "CstCore/Driver"
 
     gen = TemplateGenerator(template_struct, dst, header_path)
     # gen.generate_field()

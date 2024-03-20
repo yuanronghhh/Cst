@@ -279,7 +279,7 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
   tp = self->rnode_type;
   rnode = sys_object_new(tp, NULL);
 
-  CstRenderNodeParam param = {0};
+  CstRenderNodeContext param = {0};
   param.id = self->id;
   param.name = self->name;
 

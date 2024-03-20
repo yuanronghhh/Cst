@@ -5,7 +5,7 @@
 
 SYS_DEFINE_TYPE(CstLBox, cst_lbox, CST_TYPE_RENDER_NODE);
 
-static void cst_lbox_construct_i(CstRenderNode *o, CstRenderNodeParam *param) {
+static void cst_lbox_construct_i(CstRenderNode *o, CstRenderNodeContext *param) {
 
   CST_RENDER_NODE_CLASS(cst_lbox_parent_class)->construct(o, param);
 }

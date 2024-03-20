@@ -73,7 +73,7 @@ SysObject* cst_text_dclone_i(SysObject *o) {
   return n;
 }
 
-static void cst_text_construct_i(CstRenderNode *o, CstRenderNodeParam *param) {
+static void cst_text_construct_i(CstRenderNode *o, CstRenderNodeContext *param) {
   sys_return_if_fail(o != NULL);
 
   CST_RENDER_NODE_CLASS(cst_text_parent_class)->construct(o, param);

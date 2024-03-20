@@ -180,9 +180,6 @@ typedef struct _CstRenderNodeClass CstRenderNodeClass;
 typedef struct _CstBoxNode CstBoxNode;
 typedef struct _CstBoxNodeClass CstBoxNodeClass;
 
-typedef struct _CstRow CstRow;
-typedef struct _CstRowClass CstRowClass;
-
 typedef struct _CstCssClosure CstCssClosure;
 typedef struct _CstCssClosureClass CstCssClosureClass;
 
@@ -221,7 +218,8 @@ typedef struct _CstNodeMapClass CstNodeMapClass;
 typedef struct _CstValueMap CstValueMap;
 typedef struct _CstValueMapClass CstValueMapClass;
 
-typedef void (*CstNodeMapFunc) (CstRenderNode *rnode, CstNodeMap *map);
+typedef void (*CstNodeMapFunc) (CstNode *node, CstNodeMap *map);
+typedef void (*CstRNodeMapFunc) (CstRenderNode *rnode, CstNodeMap *map);
 typedef void (*CstCssFree) (CstCssValue *value);
 typedef SysBool (*CstLayerNodeFunc) (CstLayerNode *lnode, SysPointer user_data);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *lnode, SysPointer user_data);

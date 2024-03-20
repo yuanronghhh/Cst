@@ -4,10 +4,9 @@
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
 #include <CstCore/Front/CstFrontCore.h>
-
+#include <CstCore/Front/Common/CstIComNode.h>
 
 SYS_DEFINE_TYPE(CstComNode, cst_com_node, CST_TYPE_NODE);
-
 
 void cst_com_node_set_component(CstComNode *self, CstComponent * component) {
   sys_return_if_fail(self != NULL);
@@ -76,13 +75,12 @@ static void node_set_awatch_func_i(CstRenderNode* rnode, CstNodeMap* map) {
 }
 
 static void com_node_set_value_i(CstRenderNode* rnode, CstNodeMap* map) {
-  CstNode* node = cst_render_node_get_node(rnode);
-  CstComNode *com_node = CST_COM_NODE(node);
+  CstIComNode *i_com_node = CST_I_COM_NODE(rnode);
 
-  cst_com_node_set_node_map(com_node, map);
+  cst_i_com_node_set_node_map(i_com_node, map);
 }
 
-CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type) {
+CstRNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type) {
   if(node_type == CST_TYPE_COM_NODE) {
     if(prop_type == CST_NODE_PROP_VALUE) {
 

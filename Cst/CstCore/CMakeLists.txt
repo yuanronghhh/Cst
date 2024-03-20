@@ -19,6 +19,8 @@ set(C_API_SRC
   ./Front/CstType.h
   ./Front/Common/CstComNode.c
   ./Front/Common/CstComNode.h
+  ./Front/Common/CstIComNode.c
+  ./Front/Common/CstIComNode.h
 
   ./Front/Common/CstLBox.c
   ./Front/Common/CstLBox.h

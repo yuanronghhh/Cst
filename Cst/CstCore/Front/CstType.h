@@ -6,6 +6,9 @@
 
 SYS_BEGIN_DECLS
 
+typedef struct _CstIComNode CstIComNode;
+typedef struct _CstIComNodeInterface CstIComNodeInterface;
+
 typedef struct _CstComNode CstComNode;
 typedef struct _CstComNodeClass CstComNodeClass;
 

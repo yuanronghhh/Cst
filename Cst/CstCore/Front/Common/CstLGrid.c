@@ -6,7 +6,7 @@
 SYS_DEFINE_TYPE(CstLGrid, cst_lgrid, CST_TYPE_RENDER_NODE);
 
 
-static void cst_lgrid_construct_i(CstRenderNode *o, CstRenderNodeParam *param) {
+static void cst_lgrid_construct_i(CstRenderNode *o, CstRenderNodeContext *param) {
 
   CST_RENDER_NODE_CLASS(cst_lgrid_parent_class)->construct(o, param);
 }

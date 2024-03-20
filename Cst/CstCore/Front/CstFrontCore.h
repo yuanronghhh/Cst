@@ -6,6 +6,7 @@
 SYS_BEGIN_DECLS
 
 #include <CstCore/Front/Common/CstComNode.h>
+#include <CstCore/Front/Common/CstIComNode.h>
 #include <CstCore/Front/Common/CstComRNode.h>
 #include <CstCore/Front/Common/CstLBody.h>
 #include <CstCore/Front/Common/CstLBox.h>

@@ -30,7 +30,7 @@ CstNode* cst_com_node_new_I(CstComponent *comp);
 CstNodeMap* cst_com_node_get_node_map(CstComNode* self, const SysChar *key);
 void cst_com_node_set_node_map(CstComNode* self, CstNodeMap *map);
 
-CstNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type);
+CstRNodeMapFunc cst_com_node_get_func(SysType node_type, SysInt prop_type, SysInt data_type);
 
 void cst_com_node_set_component(CstComNode *self, CstComponent * component);
 CstComponent * cst_com_node_get_component(CstComNode *self);

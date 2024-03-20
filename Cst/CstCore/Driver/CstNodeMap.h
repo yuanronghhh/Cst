@@ -17,13 +17,13 @@ struct _CstNodeMap {
   /* <private> */
   CstValueMap* value_map;
 
-  /* CST_NODE_PROP_ENUM */
-  SysInt prop_type;
-
   /* CstRenderNode  */
   SysType node_type;
 
-  CstNodeMapFunc func;
+  /* CST_NODE_PROP_ENUM */
+  SysInt prop_type;
+
+  CstRNodeMapFunc func;
 };
 
 struct _CstNodeMapClass {

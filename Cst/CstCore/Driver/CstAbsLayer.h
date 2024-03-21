@@ -14,6 +14,9 @@ SYS_BEGIN_DECLS
 
 struct _CstAbsLayer {
   CstLayer parent;
+
+  /* <private> */
+  FRPQueue queue;
 };
 
 struct _CstAbsLayerClass {

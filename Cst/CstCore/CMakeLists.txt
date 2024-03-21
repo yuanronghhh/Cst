@@ -72,6 +72,8 @@ set(SRC
   ./Driver/CstBoxLayer.h
   ./Driver/CstAbsLayer.c
   ./Driver/CstAbsLayer.h
+  ./Driver/CstAbsNode.c
+  ./Driver/CstAbsNode.h
 
   ./Driver/CstModule.c
   ./Driver/CstModule.h
@@ -184,6 +186,7 @@ add_dependencies(CstCore
 target_link_libraries(CstCore
   FRFramework
   System
+  ${CAIRO_LIBRARIES}
   ${PANGO_LIBRARIES}
   ${GLIB_LIBRARIES}
   ${OPENSSL_LIBRARIES}

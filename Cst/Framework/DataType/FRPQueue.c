@@ -77,7 +77,7 @@ void fr_pqueue_push_head_link(FRPQueue *queue, FRPrioLink *plink) {
       nlist->next = queue->head;
       nlist->next->prev = nlist;
     }
-    
+
     queue->head = nlist;
   }
 

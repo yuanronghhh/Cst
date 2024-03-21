@@ -21,6 +21,13 @@ SYS_DEFINE_WITH_CODE(CstBoxLayer, cst_box_layer, CST_TYPE_LAYER,
     SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_LAYER, i_layer_imp));
 
 
+void cst_box_layer_print_tree(CstBoxLayer *self) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(self->tree != NULL);
+
+  cst_box_node_bfs_handle(self->tree, cst_box_node_print, NULL);
+}
+
 static void cst_box_layer_set_root_i (CstLayer *o, CstLayerNode *root) {
   sys_return_if_fail(o != NULL);
   CstBoxLayer *self = CST_BOX_LAYER(o);
@@ -85,13 +92,6 @@ static void cst_box_layer_check_i(CstLayer *o, CstLayout *layout) {
   cst_box_node_bfs_handle(self->tree, (CstBoxNodeFunc)box_layer_mark_one, &ctx);
 }
 
-void cst_box_layer_print_tree(CstBoxLayer *self) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(self->tree != NULL);
-
-  cst_box_node_bfs_handle(self->tree, cst_box_node_print, NULL);
-}
-
 static CstLayerNode *cst_box_layer_new_node_i(CstLayer *layer) {
   return cst_box_node_new_I(layer);
 }
@@ -102,8 +102,8 @@ static void cst_box_layer_append_node_i(CstLayer *layer, CstLayerNode* parent, C
 }
 
 static void cst_box_layer_iterate_node_i (CstLayer* self, 
-    CstLayerNode *lnode,  
-    CstLayerNodeFunc func,  
+    CstLayerNode *lnode,
+    CstLayerNodeFunc func,
     SysPointer user_data) {
 
   cst_box_node_handle_ft_r(CST_BOX_NODE(lnode), (CstBoxNodeFunc)func, user_data);

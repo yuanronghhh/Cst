@@ -171,6 +171,7 @@ class TemplateInfo:
 
         self.struct = self.parse_struct(self.tpl[1])
         self.sep_struct = self.seperate_struct(self.struct)
+        self.is_interface = False
         if self.sep_struct[-1] == "Interface":
             self.is_interface = True
             self.sep_struct = self.sep_struct[:-1]
@@ -517,15 +518,11 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _CstILayerInterface {
-  SysTypeInterface parent;
+struct _CstAbsNode {
+  CstLayerNode parent;
 
   /* <private> */
-  CstLayerNode* (*get_root) (CstLayer* self);
-  void (*check) (CstLayer *self, CstLayout *layout);
-  void (*set_root) (CstLayer *self, CstLayerNode *root);
-  void (*append_node) (CstLayer* self, CstLayerNode *parent, CstLayerNode* node);
-  CstLayerNode *(*new_node) (CstLayer* self);
+  SysInt z_index;
 };
 """
 

@@ -701,7 +701,6 @@ fail:
 SysBool ast_node_parse_layer_name(CstNodeBuilder *o, const SysChar *pstr) {
   sys_return_val_if_fail(o != NULL, false);
   sys_return_val_if_fail(pstr != NULL, false);
-  CstLayer *layer;
   CstSurface *surface;
 
   SysInt layer_idx = cst_layer_get_by_prop(pstr);
@@ -713,11 +712,7 @@ SysBool ast_node_parse_layer_name(CstNodeBuilder *o, const SysChar *pstr) {
   surface = cst_render_get_default_surface();
   sys_return_val_if_fail(surface == NULL, false);
 
-  layer = cst_surface_get_layer_by_type(surface, layer_idx);
-  sys_return_val_if_fail(layer == NULL, false);
-
-  cst_node_builder_set_v_layer(o, layer);
-  sys_object_ref(layer);
+  cst_node_builder_set_v_layer_index(o, layer_idx);
 
   return true;
 }

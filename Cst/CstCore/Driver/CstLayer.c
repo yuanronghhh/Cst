@@ -8,7 +8,7 @@
 SYS_DEFINE_TYPE(CstLayer, cst_layer, SYS_TYPE_OBJECT);
 
 static const SysChar* CST_NODE_LAYER_NAMES[] = {
-  "box", "absolute"
+  "box", "absolute", "static"
 };
 
 CST_NODE_LAYER_ENUM cst_layer_get_by_prop(const SysChar* name) {

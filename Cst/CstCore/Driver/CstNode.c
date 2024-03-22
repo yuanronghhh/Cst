@@ -306,7 +306,7 @@ SysBool cst_node_set_surface_and_layer(CstNode* self,
 
 static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent, CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
-  sys_return_val_if_fail(self->v_layer_idx != 0, NULL);
+  sys_return_val_if_fail(self->v_layer_idx > 0, NULL);
 
   SysInt layer_idx;
   CstLayer *layer;

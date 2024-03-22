@@ -38,7 +38,7 @@ CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type) {
     return self->box_layer;
   case CST_NODE_LAYER_ABS:
     return self->abs_layer;
-  case CST_NODE_LAYER_PASS:
+  case CST_NODE_LAYER_STATIC:
     sys_warning_N("layer not implement: %d", layer_type);
     break;
   default:

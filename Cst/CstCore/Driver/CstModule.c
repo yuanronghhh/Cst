@@ -282,9 +282,9 @@ CstRenderNode* cst_module_realize(CstModule *self, CstRenderNode *v_parent) {
   sys_return_val_if_fail(self != NULL, false);
 
   CstComponent *comp = self->root_component;
-  CstRenderNode *lnode = cst_component_realize(comp, v_parent, NULL);
+  CstRenderNode *rnode = cst_component_realize(comp, v_parent, NULL);
 
-  return lnode;
+  return rnode;
 }
 
 CstModule* cst_module_get_g_module(const SysChar *name) {

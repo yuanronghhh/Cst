@@ -7,6 +7,10 @@
 
 SYS_BEGIN_DECLS
 
+
+/**
+ * deprecated api
+ */
 typedef struct _SysQueue FRPQueue;
 typedef struct _FRPrioLink FRPrioLink;
 

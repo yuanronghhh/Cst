@@ -26,7 +26,7 @@ struct _CstNodeBuilder {
   const SysChar* v_id;
   const SysChar *v_tag;
 
-  CstLayer *v_layer;
+  SysInt v_layer_index;
   SysChar *v_value;
   SysChar *v_label;
   SysInt  v_z_index;
@@ -44,7 +44,7 @@ void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *cnode);
 
 void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map);
 void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);
-void cst_node_builder_set_v_layer(CstNodeBuilder *self, CstLayer* v_layer);
+void cst_node_builder_set_v_layer_index(CstNodeBuilder *self, SysInt v_layer_index);
 void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysHArray * v_css_list);
 void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id);
 void cst_node_builder_set_v_label(CstNodeBuilder *self, const SysChar *v_label);

@@ -118,14 +118,13 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
-  cst_render_realize(self, v_module);
-
-#if 0
   FRRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
   FRWindow* window;
   FRDraw* draw;
+
+  cst_render_realize(self, v_module);
 
   window = cst_render_get_default_window(self);
   region = render_create_region(window);
@@ -136,7 +135,6 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
 
   fr_region_destroy(region);
   sys_object_unref(layout);
-#endif
 }
 
 void cst_render_resize_window(CstRender *self) {

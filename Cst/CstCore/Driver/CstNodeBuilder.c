@@ -49,11 +49,11 @@ void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value) 
   self->v_value = sys_strdup(v_value);
 }
 
-void cst_node_builder_set_v_layer(CstNodeBuilder *self, CstLayer* v_layer) {
+void cst_node_builder_set_v_layer_index(CstNodeBuilder *self, SysInt v_layer_index) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(v_layer != NULL);
+  sys_return_if_fail(v_layer_index > 0);
 
-  self->v_layer = v_layer;
+  self->v_layer_index = v_layer_index;
 }
 
 void cst_node_builder_set_v_label(CstNodeBuilder *self, const SysChar *v_label) {
@@ -113,6 +113,7 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
     self->v_id = cst_module_new_node_id(v_module);
   }
   cst_node_set_id(node, self->v_id);
+  cst_node_set_v_layer_idx(node, self->v_layer_index);
 
   cst_node_set_v_awatch_list(node, self->v_awatch_list);
   self->v_awatch_list = NULL;
@@ -173,9 +174,9 @@ static void cst_node_builder_dispose(SysObject* o) {
     sys_clear_pointer(&self->v_tag, sys_free);
   }
 
-  if(self->v_layer) {
+  if(self->v_layer_index) {
 
-    sys_clear_pointer(&self->v_layer, _sys_object_unref);
+    sys_clear_pointer(&self->v_layer_index, _sys_object_unref);
   }
 
   if (self->v_value) {

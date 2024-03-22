@@ -23,14 +23,14 @@ static void cst_abs_layer_set_root_i (CstLayer *o, CstLayerNode *root) {
   CstAbsLayer *self = CST_ABS_LAYER(o);
   CstAbsNode *bnode = CST_ABS_NODE(root);
 
-  self->queue.head = &(bnode->list);
+  sys_bheap_push(&self->bheap, bnode);
 }
 
 static CstLayerNode* cst_abs_layer_get_root_i(CstLayer* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   CstAbsLayer *self = CST_ABS_LAYER(o);
 
-  return CST_LAYER_NODE(self->queue.head);
+  return sys_bheap_peek(&self->bheap);
 }
 
 static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
@@ -74,26 +74,37 @@ static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
 
 static void cst_abs_layer_check_i(CstLayer *o, CstLayout *layout) {
   CstAbsLayer* self = CST_ABS_LAYER(o);
-  sys_return_if_fail(self->queue.head != NULL);
 
   FRRegion *region = cst_layout_get_region(layout);
   AbsLayerPass ctx = { o, region };
-
 }
 
 static CstLayerNode *cst_abs_layer_new_node_i(CstLayer *layer) {
   return cst_abs_node_new_I(layer);
 }
 
-static void cst_abs_layer_append_node_i(CstLayer *layer, CstLayerNode* parent, CstLayerNode* children) {
+static void cst_abs_layer_append_node_i(CstLayer *o, CstLayerNode* parent, CstLayerNode* children) {
+  CstAbsLayer *self = CST_ABS_LAYER(o);
 
+  sys_bheap_push(&self->bheap, children);
 }
 
-static void cst_abs_layer_iterate_node_i(CstLayer* self,
+static void cst_abs_layer_iterate_node_i(CstLayer* o,
   CstLayerNode* lnode,
   CstLayerNodeFunc func,
   SysPointer user_data) {
 
+  CstAbsLayer *self = CST_ABS_LAYER(o);
+  CstLayerNode *node = NULL;
+  SysBHeapIter *iter = sys_bheap_iter_new(&self->bheap);
+
+  while(sys_bheap_iter_next(iter, &node)) {
+    if(!func(node, user_data)) {
+      break;
+    }
+  }
+
+  sys_bheap_iter_free(iter);
 }
 
 static void i_layer_imp(CstILayerInterface *iface) {
@@ -105,12 +116,21 @@ static void i_layer_imp(CstILayerInterface *iface) {
   iface->iterate_node = cst_abs_layer_iterate_node_i;
 }
 
+static SysDouble priority_func(SysPointer data) {
+  CstAbsNode *node = data;
+
+  return (SysDouble)(SysUInt64)(node->z_index);
+}
+
 /* object api */
 CstLayer *cst_abs_layer_new(void) {
   return sys_object_new(CST_TYPE_ABS_LAYER, NULL);
 }
 
 static void cst_abs_layer_dispose(SysObject* o) {
+  CstAbsLayer *self = CST_ABS_LAYER(o);
+
+  sys_bheap_destroy(&self->bheap);
 
   SYS_OBJECT_CLASS(cst_abs_layer_parent_class)->dispose(o);
 }
@@ -127,6 +147,7 @@ static void cst_abs_layer_class_init(CstAbsLayerClass* cls) {
 }
 
 static void cst_abs_layer_init(CstAbsLayer *self) {
+  sys_bheap_init(&self->bheap, priority_func, (SysDestroyFunc)_sys_object_unref);
 
   cst_layer_set_name(CST_LAYER(self), "AbsLayer");
 }

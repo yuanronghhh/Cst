@@ -42,25 +42,25 @@ CstNodeMap* cst_com_node_get_node_map(CstComNode * self, const SysChar *key) {
 
 void cst_com_node_set_node_map(CstComNode* self, CstNodeMap *map) {
   sys_return_if_fail(self != NULL);
-  FRPair *pair = FR_PAIR(map);
+  FrPair *pair = FR_PAIR(map);
 
   sys_hash_table_insert(self->values_ht, (SysPointer)pair->key, (SysPointer)map);
 }
 
 static void text_set_text_i(CstRenderNode *rnode, CstNodeMap *map) {
   CstText *text = CST_TEXT(rnode);
-  FRPair *pair = FR_PAIR(map);
+  FrPair *pair = FR_PAIR(map);
 
   cst_text_set_text(text, sys_value_get_v_string(pair->value));
 }
 
 static void node_set_awatch_func_i(CstRenderNode* rnode, CstNodeMap* map) {
-  FRPair *pair = FR_PAIR(map);
+  FrPair *pair = FR_PAIR(map);
   SysList *awatch_list = cst_render_node_get_awatch_list(rnode);
-  FRAWatch *mawatch = FR_AWATCH(pair->value);
+  FrAWatch *mawatch = FR_AWATCH(pair->value);
 
   SysType tp = sys_type_from_instance(mawatch);
-  FRAWatch* awatch = fr_awatch_list_get_awatch(awatch_list, tp, sys_value_get_v_string(pair->value));
+  FrAWatch* awatch = fr_awatch_list_get_awatch(awatch_list, tp, sys_value_get_v_string(pair->value));
 
   if (awatch == NULL) {
 
@@ -71,7 +71,7 @@ static void node_set_awatch_func_i(CstRenderNode* rnode, CstNodeMap* map) {
     return;
   }
 
-  fr_awatch_set_func(awatch, (FREventFunc)fr_awatch_get_func(mawatch));
+  fr_awatch_set_func(awatch, (FrEventFunc)fr_awatch_get_func(mawatch));
 }
 
 static void com_node_set_value_i(CstRenderNode* rnode, CstNodeMap* map) {

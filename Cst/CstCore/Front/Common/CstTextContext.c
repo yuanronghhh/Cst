@@ -15,11 +15,11 @@ static void cst_text_context_relayout_i(
   CstLayout *layout) {
   CstText *text = CST_TEXT(o);
 
-  FRDraw *draw;
+  FrDraw *draw;
   SysInt width = 0;
   SysInt height = 0;
 
-  FRDrawLayout *playout = text->playout;
+  FrDrawLayout *playout = text->playout;
   PangoFontDescription *font_desc = text->font_desc;
 
   draw = cst_layout_get_draw(layout);

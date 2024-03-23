@@ -82,10 +82,10 @@ static void cst_text_construct_i(CstRenderNode *o, CstRenderNodeContext *param) 
 static void cst_text_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   CstText *self = CST_TEXT(rnode);
 
-  FRDrawLayout *playout = self->playout;
-  FRDraw *draw = cst_layout_get_draw(layout);
-  const FRRect *bound = cst_render_node_get_bound(rnode);
-  const FRSInt4 *m4 = cst_render_node_get_margin(rnode);
+  FrDrawLayout *playout = self->playout;
+  FrDraw *draw = cst_layout_get_draw(layout);
+  const FrRect *bound = cst_render_node_get_bound(rnode);
+  const FrSInt4 *m4 = cst_render_node_get_margin(rnode);
 
   fr_draw_show_text(draw, playout, bound->x, bound->y, m4->m1, m4->m0);
 }

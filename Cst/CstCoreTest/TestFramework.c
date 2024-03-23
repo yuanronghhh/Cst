@@ -14,8 +14,8 @@ void test_fr_basic(void) {
 }
 
 void test_fr_window_basic(void) {
-  FRDisplay *display = fr_display_new_I();
-  FRWindow *window = fr_window_top_new(display);
+  FrDisplay *display = fr_display_new_I();
+  FrWindow *window = fr_window_top_new(display);
 
   sys_object_unref(window);
   sys_object_unref(display);

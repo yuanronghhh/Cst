@@ -125,13 +125,13 @@ SysBool cst_component_remove_css(CstComponent* self, CstCssGroup *g) {
   return fr_env_remove(self->css_env, cst_css_group_get_id(g));
 }
 
-void cst_component_set_css_env(CstComponent *self, FREnv * css_env) {
+void cst_component_set_css_env(CstComponent *self, FrEnv * css_env) {
   sys_return_if_fail(self != NULL);
 
   self->css_env = css_env;
 }
 
-FREnv * cst_component_get_css_env(CstComponent *self) {
+FrEnv * cst_component_get_css_env(CstComponent *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->css_env;
@@ -156,13 +156,13 @@ CstValueMap *cst_component_get_value_map(CstComponent *self, const SysChar *key)
   return fr_env_get_r(self->value_maps_env, key);
 }
 
-void cst_component_set_value_maps_env(CstComponent *self, FREnv * value_maps_env) {
+void cst_component_set_value_maps_env(CstComponent *self, FrEnv * value_maps_env) {
   sys_return_if_fail(self != NULL);
 
   self->value_maps_env = value_maps_env;
 }
 
-FREnv * cst_component_get_value_maps_env(CstComponent *self) {
+FrEnv * cst_component_get_value_maps_env(CstComponent *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->value_maps_env;

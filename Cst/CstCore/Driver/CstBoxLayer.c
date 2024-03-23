@@ -12,7 +12,7 @@ typedef struct _BoxLayerPass BoxLayerPass;
 
 struct _BoxLayerPass {
   CstLayer* v_layer;
-  FRRegion* v_region;
+  FrRegion* v_region;
 };
 
 static void i_layer_imp(CstILayerInterface *iface);
@@ -46,8 +46,8 @@ static CstLayerNode* cst_box_layer_get_root_i(CstLayer* o) {
 static SysBool box_layer_mark_one(CstRenderNode* rnode, BoxLayerPass* ctx) {
   CstLayerNode* lnode;
   CstLayer* self;
-  FRRegion* region;
-  const FRRect* bound;
+  FrRegion* region;
+  const FrRect* bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;
@@ -86,7 +86,7 @@ static void cst_box_layer_check_i(CstLayer *o, CstLayout *layout) {
   CstBoxLayer* self = CST_BOX_LAYER(o);
   sys_return_if_fail(self->tree != NULL);
 
-  FRRegion *region = cst_layout_get_region(layout);
+  FrRegion *region = cst_layout_get_region(layout);
   BoxLayerPass ctx = { o, region };
 
   cst_box_node_bfs_handle(self->tree, (CstBoxNodeFunc)box_layer_mark_one, &ctx);

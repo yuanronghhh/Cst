@@ -32,7 +32,7 @@ FR_FUNC_DEFINE_EVENT(application_quit_key) {
 }
 
 static void application_init_event(CstApplication* self) {
-  FRAWatch* awatch;
+  FrAWatch* awatch;
   CstModule* v_module = self->main_module;
 
   cst_module_add_user_awatch(v_module,

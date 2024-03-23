@@ -16,119 +16,119 @@ set(INC_SYS
 )
 
 set(UNIX_SRC
-  ./Platform/Unix/FRDisplayX11.c
-  ./Platform/Unix/FRWindowX11.c
+  ./Platform/Unix/FrDisplayX11.c
+  ./Platform/Unix/FrWindowX11.c
 )
 
 set(WIN32_SRC
-  ./Platform/Win32/FRDisplayWin32.c
-  ./Platform/Win32/FRWindowWin32.c
+  ./Platform/Win32/FrDisplayWin32.c
+  ./Platform/Win32/FrWindowWin32.c
 )
 
 set(COCOA_SRC
 )
 
 set(MONO_SRC
-  # ./FRMono.h
-  # ./FRMono.c
+  # ./FrMono.h
+  # ./FrMono.c
 )
 
 set(SRC
-  ./ThirdParty/FRGlfw.h
-  ./ThirdParty/FRGlfw.c
-  ./ThirdParty/FRGlib.h
-  ./ThirdParty/FRGlib.c
-  ./ThirdParty/FRCairo.h
-  ./ThirdParty/FRCairo.c
-  ./ThirdParty/FRFont.c
-  ./ThirdParty/FRFont.h
-  ./ThirdParty/FRExpr.h
-  ./ThirdParty/FRExpr.c
+  ./ThirdParty/FrGlfw.h
+  ./ThirdParty/FrGlfw.c
+  ./ThirdParty/FrGlib.h
+  ./ThirdParty/FrGlib.c
+  ./ThirdParty/FrCairo.h
+  ./ThirdParty/FrCairo.c
+  ./ThirdParty/FrFont.c
+  ./ThirdParty/FrFont.h
+  ./ThirdParty/FrExpr.h
+  ./ThirdParty/FrExpr.c
 
-  ./Event/FREventCore.h
-  ./Event/Base/FREvent.c
-  ./Event/Base/FREvent.h
-  ./Event/Base/FREventAny.c
-  ./Event/Base/FREventAny.h
-  ./Event/Base/FREventKey.h
-  ./Event/Base/FREventKey.c
-  ./Event/Base/FREventMouseKey.h
-  ./Event/Base/FREventMouseKey.c
-  ./Event/Base/FREventRefresh.h
-  ./Event/Base/FREventRefresh.c
-  ./Event/Base/FREventMapping.h
-  ./Event/Base/FREventCursorMove.c
-  ./Event/Base/FREventCursorMove.h
+  ./Event/FrEventCore.h
+  ./Event/Base/FrEvent.c
+  ./Event/Base/FrEvent.h
+  ./Event/Base/FrEventAny.c
+  ./Event/Base/FrEventAny.h
+  ./Event/Base/FrEventKey.h
+  ./Event/Base/FrEventKey.c
+  ./Event/Base/FrEventMouseKey.h
+  ./Event/Base/FrEventMouseKey.c
+  ./Event/Base/FrEventRefresh.h
+  ./Event/Base/FrEventRefresh.c
+  ./Event/Base/FrEventMapping.h
+  ./Event/Base/FrEventCursorMove.c
+  ./Event/Base/FrEventCursorMove.h
 
-  ./Event/Action/FRAWatch.c
-  ./Event/Action/FRAWatch.h
-  ./Event/Action/FRAWatchBuilder.c
-  ./Event/Action/FRAWatchBuilder.h
-  ./Event/Action/FRAWatchKey.c
-  ./Event/Action/FRAWatchKey.h
-  ./Event/Action/FRAWatchAny.c
-  ./Event/Action/FRAWatchAny.h
-  ./Event/Action/FRAWatchRefresh.c
-  ./Event/Action/FRAWatchRefresh.h
-  ./Event/Action/FRAWatchKeyPress.c
-  ./Event/Action/FRAWatchKeyPress.h
-  ./Event/Action/FRAWatchMousePress.c
-  ./Event/Action/FRAWatchMousePress.h
-  ./Event/Action/FRAWatchMouseRelease.c
-  ./Event/Action/FRAWatchMouseRelease.h
-  ./Event/Action/FRAWatchCursorMove.c
-  ./Event/Action/FRAWatchCursorMove.h
+  ./Event/Action/FrAWatch.c
+  ./Event/Action/FrAWatch.h
+  ./Event/Action/FrAWatchBuilder.c
+  ./Event/Action/FrAWatchBuilder.h
+  ./Event/Action/FrAWatchKey.c
+  ./Event/Action/FrAWatchKey.h
+  ./Event/Action/FrAWatchAny.c
+  ./Event/Action/FrAWatchAny.h
+  ./Event/Action/FrAWatchRefresh.c
+  ./Event/Action/FrAWatchRefresh.h
+  ./Event/Action/FrAWatchKeyPress.c
+  ./Event/Action/FrAWatchKeyPress.h
+  ./Event/Action/FrAWatchMousePress.c
+  ./Event/Action/FrAWatchMousePress.h
+  ./Event/Action/FrAWatchMouseRelease.c
+  ./Event/Action/FrAWatchMouseRelease.h
+  ./Event/Action/FrAWatchCursorMove.c
+  ./Event/Action/FrAWatchCursorMove.h
 
-  ./Event/Action/FRAction.c
-  ./Event/Action/FRAction.h
-  ./Event/Action/FRAKey.c
-  ./Event/Action/FRAKey.h
-  ./Event/Action/FRAMouseKey.c
-  ./Event/Action/FRAMouseKey.h
-  ./Event/Action/FRACursorMove.c
-  ./Event/Action/FRACursorMove.h
-  ./Event/FREvents.c
-  ./Event/FREvents.h
+  ./Event/Action/FrAction.c
+  ./Event/Action/FrAction.h
+  ./Event/Action/FrAKey.c
+  ./Event/Action/FrAKey.h
+  ./Event/Action/FrAMouseKey.c
+  ./Event/Action/FrAMouseKey.h
+  ./Event/Action/FrACursorMove.c
+  ./Event/Action/FrACursorMove.h
+  ./Event/FrEvents.c
+  ./Event/FrEvents.h
 
-  ./Device/FRDisplay.c
-  ./Device/FRDisplay.h
-  ./Device/FRWindow.c
-  ./Device/FRWindow.h
+  ./Device/FrDisplay.c
+  ./Device/FrDisplay.h
+  ./Device/FrWindow.c
+  ./Device/FrWindow.h
 
-  ./DataType/FRFunc.c
-  ./DataType/FRFunc.h
-  ./DataType/FRMain.c
-  ./DataType/FRMain.h
-  ./DataType/FRSource.c
-  ./DataType/FRSource.h
-  ./DataType/FRApplication.c
-  ./DataType/FRApplication.h
-  ./DataType/FRWorker.c
-  ./DataType/FRWorker.h
-  ./DataType/FRPQueue.h
-  ./DataType/FRPQueue.c
-  ./DataType/FRPair.h
-  ./DataType/FRPair.c
-  ./DataType/FRNode.h
-  ./DataType/FRNode.c
-  ./DataType/FREnv.c
-  ./DataType/FREnv.h
+  ./DataType/FrFunc.c
+  ./DataType/FrFunc.h
+  ./DataType/FrMain.c
+  ./DataType/FrMain.h
+  ./DataType/FrSource.c
+  ./DataType/FrSource.h
+  ./DataType/FrApplication.c
+  ./DataType/FrApplication.h
+  ./DataType/FrWorker.c
+  ./DataType/FrWorker.h
+  ./DataType/FrPQueue.h
+  ./DataType/FrPQueue.c
+  ./DataType/FrPair.h
+  ./DataType/FrPair.c
+  ./DataType/FrNode.h
+  ./DataType/FrNode.c
+  ./DataType/FrEnv.c
+  ./DataType/FrEnv.h
 
-  ./Graph/FRGraph.c
-  ./Graph/FRGraph.h
-  ./Graph/FRDraw.c
-  ./Graph/FRDraw.h
-  # ./Graph/FRText.c
-  # ./Graph/FRText.h
-  ./Graph/FRCanvasPrivate.h
-  ./Graph/FRCanvas.h
-  ./Graph/FRCanvas.c
+  ./Graph/FrGraph.c
+  ./Graph/FrGraph.h
+  ./Graph/FrDraw.c
+  ./Graph/FrDraw.h
+  # ./Graph/FrText.c
+  # ./Graph/FrText.h
+  ./Graph/FrCanvasPrivate.h
+  ./Graph/FrCanvas.h
+  ./Graph/FrCanvas.c
 
-  ./FRTypes.h
-  ./FRCommon.h
-  ./FRCommon.c
-  ./FRCore.c
-  ./FRCore.h
+  ./FrTypes.h
+  ./FrCommon.h
+  ./FrCommon.c
+  ./FrCore.c
+  ./FrCore.h
 )
 
 if(USE_MONO)

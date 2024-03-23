@@ -12,7 +12,7 @@ SYS_BEGIN_DECLS
 #define CST_NODE_GET_CLASS(o) sys_instance_get_class(o, CstNodeClass)
 
 struct _CstNode {
-  FRNode      unowned;
+  FrNode      unowned;
   /* <private> */
   SysChar     *name;
   SysChar     *id;
@@ -32,12 +32,12 @@ struct _CstNode {
 };
 
 struct _CstNodeClass {
-  FRNodeClass parent;
+  FrNodeClass parent;
 
   CstRenderNode* (*realize) (CstNode* self, CstRenderNode *v_parent, CstComNode *com_node);
 };
 
-typedef FRNodeFunc CstNodeFunc;
+typedef FrNodeFunc CstNodeFunc;
 
 #define cst_node_get_next(o) ((CstNode *)fr_node_get_next(FR_NODE(o)))
 #define cst_node_get_prev(o) ((CstNode*)fr_node_get_prev(FR_NODE(o)))
@@ -75,7 +75,7 @@ void cst_node_setup(void);
 void cst_node_teardown(void);
 
 /* props */
-void cst_node_add_awatch(CstNode *self, FRAWatch* o);
+void cst_node_add_awatch(CstNode *self, FrAWatch* o);
 void cst_node_add_nodemap(CstNode *self, CstNodeMap* o);
 
 void cst_node_set_v_css_list(CstNode *self, SysHArray * v_css_list);

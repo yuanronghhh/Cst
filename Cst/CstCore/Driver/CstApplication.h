@@ -15,9 +15,9 @@ struct _CstApplication {
   SysObject parent;
 
   /* <private> */
-  FRMain* main_loop;
-  FRMain* work_loop;
-  FRSource *app_source;
+  FrMain* main_loop;
+  FrMain* work_loop;
+  FrSource *app_source;
   CstModule *main_module;
   SysInt status;
 };

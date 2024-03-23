@@ -84,7 +84,7 @@ SysBool cst_node_builder_awatch_name(CstNodeBuilder *self, const SysChar *name, 
   return true;
 }
 
-void cst_node_builder_add_awatch(CstNodeBuilder *self, FRAWatch* map) {
+void cst_node_builder_add_awatch(CstNodeBuilder *self, FrAWatch* map) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(map != NULL);
 
@@ -103,7 +103,7 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
 
   CstModule *v_module = self->v_module;
   CstComponent *v_component = self->v_component;
-  FREnv *env = cst_component_get_css_env(v_component);
+  FrEnv *env = cst_component_get_css_env(v_component);
   CstCssGroup* g;
 
   cst_node_set_name(node, self->v_name);

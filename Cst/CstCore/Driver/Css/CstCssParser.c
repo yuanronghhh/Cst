@@ -3,7 +3,7 @@
 
 SYS_DEFINE_TYPE(CstCssParser, cst_css_parser, SYS_TYPE_OBJECT);
 
-SysBool cst_css_parser_parse_color(CstCssParser* parser, FRColor* color) {
+SysBool cst_css_parser_parse_color(CstCssParser* parser, FrColor* color) {
   sys_return_val_if_fail(parser != NULL, false);
 
   //JNode* jnode = parser->jnode;

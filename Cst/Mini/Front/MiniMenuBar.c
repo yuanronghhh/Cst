@@ -10,7 +10,7 @@ SYS_DEFINE_TYPE(MiniMenuBar, mini_menubar, CST_TYPE_COMPONENT);
 
 
 FR_FUNC_DEFINE_EVENT(menubar_btn_press) {
-  FREventMouseKey *ekey = FR_EVENT_MOUSEKEY(e);
+  FrEventMouseKey *ekey = FR_EVENT_MOUSEKEY(e);
 
   sys_debug_N("key press: %d,%d", fr_event_mousekey_key(ekey), fr_event_mousekey_action(ekey));
 

@@ -13,8 +13,8 @@ union _CstCssValueV {
   SysChar* v_string;
 
   SysPointer v_pointer;
-  FRSInt4* v_m4;
-  FRColor* v_color;
+  FrSInt4* v_m4;
+  FrColor* v_color;
   CstCssClosure* v_closure;
 };
 
@@ -94,7 +94,7 @@ SysPointer cst_css_value_get_v_pointer(CstCssValue *self) {
   return self->v.v_pointer;
 }
 
-void cst_css_value_set_v_m4(CstCssValue* self, FRSInt4* m4) {
+void cst_css_value_set_v_m4(CstCssValue* self, FrSInt4* m4) {
   sys_return_if_fail(self != NULL);
 
   sys_assert(self->v.v_m4 == NULL);
@@ -103,7 +103,7 @@ void cst_css_value_set_v_m4(CstCssValue* self, FRSInt4* m4) {
   self->v.v_m4 = m4;
 }
 
-FRSInt4* cst_css_value_get_v_m4(CstCssValue *self) {
+FrSInt4* cst_css_value_get_v_m4(CstCssValue *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v.v_m4;
@@ -122,7 +122,7 @@ SysDouble cst_css_value_get_v_double(CstCssValue *self) {
   return self->v.v_double;
 }
 
-void cst_css_value_set_v_color(CstCssValue* self, FRColor* v) {
+void cst_css_value_set_v_color(CstCssValue* self, FrColor* v) {
   sys_return_if_fail(self != NULL);
 
   sys_assert(self->v.v_color == NULL);
@@ -131,7 +131,7 @@ void cst_css_value_set_v_color(CstCssValue* self, FRColor* v) {
   self->v.v_color = v;
 }
 
-FRColor* cst_css_value_get_v_color(CstCssValue *self) {
+FrColor* cst_css_value_get_v_color(CstCssValue *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->v.v_color;

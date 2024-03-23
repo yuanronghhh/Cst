@@ -7,10 +7,10 @@ SYS_BEGIN_DECLS
 
 void cst_css_env_setup(void);
 void cst_css_env_teardown(void);
-FREnv *cst_css_env_new_I(FREnv *parent);
+FrEnv *cst_css_env_new_I(FrEnv *parent);
 
-void cst_css_env_set_gcss_env(FREnv * gcss_env);
-FREnv * cst_css_env_get_gcss_env(void);
+void cst_css_env_set_gcss_env(FrEnv * gcss_env);
+FrEnv * cst_css_env_get_gcss_env(void);
 
 SYS_END_DECLS
 

@@ -64,7 +64,7 @@ static void render_node_flex_item_imp(CstFlexItemInterface *iface) {
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
-  FRSInt4 m4 = { 0 };
+  FrSInt4 m4 = { 0 };
   CstLayoutNode *lnode = CST_LAYOUT_NODE(self);
 
   cst_layout_node_get_mbp(lnode, &m4);
@@ -73,7 +73,7 @@ void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
 
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-  FRDraw* draw = cst_layout_get_draw(layout);
+  FrDraw* draw = cst_layout_get_draw(layout);
 
   fr_draw_save(draw);
   cst_render_node_prepare(self, layout);
@@ -86,14 +86,14 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
 
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-  FRDraw* draw = cst_layout_get_draw(layout);
+  FrDraw* draw = cst_layout_get_draw(layout);
 
   fr_draw_restore(draw);
 }
 
 SysObject* cst_render_node_dclone_i(SysObject *o) {
   sys_return_val_if_fail(o != NULL, NULL);
-  FRAWatch *nwatch;
+  FrAWatch *nwatch;
   CstNodeMap *nodemap;
 
   SysObject *n = SYS_OBJECT_CLASS(cst_render_node_parent_class)->dclone(o);
@@ -111,7 +111,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
   }
 
   sys_list_foreach(oself->awatch_list, item) {
-    nwatch = (FRAWatch *)sys_object_dclone(item->data);
+    nwatch = (FrAWatch *)sys_object_dclone(item->data);
 
     nself->awatch_list = sys_list_prepend(nself->awatch_list, nwatch);
   }
@@ -128,7 +128,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
 void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   sys_return_if_fail(self != NULL);
 
-  const FRRect* bound = cst_render_node_get_bound(self);
+  const FrRect* bound = cst_render_node_get_bound(self);
 
   if (prnode) {
     sys_debug_N("<%s,%s> <%s,%s> <%d,%d,%d,%d>",
@@ -156,7 +156,7 @@ SysType cst_render_node_get_node_type(CstRenderNode *self) {
 void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer) {
 }
 
-void cst_render_node_ref_awatch(CstRenderNode *self, FRAWatch *awatch) {
+void cst_render_node_ref_awatch(CstRenderNode *self, FrAWatch *awatch) {
   sys_return_if_fail(self != NULL);
 
   self->awatch_list = sys_list_prepend(self->awatch_list, awatch);
@@ -290,8 +290,8 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
 }
 
 static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
-  FRDraw *draw = cst_layout_get_draw(layout);
-  const FRRect *bound = cst_render_node_get_bound(rnode);
+  FrDraw *draw = cst_layout_get_draw(layout);
+  const FrRect *bound = cst_render_node_get_bound(rnode);
 
   fr_draw_fill_bound(draw, bound);
 }
@@ -322,7 +322,8 @@ static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
 
   sys_clear_pointer(&self->rctx, _sys_object_unref);
-  sys_clear_pointer(&self->v_css_list, sys_harray_free);
+  sys_harray_free(self->v_css_list, true);
+  self->v_css_list = NULL;
 
   if (self->awatch_list) {
 

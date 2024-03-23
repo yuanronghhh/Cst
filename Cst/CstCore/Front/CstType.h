@@ -2,7 +2,7 @@
 #define __CST_TYPE__
 
 #include <CstCore/CstConfig.h>
-#include <Framework/FRCore.h>
+#include <Framework/FrCore.h>
 
 SYS_BEGIN_DECLS
 

@@ -36,13 +36,13 @@ struct _AstModulePass {
   AstParser *parser;
 };
 
-CstCssGroup* ast_css_group_new_with_jpair(FREnv *env, JPair *pair);
+CstCssGroup* ast_css_group_new_with_jpair(FrEnv *env, JPair *pair);
 SYS_DEFINE_TYPE(AstParser, ast_parser, CST_TYPE_PARSER);
 
 static SysValue *ast_parser_jnode_to_value(CstModule *v_module, const SysChar *key, JNode *jnode) {
   sys_return_val_if_fail(key != NULL, NULL);
 
-  FREventFunc func;
+  FrEventFunc func;
   const SysChar *sv;
   const SysChar *mpath;
   SysValue *v;
@@ -156,7 +156,7 @@ static SysBool component_style_node_func(JNode *jnode, AstComponentPass *pass) {
   CstComponent *v_component = self->v_component;
   sys_return_val_if_fail(v_component != NULL, false);
 
-  FREnv *env = cst_component_get_css_env(v_component);
+  FrEnv *env = cst_component_get_css_env(v_component);
   sys_return_val_if_fail(env != NULL, false);
 
   const SysChar *id = cst_component_get_id(v_component);
@@ -488,7 +488,7 @@ static SysBool ast_css_env_gstyle_func(JNode *node, AstParser *self) {
   sys_return_val_if_fail(node->type == AstJPair, false);
 
   const SysChar *id;
-  FREnv *gcss_env;
+  FrEnv *gcss_env;
   JPair *jpair;
   CstCssGroup *g;
   const SysChar *mpath;
@@ -643,8 +643,8 @@ SysBool ast_node_parse_action(
   sys_return_val_if_fail(watch_name != NULL, false);
 
   SysChar *fname;
-  FRAWatch *awatch = NULL;
-  FREventFunc watch_func = NULL;
+  FrAWatch *awatch = NULL;
+  FrEventFunc watch_func = NULL;
   SysChar *bind_var = NULL;
   SysType type;
 
@@ -656,7 +656,7 @@ SysBool ast_node_parse_action(
   } else {
 
     fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
-    watch_func = (FREventFunc)cst_module_get_function(v_module, fname);
+    watch_func = (FrEventFunc)cst_module_get_function(v_module, fname);
     sys_free_N(fname);
 
     if (watch_func == NULL) {
@@ -901,7 +901,7 @@ CstCssPair *ast_css_pair_parse(JNode *jnode) {
   return cst_css_pair_new_I(node, value);
 }
 
-CstCssGroup* ast_css_group_new_with_jpair(FREnv *env, JPair *pair) {
+CstCssGroup* ast_css_group_new_with_jpair(FrEnv *env, JPair *pair) {
   sys_return_val_if_fail(pair != NULL, NULL);
   sys_return_val_if_fail(pair->key != NULL, NULL);
   sys_return_val_if_fail(pair->value != NULL, NULL);
@@ -1041,7 +1041,7 @@ SysBool ast_css_value_parse(JNode *jnode, CstCssNode *css_node, CstCssValue *val
   sys_return_val_if_fail(value != NULL, false);
   sys_return_val_if_fail(jnode != NULL, false);
 
-  FRSInt4 *v_m4;
+  FrSInt4 *v_m4;
 
   switch (jnode->type) {
     case AstJBool:
@@ -1064,7 +1064,7 @@ SysBool ast_css_value_parse(JNode *jnode, CstCssNode *css_node, CstCssValue *val
         break;
       }
 
-      v_m4 = sys_new0_N(FRSInt4, 1);
+      v_m4 = sys_new0_N(FrSInt4, 1);
       SysInt tm4[4];
       for (SysUInt i = 0; i < jnode->v.v_array->len; i++) {
         JNode *node = jnode->v.v_array->pdata[i];
@@ -1109,7 +1109,7 @@ SysBool ast_css_value_parse(JNode *jnode, CstCssNode *css_node, CstCssValue *val
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue *value) {
   sys_return_val_if_fail(s != NULL, false);
 
-  FRColor *color = sys_new0_N(FRColor, 1);
+  FrColor *color = sys_new0_N(FrColor, 1);
 
   if (!fr_color_rgba_parse(s, color)) {
     sys_warning_N("Faild to parse %s.", s);

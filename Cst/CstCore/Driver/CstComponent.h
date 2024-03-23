@@ -12,20 +12,20 @@ SYS_BEGIN_DECLS
 #define CST_COMPONENT_GET_CLASS(o) sys_instance_get_class(o, CstComponentClass)
 
 struct _CstComponent {
-  FREnv unowned;
+  FrEnv unowned;
 
   /* <private> */
   SysChar *id;
   /* ComStyle : CstCssGroup */
-  FREnv *css_env;
+  FrEnv *css_env;
   /* ComProps: CstValueMap */
-  FREnv *value_maps_env;
+  FrEnv *value_maps_env;
   CstNode *layout_node;
   SysInt comp_type;
 };
 
 struct _CstComponentClass {
-  FREnvClass unowned;
+  FrEnvClass unowned;
 
   void (*construct) (CstComponent *o, CstComponentContext *c);
 };
@@ -60,11 +60,11 @@ void cst_component_set_id(CstComponent* self, const SysChar *id);
 void cst_component_set_css(CstComponent* self, CstCssGroup *g);
 SysBool cst_component_remove_css(CstComponent * self, CstCssGroup * g);
 
-void cst_component_set_value_maps_env(CstComponent *self, FREnv * value_maps_env);
-FREnv * cst_component_get_value_maps_env(CstComponent *self);
+void cst_component_set_value_maps_env(CstComponent *self, FrEnv * value_maps_env);
+FrEnv * cst_component_get_value_maps_env(CstComponent *self);
 
-void cst_component_set_css_env(CstComponent *self, FREnv * css_env);
-FREnv * cst_component_get_css_env(CstComponent *self);
+void cst_component_set_css_env(CstComponent *self, FrEnv * css_env);
+FrEnv * cst_component_get_css_env(CstComponent *self);
 
 void cst_component_set_parent(CstComponent *self, CstComponent * parent);
 CstComponent * cst_component_get_parent(CstComponent *self);

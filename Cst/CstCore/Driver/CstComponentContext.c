@@ -73,13 +73,13 @@ void cst_component_context_set_css(CstComponentContext* self, CstCssGroup *g) {
   fr_env_set(self->css_env, (SysPointer)cst_css_group_get_id(g), g);
 }
 
-void cst_component_context_set_css_env(CstComponentContext *self, FREnv * css_env) {
+void cst_component_context_set_css_env(CstComponentContext *self, FrEnv * css_env) {
   sys_return_if_fail(self != NULL);
 
   self->css_env = css_env;
 }
 
-FREnv * cst_component_context_get_css_env(CstComponentContext *self) {
+FrEnv * cst_component_context_get_css_env(CstComponentContext *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->css_env;

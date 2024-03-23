@@ -219,15 +219,15 @@ CstComponent* cst_module_get_component(CstModule *self, const SysChar *comp_name
 
 void cst_module_add_user_awatch(CstModule * self, 
   const SysChar *event_name, 
-  const SysChar *func_name, FREventFunc func,
+  const SysChar *func_name, FrEventFunc func,
   SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(event_name != NULL);
   sys_return_if_fail(func_name != NULL);
   sys_return_if_fail(func != NULL);
 
-  FRAWatchBuilder *builder = fr_awatch_builder_new_I(func_name, func);
-  FRAWatch *awatch = fr_awatch_new_by_name(event_name);
+  FrAWatchBuilder *builder = fr_awatch_builder_new_I(func_name, func);
+  FrAWatch *awatch = fr_awatch_new_by_name(event_name);
   fr_awatch_construct(awatch, builder);
   sys_object_unref(builder);
 
@@ -235,7 +235,7 @@ void cst_module_add_user_awatch(CstModule * self,
   cst_module_add_awatch(self, awatch);
 }
 
-SysList* cst_module_add_awatch(CstModule * self, FRAWatch *awatch) {
+SysList* cst_module_add_awatch(CstModule * self, FrAWatch *awatch) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   self->awatches = sys_list_prepend(self->awatches, awatch);
@@ -265,14 +265,14 @@ SysChar *cst_module_new_node_id(CstModule *self) {
   return nid;
 }
 
-FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name) {
+FrEventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name) {
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(func_name != NULL, NULL);
   SysChar *new_func_name;
-  FREventFunc func;
+  FrEventFunc func;
 
   new_func_name = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
-  func = (FREventFunc)cst_module_get_function(self, new_func_name);
+  func = (FrEventFunc)cst_module_get_function(self, new_func_name);
   sys_free_N(new_func_name);
 
   return func;
@@ -316,7 +316,7 @@ void cst_module_teardown(void) {
 }
 
 /* object api */
-static void cst_module_construct_i(FREnv* o, SysHashTable* ht, FREnv* parent) {
+static void cst_module_construct_i(FrEnv* o, SysHashTable* ht, FrEnv* parent) {
 
   FR_ENV_CLASS(cst_module_parent_class)->construct(o, ht, parent);
 }
@@ -364,7 +364,7 @@ static void cst_module_dispose(SysObject* o) {
 
 static void cst_module_class_init(CstModuleClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  FREnvClass* ecls = FR_ENV_CLASS(cls);
+  FrEnvClass* ecls = FR_ENV_CLASS(cls);
 
   ecls->construct = cst_module_construct_i;
   ocls->dispose = cst_module_dispose;

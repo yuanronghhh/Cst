@@ -20,7 +20,7 @@ struct _AstParser {
   CstComponent *v_pcomponent;
   CstNode* v_com_node;
   CstNode* node;
-  FREnv *gcss_env;
+  FrEnv *gcss_env;
   CstNode *pnode;
 };
 

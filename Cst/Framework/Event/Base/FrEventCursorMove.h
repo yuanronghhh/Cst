@@ -1,0 +1,32 @@
+#ifndef __FR_EVENT_CURSOR_MOVE_H__
+#define __FR_EVENT_CURSOR_MOVE_H__
+
+#include <Framework/Event/Base/FrEvent.h>
+
+SYS_BEGIN_DECLS
+
+#define FR_TYPE_EVENT_CURSOR_MOVE (fr_event_cursor_move_get_type())
+#define FR_EVENT_CURSOR_MOVE(o) ((FrEventCursorMove* )sys_object_cast_check(o, FR_TYPE_EVENT_CURSOR_MOVE))
+#define FR_EVENT_CURSOR_MOVE_CLASS(o) ((FrEventCursorMoveClass *)sys_class_cast_check(o, FR_TYPE_EVENT_CURSOR_MOVE))
+#define FR_EVENT_CURSOR_MOVE_GET_CLASS(o) sys_instance_get_class(o, FrEventCursorMoveClass)
+
+struct _FrEventCursorMoveClass {
+  FrEventClass parent;
+};
+
+struct _FrEventCursorMove {
+  FrEvent parent;
+
+  /* <private> */
+  SysDouble xpos;
+  SysDouble ypos;
+};
+
+SYS_API SysType fr_event_cursor_move_get_type(void);
+SYS_API FrEvent * fr_event_cursor_move_new_I(FrWindow * window, SysDouble xpos, SysDouble ypos);
+SYS_API void fr_event_cursor_move_position(FrEventCursorMove *self, SysDouble *x, SysDouble *y) ;
+
+SYS_END_DECLS
+
+#endif
+

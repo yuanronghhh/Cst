@@ -22,7 +22,7 @@ struct _CstRenderNode {
   SysChar* name;
   SysChar* id;
 
-  /* FRAWatch */
+  /* FrAWatch */
   SysList *awatch_list;
 
   /* CstNodeMap */
@@ -99,7 +99,7 @@ SysType cst_render_node_get_node_type(CstRenderNode *self);
 void cst_render_node_change_to_layer(CstRenderNode *self, CstLayer *tolayer);
 void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout);
 
-void cst_render_node_ref_awatch(CstRenderNode *self, FRAWatch *o);
+void cst_render_node_ref_awatch(CstRenderNode *self, FrAWatch *o);
 SysList * cst_render_node_get_awatch_list(CstRenderNode *self);
 
 void cst_render_node_ref_nodemap(CstRenderNode *self, CstNodeMap *o);

@@ -8,9 +8,9 @@ static SysRecMutex gcss_lock;
 #define GCSS_LOCK sys_rec_mutex_lock(&gcss_lock)
 #define GCSS_UNLOCK sys_rec_mutex_unlock(&gcss_lock)
 
-static FREnv *gcss_env = NULL;
+static FrEnv *gcss_env = NULL;
 
-void cst_css_env_set_gcss_env(FREnv * new_gcss_env) {
+void cst_css_env_set_gcss_env(FrEnv * new_gcss_env) {
   sys_return_if_fail(new_gcss_env != NULL);
 
   GCSS_LOCK;
@@ -18,10 +18,10 @@ void cst_css_env_set_gcss_env(FREnv * new_gcss_env) {
   GCSS_UNLOCK;
 }
 
-FREnv * cst_css_env_get_gcss_env(void) {
+FrEnv * cst_css_env_get_gcss_env(void) {
   sys_return_val_if_fail(gcss_env != NULL, NULL);
 
-  FREnv * css;
+  FrEnv * css;
 
   GCSS_LOCK;
   css = gcss_env;
@@ -30,7 +30,7 @@ FREnv * cst_css_env_get_gcss_env(void) {
   return css;
 }
 
-FREnv *cst_css_env_new_I(FREnv *parent) {
+FrEnv *cst_css_env_new_I(FrEnv *parent) {
   SysHashTable *ht;
 
   if(parent == NULL) {

@@ -7,7 +7,7 @@
 SYS_DEFINE_TYPE(AppButton, app_button, CST_TYPE_COMPONENT);
 
 FR_FUNC_DEFINE_EVENT(app_btn_clicked) {
-  FREventKey *ekey = FR_EVENT_KEY(e);
+  FrEventKey *ekey = FR_EVENT_KEY(e);
 
   sys_debug_N("key release: %d,%d", fr_event_key_key(ekey), fr_event_key_scancode(ekey));
 
@@ -15,7 +15,7 @@ FR_FUNC_DEFINE_EVENT(app_btn_clicked) {
 }
 
 FR_FUNC_DEFINE_EVENT(app_btn_press) {
-  FREventMouseKey *ekey = FR_EVENT_MOUSEKEY(e);
+  FrEventMouseKey *ekey = FR_EVENT_MOUSEKEY(e);
 
   sys_debug_N("key press: %d,%d", fr_event_mousekey_key(ekey), fr_event_mousekey_action(ekey));
 

@@ -9,7 +9,7 @@ typedef struct _AbsLayerPass AbsLayerPass;
 
 struct _AbsLayerPass {
   CstLayer* v_layer;
-  FRRegion* v_region;
+  FrRegion* v_region;
 };
 
 static void i_layer_imp(CstILayerInterface *iface);
@@ -36,8 +36,8 @@ static CstLayerNode* cst_abs_layer_get_root_i(CstLayer* o) {
 static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
   CstLayerNode* lnode;
   CstLayer* self;
-  FRRegion* region;
-  const FRRect* bound;
+  FrRegion* region;
+  const FrRect* bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;
@@ -75,7 +75,7 @@ static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
 static void cst_abs_layer_check_i(CstLayer *o, CstLayout *layout) {
   CstAbsLayer* self = CST_ABS_LAYER(o);
 
-  FRRegion *region = cst_layout_get_region(layout);
+  FrRegion *region = cst_layout_get_region(layout);
   AbsLayerPass ctx = { o, region };
 }
 

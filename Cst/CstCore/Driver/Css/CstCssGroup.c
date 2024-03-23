@@ -60,7 +60,7 @@ SysBool cst_css_group_set_by_name(SysHArray* ptr, const SysChar* name) {
   return cst_css_group_set_by_id(ptr, cst_css_env_get_gcss_env(), name);
 }
 
-SysBool cst_css_group_set_by_id(SysHArray *ptr, FREnv *env, const SysChar *id) {
+SysBool cst_css_group_set_by_id(SysHArray *ptr, FrEnv *env, const SysChar *id) {
   sys_return_val_if_fail(ptr != NULL, false);
   sys_return_val_if_fail(id != NULL, false);
 

@@ -20,7 +20,7 @@ SysInt cst_value_map_prop_data_type(CstValueMap *self) {
   return self->data_type;
 }
 
-FREnv *cst_value_map_new_env(FREnv *parent) {
+FrEnv *cst_value_map_new_env(FrEnv *parent) {
   SysHashTable *ht = sys_hash_table_new_full(sys_str_hash, 
     (SysEqualFunc)sys_str_equal, NULL, 
     (SysDestroyFunc)_sys_object_unref);

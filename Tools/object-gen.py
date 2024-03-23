@@ -17,7 +17,7 @@ interface_h_template = """\
 #ifndef __${TYPE_NAME}__
 #define __${TYPE_NAME}__
 
-#include <CstCore/Driver/CstCommon.h>
+#include <${header_path}/CstCommon.h>
 
 
 SYS_BEGIN_DECLS
@@ -80,7 +80,7 @@ h_template = """\
 #ifndef __${TYPE_NAME}_H__
 #define __${TYPE_NAME}_H__
 
-#include <CstCore/Driver/CstCommon.h>
+#include <${header_path}/CstCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -108,7 +108,7 @@ SYS_END_DECLS
 
 
 c_template = """\
-#include <CstCore/Driver/Front/${TypeName}.h>
+#include <${header_path}/${TypeName}.h>
 
 SYS_DEFINE_TYPE(${TypeName}, ${type_name}, ${TYPE_PARENT});
 
@@ -518,17 +518,16 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _CstAbsNode {
-  CstLayerNode parent;
+struct _FRRender {
+  SysObject parent;
 
   /* <private> */
-  SysInt z_index;
 };
 """
 
 def main():
-    dst = "./Cst/CstCore/Driver"
-    header_path = "CstCore/Driver"
+    dst = "./Cst/Framework/Graph"
+    header_path = "Framework/Graph"
 
     gen = TemplateGenerator(template_struct, dst, header_path)
     # gen.generate_field()

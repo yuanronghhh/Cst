@@ -92,7 +92,7 @@ static void cst_node_map_dispose(SysObject* o) {
 
 static void cst_node_map_class_init(CstNodeMapClass* cls) {
   SysObjectClass* ocls = SYS_OBJECT_CLASS(cls);
-  FRPairClass* pcls = FR_PAIR_CLASS(cls);
+  FrPairClass* pcls = FR_PAIR_CLASS(cls);
 
   ocls->dispose = cst_node_map_dispose;
   ocls->dclone = cst_node_map_dclone_i;

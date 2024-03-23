@@ -11,15 +11,15 @@ SYS_BEGIN_DECLS
 #define CST_MODULE_GET_CLASS(o) sys_instance_get_class(o, CstModuleClass)
 
 struct _CstModuleClass {
-  FREnvClass parent;
+  FrEnvClass parent;
 };
 
 struct _CstModule {
-  FREnv parent;
+  FrEnv parent;
 
   /* <private> */
   SysInt count;
-  FREnv* function_env;
+  FrEnv* function_env;
   const SysChar* path;
   SysList* awatches;
 
@@ -43,7 +43,7 @@ CstModule* cst_module_load_path(CstModule* parent, const SysChar* path);
 void cst_module_setup(void);
 void cst_module_teardown(void);
 
-FREventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
+FrEventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
 
 CstRenderNode* cst_module_realize(CstModule* self, CstRenderNode* v_parent);
 
@@ -62,10 +62,10 @@ void cst_module_set_g_module(CstModule *m);
 
 void cst_module_add_user_awatch(CstModule * self, 
   const SysChar *event_name, 
-  const SysChar *func_name, FREventFunc func,
+  const SysChar *func_name, FrEventFunc func,
   SysPointer user_data);
 
-SysList* cst_module_add_awatch(CstModule * self, FRAWatch *awatch);
+SysList* cst_module_add_awatch(CstModule * self, FrAWatch *awatch);
 void cst_module_remove_awatch(CstModule * self, SysList * awatch_link);
 
 void cst_module_set_root_component(CstModule *self, CstComponent *comp);

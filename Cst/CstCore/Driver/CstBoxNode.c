@@ -150,9 +150,9 @@ CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
 }
 
 void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout) {
-  FRDraw* draw = cst_layout_get_draw(layout);
+  FrDraw* draw = cst_layout_get_draw(layout);
   CstLayoutNode *lynode = cst_box_node_get_layout_node(self);
-  const FRRect *bound = cst_layout_node_get_bound(lynode);
+  const FrRect *bound = cst_layout_node_get_bound(lynode);
 
   fr_draw_fill_bound(draw, bound);
 }

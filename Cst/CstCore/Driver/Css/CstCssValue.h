@@ -39,14 +39,14 @@ void cst_css_value_set_v_null(CstCssValue *self);
 void cst_css_value_set_v_pointer(CstCssValue *self, SysPointer v_pointer);
 SysPointer cst_css_value_get_v_pointer(CstCssValue *self);
 
-void cst_css_value_set_v_m4(CstCssValue *self, FRSInt4* v_m4);
-FRSInt4* cst_css_value_get_v_m4(CstCssValue *self);
+void cst_css_value_set_v_m4(CstCssValue *self, FrSInt4* v_m4);
+FrSInt4* cst_css_value_get_v_m4(CstCssValue *self);
 
 void cst_css_value_set_v_double(CstCssValue *self, SysDouble v_double);
 SysDouble cst_css_value_get_v_double(CstCssValue *self);
 
-void cst_css_value_set_v_color(CstCssValue *self, FRColor* v_color);
-FRColor* cst_css_value_get_v_color(CstCssValue *self);
+void cst_css_value_set_v_color(CstCssValue *self, FrColor* v_color);
+FrColor* cst_css_value_get_v_color(CstCssValue *self);
 
 void cst_css_value_set_v_closure(CstCssValue *self, CstCssClosure* v_closure);
 CstCssClosure* cst_css_value_get_v_closure(CstCssValue *self);

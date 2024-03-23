@@ -68,7 +68,7 @@ void cst_node_unlink_node_r(CstNode *self) {
   cst_node_handle_ft_r(self, (CstNodeFunc)node_unlink_one, NULL);
 }
 
-void cst_node_add_awatch(CstNode *self, FRAWatch* o) {
+void cst_node_add_awatch(CstNode *self, FrAWatch* o) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(o != NULL);
 
@@ -310,7 +310,7 @@ static CstRenderNode* cst_node_realize_i(CstNode* self, CstRenderNode *v_parent,
 
   SysInt layer_idx;
   CstLayer *layer;
-  FRAWatch *awatch;
+  FrAWatch *awatch;
   CstNodeMap *nmap;
   CstRenderNode *rnode;
   CstLayerNode *lnode;

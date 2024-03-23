@@ -21,8 +21,8 @@ struct _CstComponentContext {
 
   SysChar *id;
   CstComponent *base_component;
-  FREnv *value_maps_env;
-  FREnv *css_env;
+  FrEnv *value_maps_env;
+  FrEnv *css_env;
   CstComponent *v_parent;
 };
 
@@ -52,8 +52,8 @@ const SysChar * cst_component_context_get_id(CstComponentContext *self);
 void cst_component_context_set_v_pnode(CstComponentContext *self, CstNode * v_pnode);
 CstNode * cst_component_context_get_v_pnode(CstComponentContext *self);
 
-void cst_component_context_set_css_env(CstComponentContext *self, FREnv * css_env);
-FREnv * cst_component_context_get_css_env(CstComponentContext *self);
+void cst_component_context_set_css_env(CstComponentContext *self, FrEnv * css_env);
+FrEnv * cst_component_context_get_css_env(CstComponentContext *self);
 
 void cst_component_context_set_v_parent(CstComponentContext *self, CstComponent * v_parent);
 CstComponent * cst_component_context_get_v_parent(CstComponentContext *self);

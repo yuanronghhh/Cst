@@ -34,7 +34,7 @@ SysHArray* cst_css_group_get_base(CstCssGroup *g);
 void cst_css_group_pair_add(CstCssGroup *g, CstCssPair *pair);
 SysBool cst_css_group_set_base_r(CstCssGroup *g, CstCssGroup *ng);
 SysBool cst_css_group_set_r(SysHArray *ptr, CstCssGroup *g);
-SysBool cst_css_group_set_by_id(SysHArray *ptr, FREnv *env, const SysChar *id);
+SysBool cst_css_group_set_by_id(SysHArray *ptr, FrEnv *env, const SysChar *id);
 SysBool cst_css_group_set_by_name(SysHArray* ptr, const SysChar* name);
 const SysChar* cst_css_group_get_id(CstCssGroup *g);
 void cst_css_group_add_pair(CstCssGroup *g, CstCssPair *pair);

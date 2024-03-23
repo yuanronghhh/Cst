@@ -120,7 +120,7 @@ void cst_css_pair_set_margin(CstRenderNode* rnode, CstLayout *layout, SysPointer
   sys_return_if_fail(self != NULL);
   CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
-  FRSInt4 *v = cst_css_value_get_v_m4(self->value);
+  FrSInt4 *v = cst_css_value_get_v_m4(self->value);
   sys_return_if_fail(v != NULL);
 
   cst_layout_node_set_margin(lnode, v);
@@ -131,7 +131,7 @@ void cst_css_pair_set_border(CstRenderNode* rnode, CstLayout *layout, SysPointer
   sys_return_if_fail(self != NULL);
   CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
-  FRSInt4 *v = cst_css_value_get_v_m4(self->value);
+  FrSInt4 *v = cst_css_value_get_v_m4(self->value);
   sys_return_if_fail(v != NULL);
 
   cst_layout_node_set_border(lnode, v);
@@ -142,7 +142,7 @@ void cst_css_pair_set_padding(CstRenderNode* rnode, CstLayout *layout, SysPointe
   sys_return_if_fail(self != NULL);
   CstLayoutNode *lnode = CST_LAYOUT_NODE(rnode);
 
-  FRSInt4 *v = cst_css_value_get_v_m4(self->value);
+  FrSInt4 *v = cst_css_value_get_v_m4(self->value);
   sys_return_if_fail(v != NULL);
 
   cst_layout_node_set_padding(lnode, v);
@@ -181,10 +181,10 @@ void cst_css_pair_set_color(CstRenderNode* rnode, CstLayout *layout, SysPointer 
   CstCssPair *self = user_data;
   sys_return_if_fail(self != NULL);
 
-  FRColor* v = cst_css_value_get_v_color(self->value);
+  FrColor* v = cst_css_value_get_v_color(self->value);
   sys_return_if_fail(v != NULL);
 
-  FRDraw *draw = cst_layout_get_draw(layout);
+  FrDraw *draw = cst_layout_get_draw(layout);
   sys_return_if_fail(draw != NULL);
 
   fr_draw_set_color(draw, v);
@@ -193,9 +193,9 @@ void cst_css_pair_set_color(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt64 d) {
   sys_return_if_fail(rnode != NULL);
 
-  const FRRect *bound;
+  const FrRect *bound;
   SysInt pwidth;
-  FRSInt4 m4;
+  FrSInt4 m4;
   CstLayoutNode* lnode;
 
   lnode = CST_LAYOUT_NODE(rnode);
@@ -210,9 +210,9 @@ void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt6
 void cst_css_pair_height_percent(CstRenderNode * rnode, CstLayout *layout, SysInt64 d) {
   sys_return_if_fail(rnode != NULL);
 
-  const FRRect* bound;
+  const FrRect* bound;
   SysInt pheight;
-  FRSInt4 m4;
+  FrSInt4 m4;
   CstLayoutNode* lnode;
 
   lnode = CST_LAYOUT_NODE(rnode);

@@ -15,7 +15,7 @@ struct _CstText {
   CstRenderNode parent;
 
   /* <private> */
-  FRDrawLayout *playout;
+  FrDrawLayout *playout;
   PangoFontDescription *font_desc;
 };
 

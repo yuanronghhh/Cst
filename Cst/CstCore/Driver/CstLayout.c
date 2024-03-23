@@ -11,7 +11,7 @@ CstLayout* cst_layout_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, FRWindow * window, FRDraw *draw, FRRegion *region) {
+static void cst_layout_construct(CstLayout* self, FrWindow * window, FrDraw *draw, FrRegion *region) {
   self->state = 0;
   self->region = region;
 
@@ -25,7 +25,7 @@ SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   return self->state & state;
 }
 
-CstLayout *cst_layout_new_I(FRWindow *window, FRDraw *draw, FRRegion *region) {
+CstLayout *cst_layout_new_I(FrWindow *window, FrDraw *draw, FrRegion *region) {
   CstLayout *o = cst_layout_new();
 
   cst_layout_construct(o, window, draw, region);
@@ -33,19 +33,19 @@ CstLayout *cst_layout_new_I(FRWindow *window, FRDraw *draw, FRRegion *region) {
   return o;
 }
 
-FRRegion *cst_layout_get_region(CstLayout* self) {
+FrRegion *cst_layout_get_region(CstLayout* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->region;
 }
 
-void cst_layout_set_draw(CstLayout *self, FRDraw * draw) {
+void cst_layout_set_draw(CstLayout *self, FrDraw * draw) {
   sys_return_if_fail(self != NULL);
 
   self->draw = draw;
 }
 
-FRDraw * cst_layout_get_draw(CstLayout *self) {
+FrDraw * cst_layout_get_draw(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->draw;

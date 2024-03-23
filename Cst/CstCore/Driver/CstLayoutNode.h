@@ -14,11 +14,11 @@ SYS_BEGIN_DECLS
 struct _CstLayoutNode {
   SysObject parent;
 
-  FRRect bound;
+  FrRect bound;
 
-  FRSInt4 border;
-  FRSInt4 margin;
-  FRSInt4 padding;
+  FrSInt4 border;
+  FrSInt4 margin;
+  FrSInt4 padding;
 };
 
 struct _CstLayoutNodeClass {
@@ -44,19 +44,19 @@ void cst_layout_node_set_size(CstLayoutNode* self, SysInt width, SysInt height);
 void cst_layout_node_get_size(CstLayoutNode* self, SysInt *width, SysInt *height);
 
 void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext* ctx);
-void cst_layout_node_get_mbp(CstLayoutNode* self, FRSInt4* m4);
+void cst_layout_node_get_mbp(CstLayoutNode* self, FrSInt4* m4);
 
-const FRRect *cst_layout_node_get_bound(CstLayoutNode* self);
-void cst_layout_node_set_bound(CstLayoutNode* self, const FRRect *bound);
+const FrRect *cst_layout_node_get_bound(CstLayoutNode* self);
+void cst_layout_node_set_bound(CstLayoutNode* self, const FrRect *bound);
 
-void cst_layout_node_set_margin(CstLayoutNode *self, const FRSInt4 * margin);
-const FRSInt4 * cst_layout_node_get_margin(CstLayoutNode *self);
+void cst_layout_node_set_margin(CstLayoutNode *self, const FrSInt4 * margin);
+const FrSInt4 * cst_layout_node_get_margin(CstLayoutNode *self);
 
-void cst_layout_node_set_padding(CstLayoutNode *self, const FRSInt4 * padding);
-const FRSInt4 * cst_layout_node_get_padding(CstLayoutNode *self);
+void cst_layout_node_set_padding(CstLayoutNode *self, const FrSInt4 * padding);
+const FrSInt4 * cst_layout_node_get_padding(CstLayoutNode *self);
 
-void cst_layout_node_set_border(CstLayoutNode *self, const FRSInt4 * border);
-const FRSInt4 * cst_layout_node_get_border(CstLayoutNode *self);
+void cst_layout_node_set_border(CstLayoutNode *self, const FrSInt4 * border);
+const FrSInt4 * cst_layout_node_get_border(CstLayoutNode *self);
 
 void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout);
 void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout);

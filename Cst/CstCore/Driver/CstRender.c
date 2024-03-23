@@ -65,15 +65,15 @@ CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
 }
 
-FRWindow *cst_render_get_default_window(CstRender *self) {
+FrWindow *cst_render_get_default_window(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->window;
 }
 
-FRRegion *render_create_region(FRWindow *window) {
-  FRRegion *region;
-  FRRect bound = { 0 };
+FrRegion *render_create_region(FrWindow *window) {
+  FrRegion *region;
+  FrRect bound = { 0 };
 
   fr_window_get_framebuffer_size(window, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
@@ -90,7 +90,7 @@ static void render_layout_surfaces(SysHArray *surfs, CstRenderNode *rnode, CstLa
 }
 
 
-void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
+void cst_render_rerender(CstRender* self, FrRegion* region, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
 #if 0
@@ -118,17 +118,18 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
-  FRRegion *region;
+  FrRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
-  FRWindow* window;
-  FRDraw* draw;
+  FrWindow* window;
+  FrDraw* draw;
 
   cst_render_realize(self, v_module);
 
   window = cst_render_get_default_window(self);
   region = render_create_region(window);
   draw = fr_draw_new_I(window);
+
   layout = cst_layout_new_I(window, draw, region);
   rnode = self->body_rnode;
   init_body_layout_info(rnode, layout);
@@ -151,11 +152,11 @@ void cst_render_resize_window(CstRender *self) {
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
 
-  FRRegion *region;
-  FRRect bound = { 0 };
-  FRDraw* draw;
+  FrRegion *region;
+  FrRect bound = { 0 };
+  FrDraw* draw;
   CstLayout* layout;
-  FRWindow* window;
+  FrWindow* window;
 
   bound.width = width;
   bound.height = height;

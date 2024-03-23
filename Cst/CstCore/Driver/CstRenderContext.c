@@ -16,7 +16,7 @@ CstRenderContext* cst_render_context_new(void) {
   return sys_object_new(CST_TYPE_RENDER_CONTEXT, NULL);
 }
 
-void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4) {
+void cst_render_context_set_mbp(CstRenderContext* self, FrSInt4* m4) {
   sys_return_if_fail(self != NULL);
 
   self->mbp.m0 = m4->m0;
@@ -25,7 +25,7 @@ void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4) {
   self->mbp.m3 = m4->m3;
 }
 
-const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self) {
+const FrSInt4* cst_render_context_get_mbp(CstRenderContext* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return &self->mbp;
@@ -166,7 +166,7 @@ SysInt cst_render_context_get_direction(CstRenderContext *self) {
   return self->direction;
 }
 
-SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound) {
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FrRect *rbound) {
   sys_return_val_if_fail(self != NULL, false);
 
   if(!self->wrap) {

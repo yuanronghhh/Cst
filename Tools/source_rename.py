@@ -23,6 +23,85 @@ def parse_object_define(line):
 
     return dinfo
 
+def rename_surffix(fname, nname):
+    logging.info("%s\t%s" % (fname, nname))
+    os.rename(fname, nname)
+
+def rename_data(fname):
+    p1 = fname.name.replace("Fr", "FR").replace(".h", "")
+    p2 = fname.name.replace(".h", "")
+    # print(".replace(\"%s\",\"%s\") \\" % (p1, p2))
+    # return
+
+    f = open(fname, "r+", encoding="utf-8")
+    data = f.read()
+    data = data\
+            .replace("FRPServer", "FrpServer") \
+            .replace("FRRegion", "FrRegion") \
+            .replace("FRSurface", "FrSurface") \
+            .replace("FRContext", "FrContext") \
+            .replace("FRSInt", "FrSInt") \
+            .replace("FRColor", "FrColor") \
+            .replace("FRRect", "FrRect") \
+            .replace("FRGetBoundFunc", "FrGetBoundFunc") \
+            .replace("FRCommon","FrCommon") \
+            .replace("FRTypes","FrTypes") \
+            .replace("FRCore","FrCore") \
+            .replace("FRNode","FrNode") \
+            .replace("FRApplication","FrApplication") \
+            .replace("FRSource","FrSource") \
+            .replace("FRMain","FrMain") \
+            .replace("FRWorker","FrWorker") \
+            .replace("FREnv","FrEnv") \
+            .replace("FRPair","FrPair") \
+            .replace("FRFunc","FrFunc") \
+            .replace("FRPQueue","FrPQueue") \
+            .replace("FRDraw","FrDraw") \
+            .replace("FRGraph","FrGraph") \
+            .replace("FRCanvasPrivate","FrCanvasPrivate") \
+            .replace("FRCanvas","FrCanvas") \
+            .replace("FREventCore","FrEventCore") \
+            .replace("FREvents","FrEvents") \
+            .replace("FRAWatchBuilder","FrAWatchBuilder") \
+            .replace("FRAction","FrAction") \
+            .replace("FRAWatchCursorMove","FrAWatchCursorMove") \
+            .replace("FRAMouseKey","FrAMouseKey") \
+            .replace("FRAWatchAny","FrAWatchAny") \
+            .replace("FRAWatchMousePress","FrAWatchMousePress") \
+            .replace("FRADoubleClick","FrADoubleClick") \
+            .replace("FRAWatchKey","FrAWatchKey") \
+            .replace("FRAWatch","FrAWatch") \
+            .replace("FRAWatchKeyPress","FrAWatchKeyPress") \
+            .replace("FRAWatchRefresh","FrAWatchRefresh") \
+            .replace("FRACursorMove","FrACursorMove") \
+            .replace("FRAKey","FrAKey") \
+            .replace("FRAWatchMouseRelease","FrAWatchMouseRelease") \
+            .replace("FREventMapping","FrEventMapping") \
+            .replace("FREvent","FrEvent") \
+            .replace("FREventScroll","FrEventScroll") \
+            .replace("FREventNodeKey","FrEventNodeKey") \
+            .replace("FREventRefresh","FrEventRefresh") \
+            .replace("FREventAny","FrEventAny") \
+            .replace("FREventCursorMove","FrEventCursorMove") \
+            .replace("FREventMouseKey","FrEventMouseKey") \
+            .replace("FREventKey","FrEventKey") \
+            .replace("FREventPrivate","FrEventPrivate") \
+            .replace("FREventPressed","FrEventPressed") \
+            .replace("FRExpr","FrExpr") \
+            .replace("FRFont","FrFont") \
+            .replace("FRVkvg","FrVkvg") \
+            .replace("FRMono","FrMono") \
+            .replace("FRGlfw","FrGlfw") \
+            .replace("FRCairo","FrCairo") \
+            .replace("FRGlib","FrGlib") \
+            .replace("FRWindow","FrWindow") \
+            .replace("FRDisplay","FrDisplay")
+
+    f.seek(0)
+    f.truncate()
+    f.write(data)
+    f.close()
+
 def update_object_data(f):
     dinfo = []
     lines = f.readlines()
@@ -41,6 +120,7 @@ def update_object_data(f):
             # continue
 
         if dinfo:
+            pass
             # if line.find("init(SysObject *o)") > -1:
             #     lines[lnum] = line.replace("SysObject *o", dinfo[0] + " *self")
             #     update = True
@@ -64,18 +144,19 @@ def update_object_data(f):
 
 def rename_gobject():
     wk = os.getcwd() + "/Cst"
+    wk = "/home/greyhound/Git/CstDemo/Cst/CstDemo"
 
     for dp, dns, fns in os.walk(wk):
         for f in fns:
             if path_suffix(f) not in {".c", ".h" }:
                 continue
 
-            fname = path.join(dp, f)
-            f = open(fname, "r+", encoding="utf-8")
+            fname = Path(path.join(dp, f))
+            # if not fname.name.startswith("App"):
+            #     continue
 
-            update_object_data(f)
-
-            f.close()
+            nname = "%s/%s" % (fname.parent.as_posix(), fname.name.replace("FR", "Fr"))
+            rename_data(fname)
 
 if __name__ == '__main__':
     rename_gobject()

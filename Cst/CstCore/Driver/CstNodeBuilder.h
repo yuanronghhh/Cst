@@ -48,7 +48,7 @@ void cst_node_builder_set_v_layer_index(CstNodeBuilder *self, SysInt v_layer_ind
 void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysHArray * v_css_list);
 void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id);
 void cst_node_builder_set_v_label(CstNodeBuilder *self, const SysChar *v_label);
-void cst_node_builder_add_awatch(CstNodeBuilder *self, FRAWatch* map);
+void cst_node_builder_add_awatch(CstNodeBuilder *self, FrAWatch* map);
 
 SYS_END_DECLS
 

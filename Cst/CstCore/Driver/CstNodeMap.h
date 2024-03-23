@@ -12,7 +12,7 @@ SYS_BEGIN_DECLS
 #define CST_NODE_MAP_GET_CLASS(o) sys_instance_get_class(o, CstNodeMapClass)
 
 struct _CstNodeMap {
-  FRPair parent;
+  FrPair parent;
 
   /* <private> */
   CstValueMap* value_map;
@@ -27,7 +27,7 @@ struct _CstNodeMap {
 };
 
 struct _CstNodeMapClass {
-  FRPairClass parent;
+  FrPairClass parent;
 };
 
 SysType cst_node_map_get_type(void);

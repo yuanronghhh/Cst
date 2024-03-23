@@ -24,7 +24,7 @@ struct _CstRenderContext {
   SysInt16 line_space;
 
   /* flexline */
-  FRSInt4 mbp;
+  FrSInt4 mbp;
 
   SysInt prefer_height;
   SysInt prefer_width;
@@ -44,8 +44,8 @@ SysType cst_render_context_get_type(void);
 CstRenderContext *cst_render_context_new(void);
 CstRenderContext *cst_render_context_new_I(void);
 
-void cst_render_context_set_mbp(CstRenderContext* self, FRSInt4* m4);
-const FRSInt4* cst_render_context_get_mbp(CstRenderContext* self);
+void cst_render_context_set_mbp(CstRenderContext* self, FrSInt4* m4);
+const FrSInt4* cst_render_context_get_mbp(CstRenderContext* self);
 
 void cst_render_context_set_width_closure(CstRenderContext* self, CstCssClosure* c);
 void cst_render_context_set_height_closure(CstRenderContext* self, CstCssClosure* c);
@@ -86,7 +86,7 @@ void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, 
 void cst_render_context_set_direction(CstRenderContext *self, SysInt direction);
 SysInt cst_render_context_get_direction(CstRenderContext *self);
 
-SysBool cst_render_context_check_wrap(CstRenderContext* self, const FRRect *rbound);
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FrRect *rbound);
 
 void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 

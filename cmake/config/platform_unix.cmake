@@ -29,6 +29,7 @@ pkg_check_modules(XKBCOMMON REQUIRED xkbcommon)
 pkg_check_modules(SDL REQUIRED sdl2)
 pkg_check_modules(VULKAN REQUIRED vulkan)
 pkg_check_modules(OPENSSL REQUIRED libssl;libcrypto)
+pkg_check_modules(SSH2 REQUIRED libssh2)
 pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0;gstreamer-video-1.0)
 
 find_package(glad REQUIRED)

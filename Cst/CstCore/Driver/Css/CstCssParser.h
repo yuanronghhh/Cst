@@ -26,7 +26,7 @@ SYS_API SysType cst_css_parser_get_type(void);
 SYS_API CstCssParser* cst_css_parser_new(void);
 SYS_API CstCssParser* cst_css_parser_new_I(JNode* jnode);
 
-SYS_API SysBool cst_css_parser_parse_color(CstCssParser *parser, FRColor *color);
+SYS_API SysBool cst_css_parser_parse_color(CstCssParser *parser, FrColor *color);
 SYS_API CstCssClosure* cst_css_parser_parse_calc(CstCssParser* parser, SysChar* str, CstRenderNodeFunc func);
 
 SYS_END_DECLS

@@ -1,6 +1,7 @@
 #include <Framework/Device/FrWindow.h>
 
 #include <Framework/Device/FrDisplay.h>
+#include <Framework/Device/FrIDevice.h>
 #include <Framework/Event/FrEventCore.h>
 
 
@@ -9,8 +10,10 @@
 
 static void fr_window_event_setup(FrWindow *self);
 static void fr_window_event_teardown(FrWindow *self);
+static void i_device_imp(FrIDeviceInterface *iface);
 
-SYS_DEFINE_TYPE(FrWindow, fr_window, SYS_TYPE_OBJECT);
+SYS_DEFINE_WITH_CODE(FrWindow, fr_window, SYS_TYPE_OBJECT,
+    SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_DEVICE, i_device_imp));
 
 static GLFWwindow* fr_window_create_window_i(SysInt width, SysInt height, const SysChar *title, GLFWwindow *gshare) {
   GLFWwindow *gwindow;
@@ -23,7 +26,6 @@ static GLFWwindow* fr_window_create_window_i(SysInt width, SysInt height, const 
 
 FrDisplay *fr_window_get_display(FrWindow *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-
 
   return self->display;
 }
@@ -86,7 +88,6 @@ void fr_window_set_opacity(FrWindow *self, double opacity) {
 void fr_window_get_size(FrWindow *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
 
-
   glfwGetWindowSize(self->gwindow, width, height);
 }
 
@@ -115,6 +116,13 @@ GLFWwindow * fr_window_get_gwindow(FrWindow *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->gwindow;
+}
+
+static void fr_window_get_size_i(FrIDevice *o, SysInt *width, SysInt *height) {
+  sys_return_if_fail(o != NULL);
+  FrWindow *self = FR_WINDOW(o);
+
+  fr_window_get_framebuffer_size(self, width, height);
 }
 
 /* event callbacks */
@@ -318,6 +326,10 @@ void fr_window_create_vk_surface(FrWindow *self, VkInstance instance, VkSurfaceK
   }
 }
 #endif
+
+static void i_device_imp(FrIDeviceInterface *iface) {
+  iface->get_size = fr_window_get_size_i;
+}
 
 /* object api */
 static void fr_window_construct(FrWindow *self, FrDisplay *display, FrWindow *share) {

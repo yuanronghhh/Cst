@@ -17,8 +17,7 @@ interface_h_template = """\
 #ifndef __${TYPE_NAME}__
 #define __${TYPE_NAME}__
 
-#include <${header_path}/CstCommon.h>
-
+#include <${header_path}/FrCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -37,7 +36,7 @@ ${FUNC_DEFINE_CODES}
 
 SYS_END_DECLS
 
-#endif
+#endif\
 """
 
 interface_c_template = """\
@@ -48,16 +47,15 @@ SYS_DEFINE_INTERFACE(${TypeName}, ${type_name}, SYS_TYPE_OBJECT);
 /* object api */
 void ${type_name}_default_init(${TypeName}Interface* iface) {
 }
-
-${FUNC_IMPL_CODES}
+${FUNC_IMPL_CODES}\
 """
 
 interface_h_func_return_template = """\
-${func_return} ${type_name}_${func_name} (${func_args});
+${func_return} ${type_name}_${func_name} (${func_args});\
 """
 
 interface_h_func_template = """\
-void ${type_name}_${func_name} (${func_args});
+void ${type_name}_${func_name} (${func_args});\
 """
 
 interface_func_return_template = """\
@@ -80,7 +78,7 @@ h_template = """\
 #ifndef __${TYPE_NAME}_H__
 #define __${TYPE_NAME}_H__
 
-#include <${header_path}/CstCommon.h>
+#include <${header_path}/FrCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -103,7 +101,7 @@ SYS_API ${TypeName} *${type_name}_new_I(void);
 
 SYS_END_DECLS
 
-#endif
+#endif\
 """
 
 
@@ -111,7 +109,6 @@ c_template = """\
 #include <${header_path}/${TypeName}.h>
 
 SYS_DEFINE_TYPE(${TypeName}, ${type_name}, ${TYPE_PARENT});
-
 
 /* object api */
 static void ${type_name}_construct(${TypeName} *self) {
@@ -144,7 +141,6 @@ static void ${type_name}_class_init(${TypeName}Class* cls) {
 
 void ${type_name}_init(${TypeName}* self) {
 }
-
 """
 
 class Prop:
@@ -402,31 +398,60 @@ class TemplateGenerator:
         fp.write(result)
         fp.close()
 
+    def gen_interface_c_func_codes(self, prop, info):
+        tpl = ""
+
+        return_code = prop.type
+        if return_code == "SysTypeInterface":
+            return ""
+
+        if prop.type == "void":
+            tpl = interface_func_template
+        else:
+            tpl = interface_func_return_template
+
+        func_codes = tpl\
+                .replace("${TYPE_NAME}", info.get_TYPE_NAME())\
+                .replace("${TypeName}", info.get_TypeName())\
+                .replace("${type_name}", info.get_type_name())\
+                .replace("${func_name}", prop.name)\
+                .replace("${func_return}", return_code)\
+                .replace("${func_args}", prop.args)\
+                .replace("${func_args_name}", ", ".join([a.name for a in prop.args_list]))
+
+        return func_codes
+
+    def gen_interface_h_func_codes(self, prop, info):
+        tpl = ""
+        return_code = prop.type
+        if return_code == "SysTypeInterface":
+            return ""
+
+        if prop.type == "void":
+            tpl = interface_h_func_template
+        else:
+            has_return = True
+            tpl = interface_h_func_return_template
+
+        func_codes = tpl\
+                .replace("${TYPE_NAME}", info.get_TYPE_NAME())\
+                .replace("${TypeName}", info.get_TypeName())\
+                .replace("${type_name}", info.get_type_name())\
+                .replace("${func_name}", prop.name)\
+                .replace("${func_return}", return_code)\
+                .replace("${func_args}", prop.args)
+
+        return func_codes
+
     def gen_c_interface_file(self, info):
         result = self.gen_with_tpl(interface_c_template, info)
-        has_return = False
 
         func_codes = ""
         for prop in info.props:
-            return_code = prop.type
-            if return_code == "SysTypeInterface":
-                continue
-
-            if prop.type == "void":
-                tpl = interface_func_template
-            else:
-                has_return = True
-                tpl = interface_func_return_template
-
-            func_codes += tpl\
-                    .replace("${TYPE_NAME}", info.get_TYPE_NAME())\
-                    .replace("${TypeName}", info.get_TypeName())\
-                    .replace("${type_name}", info.get_type_name())\
-                    .replace("${func_name}", prop.name)\
-                    .replace("${func_return}", return_code)\
-                    .replace("${func_args}", prop.args)\
-                    .replace("${func_args_name}", ", ".join([a.name for a in prop.args_list]))
+            func_codes += self.gen_interface_c_func_codes(prop, info)
             func_codes += "\n"
+
+        func_codes = func_codes[0:-1]
 
         result = result.replace("${FUNC_IMPL_CODES}", func_codes)
         return result
@@ -437,23 +462,8 @@ class TemplateGenerator:
 
         func_codes = ""
         for prop in info.props:
-            return_code = prop.type
-            if return_code == "SysTypeInterface":
-                continue
-
-            if prop.type == "void":
-                tpl = interface_h_func_template
-            else:
-                has_return = True
-                tpl = interface_h_func_return_template
-
-            func_codes += tpl\
-                    .replace("${TYPE_NAME}", info.get_TYPE_NAME())\
-                    .replace("${TypeName}", info.get_TypeName())\
-                    .replace("${type_name}", info.get_type_name())\
-                    .replace("${func_name}", prop.name)\
-                    .replace("${func_return}", return_code)\
-                    .replace("${func_args}", prop.args)
+            func_codes += self.gen_interface_h_func_codes(prop, info)
+            func_codes += "\n"
 
         result = result.replace("${FUNC_DEFINE_CODES}", func_codes)
         return result
@@ -518,10 +528,22 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _FRRender {
-  SysObject parent;
+struct _FrIDrawInterface {
+  SysTypeInterface parent;
 
-  /* <private> */
+  SysBool (*draw_need_draw) (FrDraw *self);
+  FrDraw *(*get_iface) (const SysChar *name);
+  FrDrawContext* (*create_cr_default) (FrDraw *self);
+  void (*set_color) (FrDraw *self, FrDrawContext *cr, SysDouble r, SysDouble  g, SysDouble b, SysDouble a);
+
+  /* surface */
+  FrDrawSurface* (*create_image_surface) (SysInt width, SysInt height);
+  FrDrawSurface* (*create_surface) (FrWindow* window, SysInt width, SysInt height);
+  FrDrawSurface* (*create_image_surface_from_surface)(FrDrawSurface *surface, SysInt width, SysInt height);
+
+  /* context */
+  void (*stroke_mp) (FrDrawContext* cr, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4);
+  void (*context_fill_background) (FrDrawContext *cr, SysInt width, SysInt height);
 };
 """
 
@@ -531,7 +553,7 @@ def main():
 
     gen = TemplateGenerator(template_struct, dst, header_path)
     # gen.generate_field()
-    gen.generate_file()
+    r = gen.generate_file()
 
 if __name__ == '__main__':
     main()

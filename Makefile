@@ -31,7 +31,7 @@ config:
 	@${CMAKE_CONFIG}
 
 build-linux: config
-	@${MAKE} -C "$(BUILD_DIR)" -s -j8
+	@${MAKE} -C "$(BUILD_DIR)" -s -j4
 
 build-win32: config
 	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
@@ -57,7 +57,7 @@ run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --servername GVIM3 --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --servername GVIM1 --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	# @gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}

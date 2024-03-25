@@ -1,6 +1,6 @@
 #include "TestCore.h"
 
-#define CHECK_TYPE CST_TYPE_BOX_NODE
+#define CHECK_TYPE CST_TYPE_NODE
 
 
 void setUp(void) {

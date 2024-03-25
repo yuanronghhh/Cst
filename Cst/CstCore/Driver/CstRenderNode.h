@@ -84,6 +84,8 @@ void cst_render_node_teardown(void);
 #define cst_render_node_layout_self(o, layout) cst_render_context_layout_self(CST_RENDER_NODE_RCTX(o), o, layout)
 #define cst_render_node_inherit(o, p, layout) cst_render_context_inherit(CST_RENDER_NODE_RCTX(o), CST_RENDER_NODE_RCTX(p), layout)
 
+CstRenderNode* cst_render_node_children(CstRenderNode *self);
+
 void cst_render_node_unlink_node_r(CstRenderNode* self);
 void cst_render_node_set_meta(const SysChar* name, SysType stype);
 SysType cst_render_node_get_meta(const SysChar* name);

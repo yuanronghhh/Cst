@@ -123,7 +123,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   CstRenderNode *rnode;
   FRWindow* window;
   FRDraw* draw;
-
+  CstAlgorithm *alg;
   cst_render_realize(self, v_module);
 
   window = cst_render_get_default_window(self);
@@ -133,8 +133,12 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   rnode = self->body_rnode;
   init_body_layout_info(rnode, layout);
 
+  alg = cst_flex_algorithm_new_I();
+  cst_algorithm_layout(alg, rnode, layout);
+
   fr_region_destroy(region);
   sys_object_unref(layout);
+  sys_object_unref(alg);
 }
 
 void cst_render_resize_window(CstRender *self) {

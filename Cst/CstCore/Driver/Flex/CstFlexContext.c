@@ -1,4 +1,6 @@
 #include <CstCore/Driver/Flex/CstFlexContext.h>
+#include <CstCore/Driver/CstBoxNode.h>
+#include <CstCore/Driver/CstRenderNode.h>
 
 SYS_DEFINE_TYPE(CstFlexContext, cst_flex_context, SYS_TYPE_OBJECT);
 
@@ -12,6 +14,17 @@ SysHArray * cst_flex_context_get_lines(CstFlexContext *self) {
   return &self->lines;
 }
 
+void cst_flex_context_add_nodes(CstFlexContext *self, CstRenderNode* rnode) {
+  CstBoxNode *cnode = cst_render_node_children(rnode);
+  if (cnode == NULL) { return; }
+
+  for(; cnode; cnode = cst_box_node_next(cnode)) {
+    CstFlexItem = CST_FLEX_ITEM(cst_render_node(cnode));
+
+    sys_harray_add(&self->lines, item);
+  }
+}
+
 /* object api */
 static void cst_flex_context_construct(CstFlexContext *self) {
 }
@@ -20,7 +33,7 @@ CstFlexContext* cst_flex_context_new(void) {
   return sys_object_new(CST_TYPE_FLEX_CONTEXT, NULL);
 }
 
-CstFlexContext *cst_flex_context_new_I(void) {
+CstFlexContext *cst_flex_context_new_I() {
   CstFlexContext *o = cst_flex_context_new();
 
   cst_flex_context_construct(o);

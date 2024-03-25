@@ -218,6 +218,20 @@ CstBoxNode* cst_box_node_parent(CstBoxNode *self) {
   return HNODE_TO_BOX_NODE(sys_hnode_parent(BOX_NODE_TO_HNODE(self)));
 }
 
+static CstLayerNode* cst_box_node_get_children_i(CstLayerNode* o, CstLayer *layer) {
+  CstBoxNode *bnode = CST_BOX_NODE(o);
+  CstBoxNode *nnode = cst_box_node_children(bnode);
+
+  return CST_LAYER_NODE(nnode);
+}
+
+static CstLayerNode* cst_box_node_get_parent_i(CstLayerNode* o, CstLayer *layer) {
+  CstBoxNode *bnode = CST_BOX_NODE(o);
+  CstBoxNode *nnode = cst_box_node_parent(bnode);
+
+  return CST_LAYER_NODE(nnode);
+}
+
 /* object api */
 CstLayerNode* cst_box_node_new(void) {
   return sys_object_new(CST_TYPE_BOX_NODE, NULL);
@@ -247,6 +261,8 @@ static void cst_box_node_class_init(CstBoxNodeClass* cls) {
 
   ocls->dispose = cst_box_node_dispose;
   lcls->construct = cst_box_node_construct;
+  lcls->get_children = cst_box_node_get_children_i;
+  lcls->get_parent = cst_box_node_get_parent_i;
 }
 
 static void cst_box_node_init(CstBoxNode *self) {

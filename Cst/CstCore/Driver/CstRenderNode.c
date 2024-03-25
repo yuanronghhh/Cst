@@ -1,5 +1,12 @@
 #include <CstCore/Driver/CstRenderNode.h>
 
+#include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/Common/CstLBody.h>
+#include <CstCore/Front/Common/CstLGrid.h>
+#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/Common/CstLBoxContext.h>
+#include <CstCore/Front/Common/CstLGridContext.h>
+#include <CstCore/Front/Common/CstIComNode.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/Flex/CstFlexItem.h>
@@ -11,14 +18,7 @@
 #include <CstCore/Driver/CstILayerNode.h>
 #include <CstCore/Driver/CstILayer.h>
 #include <CstCore/Driver/CstLayerNode.h>
-#include <CstCore/Front/Common/CstText.h>
-#include <CstCore/Front/Common/CstLBody.h>
-#include <CstCore/Front/Common/CstLGrid.h>
-#include <CstCore/Front/Common/CstLBox.h>
-#include <CstCore/Front/Common/CstLBoxContext.h>
-#include <CstCore/Front/Common/CstLGridContext.h>
-#include <CstCore/Front/Common/CstIComNode.h>
-
+#include <CstCore/Driver/CstBoxNode.h>
 
 #define NODE_META_LOCK sys_mutex_lock(&gnode_meta_lock)
 #define NODE_META_UNLOCK sys_mutex_unlock(&gnode_meta_lock)
@@ -218,6 +218,12 @@ static SysBool node_unlink_one(CstLayerNode* self, SysPointer user_data) {
 
   sys_object_unref(rnode);
   return true;
+}
+
+CstRenderNode* cst_render_node_get_children_i(CstRenderNode* self) {
+  CstLayerNode *cnode = cst_layer_node_get_children(self->layer_node);
+
+  return cst_layer_node_get_render_node(cnode);
 }
 
 void cst_render_node_unlink_node_r(CstRenderNode* self) {

@@ -113,7 +113,11 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
     self->v_id = cst_module_new_node_id(v_module);
   }
   cst_node_set_id(node, self->v_id);
-  cst_node_set_v_layer_idx(node, self->v_layer_index);
+
+  if (self->v_layer_index > 0) {
+
+    cst_node_set_v_layer_idx(node, self->v_layer_index);
+  }
 
   cst_node_set_v_awatch_list(node, self->v_awatch_list);
   self->v_awatch_list = NULL;

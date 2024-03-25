@@ -13,6 +13,15 @@ CstLayer* cst_layer_node_get_layer(CstLayerNode* self) {
   return self->layer;
 }
 
+CstLayerNode* cst_layer_node_get_children(CstLayerNode* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  CstLayerNodeClass* lcls = CST_LAYER_NODE_GET_CLASS(self);
+  sys_return_val_if_fail(lcls->get_children != NULL, NULL);
+
+  return lcls->get_children(self);
+}
+
 void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode* render_node) {
   sys_return_if_fail(self != NULL);
 

@@ -19,7 +19,6 @@ struct _CstAbsNode {
 
   /* <private> */
   SysInt z_index;
-  SysList list;
 };
 
 SYS_API SysType cst_abs_node_get_type(void);

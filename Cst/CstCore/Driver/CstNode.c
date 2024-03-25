@@ -108,6 +108,7 @@ SysHArray * cst_node_get_v_css_list(CstNode *self) {
 
 void cst_node_set_v_layer_idx(CstNode *self, SysInt v_layer_idx) {
   sys_return_if_fail(self != NULL);
+  sys_return_if_fail(v_layer_idx > 0);
 
   self->v_layer_idx = v_layer_idx;
 }

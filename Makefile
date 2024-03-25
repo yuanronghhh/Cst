@@ -15,6 +15,7 @@ ifeq ($(OS), Linux)
 	PLATFORM=linux
 else
 	VS_ENV=-G "Visual Studio 17 2022" -A x64
+	# VS_ENV=-G "Ninja"
 	PLATFORM=win32
 	SURFIX=.exe
 endif
@@ -26,6 +27,9 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -DCMAKE_BUILD_TYPE=${BUILD_TYPE} ${VS_ENV}
 
 build-all: build-${PLATFORM}
+
+env-win32:
+	@"C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Auxiliary/Build/vcvars64.bat"
 
 config:
 	@${CMAKE_CONFIG}
@@ -104,7 +108,7 @@ system-build:
 	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}-prj
 
 system: system-build
-	@./build/Cst/System/TestSuite/SystemTestSuite
+	@./build/Cst/System/TestSuite/${BUILD_TYPE}/SystemTestSuite
 
 system-debug: system-build
 	@gvim --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'

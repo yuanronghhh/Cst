@@ -10,6 +10,7 @@ set(CST_TEST_EXTERNAL_LIBS
   "pango"
   "pangocairo"
   "cairo"
+  "glib"
   "glad"
   "glfw3"
 )

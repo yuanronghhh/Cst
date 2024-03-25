@@ -58,7 +58,6 @@ static SysBool cst_module_new_load(CstModule *self, CstNode *pnode) {
   sys_return_val_if_fail(pnode != NULL, false);
 
   CstParser* ps;
-  CstModule* old = NULL;
 
   ps = ast_parser_new_I(self->path, self, pnode);
 

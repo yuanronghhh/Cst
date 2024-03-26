@@ -16,7 +16,7 @@ struct _CstAbsLayer {
   CstLayer parent;
 
   /* <private> */
-  SysBHeap bheap;
+  SysPQueue pqueue;
 };
 
 struct _CstAbsLayerClass {

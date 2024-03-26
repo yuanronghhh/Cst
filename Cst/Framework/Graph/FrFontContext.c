@@ -1,21 +1,36 @@
 #include <Framework/Graph/FrFontContext.h>
+#include <Framework/Graph/FrIDraw.h>
+#include <Framework/Graph/FrDraw.h>
 
 SYS_DEFINE_TYPE(FrFontContext, fr_font_context, FR_TYPE_CONTEXT);
 
 
 void fr_font_context_draw_text(FrFontContext* self, PangoLayout* layout, SysInt x, SysInt y) {
-  cairo_t *cr = fr_context_get_cr(FR_CONTEXT(self));
+  FrContext *cr = FR_CONTEXT(self);
 
-  cairo_move_to(cr, x, y);
-  pango_cairo_show_layout(cr, layout);
+  fr_context_move_to(cr, x, y);
+  fr_context_show_layout(cr, layout);
+}
+
+void fr_font_context_set_color(FrFontContext* self, FrColor* color) {
+  FrContext* ctx = FR_CONTEXT(self);
+
+  fr_context_set_color(ctx, color);
 }
 
 void fr_font_context_show_text(FrFontContext* self, PangoLayout *layout,
   SysInt x, SysInt y, SysInt m1, SysInt m0) {
+  FrIDrawInterface* iface = fr_draw_get_iface();
   FrContext* ctx = FR_CONTEXT(self);
 
-  fr_context_move_to(ctx, x + m1, y + m0);
-  fr_context_show_layout(ctx, layout);
+  iface->move_to(ctx->cr, x + m1, y + m0);
+  iface->show_layout(ctx->cr, x + m1, y + m0);
+}
+
+void fr_font_context_update_layout(FrFontContext* self, PangoLayout* layout) {
+  FrContext* ctx = FR_CONTEXT(self);
+
+  fr_i_draw_update_layout(ctx->cr, layout);
 }
 
 /* object api */

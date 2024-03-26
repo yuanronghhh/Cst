@@ -18,7 +18,7 @@ struct _CstAbsNode {
   CstLayerNode parent;
 
   /* <private> */
-  SysInt z_index;
+  SysPNode pnode;
 };
 
 SYS_API SysType cst_abs_node_get_type(void);

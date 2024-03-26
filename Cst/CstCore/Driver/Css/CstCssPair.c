@@ -184,10 +184,10 @@ void cst_css_pair_set_color(CstRenderNode* rnode, CstLayout *layout, SysPointer 
   FrColor* v = cst_css_value_get_v_color(self->value);
   sys_return_if_fail(v != NULL);
 
-  FrDraw *draw = cst_layout_get_draw(layout);
-  sys_return_if_fail(draw != NULL);
+  FrContext *cr = cst_layout_get_cr(layout);
+  sys_return_if_fail(cr != NULL);
 
-  fr_draw_set_color(draw, v);
+  fr_context_set_color(cr, v);
 }
 
 void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt64 d) {

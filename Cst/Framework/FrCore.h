@@ -9,12 +9,16 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FrCanvasPrivate.h>
 #include <Framework/Graph/FrCanvas.h>
 #include <Framework/Graph/FrDraw.h>
+#include <Framework/Graph/FrIDraw.h>
+#include <Framework/Graph/FrFontContext.h>
+#include <Framework/Graph/FrContext.h>
+#include <Framework/Graph/FrCairoDraw.h>
+#include <Framework/Graph/FrSurface.h>
 
 #include <Framework/DataType/FrMain.h>
 #include <Framework/DataType/FrSource.h>
 #include <Framework/DataType/FrApplication.h>
 #include <Framework/DataType/FrWorker.h>
-#include <Framework/DataType/FrPQueue.h>
 #include <Framework/DataType/FrPair.h>
 #include <Framework/DataType/FrNode.h>
 #include <Framework/DataType/FrEnv.h>
@@ -22,6 +26,7 @@ SYS_BEGIN_DECLS
 
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
+#include <Framework/Device/FrIDevice.h>
 
 #include <Framework/FrTypes.h>
 #include <Framework/FrCommon.h>

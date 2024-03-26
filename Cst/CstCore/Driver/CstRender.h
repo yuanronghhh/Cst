@@ -39,7 +39,7 @@ CstSurface *cst_render_get_surface(CstRender *self, SysUInt surf_idx);
 FrWindow *cst_render_get_default_window(CstRender *self);
 void cst_render_resize_window(CstRender *self);
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
-void cst_render_rerender(CstRender *self, FrRegion *region, CstLayout *layout);
+void cst_render_rerender(CstRender* self, CstLayout* layout);
 CstSurface* cst_render_get_default_surface(void);
 
 void cst_render_render(CstRender *self, CstModule *v_module);

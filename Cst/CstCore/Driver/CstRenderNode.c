@@ -73,9 +73,9 @@ void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
 
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-  FrDraw* draw = cst_layout_get_draw(layout);
+  FrContext* cr = cst_layout_get_cr(layout);
 
-  fr_draw_save(draw);
+  fr_context_save(cr);
   cst_render_node_prepare(self, layout);
 
   // sys_assert(self->v_css_list->len > 0 && "node must have one css node at least.");
@@ -86,9 +86,9 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
 
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-  FrDraw* draw = cst_layout_get_draw(layout);
+  FrContext* cr = cst_layout_get_cr(layout);
 
-  fr_draw_restore(draw);
+  fr_context_restore(cr);
 }
 
 SysObject* cst_render_node_dclone_i(SysObject *o) {
@@ -296,10 +296,10 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
 }
 
 static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
-  FrDraw *draw = cst_layout_get_draw(layout);
+  FrContext *cr = cst_layout_get_cr(layout);
   const FrRect *bound = cst_render_node_get_bound(rnode);
 
-  fr_draw_fill_bound(draw, bound);
+  fr_context_fill_bound(cr, bound);
 }
 
 void cst_render_node_paint_self(CstRenderNode *self, CstLayout *layout) {

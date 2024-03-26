@@ -19,3 +19,4 @@ tags
 compile_commands.json
 *Config.h
 __pycache__/
+compile_flags.txt

@@ -23,9 +23,9 @@ struct _CstLayerNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayerNode* o, CstLayer* layer);
-  CstLayerNode *(get_children) (CstLayerNode *lnode);
-  CstLayerNode *(get_parent) (CstLayerNode *lnode);
-  CstLayerNode *(get_next) (CstLayerNode *lnode);
+  CstLayerNode *(*get_children) (CstLayerNode *lnode);
+  CstLayerNode *(*get_parent) (CstLayerNode *lnode);
+  CstLayerNode *(*get_next) (CstLayerNode *lnode);
 };
 
 SysType cst_layer_node_get_type(void);

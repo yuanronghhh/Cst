@@ -174,9 +174,9 @@ void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout) {
   sys_return_if_fail(self != NULL);
 
   const FrRect* bound = &self->bound;
-  FrDraw* draw = cst_layout_get_draw(layout);
+  FrContext* cr = cst_layout_get_cr(layout);
 
-  fr_draw_fill_bound(draw, bound);
+  fr_context_fill_bound(cr, bound);
 }
 
 void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout) {
@@ -184,13 +184,13 @@ void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout) {
 
   const FrSInt4 *m4, *p4;
   const FrRect* bound;
-  FrDraw* draw = cst_layout_get_draw(layout);
+  FrContext* cr = cst_layout_get_cr(layout);
 
   m4 = &self->margin;
   p4 = &self->padding;
   bound = &self->bound;
 
-  fr_draw_stroke_mp(draw, bound, m4, p4);
+  fr_context_stroke_mp(cr, bound, m4, p4);
 
 #if 0
   sys_debug_N("repaint layout_node: %s,%s<%d,%d,%d,%d>",

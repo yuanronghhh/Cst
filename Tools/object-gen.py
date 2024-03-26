@@ -17,7 +17,7 @@ interface_h_template = """\
 #ifndef __${TYPE_NAME}__
 #define __${TYPE_NAME}__
 
-#include <${header_path}/FrCommon.h>
+#include <Framework/FrCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -41,6 +41,7 @@ SYS_END_DECLS
 
 interface_c_template = """\
 #include <${header_path}/${TypeName}.h>
+#include <${header_path}/FrDraw.h>
 
 SYS_DEFINE_INTERFACE(${TypeName}, ${type_name}, SYS_TYPE_OBJECT);
 
@@ -60,17 +61,19 @@ void ${type_name}_${func_name} (${func_args});\
 
 interface_func_return_template = """\
 ${func_return} ${type_name}_${func_name} (${func_args}) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  ${TypeNameNoI}Interface *self = ${type_name_no_i}_get_iface();
+  sys_return_val_if_fail(self != NULL, ${return_default});
 
-  return ${TYPE_NAME}_GET_IFACE(self)->${func_name}(${func_args_name});
+  return self->${func_name}(${func_args_name});
 }
 """
 
 interface_func_template = """\
 void ${type_name}_${func_name} (${func_args}) {
+  ${TypeNameNoI}Interface *self = ${type_name_no_i}_get_iface();
   sys_return_if_fail(self != NULL);
 
-  ${TYPE_NAME}_GET_IFACE(self)->${func_name}(${func_args_name});
+  self->${func_name}(${func_args_name});
 }
 """
 
@@ -143,6 +146,106 @@ void ${type_name}_init(${TypeName}* self) {
 }
 """
 
+default_return_dict = {
+        "SysDouble": "-1",
+        "SysInt": "-1",
+        "*": "NULL",
+        "void": "void"
+        }
+
+func_proto_re = re.compile(r"\(\*([a-zA-Z0-9_]+)\)\s*\(([^)]*)\)\s*;")
+func_define_re = re.compile(r"([a-zA-Z0-9_]+)\(([^)]*)\);")
+prop_re = re.compile(r"([a-zA-Z0-9_]+)\s*;")
+type_re = re.compile(r"^\s*([a-zA-Z0-9_]+\s*\*{0,1})")
+
+
+def match_return_default(nstr):
+    nstr = nstr.strip(" ")
+
+    if nstr.find("*") > -1:
+        return default_return_dict["*"]
+
+    if nstr in default_return_dict:
+        return default_return_dict[nstr]
+
+def parse_args_list(arg_str):
+    if not arg_str:
+        return None
+
+    if arg_str == "void":
+        return []
+
+    arg_info_list = []
+    args = arg_str.split(",")
+
+    for arg in args:
+        name = ""
+        alen = len(arg)
+        if alen == 0:
+            continue
+
+        argInfo = Arg()
+        for i in range(alen-1, 0, -1):
+            c = arg[i]
+            if not c.isalnum() and c != "_":
+                break
+
+            name += c
+
+        argInfo.name = name[::-1]
+        argInfo.type = arg[0:alen-len(name)]
+
+        arg_info_list.append(argInfo)
+
+    return arg_info_list
+
+def parse_prop_value(match_type, line):
+    prop = Prop()
+
+    prop.type = match_type
+    match = prop_re.findall(line)
+    if not match:
+        return None
+    prop.name = match[0]
+
+    return prop
+
+def parse_prop_type(line):
+    match = type_re.findall(line)
+    if not match:
+        return None
+
+    return match[0].strip(" ");
+
+def parse_func_define(match_type, func_start):
+    prop = Prop()
+    if not match_type:
+        return None
+
+    match = func_define_re.findall(func_start)
+    if not match:
+        return None
+
+    prop.type = match_type
+    prop.name = match[0][0]
+    prop.args = match[0][1]
+    prop.args_list = parse_args_list(match[0][1])
+
+    return prop
+
+def parse_func_prototype(match_type, line):
+    prop = Prop()
+    prop.type = match_type
+    match = func_proto_re.findall(line)
+    if not match:
+        return None
+
+    prop.name = match[0][0]
+    prop.args = match[0][1]
+    prop.args_list = parse_args_list(match[0][1])
+
+    return prop
+
 class Prop:
     def __init__(self):
         self.type = None
@@ -157,9 +260,6 @@ class Arg:
 
 class TemplateInfo:
     struct_name_re = re.compile(r"struct _(\w+)")
-    type_re = re.compile(r"^\s+([a-zA-Z0-9]+\s*\*{0,1})")
-    prop_re = re.compile(r"([a-zA-Z0-9_]+)\s*;")
-    func_re = re.compile(r"\(\*([a-zA-Z0-9_]+)\)\s*\(([^)]*)\)\s*;")
 
     def __init__(self, struct_str):
         self.struct_str = struct_str
@@ -181,69 +281,19 @@ class TemplateInfo:
         else:
             self.p_sep_struct = self.seperate_struct(self.pinfo.type)
 
-    def parse_args_list(self, arg_str):
-        if not arg_str:
-            return None
-
-        arg_info_list = []
-        args = arg_str.split(",")
-
-        for arg in args:
-            name = ""
-            alen = len(arg)
-            if alen == 0:
-                continue
-
-            argInfo = Arg()
-            for i in range(alen-1, 0, -1):
-                c = arg[i]
-                if not c.isalnum():
-                    break
-
-                name += c
-
-            argInfo.name = name[::-1]
-            argInfo.type = arg[0:alen-len(name)]
-
-            arg_info_list.append(argInfo)
-
-        return arg_info_list
-
-    def parse_func_prop(self, prop, line):
-        match = TemplateInfo.func_re.findall(line)
-        if not match:
-            return None
-
-        prop.name = match[0][0]
-        prop.args = match[0][1]
-        prop.args_list = self.parse_args_list(match[0][1])
-
-        return prop
-
-    def parse_value_prop(self, prop, line):
-        match = TemplateInfo.prop_re.findall(line)
-        if not match:
-            return None
-        prop.name = match[0]
-
-        return prop
-
-
     def parse_prop(self, line):
-        prop = Prop()
+        prop = None
         if line.startswith("#"):
             return None
 
-        match = TemplateInfo.type_re.findall(line)
-        if not match:
+        match_type = parse_prop_type(line)
+        if not match_type:
             return None
 
-        prop.type = match[0].strip(" ");
-
-        if self.is_interface and prop.type != "SysObject" and prop.type != "SysTypeInterface":
-            prop = self.parse_func_prop(prop, line);
+        if self.is_interface and match_type != "SysObject" and match_type != "SysTypeInterface":
+            prop = parse_func_prototype(match_type, line);
         else:
-            prop = self.parse_value_prop(prop, line)
+            prop = parse_prop_value(match_type, line)
 
         if not prop:
             return None
@@ -405,6 +455,7 @@ class TemplateGenerator:
         if return_code == "SysTypeInterface":
             return ""
 
+        return_default = match_return_default(return_code)
         if prop.type == "void":
             tpl = interface_func_template
         else:
@@ -413,9 +464,12 @@ class TemplateGenerator:
         func_codes = tpl\
                 .replace("${TYPE_NAME}", info.get_TYPE_NAME())\
                 .replace("${TypeName}", info.get_TypeName())\
+                .replace("${TypeNameNoI}", info.get_TypeName().replace("_i_", "_"))\
                 .replace("${type_name}", info.get_type_name())\
+                .replace("${type_name_no_i}", info.get_type_name().replace("_i_", "_"))\
                 .replace("${func_name}", prop.name)\
                 .replace("${func_return}", return_code)\
+                .replace("${return_default}", return_default)\
                 .replace("${func_args}", prop.args)\
                 .replace("${func_args_name}", ", ".join([a.name for a in prop.args_list]))
 
@@ -531,21 +585,127 @@ template_struct = """
 struct _FrIDrawInterface {
   SysTypeInterface parent;
 
-  SysBool (*draw_need_draw) (FrDraw *self);
-  FrDraw *(*get_iface) (const SysChar *name);
-  FrDrawContext* (*create_cr_default) (FrDraw *self);
-  void (*set_color) (FrDraw *self, FrDrawContext *cr, SysDouble r, SysDouble  g, SysDouble b, SysDouble a);
-
-  /* surface */
-  FrDrawSurface* (*create_image_surface) (SysInt width, SysInt height);
-  FrDrawSurface* (*create_surface) (FrWindow* window, SysInt width, SysInt height);
-  FrDrawSurface* (*create_image_surface_from_surface)(FrDrawSurface *surface, SysInt width, SysInt height);
-
-  /* context */
-  void (*stroke_mp) (FrDrawContext* cr, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4);
-  void (*context_fill_background) (FrDrawContext *cr, SysInt width, SysInt height);
+  FrDrawSurface* (*surface_create_similar_image) (FrDrawSurface* other, SysInt format, SysInt width, SysInt height);
+  FrDrawSurface* (*image_surface_create) (SysInt width, SysInt height);
+  FrDrawSurface* (*create_surface) (FrIDevice *device, SysInt width, SysInt height);
+  FrDrawSurface* (*get_target) (FrDrawContext* cr);
+  FrDrawSurface* (*image_surface_create_from_png) (const char * filename);
+  FrDrawSurface* (*surface_create_for_rectangle) (FrDrawSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
+  FrDrawSurface* (*surface_reference) (FrDrawSurface* surface);
+  FrDrawContext* (*create) (FrDrawSurface* target);
+  SysDouble (*get_line_width) (FrDrawContext* cr);
+  SysInt (*image_surface_get_height) (FrDrawSurface* surface);
+  SysInt (*image_surface_get_stride) (FrDrawSurface* surface);
+  SysInt (*image_surface_get_width) (FrDrawSurface* surface);
+  void (*arc) (FrDrawContext* cr,SysDouble xc,SysDouble yc,SysDouble radius,SysDouble angle1,SysDouble angle2);
+  void (*arc_negative) (FrDrawContext* cr,SysDouble xc,SysDouble yc,SysDouble radius,SysDouble angle1,SysDouble angle2);
+  void (*clip) (FrDrawContext* cr);
+  void (*clip_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
+  void (*clip_preserve) (FrDrawContext* cr);
+  void (*close_path) (FrDrawContext* cr);
+  void (*curve_to) (FrDrawContext* cr,SysDouble x1,SysDouble y1,SysDouble x2,SysDouble y2,SysDouble x3,SysDouble y3);
+  void (*destroy) (FrDrawContext* cr);
+  void (*fill) (FrDrawContext* cr);
+  void (*fill_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
+  void (*fill_preserve) (FrDrawContext* cr);
+  void (*line_to) (FrDrawContext* cr,SysDouble x,SysDouble y);
+  void (*mask_surface) (FrDrawContext* cr,FrDrawSurface* surface,SysDouble surface_x,SysDouble surface_y);
+  void (*move_to) (FrDrawContext* cr,SysDouble x,SysDouble y);
+  void (*new_path) (FrDrawContext* cr);
+  void (*new_sub_path) (FrDrawContext* cr);
+  void (*paint) (FrDrawContext* cr);
+  void (*paint_with_alpha) (FrDrawContext* cr,SysDouble alpha);
+  void (*path_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
+  void (*pop_group_to_source) (FrDrawContext* cr);
+  void (*push_group) (FrDrawContext* cr);
+  void (*recording_surface_ink_extents) (FrDrawSurface* surface,SysDouble * x0,SysDouble * y0,SysDouble * width,SysDouble * height);
+  void (*rectangle) (FrDrawContext* cr,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
+  void (*rel_curve_to) (FrDrawContext* cr,SysDouble dx1,SysDouble dy1,SysDouble dx2,SysDouble dy2,SysDouble dx3,SysDouble dy3);
+  void (*rel_line_to) (FrDrawContext* cr,SysDouble dx,SysDouble dy);
+  void (*rel_move_to) (FrDrawContext* cr,SysDouble dx,SysDouble dy);
+  void (*reset_clip) (FrDrawContext* cr);
+  void (*restore) (FrDrawContext* cr);
+  void (*rotate) (FrDrawContext* cr,SysDouble angle);
+  void (*save) (FrDrawContext* cr);
+  void (*scale) (FrDrawContext* cr,SysDouble sx,SysDouble sy);
+  void (*set_dash) (FrDrawContext* cr,const SysDouble * dashes,SysInt num_dashes,SysDouble offset);
+  void (*set_font_size) (FrDrawContext* cr,SysDouble size);
+  void (*set_line_width) (FrDrawContext* cr,SysDouble width);
+  void (*set_source_rgb) (FrDrawContext* cr,SysDouble red,SysDouble green,SysDouble blue);
+  void (*set_source_rgba) (FrDrawContext* cr,SysDouble red,SysDouble green,SysDouble blue,SysDouble alpha);
+  void (*set_source_surface) (FrDrawContext* cr,FrDrawSurface* surface,SysDouble x,SysDouble y);
+  void (*stroke) (FrDrawContext* cr);
+  void (*stroke_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
+  void (*stroke_preserve) (FrDrawContext* cr);
+  void (*surface_copy_page) (FrDrawSurface* surface);
+  void (*surface_destroy) (FrDrawSurface* surface);
+  void (*surface_finish) (FrDrawSurface* surface);
+  void (*surface_flush) (FrDrawSurface* surface);
+  void (*surface_get_device_offset) (FrDrawSurface* surface,SysDouble * x_offset,SysDouble * y_offset);
+  void (*surface_get_device_scale) (FrDrawSurface* surface,SysDouble * x_scale,SysDouble * y_scale);
+  void (*surface_get_fallback_resolution) (FrDrawSurface* surface,SysDouble * x_pixels_per_inch,SysDouble * y_pixels_per_inch);
+  void (*surface_get_mime_data) (FrDrawSurface* surface,const char * mime_type,const unsigned char ** data,unsigned long * length);
+  void (*surface_mark_dirty) (FrDrawSurface* surface);
+  void (*surface_mark_dirty_rectangle) (FrDrawSurface* surface,SysInt x,SysInt y,SysInt width,SysInt height);
+  void (*surface_set_device_offset) (FrDrawSurface* surface,SysDouble x_offset,SysDouble y_offset);
+  void (*surface_set_device_scale) (FrDrawSurface* surface,SysDouble x_scale,SysDouble y_scale);
+  void (*surface_set_fallback_resolution) (FrDrawSurface* surface,SysDouble x_pixels_per_inch,SysDouble y_pixels_per_inch);
+  void (*surface_show_page) (FrDrawSurface* surface);
+  void (*surface_unmap_image) (FrDrawSurface* surface,FrDrawSurface* image);
 };
 """
+
+draw_template = """\
+${return_type} (*${func_name}) (${args});\
+"""
+
+def gen_interface_for_func(data):
+    funcs = { 
+             "set_source_rgba",
+             "rectangle",
+             "paint",
+             "create"
+             }
+
+    for line in data.split("\n"):
+        line = line\
+                .replace("cairo_t ", "FrDrawContext")\
+                .replace("cairo_surface_t ", "FrDrawSurface")\
+                .replace("double ", "SysDouble ")\
+                .replace("int ", "SysInt ")
+
+        match_type = parse_prop_type(line)
+        if not match_type:
+            continue
+
+        prop = parse_func_define(match_type, line)
+        if not prop:
+            continue
+
+        # match = False
+        # for v in funcs:
+        #     if prop.name.endswith(v):
+        #         match = True
+
+        # if not match:
+        #     continue
+
+        r = draw_template\
+                .replace("${func_name}", prop.name.replace("cairo_", "")) \
+                .replace("${return_type}", prop.type) \
+                .replace("${args}", prop.args) \
+
+        print(r)
+
+def gen_interface_for_cairo():
+    # ctags extract command
+    # ctags.exe -x --c-kinds=pf --fields=+Sne --_xformat="%{typeref} %{name}%{signature};" ./cairo.h > def.txt
+    f = open("def.txt", "r+")
+
+    data = f.read()
+    gen_interface_for_func(data)
+
+    f.close()
 
 def main():
     dst = "./Cst/Framework/Graph"

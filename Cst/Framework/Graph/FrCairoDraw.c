@@ -1,8 +1,9 @@
 #include <Framework/Graph/FrCairoDraw.h>
 
+#include <Framework/Device/FrWindow.h>
 #include <Framework/Graph/FrIDraw.h>
 #include <Framework/Device/FrDisplay.h>
-#include <Framework/Device/FrIDevice.h>
+#include <Framework/Device/FrWindow.h>
 
 
 static void i_draw_imp(FrIDrawInterface *iface);
@@ -34,17 +35,20 @@ void cairo_context_fill_bound_i(FrDrawContext* cr, const FrRect *bound) {
 }
 
 /* surface */
-FrDrawSurface* cairo_create_image_surface_i(SysInt width, SysInt height) {
+FrDrawSurface* cairo_image_surface_create_i(SysInt width, SysInt height) {
   return cairo_image_surface_create(CAIRO_FORMAT_ARGB32, width, height);
 }
 
-FrDrawSurface* cairo_create_surface_i(FrIDevice* idevice, SysInt width, SysInt height) {
-  sys_return_val_if_fail(idevice != NULL, NULL);
+FrDrawSurface* cairo_create_surface_i(FrIDevice* device, SysInt width, SysInt height) {
+  sys_return_val_if_fail(device != NULL, NULL);
 
   FrDrawSurface* surface;
 
+  /* only support window now */
+  FrWindow *window = FR_WINDOW(device);
+
 #if SYS_OS_WIN32
-  HWND hwd = fr_idevice_get_win32_idevice(idevice);
+  HWND hwd = fr_window_get_win32_window(window);
   HDC hdc = GetDC(hwd);
   surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 
@@ -54,14 +58,14 @@ FrDrawSurface* cairo_create_surface_i(FrIDevice* idevice, SysInt width, SysInt h
   cairo_destroy(cr);
 
 #elif SYS_OS_UNIX
-  FrDisplay* display = fr_idevice_get_display(idevice);
-  Window xidevice = fr_idevice_get_x11_idevice(idevice);
+  FrDisplay* display = fr_window_get_display(window);
+  Window xwindow = fr_window_get_x11_window(window);
   Display* ndisplay = fr_display_get_x11_display(display);
   int nscreen = DefaultScreen(ndisplay);
   Visual* nvisual = DefaultVisual(ndisplay, nscreen);
 
   surface = cairo_xlib_surface_create(ndisplay,
-    xidevice,
+    xwindow,
     nvisual,
     width, height);
 #endif
@@ -69,7 +73,7 @@ FrDrawSurface* cairo_create_surface_i(FrIDevice* idevice, SysInt width, SysInt h
   return surface;
 }
 
-FrDrawSurface* cairo_create_image_surface_from_surface_i(FrDrawSurface *surface, SysInt width, SysInt height) {
+FrDrawSurface* cairo_surface_create_similar_image_i(FrDrawSurface *surface, SysInt width, SysInt height) {
   FrDrawSurface * nsur = cairo_surface_create_similar_image(surface,
       CAIRO_FORMAT_ARGB32,
       width,
@@ -84,41 +88,26 @@ void cairo_context_fill_background_i(FrDrawContext *cr, SysInt width, SysInt hei
   cairo_paint(cr);
 }
 
-FrDrawContext* fr_cairo_draw_create_cr_default(FrDraw *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  FrDrawContext *cr;
-  sys_assert(self->paint_surface != NULL && "paint_surface should set before create context.");
-  sys_assert(self->idevice_surface != NULL && "idevice_surface should set before create context.");
-
-  cr = cairo_create(self->idevice_surface);
-
-  return cr;
-}
-
 static void i_draw_imp(FrIDrawInterface *iface) {
-  iface->context_fill_background = cairo_context_fill_background_i;
-  iface->stroke_mp = cairo_stroke_mp_i;
-
-  iface->create_image_surface = cairo_create_image_surface_i;
+  iface->image_surface_create = cairo_image_surface_create_i;
   iface->create_surface = cairo_create_surface_i;
-  iface->create_image_surface_from_surface = cairo_create_image_surface_from_surface_i;
+  iface->surface_create_similar_image = cairo_surface_create_similar_image_i;
 }
 
 /* object api */
-static void fr_cairo_draw_construct(FrDraw *o, FrIDevice *idevice) {
+static void fr_cairo_draw_construct(FrDraw *o, FrIDevice *device) {
 
-  FR_DRAW_CLASS(fr_cairo_draw_parent_class)->construct(o, idevice);
+  FR_DRAW_CLASS(fr_cairo_draw_parent_class)->construct(o, device);
 }
 
 FrDraw* fr_cairo_draw_new(void) {
   return sys_object_new(FR_TYPE_CAIRO_DRAW, NULL);
 }
 
-FrDraw *fr_cairo_draw_new_I(FrIDevice *idevice) {
+FrDraw *fr_cairo_draw_new_I(FrIDevice *device) {
   FrDraw *o = fr_cairo_draw_new();
 
-  fr_cairo_draw_construct(o, idevice);
+  fr_cairo_draw_construct(o, device);
 
   return o;
 }

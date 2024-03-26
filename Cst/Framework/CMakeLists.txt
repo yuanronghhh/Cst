@@ -90,6 +90,8 @@ set(SRC
   ./Event/FrEvents.c
   ./Event/FrEvents.h
 
+  ./Device/FrIDevice.c
+  ./Device/FrIDevice.h
   ./Device/FrDisplay.c
   ./Device/FrDisplay.h
   ./Device/FrWindow.c
@@ -105,8 +107,6 @@ set(SRC
   ./DataType/FrApplication.h
   ./DataType/FrWorker.c
   ./DataType/FrWorker.h
-  ./DataType/FrPQueue.h
-  ./DataType/FrPQueue.c
   ./DataType/FrPair.h
   ./DataType/FrPair.c
   ./DataType/FrNode.h
@@ -118,11 +118,21 @@ set(SRC
   ./Graph/FrGraph.h
   ./Graph/FrDraw.c
   ./Graph/FrDraw.h
-  # ./Graph/FrText.c
-  # ./Graph/FrText.h
+  ./Graph/FrIDraw.c
+  ./Graph/FrIDraw.h
+  ./Graph/FrSurface.c
+  ./Graph/FrSurface.h
+  ./Graph/FrContext.c
+  ./Graph/FrContext.h
+  ./Graph/FrFontContext.c
+  ./Graph/FrFontContext.h
+  ./Graph/FrCairoDraw.c
+  ./Graph/FrCairoDraw.h
   ./Graph/FrCanvasPrivate.h
   ./Graph/FrCanvas.h
   ./Graph/FrCanvas.c
+  # ./Graph/FrText.c
+  # ./Graph/FrText.h
 
   ./FrTypes.h
   ./FrCommon.h

@@ -150,11 +150,11 @@ CstLayoutNode *cst_box_node_get_layout_node(CstBoxNode *self) {
 }
 
 void cst_box_node_repaint_root(CstBoxNode *self, CstLayout *layout) {
-  FrDraw* draw = cst_layout_get_draw(layout);
+  FrContext* cr = cst_layout_get_cr(layout);
   CstLayoutNode *lynode = cst_box_node_get_layout_node(self);
   const FrRect *bound = cst_layout_node_get_bound(lynode);
 
-  fr_draw_fill_bound(draw, bound);
+  fr_context_fill_bound(cr, bound);
 }
 
 SysBool box_node_cb(SysHNode *node, SysPointer user_data) {

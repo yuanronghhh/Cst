@@ -18,17 +18,17 @@ struct _FrFontContext {
   FrContext parent;
 
   /* <private> */
-  FrDrawLayout *layout;
+  PangoLayout *layout;
 };
 
 SYS_API SysType fr_font_context_get_type(void);
 SYS_API FrFontContext *fr_font_context_new(void);
 
 SYS_API FrFontContext *fr_font_context_new_I(void);
-SYS_API void fr_font_context_draw_text(FrFontContext* self, FrFontContextLayout* layout, SysInt x, SysInt y);
-SYS_API void fr_font_context_show_text(FrFontContext * self, FrFontContextLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);
+SYS_API void fr_font_context_draw_text(FrFontContext* self, PangoLayout* layout, SysInt x, SysInt y);
+SYS_API void fr_font_context_show_text(FrFontContext * self, PangoLayout* layout, SysInt x, SysInt y, SysInt m1, SysInt m0);
 SYS_API void fr_font_context_set_color(FrFontContext *self, FrColor *color);
-SYS_API void fr_font_context_layout_layout(FrFontContext * self, FrFontContextLayout * layout);
+SYS_API void fr_font_context_update_layout(FrFontContext* self, PangoLayout* layout);
 
 SYS_END_DECLS
 

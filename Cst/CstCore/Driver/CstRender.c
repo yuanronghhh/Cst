@@ -10,6 +10,7 @@
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/Flex/CstFlexAlgorithm.h>
+#include <Framework/Device/FrIDevice.h>
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
@@ -65,15 +66,15 @@ CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
 }
 
-FRWindow *cst_render_get_default_window(CstRender *self) {
+FrWindow *cst_render_get_default_window(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->window;
 }
 
-FRRegion *render_create_region(FRWindow *window) {
-  FRRegion *region;
-  FRRect bound = { 0 };
+FrRegion *render_create_region(FrWindow *window) {
+  FrRegion *region;
+  FrRect bound = { 0 };
 
   fr_window_get_framebuffer_size(window, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
@@ -89,8 +90,7 @@ static void render_layout_surfaces(SysHArray *surfs, CstRenderNode *rnode, CstLa
   }
 }
 
-
-void cst_render_rerender(CstRender* self, FRRegion* region, CstLayout *layout) {
+void cst_render_rerender(CstRender* self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
 
 #if 0
@@ -117,19 +117,27 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
 
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
-
-  FRRegion *region;
+#if 0
+  FrRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
-  FRWindow* window;
-  FRDraw* draw;
+  FrWindow* window;
+  FrDraw* draw;
+  FrContext* cr;
+  FrSurface* surface;
+  FrIDevice *device;
   CstAlgorithm *alg;
   cst_render_realize(self, v_module);
 
   window = cst_render_get_default_window(self);
   region = render_create_region(window);
-  draw = fr_draw_new_I(window);
-  layout = cst_layout_new_I(window, draw, region);
+  device = FR_I_DEVICE(window);
+  draw = fr_draw_new_I(device);
+
+  surface = fr_surface_create_device_surface(device);
+  cr = fr_context_new_I(surface);
+  layout = cst_layout_new_I(window, cr, region);
+
   rnode = self->body_rnode;
   init_body_layout_info(rnode, layout);
 
@@ -139,6 +147,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   fr_region_destroy(region);
   sys_object_unref(layout);
   sys_object_unref(alg);
+#endif
 }
 
 void cst_render_resize_window(CstRender *self) {
@@ -154,25 +163,28 @@ void cst_render_resize_window(CstRender *self) {
 
 void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
-
-  FRRegion *region;
-  FRRect bound = { 0 };
-  FRDraw* draw;
+#if 0
+  FrRegion *region;
+  FrRect bound = { 0 };
+  FrDraw* draw;
   CstLayout* layout;
-  FRWindow* window;
+  FrWindow* window;
+  FrIDevice *device;
 
   bound.width = width;
   bound.height = height;
 
   region = fr_region_create_rectangle(&bound);
-  draw = fr_draw_new_I(self->window);
+  device = FR_I_DEVICE(self->window);
+  draw = fr_draw_new_I(device);
   window = cst_render_get_default_window(self);
 
   layout = cst_layout_new_I(window, draw, region);
-  cst_render_rerender(self, region, layout);
+  cst_render_rerender(self, layout);
 
   sys_object_unref(layout);
   fr_region_destroy(region);
+#endif
 }
 
 CstSurface* cst_render_get_default_surface(void) {
@@ -204,7 +216,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
     self->window = fr_window_top_new(self->display);
 
     fr_window_get_framebuffer_size(self->window, &width, &height);
-    surf = cst_surface_create_by_window(self->window, width, height);
+    surf = cst_surface_create_window_surface(self->window, width, height);
   }
 
   sys_harray_add(&self->surfaces, surf);

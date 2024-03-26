@@ -29,7 +29,7 @@ CstSurface *cst_surface_new(void);
 CstSurface *cst_surface_new_I(FrSurface *fsurf);
 CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type);
 void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* layout);
-CstSurface* cst_surface_create_by_window(FrWindow *window, SysInt width, SysInt height);
+CstSurface* cst_surface_create_window_surface(FrWindow *window, SysInt width, SysInt height);
 CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height);
 
 SYS_END_DECLS

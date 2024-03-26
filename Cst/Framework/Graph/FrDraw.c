@@ -1,5 +1,6 @@
 #include <Framework/Graph/FrDraw.h>
 #include <Framework/Graph/FrIDraw.h>
+#include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrCairoDraw.h>
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Device/FrDisplay.h>
@@ -27,44 +28,43 @@ void fr_draw_frame_begin(FrDraw *self, FrRegion *region) {
 
   fr_i_device_get_size(self->idevice, &width, &height);
 
-  self->idevice_surface = fr_surface_new_device(self->idevice, width, height);
+  self->idevice_surface = fr_surface_create_device_surface_full(self->idevice, width, height);
   self->paint_surface = fr_surface_create_image_surface_from_surface(self->idevice_surface, width, height);
 
-  sys_assert(self->cr == NULL && "draw cr should be NULL when cairo_frame_begin_i, missing fr_cairo_draw_frame_end ?");
+  sys_assert(self->ctx == NULL && "draw cr should be NULL when cairo_frame_begin_i, missing fr_cairo_draw_frame_end ?");
 
-  self->cr = fr_surface_create_draw_cr(self->paint_surface);
-  fr_context_fill_background(self->cr, width, height);
+  self->ctx = fr_context_new_I(self->paint_surface);
+  fr_context_fill_background(self->ctx, width, height);
 
   self->is_painting = true;
 }
 
 void fr_draw_frame_end(FrDraw *self, FrRegion *region) {
   sys_return_if_fail(self != NULL);
-  FrIDrawInterface *idraw_iface = FR_I_DRAW_GET_IFACE(self);
 
   int n_boxes, i;
   cairo_rectangle_int_t box;
-  FrDrawContext* cr;
+  FrContext* ctx;
 
-  cr = fr_surface_create_cr(self->idevice_surface);
-  fr_context_set_source_surface(cr, self->paint_surface, 0, 0);
+  ctx = fr_context_new_I(self->idevice_surface);
+  fr_context_set_source_surface(ctx, self->paint_surface, 0, 0);
 
   n_boxes = cairo_region_num_rectangles(region);
   for (i = 0; i < n_boxes; i++) {
-    fr_context_region_get_rectangle(region, i, &box);
-    fr_context_rectangle(cr, box.x, box.y, box.width, box.height);
+    fr_region_get_rectangle(region, i, &box);
+    fr_context_rectangle(ctx, box.x, box.y, box.width, box.height);
   }
 
-  fr_context_rectangle(cr, box.x, box.y, box.width, box.height);
-  fr_context_clip(cr);
-  fr_context_paint(cr);
-  fr_context_destroy(cr);
+  fr_context_rectangle(ctx, box.x, box.y, box.width, box.height);
+  fr_context_clip(ctx);
+  fr_context_paint(ctx);
+  sys_object_unref(ctx);
 
-  sys_clear_pointer(&self->cr, fr_context_destroy);
+  sys_clear_pointer(&self->ctx, fr_context_destroy);
   fr_surface_flush(self->idevice_surface);
 
-  sys_clear_pointer(&self->idevice_surface, fr_surface_destroy);
-  sys_clear_pointer(&self->paint_surface, fr_surface_destroy);
+  sys_clear_pointer(&self->idevice_surface, _sys_object_unref);
+  sys_clear_pointer(&self->paint_surface, _sys_object_unref);
 
   self->is_painting = false;
 }

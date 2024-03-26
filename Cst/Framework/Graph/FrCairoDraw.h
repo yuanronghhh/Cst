@@ -22,7 +22,7 @@ struct _FrCairoDraw {
 
 SYS_API SysType fr_cairo_draw_get_type(void);
 SYS_API FrDraw *fr_cairo_draw_new(void);
-SYS_API FrDraw *fr_cairo_draw_new_I(FrIDevice *idevice);
+SYS_API FrDraw *fr_cairo_draw_new_I(FrIDevice *device);
 
 SYS_END_DECLS
 

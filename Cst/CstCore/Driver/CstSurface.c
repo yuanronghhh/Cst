@@ -5,6 +5,7 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstAlgorithm.h>
 #include <CstCore/Driver/CstRenderNode.h>
+#include <Framework/Device/FrIDevice.h>
 
 
 SYS_DEFINE_TYPE(CstSurface, cst_surface, SYS_TYPE_OBJECT);
@@ -49,14 +50,16 @@ CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type) {
 }
 
 CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
-  FrSurface *fsur = fr_draw_create_image_surface(width, height);
-  CstSurface* sur = cst_surface_new_I(fsur);
+  FrSurface *fsurface = fr_surface_image_surface_create(width, height);
+  CstSurface* sur = cst_surface_new_I(fsurface);
 
   return sur;
 }
 
-CstSurface* cst_surface_create_by_window(FrWindow *window, SysInt width, SysInt height) {
-  FrSurface* fsur = fr_draw_create_surface(window, width, height);
+CstSurface* cst_surface_window_surface(FrWindow *window, SysInt width, SysInt height) {
+  FrIDevice *device = FR_I_DEVICE(window);
+
+  FrSurface* fsur = fr_surface_create_device_surface_full(device, width, height);
   CstSurface* sur = cst_surface_new_I(fsur);
 
   return sur;
@@ -87,7 +90,7 @@ static void cst_surface_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
-  sys_clear_pointer(&self->surface, fr_draw_destroy_surface);
+  sys_clear_pointer(&self->surface, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_surface_parent_class)->dispose(o);
 }

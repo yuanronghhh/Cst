@@ -23,10 +23,10 @@ struct _FrDraw {
   SysObject parent;
 
   /* <private> */
-  FrContext *cr;
+  FrContext *ctx;
   FrSurface *idevice_surface;
   FrSurface *paint_surface;
-  FrIDevice* idevice;
+  FrIDevice *idevice;
   SysBool is_painting;
 };
 

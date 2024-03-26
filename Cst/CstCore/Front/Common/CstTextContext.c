@@ -19,14 +19,14 @@ static void cst_text_context_relayout_i(
   SysInt width = 0;
   SysInt height = 0;
 
-  FrDrawLayout *playout = text->playout;
+  PangoLayout *playout = text->playout;
   PangoFontDescription *font_desc = text->font_desc;
 
-  draw = cst_layout_get_draw(layout);
+  FrContext* cr = cst_layout_get_cr(layout);
 
   fr_layout_set_font_description (playout, font_desc);
   fr_layout_get_pixel_size(playout, &width, &height);
-  fr_draw_layout_layout(draw, playout);
+  fr_font_context_layout_layout(cr, playout);
   cst_render_node_set_size(o, width, height);
 }
 

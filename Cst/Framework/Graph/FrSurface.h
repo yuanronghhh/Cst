@@ -18,15 +18,20 @@ struct _FrSurface {
   SysObject parent;
 
   /* <private> */
-  FrDrawSurface *surface;
+  FrDrawSurface *draw_surface;
 };
 
 SYS_API SysType fr_surface_get_type(void);
 SYS_API FrSurface *fr_surface_new(void);
-SYS_API FrSurface *fr_surface_new_I(FrDrawSurface *dsurface);
-SYS_API FrSurface *fr_surface_new_device(FrIDevice *device, SysInt width, SysInt height);
-SYS_API FrContext *fr_surface_create_draw_cr(FrSurface *self);
-SYS_API FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface, width, height);
+SYS_API FrSurface *fr_surface_create_draw_surface(FrDrawSurface *dsurface);
+SYS_API FrSurface* fr_surface_create_device_surface(FrIDevice* device);
+SYS_API FrSurface* fr_surface_create_device_surface_full(FrIDevice* device, SysInt width, SysInt height);
+SYS_API FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface, SysInt width, SysInt height);
+SYS_API FrSurface *fr_surface_image_surface_create(SysInt width, SysInt height);
+
+void fr_surface_set_draw_surface(FrSurface *self, FrDrawSurface * draw_surface);
+FrDrawSurface * fr_surface_get_draw_surface(FrSurface *self);
+void fr_surface_flush(FrSurface *self);
 
 SYS_END_DECLS
 

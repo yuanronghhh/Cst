@@ -1,12 +1,23 @@
 #include <CstCore/Driver/CstAbsNode.h>
 
+#define PNODE_TO_ABS_NODE(o) (CstAbsNode *)(((SysUInt8 *)o) - offsetof(CstAbsNode, pnode));
+
 SYS_DEFINE_TYPE(CstAbsNode, cst_abs_node, CST_TYPE_LAYER_NODE);
 
 CstLayerNode *cst_abs_node_get_children_i(CstLayerNode *o) {
   CstAbsNode *anode = CST_ABS_NODE(o);
-  CstLayerNode *layer = cst_layer_node_get_layer(o);
 
-  return cst_abs_layer_get_parent(layer, anode);
+  CstAbsNode *p = PNODE_TO_ABS_NODE(sys_pnode_next(&anode->pnode));
+  return CST_LAYER_NODE(p);
+}
+
+CstLayerNode* cst_abs_node_get_parent_i(CstLayerNode *o) {
+  CstAbsNode *anode = CST_ABS_NODE(o);
+  CstLayer *layer = cst_layer_node_get_layer(o);
+
+  CstAbsNode* p = PNODE_TO_ABS_NODE(sys_pnode_prev(&anode->pnode));
+
+  return CST_LAYER_NODE(p);
 }
 
 /* object api */

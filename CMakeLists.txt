@@ -17,3 +17,7 @@ else()
 endif()
 
 add_subdirectory(Cst)
+
+configure_file(${CMAKE_CURRENT_LIST_DIR}/compile_flags.txt.in
+               ${CMAKE_CURRENT_LIST_DIR}/compile_flags.txt
+)

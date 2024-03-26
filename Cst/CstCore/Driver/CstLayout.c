@@ -11,12 +11,12 @@ CstLayout* cst_layout_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, FrWindow * window, FrDraw *draw, FrRegion *region) {
+static void cst_layout_construct(CstLayout* self, FrWindow * window, FrContext *cr, FrRegion *region) {
   self->state = 0;
   self->region = region;
 
   self->window = window;
-  self->draw = draw;
+  self->cr = cr;
 }
 
 SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
@@ -25,10 +25,10 @@ SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   return self->state & state;
 }
 
-CstLayout *cst_layout_new_I(FrWindow *window, FrDraw *draw, FrRegion *region) {
+CstLayout *cst_layout_new_I(FrWindow *window, FrContext *cr, FrRegion *region) {
   CstLayout *o = cst_layout_new();
 
-  cst_layout_construct(o, window, draw, region);
+  cst_layout_construct(o, window, cr, region);
 
   return o;
 }
@@ -39,16 +39,16 @@ FrRegion *cst_layout_get_region(CstLayout* self) {
   return self->region;
 }
 
-void cst_layout_set_draw(CstLayout *self, FrDraw * draw) {
+void cst_layout_set_cr(CstLayout *self, FrContext * cr) {
   sys_return_if_fail(self != NULL);
 
-  self->draw = draw;
+  self->cr = cr;
 }
 
-FrDraw * cst_layout_get_draw(CstLayout *self) {
+FrContext * cst_layout_get_cr(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->draw;
+  return self->cr;
 }
 
 void cst_layout_set_surface(CstLayout *self, CstSurface * surface) {
@@ -98,12 +98,12 @@ CstLayer * cst_layout_get_layer(CstLayout *self) {
 void cst_layout_begin_layout(CstLayout* self) {
   self->state = CST_RENDER_STATE_LAYOUT;
 
-  fr_draw_frame_begin(self->draw, self->region);
+  fr_draw_frame_begin(self->cr, self->region);
 }
 
 void cst_layout_end_layout(CstLayout* self) {
 
-  fr_draw_frame_end(self->draw, self->region);
+  fr_draw_frame_end(self->cr, self->region);
 }
 
 /* object api */
@@ -114,7 +114,7 @@ static void cst_layout_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
   CstLayout* self = CST_LAYOUT(o);
 
-  sys_clear_pointer(&self->draw, _sys_object_unref);
+  sys_clear_pointer(&self->cr, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_layout_parent_class)->dispose(o);
 }

@@ -218,14 +218,14 @@ CstBoxNode* cst_box_node_parent(CstBoxNode *self) {
   return HNODE_TO_BOX_NODE(sys_hnode_parent(BOX_NODE_TO_HNODE(self)));
 }
 
-static CstLayerNode* cst_box_node_get_children_i(CstLayerNode* o, CstLayer *layer) {
+static CstLayerNode* cst_box_node_get_children_i(CstLayerNode* o) {
   CstBoxNode *bnode = CST_BOX_NODE(o);
   CstBoxNode *nnode = cst_box_node_children(bnode);
 
   return CST_LAYER_NODE(nnode);
 }
 
-static CstLayerNode* cst_box_node_get_parent_i(CstLayerNode* o, CstLayer *layer) {
+static CstLayerNode* cst_box_node_get_parent_i(CstLayerNode* o) {
   CstBoxNode *bnode = CST_BOX_NODE(o);
   CstBoxNode *nnode = cst_box_node_parent(bnode);
 

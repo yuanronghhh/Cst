@@ -1,4 +1,4 @@
-#include "TestApp.h"
+#include <CstCoreTest/TestApp.h>
 
 static void app_types_setup() {
   cst_render_node_set_meta("app-button", APP_TYPE_BUTTON);

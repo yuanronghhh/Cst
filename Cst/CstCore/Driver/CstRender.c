@@ -123,9 +123,6 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   CstRenderNode *rnode;
   FrWindow* window;
   FrDraw* draw;
-  FrContext* cr;
-  FrSurface* surface;
-  FrIDevice *device;
   CstAlgorithm *alg;
   cst_render_realize(self, v_module);
 
@@ -169,7 +166,6 @@ void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt heig
   FrDraw* draw;
   CstLayout* layout;
   FrWindow* window;
-  FrIDevice *device;
 
   bound.width = width;
   bound.height = height;

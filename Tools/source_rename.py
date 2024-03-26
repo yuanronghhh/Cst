@@ -144,7 +144,7 @@ def update_object_data(f):
 
 def rename_gobject():
     wk = os.getcwd() + "/Cst"
-    wk = "/home/greyhound/Git/CstDemo/Cst/CstDemo"
+    wk = "/home/greyhound/Git/Cst"
 
     for dp, dns, fns in os.walk(wk):
         for f in fns:

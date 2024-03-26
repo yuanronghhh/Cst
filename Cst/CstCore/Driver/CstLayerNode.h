@@ -23,6 +23,7 @@ struct _CstLayerNodeClass {
   SysObjectClass parent;
 
   void (*construct) (CstLayerNode* o, CstLayer* layer);
+
   CstLayerNode *(*get_children) (CstLayerNode *lnode);
   CstLayerNode *(*get_parent) (CstLayerNode *lnode);
   CstLayerNode *(*get_next) (CstLayerNode *lnode);

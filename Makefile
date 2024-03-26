@@ -34,7 +34,8 @@ env-win32:
 config:
 	@${CMAKE_CONFIG}
 	@sed -i 's/;/\n-I/g' compile_flags.txt
-	@cat compile_flags.txt|sort |uniq > compile_flags.txt
+	@cat compile_flags.txt|sort |uniq > compile_flags2.txt
+	@mv compile_flags2.txt compile_flags.txt
 
 build-linux: config
 	@${MAKE} -C "$(BUILD_DIR)" -s -j4

@@ -170,21 +170,19 @@ const FrRect *cst_layout_node_get_bound(CstLayoutNode* self) {
   return &self->bound;
 }
 
-void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout) {
+void cst_layout_node_fill_rectangle(CstLayoutNode *self, FrContext* cr) {
   sys_return_if_fail(self != NULL);
 
   const FrRect* bound = &self->bound;
-  FrContext* cr = cst_layout_get_cr(layout);
 
   fr_context_fill_bound(cr, bound);
 }
 
-void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout) {
+void cst_layout_node_stroke_rectangle(CstLayoutNode *self, FrContext* cr) {
   sys_return_if_fail(self != NULL);
 
   const FrSInt4 *m4, *p4;
   const FrRect* bound;
-  FrContext* cr = cst_layout_get_cr(layout);
 
   m4 = &self->margin;
   p4 = &self->padding;

@@ -11,14 +11,16 @@ SYS_BEGIN_DECLS
 #define CST_SURFACE_GET_CLASS(o) sys_instance_get_class(o, CstSurfaceClass)
 
 struct _CstSurfaceClass {
-  SysObjectClass parent;
+  FrSurfaceClass parent;
 };
 
 struct _CstSurface {
-  SysObject parent;
+  FrSurface parent;
 
   /* <private> */
-  FrSurface* surface;
+
+  /* paint surface */
+  FrContext *cr;
   CstLayer* box_layer;
   CstLayer* abs_layer;
 };
@@ -26,11 +28,14 @@ struct _CstSurface {
 SysType cst_surface_get_type(void);
 CstSurface *cst_surface_new(void);
 
-CstSurface *cst_surface_new_I(FrSurface *fsurf);
+CstSurface *cst_surface_new_I(FrDrawSurface *draw_surface);
 CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type);
 void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* layout);
-CstSurface* cst_surface_create_window_surface(FrWindow *window, SysInt width, SysInt height);
+CstSurface* cst_surface_create_device_surface(FrIDevice *device, SysInt width, SysInt height);
 CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height);
+
+void cst_surface_set_cr(CstSurface *self, FrContext * cr);
+FrContext * cst_surface_get_cr(CstSurface *self);
 
 SYS_END_DECLS
 

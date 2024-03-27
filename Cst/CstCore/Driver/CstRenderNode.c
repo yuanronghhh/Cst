@@ -73,7 +73,7 @@ void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
 
 void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-  FrContext* cr = cst_layout_get_cr(layout);
+  FrContext* cr = cst_surface_get_cr(self->surface);
 
   fr_context_save(cr);
   cst_render_node_prepare(self, layout);
@@ -86,9 +86,21 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
 
 void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
-  FrContext* cr = cst_layout_get_cr(layout);
+  FrContext* cr = cst_surface_get_cr(self->surface);
 
   fr_context_restore(cr);
+}
+
+void cst_render_node_set_surface(CstRenderNode *self, CstSurface * surface) {
+  sys_return_if_fail(self != NULL);
+
+  self->surface = surface;
+}
+
+CstSurface * cst_render_node_get_surface(CstRenderNode *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->surface;
 }
 
 SysObject* cst_render_node_dclone_i(SysObject *o) {
@@ -295,9 +307,9 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
   return self->layer_node;
 }
 
-static void cst_render_node_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
-  FrContext *cr = cst_layout_get_cr(layout);
-  const FrRect *bound = cst_render_node_get_bound(rnode);
+static void cst_render_node_paint_self_i(CstRenderNode *self, CstLayout *layout) {
+  FrContext *cr = cst_surface_get_cr(self->surface);
+  const FrRect *bound = cst_render_node_get_bound(self);
 
   fr_context_fill_bound(cr, bound);
 }

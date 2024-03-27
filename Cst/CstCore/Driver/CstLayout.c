@@ -11,11 +11,9 @@ CstLayout* cst_layout_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, FrIDevice * idevice, FrDraw *draw, FrRegion *region) {
+static void cst_layout_construct(CstLayout* self, FrDraw *draw, FrRegion *region) {
   self->state = 0;
   self->region = region;
-
-  self->idevice = idevice;
   self->draw = draw;
 }
 
@@ -25,10 +23,10 @@ SysBool cst_layout_is_state(CstLayout *self, SysInt state) {
   return self->state & state;
 }
 
-CstLayout *cst_layout_new_I(FrIDevice *idevice, FrDraw *draw, FrRegion *region) {
+CstLayout *cst_layout_new_I(FrDraw *draw, FrRegion *region) {
   CstLayout *o = cst_layout_new();
 
-  cst_layout_construct(o, idevice, draw, region);
+  cst_layout_construct(o, draw, region);
 
   return o;
 }
@@ -39,30 +37,11 @@ FrRegion *cst_layout_get_region(CstLayout* self) {
   return self->region;
 }
 
-FrContext * cst_layout_get_cr(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return fr_draw_get_cr(self->draw);
-}
-
-void cst_layout_set_surface(CstLayout *self, CstSurface * surface) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(surface != NULL);
-
-  self->surface = surface;
-}
-
-CstSurface * cst_layout_get_surface(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->surface;
-}
-
 void cst_layout_get_size(CstLayout* self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
-  sys_return_if_fail(self->idevice != NULL);
+  sys_return_if_fail(self->draw != NULL);
 
-  fr_i_device_get_size(self->idevice, width, height);
+  fr_draw_get_buffer_size(self->draw, width, height);
 }
 
 void cst_layout_set_state(CstLayout *self, CST_RENDER_STATE_ENUM state) {
@@ -75,18 +54,6 @@ CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
   return self->state;
-}
-
-void cst_layout_set_layer(CstLayout *self, CstLayer * layer) {
-  sys_return_if_fail(self != NULL);
-
-  self->layer = layer;
-}
-
-CstLayer * cst_layout_get_layer(CstLayout *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->layer;
 }
 
 void cst_layout_begin_layout(CstLayout* self) {

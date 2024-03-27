@@ -87,7 +87,7 @@ SYS_BEGIN_DECLS
 
 #define ${FN_TYPE_NAME} (${type_name}_get_type())
 #define ${TYPE_NAME}(o) ((${TypeName}* )sys_object_cast_check(o, ${FN_TYPE_NAME}))
-#define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)sys_class_cast_check(o, ${FN_TYPE_NAME})
+#define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)sys_class_cast_check(o, ${FN_TYPE_NAME}))
 #define ${TYPE_NAME}_GET_CLASS(o) sys_instance_get_class(o, ${TypeName}Class)
 
 typedef struct _${TypeName} ${TypeName};
@@ -582,76 +582,12 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _FrIDrawInterface {
-  SysTypeInterface parent;
+struct _FrFrame {
+  SysObject parent;
 
-  FrDrawSurface* (*surface_create_similar_image) (FrDrawSurface* other, SysInt format, SysInt width, SysInt height);
-  FrDrawSurface* (*image_surface_create) (SysInt width, SysInt height);
-  FrDrawSurface* (*create_surface) (FrIDevice *device, SysInt width, SysInt height);
-  FrDrawSurface* (*get_target) (FrDrawContext* cr);
-  FrDrawSurface* (*image_surface_create_from_png) (const char * filename);
-  FrDrawSurface* (*surface_create_for_rectangle) (FrDrawSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
-  FrDrawSurface* (*surface_reference) (FrDrawSurface* surface);
-  FrDrawContext* (*create) (FrDrawSurface* target);
-  SysDouble (*get_line_width) (FrDrawContext* cr);
-  SysInt (*image_surface_get_height) (FrDrawSurface* surface);
-  SysInt (*image_surface_get_stride) (FrDrawSurface* surface);
-  SysInt (*image_surface_get_width) (FrDrawSurface* surface);
-  void (*arc) (FrDrawContext* cr,SysDouble xc,SysDouble yc,SysDouble radius,SysDouble angle1,SysDouble angle2);
-  void (*arc_negative) (FrDrawContext* cr,SysDouble xc,SysDouble yc,SysDouble radius,SysDouble angle1,SysDouble angle2);
-  void (*clip) (FrDrawContext* cr);
-  void (*clip_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
-  void (*clip_preserve) (FrDrawContext* cr);
-  void (*close_path) (FrDrawContext* cr);
-  void (*curve_to) (FrDrawContext* cr,SysDouble x1,SysDouble y1,SysDouble x2,SysDouble y2,SysDouble x3,SysDouble y3);
-  void (*destroy) (FrDrawContext* cr);
-  void (*fill) (FrDrawContext* cr);
-  void (*fill_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
-  void (*fill_preserve) (FrDrawContext* cr);
-  void (*line_to) (FrDrawContext* cr,SysDouble x,SysDouble y);
-  void (*mask_surface) (FrDrawContext* cr,FrDrawSurface* surface,SysDouble surface_x,SysDouble surface_y);
-  void (*move_to) (FrDrawContext* cr,SysDouble x,SysDouble y);
-  void (*new_path) (FrDrawContext* cr);
-  void (*new_sub_path) (FrDrawContext* cr);
-  void (*paint) (FrDrawContext* cr);
-  void (*paint_with_alpha) (FrDrawContext* cr,SysDouble alpha);
-  void (*path_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
-  void (*pop_group_to_source) (FrDrawContext* cr);
-  void (*push_group) (FrDrawContext* cr);
-  void (*recording_surface_ink_extents) (FrDrawSurface* surface,SysDouble * x0,SysDouble * y0,SysDouble * width,SysDouble * height);
-  void (*rectangle) (FrDrawContext* cr,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
-  void (*rel_curve_to) (FrDrawContext* cr,SysDouble dx1,SysDouble dy1,SysDouble dx2,SysDouble dy2,SysDouble dx3,SysDouble dy3);
-  void (*rel_line_to) (FrDrawContext* cr,SysDouble dx,SysDouble dy);
-  void (*rel_move_to) (FrDrawContext* cr,SysDouble dx,SysDouble dy);
-  void (*reset_clip) (FrDrawContext* cr);
-  void (*restore) (FrDrawContext* cr);
-  void (*rotate) (FrDrawContext* cr,SysDouble angle);
-  void (*save) (FrDrawContext* cr);
-  void (*scale) (FrDrawContext* cr,SysDouble sx,SysDouble sy);
-  void (*set_dash) (FrDrawContext* cr,const SysDouble * dashes,SysInt num_dashes,SysDouble offset);
-  void (*set_font_size) (FrDrawContext* cr,SysDouble size);
-  void (*set_line_width) (FrDrawContext* cr,SysDouble width);
-  void (*set_source_rgb) (FrDrawContext* cr,SysDouble red,SysDouble green,SysDouble blue);
-  void (*set_source_rgba) (FrDrawContext* cr,SysDouble red,SysDouble green,SysDouble blue,SysDouble alpha);
-  void (*set_source_surface) (FrDrawContext* cr,FrDrawSurface* surface,SysDouble x,SysDouble y);
-  void (*stroke) (FrDrawContext* cr);
-  void (*stroke_extents) (FrDrawContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
-  void (*stroke_preserve) (FrDrawContext* cr);
-  void (*surface_copy_page) (FrDrawSurface* surface);
-  void (*surface_destroy) (FrDrawSurface* surface);
-  void (*surface_finish) (FrDrawSurface* surface);
-  void (*surface_flush) (FrDrawSurface* surface);
-  void (*surface_get_device_offset) (FrDrawSurface* surface,SysDouble * x_offset,SysDouble * y_offset);
-  void (*surface_get_device_scale) (FrDrawSurface* surface,SysDouble * x_scale,SysDouble * y_scale);
-  void (*surface_get_fallback_resolution) (FrDrawSurface* surface,SysDouble * x_pixels_per_inch,SysDouble * y_pixels_per_inch);
-  void (*surface_get_mime_data) (FrDrawSurface* surface,const char * mime_type,const unsigned char ** data,unsigned long * length);
-  void (*surface_mark_dirty) (FrDrawSurface* surface);
-  void (*surface_mark_dirty_rectangle) (FrDrawSurface* surface,SysInt x,SysInt y,SysInt width,SysInt height);
-  void (*surface_set_device_offset) (FrDrawSurface* surface,SysDouble x_offset,SysDouble y_offset);
-  void (*surface_set_device_scale) (FrDrawSurface* surface,SysDouble x_scale,SysDouble y_scale);
-  void (*surface_set_fallback_resolution) (FrDrawSurface* surface,SysDouble x_pixels_per_inch,SysDouble y_pixels_per_inch);
-  void (*surface_show_page) (FrDrawSurface* surface);
-  void (*surface_unmap_image) (FrDrawSurface* surface,FrDrawSurface* image);
+  /* <private> */
+  FrSurface *idevice_surface;
+  FrIDevice *idevice;
 };
 """
 

@@ -113,7 +113,7 @@ FrDraw *fr_cairo_draw_new_I(FrIDevice *device) {
 }
 
 static void fr_cairo_draw_dispose(SysObject* o) {
-  FrCairoDraw *self = FR_CAIRO_DRAW(o);
+  // FrCairoDraw *self = FR_CAIRO_DRAW(o);
 
   SYS_OBJECT_CLASS(fr_cairo_draw_parent_class)->dispose(o);
 }

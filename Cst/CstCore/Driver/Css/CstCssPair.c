@@ -109,7 +109,7 @@ void cst_css_pair_set_layer(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 
   v = cst_css_value_get_v_int(self->value);
   sys_return_if_fail(v != -1);
-  surface = cst_layout_get_surface(layout);
+  surface = cst_render_node_get_surface(rnode);
   tolayer = cst_surface_get_layer_by_type(surface, v);
 
   cst_render_node_change_to_layer(rnode, tolayer);
@@ -183,8 +183,10 @@ void cst_css_pair_set_color(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 
   FrColor* v = cst_css_value_get_v_color(self->value);
   sys_return_if_fail(v != NULL);
+  CstSurface *surface = cst_render_node_get_surface(rnode);
+  sys_return_if_fail(surface != NULL);
 
-  FrContext *cr = cst_layout_get_cr(layout);
+  FrContext *cr = cst_surface_get_cr(surface);
   sys_return_if_fail(cr != NULL);
 
   fr_context_set_color(cr, v);

@@ -7,11 +7,13 @@ SYS_BEGIN_DECLS
 
 #define FR_TYPE_SURFACE (fr_surface_get_type())
 #define FR_SURFACE(o) ((FrSurface* )sys_object_cast_check(o, FR_TYPE_SURFACE))
-#define FR_SURFACE_CLASS(o) ((FrSurfaceClass *)sys_class_cast_check(o, FR_TYPE_SURFACE)
+#define FR_SURFACE_CLASS(o) ((FrSurfaceClass *)sys_class_cast_check(o, FR_TYPE_SURFACE))
 #define FR_SURFACE_GET_CLASS(o) sys_instance_get_class(o, FrSurfaceClass)
 
 struct _FrSurfaceClass {
   SysObjectClass parent;
+
+  void (*construct) (FrSurface *self, FrDrawSurface* draw_surface);
 };
 
 struct _FrSurface {

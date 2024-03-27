@@ -14,7 +14,6 @@ SYS_DEFINE_TYPE(CstSurface, cst_surface, SYS_TYPE_OBJECT);
 void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* layout) {
   CstAlgorithm* alg;
 
-  cst_layout_set_layer(layout, self->box_layer);
   cst_layout_begin_layout(layout);
 
   alg = cst_render_node_get_algorithm(rnode);
@@ -22,7 +21,6 @@ void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* lay
 
   cst_layout_end_layout(layout);
 
-  cst_layout_set_layer(layout, self->abs_layer);
   cst_layout_begin_layout(layout);
 
   alg = cst_render_node_get_algorithm(rnode);
@@ -50,24 +48,32 @@ CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type) {
 }
 
 CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
-  FrSurface *fsurface = fr_surface_image_surface_create(width, height);
-  CstSurface* sur = cst_surface_new_I(fsurface);
+  FrDrawSurface *draw_surface = fr_i_draw_image_surface_create(width, height);
 
-  return sur;
+  return cst_surface_new_I(draw_surface);
 }
 
-CstSurface* cst_surface_create_window_surface(FrWindow *window, SysInt width, SysInt height) {
-  FrIDevice *device = FR_I_DEVICE(window);
+CstSurface* cst_surface_create_device_surface(FrIDevice *device, SysInt width, SysInt height) {
+  FrDrawSurface* draw_surface = fr_i_device_create_surface(device, width, height);
 
-  FrSurface* fsur = fr_surface_create_device_surface_full(device, width, height);
-  CstSurface* sur = cst_surface_new_I(fsur);
+  return cst_surface_new_I(draw_surface);
+}
 
-  return sur;
+void cst_surface_set_cr(CstSurface *self, FrContext * cr) {
+  sys_return_if_fail(self != NULL);
+
+  self->cr = cr;
+}
+
+FrContext * cst_surface_get_cr(CstSurface *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->cr;
 }
 
 /* object api */
-static void cst_surface_construct(CstSurface *self, FrSurface* surface) {
-  self->surface = surface;
+static void cst_surface_construct(CstSurface *self, FrDrawSurface* draw_surface) {
+  FR_SURFACE_CLASS(cst_surface_parent_class)->construct(FR_SURFACE(self), draw_surface);
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
@@ -77,10 +83,10 @@ CstSurface* cst_surface_new(void) {
   return sys_object_new(CST_TYPE_SURFACE, NULL);
 }
 
-CstSurface *cst_surface_new_I(FrSurface *surface) {
+CstSurface *cst_surface_new_I(FrDrawSurface *draw_surface) {
   CstSurface *o = cst_surface_new();
 
-  cst_surface_construct(o, surface);
+  cst_surface_construct(o, draw_surface);
 
   return o;
 }
@@ -90,7 +96,6 @@ static void cst_surface_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
-  sys_clear_pointer(&self->surface, _sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_surface_parent_class)->dispose(o);
 }

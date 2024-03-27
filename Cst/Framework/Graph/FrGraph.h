@@ -67,6 +67,7 @@ SYS_API void fr_sint4_free(FrSInt4* o);
 #define fr_region_intersect_rectangle cairo_region_intersect_rectangle
 #define fr_region_is_empty cairo_region_is_empty
 #define fr_region_get_rectangle cairo_region_get_rectangle
+#define fr_region_num_rectangles cairo_region_num_rectangles
 
 SYS_END_DECLS
 

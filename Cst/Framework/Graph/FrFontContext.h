@@ -7,7 +7,7 @@ SYS_BEGIN_DECLS
 
 #define FR_TYPE_FONT_CONTEXT (fr_font_context_get_type())
 #define FR_FONT_CONTEXT(o) ((FrFontContext* )sys_object_cast_check(o, FR_TYPE_FONT_CONTEXT))
-#define FR_FONT_CONTEXT_CLASS(o) ((FrFontContextClass *)sys_class_cast_check(o, FR_TYPE_FONT_CONTEXT)
+#define FR_FONT_CONTEXT_CLASS(o) ((FrFontContextClass *)sys_class_cast_check(o, FR_TYPE_FONT_CONTEXT))
 #define FR_FONT_CONTEXT_GET_CLASS(o) sys_instance_get_class(o, FrFontContextClass)
 
 struct _FrFontContextClass {

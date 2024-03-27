@@ -58,8 +58,8 @@ const FrSInt4 * cst_layout_node_get_padding(CstLayoutNode *self);
 void cst_layout_node_set_border(CstLayoutNode *self, const FrSInt4 * border);
 const FrSInt4 * cst_layout_node_get_border(CstLayoutNode *self);
 
-void cst_layout_node_fill_rectangle(CstLayoutNode *self, CstLayout* layout);
-void cst_layout_node_stroke_rectangle(CstLayoutNode *self, CstLayout *layout);
+void cst_layout_node_fill_rectangle(CstLayoutNode *self, FrContext* cr);
+void cst_layout_node_stroke_rectangle(CstLayoutNode *self, FrContext* cr);
 
 void cst_layout_node_constraint_width(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext* pctx);
 void cst_layout_node_constraint_height(CstLayoutNode* self, CstRenderContext* rctx, CstRenderContext* pctx);

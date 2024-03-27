@@ -20,9 +20,7 @@ struct _CstLayout {
   SysInt state;
 
   /* CST_LAYER_ENUM */
-  CstLayer* layer;
   FrRegion* region;
-  FrIDevice* idevice;
 
   /* CstSurface */
   CstSurface *surface;
@@ -36,7 +34,7 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(FrIDevice *idevice, FrDraw *draw, FrRegion *region);
+CstLayout *cst_layout_new_I(FrDraw *draw, FrRegion *region);
 
 SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FrRegion *cst_layout_get_region(CstLayout* self);
@@ -48,14 +46,6 @@ void cst_layout_end_layout(CstLayout * self);
 
 void cst_layout_set_state(CstLayout *self, CST_RENDER_STATE_ENUM state);
 CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
-
-void cst_layout_set_layer(CstLayout *self, CstLayer * layer);
-CstLayer * cst_layout_get_layer(CstLayout *self);
-
-FrContext * cst_layout_get_cr(CstLayout *self);
-
-void cst_layout_set_surface(CstLayout *self, CstSurface * surface);
-CstSurface * cst_layout_get_surface(CstLayout *self);
 
 SYS_END_DECLS
 

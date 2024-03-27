@@ -4,6 +4,7 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/CstSurface.h>
 
 
 SYS_DEFINE_TYPE(CstTextContext, cst_text_context, CST_TYPE_RENDER_CONTEXT);
@@ -20,8 +21,8 @@ static void cst_text_context_relayout_i(
 
   PangoLayout *playout = text->playout;
   PangoFontDescription *font_desc = text->font_desc;
-
-  FrContext* cr = cst_layout_get_cr(layout);
+  CstSurface *surface = cst_render_node_get_surface(o);
+  FrContext* cr = cst_surface_get_cr(surface);
 
   pango_layout_set_font_description (playout, font_desc);
   pango_layout_get_pixel_size(playout, &width, &height);

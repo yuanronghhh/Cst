@@ -7,7 +7,7 @@ SYS_BEGIN_DECLS
 
 #define FR_TYPE_CONTEXT (fr_context_get_type())
 #define FR_CONTEXT(o) ((FrContext* )sys_object_cast_check(o, FR_TYPE_CONTEXT))
-#define FR_CONTEXT_CLASS(o) ((FrContextClass *)sys_class_cast_check(o, FR_TYPE_CONTEXT)
+#define FR_CONTEXT_CLASS(o) ((FrContextClass *)sys_class_cast_check(o, FR_TYPE_CONTEXT))
 #define FR_CONTEXT_GET_CLASS(o) sys_instance_get_class(o, FrContextClass)
 
 struct _FrContextClass {

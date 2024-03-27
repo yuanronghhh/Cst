@@ -21,7 +21,7 @@ struct _CstRender {
 
   /* < private > */
   FrDisplay *display;
-  FrWindow *window;
+  FrIDevice *device;
   CstRenderNode *body_rnode;
 
   /* FrSurface */
@@ -36,9 +36,9 @@ void cst_render_teardown(void);
 CstRender *cst_render_get_g_render(void);
 
 CstSurface *cst_render_get_surface(CstRender *self, SysUInt surf_idx);
-FrWindow *cst_render_get_default_window(CstRender *self);
-void cst_render_resize_window(CstRender *self);
-void cst_render_request_resize_window(CstRender *self, SysInt width, SysInt height);
+FrIDevice *cst_render_get_default_device(CstRender *self);
+void cst_render_resize_device(CstRender *self);
+void cst_render_request_resize_device(CstRender *self, SysInt width, SysInt height);
 void cst_render_rerender(CstRender* self, CstLayout* layout);
 CstSurface* cst_render_get_default_surface(void);
 

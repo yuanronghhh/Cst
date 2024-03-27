@@ -6,6 +6,7 @@
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstNode.h>
+#include <CstCore/Driver/CstSurface.h>
 
 
 SYS_DEFINE_TYPE(CstText, cst_text, CST_TYPE_RENDER_NODE);
@@ -81,9 +82,10 @@ static void cst_text_construct_i(CstRenderNode *o, CstRenderNodeContext *param) 
 
 static void cst_text_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   CstText *self = CST_TEXT(rnode);
+  CstSurface *surface = cst_render_node_get_surface(rnode);
 
   PangoLayout *playout = self->playout;
-  FrContext* cr = cst_layout_get_cr(layout);
+  FrContext* cr = cst_surface_get_cr(surface);
   const FrRect *bound = cst_render_node_get_bound(rnode);
   const FrSInt4 *m4 = cst_render_node_get_margin(rnode);
 

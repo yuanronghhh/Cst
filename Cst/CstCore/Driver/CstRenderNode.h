@@ -39,6 +39,9 @@ struct _CstRenderNode {
 
   /* CstAlgorithm ref */
   CstAlgorithm* algorithm;
+
+  /* surface */
+  CstSurface* surface;
 };
 
 struct _CstRenderNodeClass {
@@ -124,6 +127,9 @@ CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self);
 
 void cst_render_node_set_algorithm(CstRenderNode *self, CstAlgorithm * algorithm);
 CstAlgorithm * cst_render_node_get_algorithm(CstRenderNode *self);
+
+void cst_render_node_set_surface(CstRenderNode *self, CstSurface * surface);
+CstSurface * cst_render_node_get_surface(CstRenderNode *self);
 
 SYS_END_DECLS
 

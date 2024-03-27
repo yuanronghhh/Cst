@@ -124,8 +124,6 @@ set(SRC
   ./Graph/FrSurface.h
   ./Graph/FrContext.c
   ./Graph/FrContext.h
-  ./Graph/FrFontContext.c
-  ./Graph/FrFontContext.h
   ./Graph/FrCairoDraw.c
   ./Graph/FrCairoDraw.h
   ./Graph/FrCanvasPrivate.h

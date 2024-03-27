@@ -65,7 +65,5 @@ set(GTK_LIBRARIES
   fribidi
   )
 
-
-set(PTHREAD_LIBRARIES "-lpthread")
-set(SYSTEM_LIBRARIES "-lexpat -lm -lrt -lrt -luuid")
-list(APPEND GTK_LIBRARIES ${SYSTEM_LIBRARIES})
+set(ADDTIONAL_LIBRARIES "-lpthread -lexpat -lm -lrt -lrt -luuid")
+list(APPEND GTK_LIBRARIES ${ADDTIONAL_LIBRARIES})

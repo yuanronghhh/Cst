@@ -9,7 +9,7 @@ void fr_context_fill_bound(FrContext* self, const FrRect *bound) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(bound != NULL);
 
-  FrDrawContext* cr = self->cr;
+  FrDrawContext* cr = self->v.cr;
   FrIDrawInterface* idraw_iface = fr_draw_get_iface();
 
   idraw_iface->rectangle(cr, bound->x, bound->y, bound->width, bound->height);
@@ -17,7 +17,7 @@ void fr_context_fill_bound(FrContext* self, const FrRect *bound) {
 }
 
 void fr_context_fill_background (FrContext *self, SysInt width, SysInt height) {
-  FrDrawContext *cr = self->cr;
+  FrDrawContext *cr = self->v.cr;
   FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
   idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
@@ -27,18 +27,18 @@ void fr_context_fill_background (FrContext *self, SysInt width, SysInt height) {
 
 void fr_context_set_color(FrContext * self, FrColor *color) {
 
-  fr_i_draw_set_source_rgba(self->cr, color->r, color->g, color->b, color->a);
+  fr_i_draw_set_source_rgba(self->v.cr, color->r, color->g, color->b, color->a);
 }
 
 void fr_context_set_source_surface (FrContext* self, FrSurface* surface, SysDouble x, SysDouble y) {
 
-  fr_i_draw_set_source_surface(self->cr, surface->draw_surface, x, y);
+  fr_i_draw_set_source_surface(self->v.cr, surface->draw_surface, x, y);
 }
 
 void fr_context_rectangle (FrContext* self,SysDouble x,SysDouble y,SysDouble width,SysDouble height) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_rectangle(self->cr, x, y, width, height);
+  fr_i_draw_rectangle(self->v.cr, x, y, width, height);
 }
 
 void fr_context_stroke_mp(FrContext* self, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4) {
@@ -47,7 +47,7 @@ void fr_context_stroke_mp(FrContext* self, const FrRect *bound, const FrSInt4* m
   sys_return_if_fail(p4 != NULL);
   sys_return_if_fail(bound != NULL);
 
-  FrDrawContext* cr = self->cr;
+  FrDrawContext* cr = self->v.cr;
   FrIDrawInterface* idraw_iface = fr_draw_get_iface();
 
   SysInt x = bound->x + m4->m3;
@@ -62,49 +62,71 @@ void fr_context_stroke_mp(FrContext* self, const FrRect *bound, const FrSInt4* m
 void fr_context_clip (FrContext* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_clip (self->cr);
+  fr_i_draw_clip (self->v.cr);
 }
 
 void fr_context_paint (FrContext* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_paint (self->cr);
+  fr_i_draw_paint (self->v.cr);
 }
 
 void fr_context_destroy (FrContext* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_destroy(self->cr);
+  fr_i_draw_destroy(self->v.cr);
 }
 
 void fr_context_move_to (FrContext* self,SysDouble x,SysDouble y) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_move_to(self->cr, x, y);
+  fr_i_draw_move_to(self->v.cr, x, y);
 }
 
 void fr_context_layout_layout(FrContext* self, PangoLayout* layout) {
 
-  pango_cairo_update_layout(self->cr, layout);
+  pango_cairo_update_layout(self->v.cr, layout);
 }
 
 void fr_context_save(FrContext* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_save(self->cr);
+  fr_i_draw_save(self->v.cr);
 }
 
 void fr_context_restore(FrContext* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_restore(self->cr);
+  fr_i_draw_restore(self->v.cr);
 }
+
+/* font */
+void fr_context_draw_text(FrContext* self, PangoLayout* layout, SysInt x, SysInt y) {
+  FrIDrawInterface* iface = fr_draw_get_iface();
+
+  iface->move_to(self->v.cr, x, y);
+  iface->show_layout(self->v.cr, layout);
+}
+
+void fr_context_show_text(FrContext* self, PangoLayout *layout,
+  SysInt x, SysInt y, SysInt m1, SysInt m0) {
+  FrIDrawInterface* iface = fr_draw_get_iface();
+
+  iface->move_to(self->v.cr, x + m1, y + m0);
+  iface->show_layout(self->v.cr, layout);
+}
+
+void fr_context_update_layout(FrContext* self, PangoLayout* layout) {
+
+  fr_i_draw_update_layout(self->v.cr, layout);
+}
+
 
 /* object api */
 static void fr_context_construct(FrContext *self, FrSurface *surface) {
   FrDrawSurface *draw_surface = fr_surface_get_draw_surface(surface);
 
-  self->cr = fr_i_draw_create(draw_surface);
+  self->v.cr = fr_i_draw_create(draw_surface);
 }
 
 FrContext* fr_context_new(void) {
@@ -122,7 +144,7 @@ FrContext *fr_context_new_I(FrSurface *surface) {
 static void fr_context_dispose(SysObject* o) {
   FrContext *self = FR_CONTEXT(o);
 
-  sys_clear_pointer(&self->cr, fr_i_draw_destroy);
+  sys_clear_pointer(&self->v.cr, fr_i_draw_destroy);
 
   SYS_OBJECT_CLASS(fr_context_parent_class)->dispose(o);
 }

@@ -480,12 +480,12 @@ void fr_i_draw_update_layout(FrDrawContext *cr, PangoLayout *layout) {
   FrIDrawInterface* self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
-  self->update_layout(self, layout);
+  self->update_layout(cr, layout);
 }
 
 void fr_i_draw_show_layout(FrDrawContext* cr, PangoLayout* layout) {
   FrIDrawInterface* self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
-  self->show_layout(self, layout);
+  self->show_layout(cr, layout);
 }

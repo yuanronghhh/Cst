@@ -11,7 +11,7 @@ SYS_DEFINE_TYPE(CstLBodyContext, cst_lbody_context, CST_TYPE_RENDER_CONTEXT);
 static void cst_lbody_context_layout_self_i (CstRenderContext *o, CstRenderNode *rnode, CstLayout *layout) {
   SysInt width, height;
 
-  cst_layout_get_buffer_size(layout, &width, &height);
+  cst_layout_get_size(layout, &width, &height);
   cst_render_node_set_size(rnode, width, height);
 
   o->prefer_width = width;

@@ -56,7 +56,7 @@ CstFlexBox *cst_flex_box_new_I(void) {
 }
 
 static void cst_flex_box_dispose(SysObject* o) {
-  CstFlexBox *self = CST_FLEX_BOX(o);
+  // CstFlexBox *self = CST_FLEX_BOX(o);
 
   SYS_OBJECT_CLASS(cst_flex_box_parent_class)->dispose(o);
 }

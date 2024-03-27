@@ -13,8 +13,6 @@ CstLayerNode *cst_abs_node_get_children_i(CstLayerNode *o) {
 
 CstLayerNode* cst_abs_node_get_parent_i(CstLayerNode *o) {
   CstAbsNode *anode = CST_ABS_NODE(o);
-  CstLayer *layer = cst_layer_node_get_layer(o);
-
   CstAbsNode* p = PNODE_TO_ABS_NODE(sys_pnode_prev(&anode->pnode));
 
   return CST_LAYER_NODE(p);

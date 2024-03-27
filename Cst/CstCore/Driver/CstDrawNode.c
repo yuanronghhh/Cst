@@ -21,7 +21,7 @@ CstDrawNode *cst_draw_node_new_I(void) {
 }
 
 static void cst_draw_node_dispose(SysObject* o) {
-  CstDrawNode *self = CST_DRAW_NODE(o);
+  // CstDrawNode *self = CST_DRAW_NODE(o);
 
   SYS_OBJECT_CLASS(cst_draw_node_parent_class)->dispose(o);
 }

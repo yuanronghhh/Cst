@@ -56,7 +56,7 @@ CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
   return sur;
 }
 
-CstSurface* cst_surface_window_surface(FrWindow *window, SysInt width, SysInt height) {
+CstSurface* cst_surface_create_window_surface(FrWindow *window, SysInt width, SysInt height) {
   FrIDevice *device = FR_I_DEVICE(window);
 
   FrSurface* fsur = fr_surface_create_device_surface_full(device, width, height);

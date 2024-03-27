@@ -87,7 +87,7 @@ static void cst_text_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
   const FrRect *bound = cst_render_node_get_bound(rnode);
   const FrSInt4 *m4 = cst_render_node_get_margin(rnode);
 
-  fr_font_context_show_text(cr, playout, bound->x, bound->y, m4->m1, m4->m0);
+  fr_context_show_text(cr, playout, bound->x, bound->y, m4->m1, m4->m0);
 }
 
 void cst_text_get_size(CstRenderNode *o, SysInt *width, SysInt *height) {

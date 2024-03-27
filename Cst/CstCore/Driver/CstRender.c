@@ -35,7 +35,7 @@ void cst_render_teardown(void) {
 static void init_body_layout_info(CstRenderNode* rnode, CstLayout* layout) {
   SysInt width, height;
 
-  cst_layout_get_buffer_size(layout, &width, &height);
+  cst_layout_get_size(layout, &width, &height);
   cst_render_node_set_prefer_size(rnode, width, height);
   cst_render_node_set_size(rnode, width, height);
 }

@@ -10,7 +10,6 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FrCanvas.h>
 #include <Framework/Graph/FrDraw.h>
 #include <Framework/Graph/FrIDraw.h>
-#include <Framework/Graph/FrFontContext.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrCairoDraw.h>
 #include <Framework/Graph/FrSurface.h>

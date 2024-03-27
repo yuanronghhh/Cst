@@ -23,7 +23,7 @@ struct _FrDraw {
   SysObject parent;
 
   /* <private> */
-  FrContext *ctx;
+  FrContext *cr;
   FrSurface *idevice_surface;
   FrSurface *paint_surface;
   FrIDevice *idevice;
@@ -40,6 +40,9 @@ SYS_API void fr_draw_frame_end(FrDraw *self, FrRegion *region);
 void fr_draw_setup(const SysChar *name, FrIDevice *idevice);
 void fr_draw_teardown(void);
 FrIDrawInterface* fr_draw_get_iface(void);
+
+void fr_draw_set_cr(FrDraw *self, FrContext * cr);
+FrContext * fr_draw_get_cr(FrDraw *self);
 
 SYS_END_DECLS
 

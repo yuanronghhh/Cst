@@ -10,12 +10,11 @@ SYS_DEFINE_TYPE(CstTextContext, cst_text_context, CST_TYPE_RENDER_CONTEXT);
 
 
 static void cst_text_context_relayout_i(
-  CstRenderContext *ctx, 
-  CstRenderNode *o, 
+  CstRenderContext *ctx,
+  CstRenderNode *o,
   CstLayout *layout) {
   CstText *text = CST_TEXT(o);
 
-  FrDraw *draw;
   SysInt width = 0;
   SysInt height = 0;
 
@@ -24,9 +23,9 @@ static void cst_text_context_relayout_i(
 
   FrContext* cr = cst_layout_get_cr(layout);
 
-  fr_layout_set_font_description (playout, font_desc);
-  fr_layout_get_pixel_size(playout, &width, &height);
-  fr_font_context_layout_layout(cr, playout);
+  pango_layout_set_font_description (playout, font_desc);
+  pango_layout_get_pixel_size(playout, &width, &height);
+  fr_context_update_layout(cr, playout);
   cst_render_node_set_size(o, width, height);
 }
 

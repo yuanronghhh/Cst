@@ -75,10 +75,10 @@ static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
 }
 
 static void cst_abs_layer_check_i(CstLayer *o, CstLayout *layout) {
-  CstAbsLayer* self = CST_ABS_LAYER(o);
+  // CstAbsLayer* self = CST_ABS_LAYER(o);
 
-  FrRegion *region = cst_layout_get_region(layout);
-  AbsLayerPass ctx = { o, region };
+  // FrRegion *region = cst_layout_get_region(layout);
+  // AbsLayerPass ctx = { o, region };
 }
 
 static CstLayerNode *cst_abs_layer_new_node_i(CstLayer *layer) {
@@ -98,7 +98,7 @@ static void cst_abs_layer_iterate_node_i(CstLayer* o,
   SysPointer user_data) {
 
   CstAbsLayer *self = CST_ABS_LAYER(o);
-  CstLayerNode *node = NULL;
+  // CstLayerNode *node = NULL;
 
   sys_queue_foreach(&(self->pqueue), node) {
     if(!func(node->data, user_data)) {
@@ -124,7 +124,7 @@ CstLayer *cst_abs_layer_new(void) {
 static void cst_abs_layer_dispose(SysObject* o) {
   CstAbsLayer *self = CST_ABS_LAYER(o);
 
-  sys_pqueue_destroy(&self->pqueue, _sys_object_unref);
+  sys_pqueue_destroy(&self->pqueue, (SysDestroyFunc)_sys_object_unref);
 
   SYS_OBJECT_CLASS(cst_abs_layer_parent_class)->dispose(o);
 }

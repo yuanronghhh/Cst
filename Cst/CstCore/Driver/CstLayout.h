@@ -21,12 +21,13 @@ struct _CstLayout {
 
   /* CST_LAYER_ENUM */
   CstLayer* layer;
-  FrRegion *region;
-  FrContext *cr;
-  FrWindow* window;
+  FrRegion* region;
+  FrIDevice* idevice;
 
   /* CstSurface */
   CstSurface *surface;
+
+  FrDraw *draw;
 };
 
 struct _CstLayoutClass {
@@ -35,12 +36,12 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(FrWindow *window, FrContext *cr, FrRegion *region);
+CstLayout *cst_layout_new_I(FrIDevice *idevice, FrDraw *draw, FrRegion *region);
 
 SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FrRegion *cst_layout_get_region(CstLayout* self);
 
-void cst_layout_get_buffer_size(CstLayout* self, SysInt* width, SysInt* height);
+void cst_layout_get_size(CstLayout* self, SysInt* width, SysInt* height);
 
 void cst_layout_begin_layout(CstLayout* self);
 void cst_layout_end_layout(CstLayout * self);
@@ -51,7 +52,6 @@ CST_RENDER_STATE_ENUM cst_layout_get_state(CstLayout *self);
 void cst_layout_set_layer(CstLayout *self, CstLayer * layer);
 CstLayer * cst_layout_get_layer(CstLayout *self);
 
-void cst_layout_set_cr(CstLayout *self, FrContext * cr);
 FrContext * cst_layout_get_cr(CstLayout *self);
 
 void cst_layout_set_surface(CstLayout *self, CstSurface * surface);

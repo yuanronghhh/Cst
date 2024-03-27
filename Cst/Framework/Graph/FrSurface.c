@@ -87,7 +87,7 @@ FrSurface *fr_surface_create_surface(FrIDevice *device, SysInt width, SysInt hei
 }
 
 static void fr_surface_dispose(SysObject* o) {
-  FrSurface *self = FR_SURFACE(o);
+  // FrSurface *self = FR_SURFACE(o);
 
   SYS_OBJECT_CLASS(fr_surface_parent_class)->dispose(o);
 }

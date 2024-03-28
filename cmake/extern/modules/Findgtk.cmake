@@ -41,7 +41,7 @@ set(GTK_DEPS
   "tiff"
   "png"
   "pango"
-  "epoxy"
+  "libepoxy"
   "glib"
   "cairo"
   "pixman"

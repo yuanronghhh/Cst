@@ -55,6 +55,7 @@ function(add_deps_N
 
   list(REMOVE_DUPLICATES _INCS)
   list(REMOVE_DUPLICATES _LIBS)
+  list(REMOVE_DUPLICATES _FILES)
 
   include_directories(${_INCS})
   IF ("${INNER_LIBS}" STREQUAL "")

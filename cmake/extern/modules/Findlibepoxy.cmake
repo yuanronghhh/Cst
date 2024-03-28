@@ -36,7 +36,6 @@ IF(WIN32)
 ENDIF()
 
 set(LIBEPOXY_DEPS
-   
 )
 add_dep_for_libray_N(libepoxy "${LIBEPOXY_DEPS}")
 

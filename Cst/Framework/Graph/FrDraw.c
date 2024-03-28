@@ -23,7 +23,7 @@ void fr_draw_set_is_painting(FrDraw *self, SysBool is_painting) {
 }
 
 SysBool fr_draw_get_is_painting(FrDraw *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self != NULL, false);
 
   return self->is_painting;
 }

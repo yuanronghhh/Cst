@@ -16,38 +16,21 @@ SYS_BEGIN_DECLS
 struct _FrDrawClass {
   SysObjectClass parent;
 
-  void (*construct) (FrDraw *o, FrIDevice *idevice);
+  void (*construct) (FrDraw *o);
 };
 
 struct _FrDraw {
   SysObject parent;
 
   /* <private> */
-  FrSurface *idevice_surface;
-  FrIDevice *idevice;
-
-  /* FrSurface */
-  SysHArray *surfaces;
-  SysBool is_painting;
 };
 
 SYS_API SysType fr_draw_get_type(void);
-SYS_API FrDraw* fr_draw_new_I(FrIDevice *idevice);
 
-SYS_API SysBool fr_draw_frame_need_draw(FrDraw *self);
-SYS_API void fr_draw_frame_begin(FrDraw *self, FrRegion *region);
-SYS_API void fr_draw_frame_end(FrDraw *self, FrRegion *region);
-SYS_API void fr_draw_get_buffer_size (FrDraw *self, SysInt *width, SysInt *height);
-FrSurface *fr_draw_get_surface_by_idx(FrDraw *self, SysInt idx);
-
-void fr_draw_setup(const SysChar *name, FrIDevice *idevice);
-void fr_draw_teardown(void);
-FrIDrawInterface* fr_draw_get_iface(void);
-void fr_draw_set_surfaces(FrDraw *self, SysHArray * surfaces);
-SysHArray * fr_draw_get_surfaces(FrDraw *self);
-
-void fr_draw_set_is_painting(FrDraw *self, SysBool is_painting);
-SysBool fr_draw_get_is_painting(FrDraw *self);
+SYS_API void fr_draw_setup(const SysChar *name);
+SYS_API void fr_draw_teardown(void);
+SYS_API FrIDrawInterface* fr_draw_get_iface(void);
+SYS_API FrIDraw* fr_draw_get_g_idraw(void);
 
 SYS_END_DECLS
 

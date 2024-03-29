@@ -11,18 +11,18 @@ SYS_BEGIN_DECLS
 #define FR_CAIRO_DRAW_GET_CLASS(o) sys_instance_get_class(o, FrCairoDrawClass)
 
 struct _FrCairoDrawClass {
-  SysObjectClass parent;
+  FrDrawClass parent;
 };
 
 struct _FrCairoDraw {
-  SysObject parent;
+  FrDraw parent;
 
   /* <private> */
 };
 
 SYS_API SysType fr_cairo_draw_get_type(void);
 SYS_API FrDraw *fr_cairo_draw_new(void);
-SYS_API FrDraw *fr_cairo_draw_new_I(FrIDevice *device);
+SYS_API FrDraw *fr_cairo_draw_new_I(void);
 
 SYS_END_DECLS
 

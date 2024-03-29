@@ -6,13 +6,12 @@
 SYS_BEGIN_DECLS
 
 #include <Framework/Graph/FrGraph.h>
-#include <Framework/Graph/FrCanvasPrivate.h>
-#include <Framework/Graph/FrCanvas.h>
 #include <Framework/Graph/FrDraw.h>
 #include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrCairoDraw.h>
 #include <Framework/Graph/FrSurface.h>
+#include <Framework/Graph/FrDrawContext.h>
 
 #include <Framework/DataType/FrMain.h>
 #include <Framework/DataType/FrSource.h>

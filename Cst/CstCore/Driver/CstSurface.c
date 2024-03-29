@@ -5,10 +5,9 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstAlgorithm.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <Framework/Device/FrIDevice.h>
 
 
-SYS_DEFINE_TYPE(CstSurface, cst_surface, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(CstSurface, cst_surface, FR_TYPE_SURFACE);
 
 
 void cst_surface_layout_r(CstSurface* self, CstRenderNode* rnode, CstLayout* layout) {
@@ -54,7 +53,7 @@ CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
 }
 
 CstSurface* cst_surface_create_device_surface(FrIDevice *device, SysInt width, SysInt height) {
-  FrDrawSurface* draw_surface = fr_i_device_create_surface(device, width, height);
+  FrDrawSurface* draw_surface = fr_i_draw_create_surface(device, width, height);
 
   return cst_surface_new_I(draw_surface);
 }

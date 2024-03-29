@@ -25,7 +25,7 @@ struct _CstLayout {
   /* CstSurface */
   CstSurface *surface;
 
-  FrDraw *draw;
+  FrDrawContext *draw_context;
 };
 
 struct _CstLayoutClass {
@@ -34,7 +34,7 @@ struct _CstLayoutClass {
 
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
-CstLayout *cst_layout_new_I(FrDraw *draw, FrRegion *region);
+CstLayout *cst_layout_new_I(FrDrawContext *draw_context, FrRegion *region);
 
 SysBool cst_layout_is_state(CstLayout * self, SysInt state);
 FrRegion *cst_layout_get_region(CstLayout* self);

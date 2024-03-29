@@ -19,9 +19,9 @@ typedef  struct  _FrSInt4          FrSInt4;
 typedef  struct _cairo_region  FrRegion;
 typedef  struct _cairo_rectangle_int FrRect;
 
-typedef struct _cairo FrDrawContext;
+typedef struct _cairo FrDrawBrush;
 typedef struct _cairo_surface FrDrawSurface;
-typedef struct _cairo_pattern FrPattern;
+typedef struct _cairo_pattern FrDrawPattern;
 
 #define FrImage pixman_image_t
 

@@ -80,8 +80,8 @@ typedef struct _FrSurfaceClass FrSurfaceClass;
 typedef struct _FrContext FrContext;
 typedef struct _FrContextClass FrContextClass;
 
-typedef struct _FrFontContext FrFontContext;
-typedef struct _FrFontContextClass FrFontContextClass;
+typedef struct _FrDrawContext FrDrawContext;
+typedef struct _FrDrawContextClass FrDrawContextClass;
 
 typedef  struct  _FrWindow           FrWindow;
 typedef  struct  _FrWindowClass      FrWindowClass;

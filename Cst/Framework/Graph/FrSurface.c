@@ -43,7 +43,7 @@ void fr_surface_flush(FrSurface *self) {
 }
 
 FrSurface* fr_surface_create_device_surface_full(FrIDevice *device, SysInt width, SysInt height) {
-  FrDrawSurface* draw_surface = fr_i_device_create_surface(device, width, height);
+  FrDrawSurface* draw_surface = fr_i_draw_create_surface(device, width, height);
 
   return fr_surface_create_draw_surface(draw_surface);
 }

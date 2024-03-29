@@ -47,17 +47,37 @@ CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self) {
   return self->rctx;
 }
 
-SysInt render_node_get_width (CstFlexItem *item) {
+static SysInt render_node_get_width (CstFlexItem *item) {
   CstRenderNode* self = CST_RENDER_NODE(item);
 
   return cst_render_node_get_width(self);
+}
+
+static SysInt render_node_get_direction(CstFlexItem *item) {
+  CstRenderNode* rnode = CST_RENDER_NODE(item);
+
+  return cst_render_node_get_direction(rnode);
+}
+
+static const FrRect* render_node_get_bound(CstFlexItem* item) {
+  CstRenderNode* rnode = CST_RENDER_NODE(item);
+
+  return cst_render_node_get_bound(rnode);
+}
+
+static const SysChar* render_node_get_name(CstFlexItem* item) {
+  CstRenderNode* rnode = CST_RENDER_NODE(item);
+
+  return cst_render_node_get_name(rnode);
 }
 
 static void render_node_i_com_node_imp(CstIComNodeInterface* iface) {
 }
 
 static void render_node_flex_item_imp(CstFlexItemInterface *iface) {
-
+  iface->get_name = render_node_get_name;
+  iface->get_bound = render_node_get_bound;
+  iface->get_direction = render_node_get_direction;
   iface->get_width = render_node_get_width;
 }
 

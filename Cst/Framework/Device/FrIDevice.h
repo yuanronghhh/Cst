@@ -16,12 +16,10 @@ struct _FrIDeviceInterface {
 
   /* <private> */
   void (*get_size) (FrIDevice *self, SysInt *width, SysInt *height);
-  FrDrawSurface* (*create_surface) (FrIDevice* device, SysInt width, SysInt height);
 };
 
 SysType fr_i_device_get_type(void);
 void fr_i_device_get_size (FrIDevice *self, SysInt *width, SysInt *height);
-FrDrawSurface* fr_i_device_create_surface (FrIDevice *self, SysInt width, SysInt height);
 
 SYS_END_DECLS
 

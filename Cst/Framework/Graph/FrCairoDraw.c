@@ -8,10 +8,10 @@
 
 static void i_draw_imp(FrIDrawInterface *iface);
 
-SYS_DEFINE_WITH_CODE(FrCairoDraw, fr_cairo_draw, SYS_TYPE_OBJECT,
+SYS_DEFINE_WITH_CODE(FrCairoDraw, fr_cairo_draw, FR_TYPE_DRAW,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_DRAW, i_draw_imp));
 
-void cairo_stroke_mp_i(FrDrawContext* cr, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4) {
+void cairo_stroke_mp_i(FrDrawBrush* cr, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4) {
   sys_return_if_fail(cr != NULL);
   sys_return_if_fail(m4 != NULL);
   sys_return_if_fail(p4 != NULL);
@@ -26,7 +26,7 @@ void cairo_stroke_mp_i(FrDrawContext* cr, const FrRect *bound, const FrSInt4* m4
   cairo_stroke(cr);
 }
 
-void cairo_context_fill_bound_i(FrDrawContext* cr, const FrRect *bound) {
+void cairo_context_fill_bound_i(FrDrawBrush* cr, const FrRect *bound) {
   sys_return_if_fail(cr != NULL);
   sys_return_if_fail(bound != NULL);
 
@@ -82,32 +82,60 @@ FrDrawSurface* cairo_surface_create_similar_image_i(FrDrawSurface *surface, SysI
   return nsur;
 }
 
-void cairo_context_fill_background_i(FrDrawContext *cr, SysInt width, SysInt height) {
+void cairo_context_fill_background_i(FrDrawBrush *cr, SysInt width, SysInt height) {
   cairo_set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
   cairo_rectangle(cr, 0, 0, width, height);
   cairo_paint(cr);
 }
 
+SysInt cairo_rounded_rectangle_i(FrDrawBrush* cr,
+  SysDouble x, SysDouble y, SysDouble w, SysDouble h, 
+  SysDouble radius) {
+
+  SysDouble degrees = M_PI / 180.0;
+
+  cairo_new_sub_path(cr);
+  cairo_arc(cr, x + w - radius, y + radius, radius, -90 * degrees, 0 * degrees);
+  cairo_arc(cr, x + w - radius, y + h - radius, radius, 0 * degrees, 90 * degrees);
+  cairo_arc(cr, x + radius, y + h - radius, radius, 90 * degrees, 180 * degrees);
+  cairo_arc(cr, x + radius, y + radius, radius, 180 * degrees, 270 * degrees);
+  cairo_close_path(cr);
+
+  cairo_set_source_rgb(cr, 0.5, 0.5, 1);
+  cairo_fill_preserve(cr);
+  cairo_set_source_rgba(cr, 0.5, 0, 0, 0.5);
+  cairo_set_line_width(cr, 10.0);
+  cairo_stroke(cr);
+
+  return cairo_status(cr);
+}
+
 static void i_draw_imp(FrIDrawInterface *iface) {
+  iface->set_source_rgba = cairo_set_source_rgba;
+  iface->rectangle = cairo_rectangle;
+  iface->paint = cairo_paint;
+  iface->create = cairo_create;
+  iface->destroy = cairo_destroy;
+  iface->rounded_rectangle = cairo_rounded_rectangle_i;
   iface->image_surface_create = cairo_image_surface_create_i;
   iface->create_surface = cairo_create_surface_i;
   iface->surface_create_similar_image = cairo_surface_create_similar_image_i;
 }
 
 /* object api */
-static void fr_cairo_draw_construct(FrDraw *o, FrIDevice *device) {
+static void fr_cairo_draw_construct(FrDraw *o) {
 
-  FR_DRAW_CLASS(fr_cairo_draw_parent_class)->construct(o, device);
+  FR_DRAW_CLASS(fr_cairo_draw_parent_class)->construct(o);
 }
 
 FrDraw* fr_cairo_draw_new(void) {
   return sys_object_new(FR_TYPE_CAIRO_DRAW, NULL);
 }
 
-FrDraw *fr_cairo_draw_new_I(FrIDevice *device) {
+FrDraw *fr_cairo_draw_new_I(void) {
   FrDraw *o = fr_cairo_draw_new();
 
-  fr_cairo_draw_construct(o, device);
+  fr_cairo_draw_construct(o);
 
   return o;
 }
@@ -120,7 +148,9 @@ static void fr_cairo_draw_dispose(SysObject* o) {
 
 static void fr_cairo_draw_class_init(FrCairoDrawClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FrDrawClass* dcls = FR_DRAW_CLASS(cls);
 
+  dcls->construct = fr_cairo_draw_construct;
   ocls->dispose = fr_cairo_draw_dispose;
 }
 

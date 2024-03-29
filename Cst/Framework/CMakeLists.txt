@@ -120,15 +120,14 @@ set(SRC
   ./Graph/FrDraw.h
   ./Graph/FrIDraw.c
   ./Graph/FrIDraw.h
+  ./Graph/FrDrawContext.c
+  ./Graph/FrDrawContext.h
   ./Graph/FrSurface.c
   ./Graph/FrSurface.h
   ./Graph/FrContext.c
   ./Graph/FrContext.h
   ./Graph/FrCairoDraw.c
   ./Graph/FrCairoDraw.h
-  ./Graph/FrCanvasPrivate.h
-  ./Graph/FrCanvas.h
-  ./Graph/FrCanvas.c
   # ./Graph/FrText.c
   # ./Graph/FrText.h
 

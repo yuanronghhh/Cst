@@ -19,7 +19,7 @@ struct _FrContext {
 
   /* <private> */
   union ctx {
-    FrDrawContext *cr;
+    FrDrawBrush *cr;
   } v;
 };
 

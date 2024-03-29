@@ -1,5 +1,6 @@
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>
+#include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrDraw.h>
 #include <Framework/Graph/FrIDraw.h>
 
@@ -9,7 +10,7 @@ void fr_context_fill_bound(FrContext* self, const FrRect *bound) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(bound != NULL);
 
-  FrDrawContext* cr = self->v.cr;
+  FrDrawBrush* cr = self->v.cr;
   FrIDrawInterface* idraw_iface = fr_draw_get_iface();
 
   idraw_iface->rectangle(cr, bound->x, bound->y, bound->width, bound->height);
@@ -17,7 +18,7 @@ void fr_context_fill_bound(FrContext* self, const FrRect *bound) {
 }
 
 void fr_context_fill_background (FrContext *self, SysInt width, SysInt height) {
-  FrDrawContext *cr = self->v.cr;
+  FrDrawBrush *cr = self->v.cr;
   FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
   idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
@@ -47,7 +48,7 @@ void fr_context_stroke_mp(FrContext* self, const FrRect *bound, const FrSInt4* m
   sys_return_if_fail(p4 != NULL);
   sys_return_if_fail(bound != NULL);
 
-  FrDrawContext* cr = self->v.cr;
+  FrDrawBrush* cr = self->v.cr;
   FrIDrawInterface* idraw_iface = fr_draw_get_iface();
 
   SysInt x = bound->x + m4->m3;

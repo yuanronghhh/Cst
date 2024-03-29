@@ -122,21 +122,23 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   FrRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
-  FrDraw* draw;
+  FrDrawContext* draw_context;
   CstAlgorithm *alg;
   FrIDevice *device;
+  FrIDraw* idraw;
 
   cst_render_realize(self, v_module);
 
   device = cst_render_get_default_device(self);
   region = render_create_region(device);
+  idraw = fr_draw_get_g_idraw();
 
-  draw = fr_draw_new_I(device);
-  fr_draw_set_surfaces(draw, &self->surfaces);
+  draw_context = fr_draw_context_new_I(idraw, device);
+  fr_draw_context_set_surfaces(draw_context, &self->surfaces);
 
-  layout = cst_layout_new_I(draw, region);
+  layout = cst_layout_new_I(draw_context, region);
 
-  fr_draw_frame_begin(draw, region);
+  fr_draw_context_frame_begin(draw_context, region);
 
   rnode = self->body_rnode;
   init_body_layout_info(rnode, layout);
@@ -144,7 +146,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   alg = cst_flex_algorithm_new_I();
   cst_algorithm_layout(alg, rnode, layout);
 
-  fr_draw_frame_end(draw, region);
+  fr_draw_context_frame_end(draw_context, region);
 
   fr_region_destroy(region);
   sys_object_unref(layout);
@@ -177,7 +179,7 @@ void cst_render_request_resize_device(CstRender *self, SysInt width, SysInt heig
 
   region = fr_region_create_rectangle(&bound);
   device = FR_I_DEVICE(self->device);
-  draw = fr_draw_new_I(device);
+  draw = fr_draw_context_new_I(device);
   device = cst_render_get_default_device(self);
 
   layout = cst_layout_new_I(device, draw, region);
@@ -208,6 +210,7 @@ CstSurface* cst_render_get_default_surface(void) {
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
   CstSurface* surf;
   FrWindow *window;
+  FrDisplay* display;
   FrIDevice *device;
   SysInt width = 0, height = 0;
 
@@ -215,12 +218,13 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
     self->device = NULL;
     surf = cst_surface_create_image_surface(800, 600);
   } else {
-    window = fr_window_top_new(self->display);
+    display = fr_display_new_I();
+    window = fr_window_top_new(display);
     device = FR_I_DEVICE(window);
     fr_i_device_get_size(device, &width, &height);
 
-    self->display = fr_display_new_I();
     surf = cst_surface_create_device_surface(device, width, height);
+    self->display = display;
     self->device = device;
   }
 

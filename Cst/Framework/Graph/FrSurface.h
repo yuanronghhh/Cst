@@ -30,10 +30,12 @@ SYS_API FrSurface* fr_surface_create_device_surface(FrIDevice* device);
 SYS_API FrSurface* fr_surface_create_device_surface_full(FrIDevice* device, SysInt width, SysInt height);
 SYS_API FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface, SysInt width, SysInt height);
 SYS_API FrSurface *fr_surface_image_surface_create(SysInt width, SysInt height);
+SYS_API void fr_surface_set_source_surface(FrSurface *surface, FrSurface *dst_surface);
 
-void fr_surface_set_draw_surface(FrSurface *self, FrDrawSurface * draw_surface);
-FrDrawSurface * fr_surface_get_draw_surface(FrSurface *self);
-void fr_surface_flush(FrSurface *self);
+SYS_API void fr_surface_set_draw_surface(FrSurface *self, FrDrawSurface * draw_surface);
+SYS_API FrDrawSurface * fr_surface_get_draw_surface(FrSurface *self);
+SYS_API void fr_surface_flush(FrSurface *self);
+SYS_API FrSurface *fr_surface_update_surface(FrSurface *self, FrSurface *idevice_surface, SysInt width, SysInt height);
 
 SYS_END_DECLS
 

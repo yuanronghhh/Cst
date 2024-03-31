@@ -582,12 +582,11 @@ class TemplateGenerator:
 
 
 template_struct = """
-struct _FrFrame {
-  SysObject parent;
+struct _FrIDrawInterface {
+  SysTypeInterface parent;
 
   /* <private> */
-  FrSurface *idevice_surface;
-  FrIDevice *idevice;
+  void (*overlay) (FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, SysInt y);
 };
 """
 
@@ -648,8 +647,9 @@ def main():
     header_path = "Framework/Graph"
 
     gen = TemplateGenerator(template_struct, dst, header_path)
-    # gen.generate_field()
-    r = gen.generate_file()
+    r = gen.gen_h_interface_file(gen.sInfo)
+    r += gen.gen_c_interface_file(gen.sInfo)
+    print(r)
 
 if __name__ == '__main__':
     main()

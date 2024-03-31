@@ -8,6 +8,15 @@
 SYS_DEFINE_TYPE(FrSurface, fr_surface, SYS_TYPE_OBJECT);
 
 
+FrSurface *fr_surface_update_surface(FrSurface *self, FrSurface *device_surface, SysInt width, SysInt height) {
+  FrDrawSurface * new_surface = fr_i_draw_surface_create_similar_image(self->draw_surface, width, height);
+
+  sys_clear_pointer(&self->draw_surface, fr_i_draw_surface_destroy);
+  self->draw_surface = new_surface;
+
+  return self;
+}
+
 FrSurface *fr_surface_image_surface_create(SysInt width, SysInt height) {
   FrDrawSurface *draw_surface = fr_i_draw_image_surface_create(width, height);
   if(draw_surface == NULL) { return NULL; }
@@ -87,7 +96,9 @@ FrSurface *fr_surface_create_surface(FrIDevice *device, SysInt width, SysInt hei
 }
 
 static void fr_surface_dispose(SysObject* o) {
-  // FrSurface *self = FR_SURFACE(o);
+  FrSurface *self = FR_SURFACE(o);
+
+  sys_clear_pointer(&self->draw_surface, fr_i_draw_surface_destroy);
 
   SYS_OBJECT_CLASS(fr_surface_parent_class)->dispose(o);
 }

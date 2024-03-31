@@ -72,14 +72,50 @@ void fr_draw_context_frame_begin(FrDrawContext* self, FrRegion* region) {
 
   p = (FrSurface**)(self->surfaces->pdata);
   for (SysUInt i = 0; i < self->surfaces->len; i++, p++) {
-    sys_clear_pointer(p, _sys_object_unref);
+    *p = fr_surface_update_surface(*p, idevice_surface, width, height);
 
-    *p = fr_surface_create_image_surface_from_surface(idevice_surface, width, height);
     prepare_paint_surface(self->idevice, *p, region);
   }
 
   self->idevice_surface = idevice_surface;
   self->is_painting = false;
+}
+
+static void draw_context_frame_composite(FrDrawContext *self) {
+  FrSurface* pb, *pn;
+  FrContext *cr, *paint_cr;
+
+  pb = self->idevice_surface;
+  pn = self->surfaces->pdata[0];
+
+  cr = fr_context_new_I(pb);
+  paint_cr = fr_context_new_I(pn);
+
+  fr_context_stoke_debug(paint_cr);
+
+  fr_context_set_source_surface(cr, pb, 0, 0);
+  fr_context_paint(cr);
+
+  sys_object_unref(cr);
+  sys_object_unref(paint_cr);
+
+#if 0
+  for (SysUInt i = 0; i < self->surfaces->len; i++) {
+    pn = self->surfaces->pdata[i];
+
+    cr = fr_context_new_I(pb);
+    paint_cr = fr_context_new_I(pn);
+
+    fr_context_stoke_debug(paint_cr);
+
+    fr_context_overlay(cr, pb, 0, 0);
+    fr_context_paint(cr);
+
+    sys_object_unref(cr);
+
+    pb = pn;
+  }
+#endif
 }
 
 void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
@@ -100,11 +136,11 @@ void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
   fr_context_rectangle(cr, box.x, box.y, box.width, box.height);
   fr_context_clip(cr);
   fr_context_paint(cr);
-  sys_object_unref(cr);
+  sys_clear_pointer(&cr, _sys_object_unref);
 
-  sys_clear_pointer(&cr, fr_context_destroy);
+  draw_context_frame_composite(self);
+
   fr_surface_flush(self->idevice_surface);
-
   sys_clear_pointer(&self->idevice_surface, _sys_object_unref);
 
   self->is_painting = true;
@@ -131,7 +167,10 @@ FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrIDevice* idevice) {
 }
 
 static void fr_draw_context_dispose(SysObject* o) {
-  // FrDrawContext *self = FR_DRAW_CONTEXT(o);
+  FrDrawContext *self = FR_DRAW_CONTEXT(o);
+
+  sys_clear_pointer(&self->idevice, _sys_object_unref);
+  sys_clear_pointer(&self->iface, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_draw_context_parent_class)->dispose(o);
 }

@@ -29,16 +29,18 @@ SYS_API FrContext *fr_context_new(void);
 SYS_API FrContext *fr_context_new_I(FrSurface *surface);
 void fr_context_fill_background (FrContext *self, SysInt width, SysInt height);
 void fr_context_fill_bound(FrContext* self, const FrRect* bound);
+void fr_context_stroke(FrContext *self);
 void fr_context_stroke_mp(FrContext* self, const FrRect* bound, const FrSInt4* m4, const FrSInt4* p4);
 void fr_context_set_color(FrContext* self, FrColor *color);
 void fr_context_set_source_surface (FrContext* self, FrSurface* surface,SysDouble x,SysDouble y);
 void fr_context_rectangle (FrContext* self,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
 void fr_context_clip (FrContext* self);
 void fr_context_paint (FrContext* self);
-void fr_context_destroy (FrContext* self);
 void fr_context_move_to (FrContext* self,SysDouble x,SysDouble y);
 void fr_context_save(FrContext* self);
 void fr_context_restore(FrContext* self);
+void fr_context_overlay(FrContext* self, FrSurface *surface, SysInt x, SysInt y);
+void fr_context_stoke_debug (FrContext *self);
 
 /* font */
 SYS_API void fr_context_draw_text(FrContext* self, PangoLayout* layout, SysInt x, SysInt y);

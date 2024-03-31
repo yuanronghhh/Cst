@@ -21,9 +21,18 @@ void fr_context_fill_background (FrContext *self, SysInt width, SysInt height) {
   FrDrawBrush *cr = self->v.cr;
   FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
-  idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 0.5);
+  idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
   idraw_iface->rectangle(cr, 0, 0, width, height);
   idraw_iface->paint(cr);
+}
+
+void fr_context_stoke_debug (FrContext *self) {
+  FrDrawBrush *cr = self->v.cr;
+  FrIDrawInterface *idraw_iface = fr_draw_get_iface();
+
+  idraw_iface->set_source_rgba(cr, 1.0, 0.0, 0.0, 0.8);
+  idraw_iface->rectangle(cr, 20, 30, 200, 300);
+  idraw_iface->stroke(cr);
 }
 
 void fr_context_set_color(FrContext * self, FrColor *color) {
@@ -32,8 +41,9 @@ void fr_context_set_color(FrContext * self, FrColor *color) {
 }
 
 void fr_context_set_source_surface (FrContext* self, FrSurface* surface, SysDouble x, SysDouble y) {
+  FrDrawSurface *draw_surface = fr_surface_get_draw_surface(surface);
 
-  fr_i_draw_set_source_surface(self->v.cr, surface->draw_surface, x, y);
+  fr_i_draw_set_source_surface(self->v.cr, draw_surface, x, y);
 }
 
 void fr_context_rectangle (FrContext* self,SysDouble x,SysDouble y,SysDouble width,SysDouble height) {
@@ -60,6 +70,12 @@ void fr_context_stroke_mp(FrContext* self, const FrRect *bound, const FrSInt4* m
   idraw_iface->stroke(cr);
 }
 
+void fr_context_stroke(FrContext *self) {
+  FrIDrawInterface* idraw_iface = fr_draw_get_iface();
+
+  idraw_iface->stroke(self->v.cr);
+}
+
 void fr_context_clip (FrContext* self) {
   sys_return_if_fail(self != NULL);
 
@@ -70,12 +86,6 @@ void fr_context_paint (FrContext* self) {
   sys_return_if_fail(self != NULL);
 
   fr_i_draw_paint (self->v.cr);
-}
-
-void fr_context_destroy (FrContext* self) {
-  sys_return_if_fail(self != NULL);
-
-  fr_i_draw_destroy(self->v.cr);
 }
 
 void fr_context_move_to (FrContext* self,SysDouble x,SysDouble y) {
@@ -122,6 +132,11 @@ void fr_context_update_layout(FrContext* self, PangoLayout* layout) {
   fr_i_draw_update_layout(self->v.cr, layout);
 }
 
+void fr_context_overlay(FrContext *self, FrSurface *surface, SysInt x, SysInt y) {
+  FrDrawSurface *draw_surface = fr_surface_get_draw_surface(surface);
+
+  fr_i_draw_context_overlay(self->v.cr, draw_surface, 0, 0);
+}
 
 /* object api */
 static void fr_context_construct(FrContext *self, FrSurface *surface) {

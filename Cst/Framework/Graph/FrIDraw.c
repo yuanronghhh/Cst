@@ -496,3 +496,11 @@ SysInt fr_i_draw_rounded_rectangle(FrDrawBrush* cr, SysDouble x, SysDouble y, Sy
 
   return self->rounded_rectangle(cr, x, y, w, h, radius);
 }
+
+void fr_i_draw_context_overlay (FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, SysInt y) {
+  FrIDrawInterface* self = fr_draw_get_iface();
+  sys_return_if_fail(self != NULL);
+
+  self->overlay(cr, surface, x, y);
+}
+

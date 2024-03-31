@@ -118,7 +118,6 @@ void cst_render_realize(CstRender *self, CstModule *v_module) {
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
 
-#if 1
   FrRegion *region;
   CstLayout* layout;
   CstRenderNode *rnode;
@@ -135,23 +134,18 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
 
   draw_context = fr_draw_context_new_I(idraw, device);
   fr_draw_context_set_surfaces(draw_context, &self->surfaces);
-
   layout = cst_layout_new_I(draw_context, region);
 
   fr_draw_context_frame_begin(draw_context, region);
-
   rnode = self->body_rnode;
   init_body_layout_info(rnode, layout);
-
   alg = cst_flex_algorithm_new_I();
   cst_algorithm_layout(alg, rnode, layout);
-
   fr_draw_context_frame_end(draw_context, region);
 
   fr_region_destroy(region);
   sys_object_unref(layout);
   sys_object_unref(alg);
-#endif
 }
 
 void cst_render_resize_device(CstRender *self) {
@@ -249,8 +243,9 @@ static void cst_render_dispose(SysObject* o) {
   CstRender *self = CST_RENDER(o);
 
   if (self->device) {
-    sys_object_unref(self->device);
-    sys_object_unref(self->display);
+
+    sys_clear_pointer(&self->device, _sys_object_unref);
+    sys_clear_pointer(&self->display, _sys_object_unref);
   }
 
   sys_harray_destroy(&self->surfaces);

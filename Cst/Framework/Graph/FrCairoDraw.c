@@ -1,7 +1,6 @@
 #include <Framework/Graph/FrCairoDraw.h>
-
-#include <Framework/Device/FrWindow.h>
 #include <Framework/Graph/FrIDraw.h>
+#include <Framework/Device/FrWindow.h>
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
 
@@ -110,16 +109,28 @@ SysInt cairo_rounded_rectangle_i(FrDrawBrush* cr,
   return cairo_status(cr);
 }
 
+static void cairo_overlay_i(FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, SysInt y) {
+
+  cairo_set_source_surface(cr, surface, x, y);
+  cairo_set_operator(cr, CAIRO_OPERATOR_OVERLAY);
+}
+
 static void i_draw_imp(FrIDrawInterface *iface) {
+  iface->overlay = cairo_overlay_i;
   iface->set_source_rgba = cairo_set_source_rgba;
+  iface->set_source_surface = cairo_set_source_surface;
   iface->rectangle = cairo_rectangle;
   iface->paint = cairo_paint;
   iface->create = cairo_create;
+  iface->stroke = cairo_stroke;
+  iface->clip = cairo_clip;
   iface->destroy = cairo_destroy;
   iface->rounded_rectangle = cairo_rounded_rectangle_i;
   iface->image_surface_create = cairo_image_surface_create_i;
   iface->create_surface = cairo_create_surface_i;
   iface->surface_create_similar_image = cairo_surface_create_similar_image_i;
+  iface->surface_flush = cairo_surface_flush;
+  iface->surface_destroy = cairo_surface_destroy;
 }
 
 /* object api */

@@ -1,5 +1,4 @@
 #include <CstCore/Driver/CstSurface.h>
-
 #include <CstCore/Driver/CstBoxLayer.h>
 #include <CstCore/Driver/CstAbsLayer.h>
 #include <CstCore/Driver/CstLayout.h>

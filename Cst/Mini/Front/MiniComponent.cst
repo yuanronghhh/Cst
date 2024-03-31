@@ -1,7 +1,7 @@
 import MenuBar from "./MiniMenuBar.cst";
 
 
-Component<id: "mini-component", surface: 1>: {
+Component<id: "mini-component">: {
   Style: {
     menu: {
       width: 200,

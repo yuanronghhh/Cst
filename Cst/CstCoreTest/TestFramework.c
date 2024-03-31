@@ -24,17 +24,10 @@ void test_fr_window_basic(void) {
 void test_fr_window_leak(void) {
   GLFWwindow *gwindow;
 
-  if (!glfwInit()) {
-    sys_error_N("%s", SYS_("GFLW failed to init"));
-  }
-
-  SYS_LEAK_IGNORE_BEGIN;
   gwindow = glfwCreateWindow(800, 600, "Leak Demo", NULL, NULL);
-  SYS_LEAK_IGNORE_END;
 
-  glfwMakeContextCurrent(gwindow);
+  glfwDestroyWindow(gwindow);
   glfwTerminate();
-
 }
 
 void test_fr_init(int argc, SysChar * argv[]) {

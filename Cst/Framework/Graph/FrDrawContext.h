@@ -22,7 +22,6 @@ struct _FrDrawContext {
   FrSurface* idevice_surface;
   FrIDevice* idevice;
 
-  /* FrSurface */
   SysHArray* surfaces;
   SysBool is_painting;
 };

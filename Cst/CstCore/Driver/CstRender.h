@@ -24,7 +24,7 @@ struct _CstRender {
   FrIDevice *device;
   CstRenderNode *body_rnode;
 
-  /* FrSurface */
+  /* CstSurface */
   SysHArray surfaces;
 };
 

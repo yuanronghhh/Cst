@@ -110,11 +110,23 @@ cst-test-check: cst-test-build
 system-build:
 	@make PROJ_NAME="SystemTestSuite" build-${PLATFORM}-prj
 
+system-check:
+	@export G_DEBUG=gc-friendly
+	@export G_SLICE=always-malloc
+	valgrind --leak-check=full \
+		--log-file=./check.log \
+		--leak-resolution=high \
+		--show-leak-kinds=all \
+		--show-reachable=no \
+		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
+		--suppressions=cst.supp  \
+		./build/Cst/System/TestSuite/SystemTestSuite ${ARGS}
+
 system: system-build
 	@./build/Cst/System/TestSuite/${BUILD_TYPE}/SystemTestSuite
 
 system-debug: system-build
-	@gvim --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
+	@gvim --servername GVIM1 --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:

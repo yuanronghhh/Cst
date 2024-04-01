@@ -18,7 +18,7 @@ FR_FUNC_DEFINE_EVENT(application_window_resize) {
   // CstApplication *app = CST_APPLICATION(user_data);
 
   CstRender *render = cst_render_get_g_render();
-  cst_render_resize_device(render);
+  cst_render_resize_surface(render);
 
   return 0;
 }
@@ -40,7 +40,9 @@ static void application_init_event(CstApplication* self) {
     "application_window_resize", application_window_resize,
     self);
 
-  awatch = fr_awatch_key_new_I(FR_KEY_Q, "application_quit_key", application_quit_key);
+  awatch = fr_awatch_key_new_I(FR_KEY_Q,
+      "application_quit_key", 
+      application_quit_key);
   fr_awatch_bind(awatch, (SysPointer)self);
   cst_module_add_awatch(v_module, awatch);
 }

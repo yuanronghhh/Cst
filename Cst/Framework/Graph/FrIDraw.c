@@ -7,7 +7,9 @@ SYS_DEFINE_INTERFACE(FrIDraw, fr_i_draw, SYS_TYPE_OBJECT);
 void fr_i_draw_default_init(FrIDrawInterface* iface) {
 }
 
-FrDrawSurface* fr_i_draw_surface_create_similar_image (FrDrawSurface* other, SysInt width, SysInt height) {
+FrDrawSurface* fr_i_draw_surface_create_similar_image (FrDrawSurface* other,
+    SysInt width,
+    SysInt height) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -21,7 +23,9 @@ FrDrawSurface* fr_i_draw_image_surface_create (SysInt width, SysInt height) {
   return self->image_surface_create(width, height);
 }
 
-FrDrawSurface* fr_i_draw_create_surface (FrIDevice *device, SysInt width, SysInt height) {
+FrDrawSurface* fr_i_draw_create_surface (FrIDevice *device,
+    SysInt width, 
+    SysInt height) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -42,7 +46,12 @@ FrDrawSurface* fr_i_draw_image_surface_create_from_png (const char * filename) {
   return self->image_surface_create_from_png(filename);
 }
 
-FrDrawSurface* fr_i_draw_surface_create_for_rectangle (FrDrawSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height) {
+FrDrawSurface* fr_i_draw_surface_create_for_rectangle (FrDrawSurface* target,
+    SysDouble x,
+    SysDouble y,
+    SysDouble width,
+    SysDouble height) {
+
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -91,14 +100,23 @@ SysInt fr_i_draw_image_surface_get_width (FrDrawSurface* surface) {
   return self->image_surface_get_width(surface);
 }
 
-void fr_i_draw_arc (FrDrawBrush* cr,SysDouble xc,SysDouble yc,SysDouble radius,SysDouble angle1,SysDouble angle2) {
+void fr_i_draw_arc (FrDrawBrush* cr,SysDouble xc,
+    SysDouble yc,
+    SysDouble radius,
+    SysDouble angle1,
+    SysDouble angle2) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->arc(cr, xc, yc, radius, angle1, angle2);
 }
 
-void fr_i_draw_arc_negative (FrDrawBrush* cr,SysDouble xc,SysDouble yc,SysDouble radius,SysDouble angle1,SysDouble angle2) {
+void fr_i_draw_arc_negative (FrDrawBrush* cr,
+    SysDouble xc,
+    SysDouble yc,
+    SysDouble radius,
+    SysDouble angle1,
+    SysDouble angle2) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -112,7 +130,11 @@ void fr_i_draw_clip (FrDrawBrush* cr) {
   self->clip(cr);
 }
 
-void fr_i_draw_clip_extents (FrDrawBrush* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2) {
+void fr_i_draw_clip_extents (FrDrawBrush* cr,
+    SysDouble * x1,
+    SysDouble * y1,
+    SysDouble * x2,
+    SysDouble * y2) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -133,7 +155,13 @@ void fr_i_draw_close_path (FrDrawBrush* cr) {
   self->close_path(cr);
 }
 
-void fr_i_draw_curve_to (FrDrawBrush* cr,SysDouble x1,SysDouble y1,SysDouble x2,SysDouble y2,SysDouble x3,SysDouble y3) {
+void fr_i_draw_curve_to (FrDrawBrush* cr,
+    SysDouble x1,
+    SysDouble y1,
+    SysDouble x2,
+    SysDouble y2,
+    SysDouble x3,
+    SysDouble y3) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -154,7 +182,11 @@ void fr_i_draw_fill (FrDrawBrush* cr) {
   self->fill(cr);
 }
 
-void fr_i_draw_fill_extents (FrDrawBrush* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2) {
+void fr_i_draw_fill_extents (FrDrawBrush* cr,
+    SysDouble * x1,
+    SysDouble * y1,
+    SysDouble * x2,
+    SysDouble * y2) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -175,7 +207,10 @@ void fr_i_draw_line_to (FrDrawBrush* cr,SysDouble x,SysDouble y) {
   self->line_to(cr, x, y);
 }
 
-void fr_i_draw_mask_surface (FrDrawBrush* cr,FrDrawSurface* surface,SysDouble surface_x,SysDouble surface_y) {
+void fr_i_draw_mask_surface (FrDrawBrush* cr,
+    FrDrawSurface* surface,
+    SysDouble surface_x,
+    SysDouble surface_y) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -217,7 +252,11 @@ void fr_i_draw_paint_with_alpha (FrDrawBrush* cr,SysDouble alpha) {
   self->paint_with_alpha(cr, alpha);
 }
 
-void fr_i_draw_path_extents (FrDrawBrush* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2) {
+void fr_i_draw_path_extents (FrDrawBrush* cr,
+    SysDouble * x1,
+    SysDouble * y1,
+    SysDouble * x2,
+    SysDouble * y2) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -238,21 +277,35 @@ void fr_i_draw_push_group (FrDrawBrush* cr) {
   self->push_group(cr);
 }
 
-void fr_i_draw_recording_surface_ink_extents (FrDrawSurface* surface,SysDouble * x0,SysDouble * y0,SysDouble * width,SysDouble * height) {
+void fr_i_draw_recording_surface_ink_extents (FrDrawSurface* surface,
+    SysDouble * x0,
+    SysDouble * y0,
+    SysDouble * width,
+    SysDouble * height) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->recording_surface_ink_extents(surface, x0, y0, width, height);
 }
 
-void fr_i_draw_rectangle (FrDrawBrush* cr,SysDouble x,SysDouble y,SysDouble width,SysDouble height) {
+void fr_i_draw_rectangle (FrDrawBrush* cr,
+    SysDouble x,
+    SysDouble y,
+    SysDouble width,
+    SysDouble height) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->rectangle(cr, x, y, width, height);
 }
 
-void fr_i_draw_rel_curve_to (FrDrawBrush* cr,SysDouble dx1,SysDouble dy1,SysDouble dx2,SysDouble dy2,SysDouble dx3,SysDouble dy3) {
+void fr_i_draw_rel_curve_to (FrDrawBrush* cr,
+    SysDouble dx1,
+    SysDouble dy1,
+    SysDouble dx2,
+    SysDouble dy2,
+    SysDouble dx3,
+    SysDouble dy3) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -308,7 +361,10 @@ void fr_i_draw_scale (FrDrawBrush* cr,SysDouble sx,SysDouble sy) {
   self->scale(cr, sx, sy);
 }
 
-void fr_i_draw_set_dash (FrDrawBrush* cr,const SysDouble * dashes,SysInt num_dashes,SysDouble offset) {
+void fr_i_draw_set_dash (FrDrawBrush* cr,
+    const SysDouble * dashes,
+    SysInt num_dashes,
+    SysDouble offset) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -329,21 +385,31 @@ void fr_i_draw_set_line_width (FrDrawBrush* cr,SysDouble width) {
   self->set_line_width(cr, width);
 }
 
-void fr_i_draw_set_source_rgb (FrDrawBrush* cr,SysDouble red,SysDouble green,SysDouble blue) {
+void fr_i_draw_set_source_rgb (FrDrawBrush* cr,
+    SysDouble red,
+    SysDouble green,
+    SysDouble blue) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->set_source_rgb(cr, red, green, blue);
 }
 
-void fr_i_draw_set_source_rgba (FrDrawBrush* cr,SysDouble red,SysDouble green,SysDouble blue,SysDouble alpha) {
+void fr_i_draw_set_source_rgba (FrDrawBrush* cr,
+    SysDouble red,
+    SysDouble green,
+    SysDouble blue,
+    SysDouble alpha) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->set_source_rgba(cr, red, green, blue, alpha);
 }
 
-void fr_i_draw_set_source_surface (FrDrawBrush* cr,FrDrawSurface* surface,SysDouble x,SysDouble y) {
+void fr_i_draw_set_source_surface (FrDrawBrush* cr,
+    FrDrawSurface* surface,
+    SysDouble x,
+    SysDouble y) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -357,7 +423,11 @@ void fr_i_draw_stroke (FrDrawBrush* cr) {
   self->stroke(cr);
 }
 
-void fr_i_draw_stroke_extents (FrDrawBrush* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2) {
+void fr_i_draw_stroke_extents (FrDrawBrush* cr,
+    SysDouble * x1,
+    SysDouble * y1,
+    SysDouble * x2,
+    SysDouble * y2) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -399,28 +469,39 @@ void fr_i_draw_surface_flush (FrDrawSurface* surface) {
   self->surface_flush(surface);
 }
 
-void fr_i_draw_surface_get_device_offset (FrDrawSurface* surface,SysDouble * x_offset,SysDouble * y_offset) {
+void fr_i_draw_surface_get_device_offset (FrDrawSurface* surface,
+    SysDouble * x_offset,
+    SysDouble * y_offset) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->surface_get_device_offset(surface, x_offset, y_offset);
 }
 
-void fr_i_draw_surface_get_device_scale (FrDrawSurface* surface,SysDouble * x_scale,SysDouble * y_scale) {
+void fr_i_draw_surface_get_device_scale (FrDrawSurface* surface,
+    SysDouble * x_scale,
+    SysDouble * y_scale) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->surface_get_device_scale(surface, x_scale, y_scale);
 }
 
-void fr_i_draw_surface_get_fallback_resolution (FrDrawSurface* surface,SysDouble * x_pixels_per_inch,SysDouble * y_pixels_per_inch) {
+void fr_i_draw_surface_get_fallback_resolution (FrDrawSurface* surface,
+    SysDouble * x_pixels_per_inch,
+    SysDouble * y_pixels_per_inch) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
-  self->surface_get_fallback_resolution(surface, x_pixels_per_inch, y_pixels_per_inch);
+  self->surface_get_fallback_resolution(surface,
+      x_pixels_per_inch, 
+      y_pixels_per_inch);
 }
 
-void fr_i_draw_surface_get_mime_data (FrDrawSurface* surface,const char * mime_type,const unsigned char ** data,unsigned long * length) {
+void fr_i_draw_surface_get_mime_data (FrDrawSurface* surface,
+    const char * mime_type,
+    const unsigned char ** data,
+    unsigned long * length) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
@@ -434,32 +515,44 @@ void fr_i_draw_surface_mark_dirty (FrDrawSurface* surface) {
   self->surface_mark_dirty(surface);
 }
 
-void fr_i_draw_surface_mark_dirty_rectangle (FrDrawSurface* surface,SysInt x,SysInt y,SysInt width,SysInt height) {
+void fr_i_draw_surface_mark_dirty_rectangle (FrDrawSurface* surface,
+    SysInt x,
+    SysInt y,
+    SysInt width,
+    SysInt height) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->surface_mark_dirty_rectangle(surface, x, y, width, height);
 }
 
-void fr_i_draw_surface_set_device_offset (FrDrawSurface* surface,SysDouble x_offset,SysDouble y_offset) {
+void fr_i_draw_surface_set_device_offset (FrDrawSurface* surface,
+    SysDouble x_offset,
+    SysDouble y_offset) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->surface_set_device_offset(surface, x_offset, y_offset);
 }
 
-void fr_i_draw_surface_set_device_scale (FrDrawSurface* surface,SysDouble x_scale,SysDouble y_scale) {
+void fr_i_draw_surface_set_device_scale (FrDrawSurface* surface,
+    SysDouble x_scale,
+    SysDouble y_scale) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
   self->surface_set_device_scale(surface, x_scale, y_scale);
 }
 
-void fr_i_draw_surface_set_fallback_resolution (FrDrawSurface* surface,SysDouble x_pixels_per_inch,SysDouble y_pixels_per_inch) {
+void fr_i_draw_surface_set_fallback_resolution (FrDrawSurface* surface,
+    SysDouble x_pixels_per_inch,
+    SysDouble y_pixels_per_inch) {
   FrIDrawInterface *self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 
-  self->surface_set_fallback_resolution(surface, x_pixels_per_inch, y_pixels_per_inch);
+  self->surface_set_fallback_resolution(surface,
+      x_pixels_per_inch, 
+      y_pixels_per_inch);
 }
 
 void fr_i_draw_surface_show_page (FrDrawSurface* surface) {
@@ -490,14 +583,22 @@ void fr_i_draw_show_layout(FrDrawBrush* cr, PangoLayout* layout) {
   self->show_layout(cr, layout);
 }
 
-SysInt fr_i_draw_rounded_rectangle(FrDrawBrush* cr, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius) {
+SysInt fr_i_draw_rounded_rectangle(FrDrawBrush* cr,
+    SysDouble x, 
+    SysDouble y, 
+    SysDouble w, 
+    SysDouble h, 
+    SysDouble radius) {
   FrIDrawInterface* self = fr_draw_get_iface();
   sys_return_val_if_fail(self != NULL, -1);
 
   return self->rounded_rectangle(cr, x, y, w, h, radius);
 }
 
-void fr_i_draw_context_overlay (FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, SysInt y) {
+void fr_i_draw_context_overlay (FrDrawBrush* cr,
+    FrDrawSurface *surface, 
+    SysInt x, 
+    SysInt y) {
   FrIDrawInterface* self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
 

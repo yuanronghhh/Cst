@@ -8,8 +8,12 @@
 SYS_DEFINE_TYPE(FrSurface, fr_surface, SYS_TYPE_OBJECT);
 
 
-FrSurface *fr_surface_update_surface(FrSurface *self, FrSurface *device_surface, SysInt width, SysInt height) {
-  FrDrawSurface * new_surface = fr_i_draw_surface_create_similar_image(self->draw_surface, width, height);
+FrSurface *fr_surface_update_surface(FrSurface *self,
+    FrSurface *device_surface, 
+    SysInt width, 
+    SysInt height) {
+  FrDrawSurface * new_surface = 
+    fr_i_draw_surface_create_similar_image(self->draw_surface, width, height);
 
   sys_clear_pointer(&self->draw_surface, fr_i_draw_surface_destroy);
   self->draw_surface = new_surface;
@@ -27,8 +31,11 @@ FrSurface *fr_surface_image_surface_create(SysInt width, SysInt height) {
   return surface;
 }
 
-FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface, SysInt width, SysInt height) {
-  FrDrawSurface * draw_surface = fr_i_draw_surface_create_similar_image(surface->draw_surface, width, height);
+FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface,
+    SysInt width, 
+    SysInt height) {
+  FrDrawSurface * draw_surface =
+    fr_i_draw_surface_create_similar_image(surface->draw_surface, width, height);
 
   return fr_surface_create_draw_surface(draw_surface);
 }
@@ -51,7 +58,9 @@ void fr_surface_flush(FrSurface *self) {
   fr_i_draw_surface_flush(self->draw_surface);
 }
 
-FrSurface* fr_surface_create_device_surface_full(FrIDevice *device, SysInt width, SysInt height) {
+FrSurface* fr_surface_create_device_surface_full(FrIDevice *device,
+    SysInt width, 
+    SysInt height) {
   FrDrawSurface* draw_surface = fr_i_draw_create_surface(device, width, height);
 
   return fr_surface_create_draw_surface(draw_surface);
@@ -83,7 +92,9 @@ FrSurface *fr_surface_create_draw_surface(FrDrawSurface *draw_surface) {
   return o;
 }
 
-FrSurface *fr_surface_create_surface(FrIDevice *device, SysInt width, SysInt height) {
+FrSurface *fr_surface_create_surface(FrIDevice *device,
+    SysInt width, 
+    SysInt height) {
   FrSurface *o;
 
   FrIDrawInterface *iface  = fr_draw_get_iface();

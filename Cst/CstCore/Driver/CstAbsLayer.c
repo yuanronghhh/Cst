@@ -85,7 +85,10 @@ static CstLayerNode *cst_abs_layer_new_node_i(CstLayer *layer) {
   return cst_abs_node_new_I(layer);
 }
 
-static void cst_abs_layer_append_node_i(CstLayer *o, CstLayerNode* parent, CstLayerNode* children) {
+static void cst_abs_layer_append_node_i(CstLayer *o,
+    CstLayerNode* parent, 
+    CstLayerNode* children) {
+
   CstAbsLayer *self = CST_ABS_LAYER(o);
   CstAbsNode* abs_node = CST_ABS_NODE(children);
 

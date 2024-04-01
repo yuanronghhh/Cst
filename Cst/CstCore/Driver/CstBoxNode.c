@@ -43,7 +43,9 @@ void cst_box_node_set_last_child(CstBoxNode *self, CstBoxNode *last_child) {
   sys_hnode_set_last_child(&self->tree_node, BOX_NODE_TO_HNODE(last_child));
 }
 
-CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent, CstBoxNode *sibling, CstBoxNode *box_node) {
+CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent,
+    CstBoxNode *sibling, 
+    CstBoxNode *box_node) {
   sys_return_val_if_fail (parent != NULL, NULL);
   sys_return_val_if_fail (box_node != NULL, NULL);
 
@@ -159,12 +161,16 @@ SysBool box_node_cb(SysHNode *node, SysPointer user_data) {
   return pass->func(bnode, pass->user_data);
 }
 
-void cst_box_node_bfs_handle(CstBoxNode* self, CstBoxNodeFunc func, SysPointer user_data) {
+void cst_box_node_bfs_handle(CstBoxNode* self,
+    CstBoxNodeFunc func, 
+    SysPointer user_data) {
   BoxNodePass pass = { func, user_data };
   sys_hnode_handle_bfs_r(&self->tree_node, box_node_cb, &pass);
 }
 
-void cst_box_node_handle_ft_r(CstBoxNode *self, CstBoxNodeFunc func, SysPointer user_data) {
+void cst_box_node_handle_ft_r(CstBoxNode *self,
+    CstBoxNodeFunc func, 
+    SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   BoxNodePass pass = { func, user_data };
 

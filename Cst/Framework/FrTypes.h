@@ -77,6 +77,9 @@ typedef struct _FrIDrawInterface FrIDrawInterface;
 typedef struct _FrSurface FrSurface;
 typedef struct _FrSurfaceClass FrSurfaceClass;
 
+typedef struct _FrCompositor FrCompositor;
+typedef struct _FrCompositorClass FrCompositorClass;
+
 typedef struct _FrContext FrContext;
 typedef struct _FrContextClass FrContextClass;
 

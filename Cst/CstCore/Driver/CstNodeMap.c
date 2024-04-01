@@ -6,10 +6,17 @@
 
 SYS_DEFINE_TYPE(CstNodeMap, cst_node_map, FR_TYPE_PAIR);
 
-void cst_node_map_construct(CstNodeMap *self, CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysValue *value) {
+void cst_node_map_construct(CstNodeMap *self,
+    CstValueMap *value_map, 
+    SysInt prop_type, 
+    const SysChar *prop_name, 
+    SysValue *value) {
+
   sys_assert(prop_type > 0 && "prop_type > 0 failed, see CST_NODE_PROP_ENUM");
 
-  FR_PAIR_CLASS(cst_node_map_parent_class)->construct(FR_PAIR(self), sys_strdup(prop_name), value);
+  FR_PAIR_CLASS(cst_node_map_parent_class)->construct(FR_PAIR(self),
+      sys_strdup(prop_name), 
+      value);
 
   self->value_map = value_map;
   self->prop_type = prop_type;
@@ -35,7 +42,9 @@ SysObject* cst_node_map_dclone_i(SysObject* o) {
   return n;
 }
 
-void cst_node_map_bind(CstNodeMap *self, CstComNode *com_node, CstRenderNode *rnode) {
+void cst_node_map_bind(CstNodeMap *self,
+    CstComNode *com_node, 
+    CstRenderNode *rnode) {
   sys_return_if_fail(self != NULL);
 
   CstNodeMap* map;
@@ -70,7 +79,10 @@ CstNodeMap* cst_node_map_new(void) {
   return sys_object_new(CST_TYPE_NODE_MAP, NULL);
 }
 
-CstNodeMap* cst_node_map_new_I(CstValueMap *value_map, SysInt prop_type, const SysChar *prop_name, SysValue *value) {
+CstNodeMap* cst_node_map_new_I(CstValueMap *value_map,
+    SysInt prop_type, 
+    const SysChar *prop_name, 
+    SysValue *value) {
   CstNodeMap * o = cst_node_map_new();
 
   cst_node_map_construct(o, value_map, prop_type, prop_name, value);

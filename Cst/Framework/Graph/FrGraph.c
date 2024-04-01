@@ -65,7 +65,10 @@ FrColor *fr_color_clone(FrColor *oself) {
 }
 
 SysBool fr_rect_in_range(const FrRect *rect, SysInt x, SysInt y) {
-  return (x >= rect->x && y >= rect->y && x <= rect->x + rect->width && y <= rect->y + rect->height);
+  return (x >= rect->x 
+      && y >= rect->y 
+      && x <= rect->x + rect->width
+      && y <= rect->y + rect->height);
 }
 
 FrSInt4* fr_sint4_clone(FrSInt4 *m) {

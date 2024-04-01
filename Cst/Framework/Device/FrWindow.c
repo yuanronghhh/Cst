@@ -5,7 +5,7 @@
 #include <Framework/Event/FrEventCore.h>
 
 
-#define fr_glfw_get_window(gwindow) (FrWindow *)glfwGetWindowUserPointer(gwindow)
+#define fr_glfw_get_window(gwindow) ((FrWindow *)glfwGetWindowUserPointer(gwindow))
 #define fr_glfw_set_window(gwindow, window) glfwSetWindowUserPointer(gwindow, window)
 
 static void fr_window_event_setup(FrWindow *self);
@@ -15,7 +15,10 @@ static void i_device_imp(FrIDeviceInterface *iface);
 SYS_DEFINE_WITH_CODE(FrWindow, fr_window, SYS_TYPE_OBJECT,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_DEVICE, i_device_imp));
 
-static GLFWwindow* fr_window_create_window_i(SysInt width, SysInt height, const SysChar *title, GLFWwindow *gshare) {
+static GLFWwindow* fr_window_create_window_i(SysInt width,
+    SysInt height, 
+    const SysChar *title, 
+    GLFWwindow *gshare) {
   GLFWwindow *gwindow;
   SYS_LEAK_IGNORE_BEGIN;
   gwindow = glfwCreateWindow(width, height, title, NULL, gshare);
@@ -59,7 +62,9 @@ FRMonitor* fr_get_primary_monitor(void) {
   return glfwGetPrimaryMonitor();
 }
 
-void fr_window_get_framebuffer_size(FrWindow *self, SysInt *width, SysInt * height) {
+void fr_window_get_framebuffer_size(FrWindow *self,
+    SysInt *width, 
+    SysInt * height) {
   sys_return_if_fail(self != NULL);
 
   glfwGetFramebufferSize(self->gwindow, width, height);
@@ -91,7 +96,8 @@ void fr_window_get_size(FrWindow *self, SysInt *width, SysInt *height) {
   glfwGetWindowSize(self->gwindow, width, height);
 }
 
-static void fr_window_error_callback(SysInt error_code, const char* description) {
+static void fr_window_error_callback(SysInt error_code, 
+    const char* description) {
   sys_error_N(SYS_("Error: %d, %s"), error_code, description);
 }
 
@@ -118,7 +124,9 @@ GLFWwindow * fr_window_get_gwindow(FrWindow *self) {
   return self->gwindow;
 }
 
-static void fr_window_get_size_i(FrIDevice *o, SysInt *width, SysInt *height) {
+static void fr_window_get_size_i(FrIDevice *o,
+    SysInt *width, 
+    SysInt *height) {
   sys_return_if_fail(o != NULL);
   FrWindow *self = FR_WINDOW(o);
 
@@ -126,7 +134,11 @@ static void fr_window_get_size_i(FrIDevice *o, SysInt *width, SysInt *height) {
 }
 
 /* event callbacks */
-static void fr_window_key_callback(GLFWwindow* gwindow, SysInt key, SysInt scancode, SysInt action, SysInt mods) {
+static void fr_window_key_callback(GLFWwindow* gwindow,
+    SysInt key, 
+    SysInt scancode, 
+    SysInt action, 
+    SysInt mods) {
   FrWindow *self = fr_glfw_get_window(gwindow);
 
   FrEvent *e = fr_event_key_new_I(self, key, scancode, action, mods);
@@ -134,7 +146,10 @@ static void fr_window_key_callback(GLFWwindow* gwindow, SysInt key, SysInt scanc
   fr_events_push_head(e);
 }
 
-static void fr_window_mouse_button_callback(GLFWwindow* gwindow, SysInt button, SysInt action, SysInt mods) {
+static void fr_window_mouse_button_callback(GLFWwindow* gwindow,
+    SysInt button, 
+    SysInt action, 
+    SysInt mods) {
   FrWindow *self = fr_glfw_get_window(gwindow);
 
   FrEvent *e = fr_event_mousekey_new_I(self, button, action, mods);
@@ -142,7 +157,9 @@ static void fr_window_mouse_button_callback(GLFWwindow* gwindow, SysInt button, 
   fr_events_push_head(e);
 }
 
-static void fr_window_cursor_pos_callback(GLFWwindow* gwindow, SysDouble xpos, SysDouble ypos) {
+static void fr_window_cursor_pos_callback(GLFWwindow* gwindow,
+    SysDouble xpos, 
+    SysDouble ypos) {
   FrWindow *self = fr_glfw_get_window(gwindow);
 
   FrEvent *e = fr_event_cursor_move_new_I(self, xpos, ypos);
@@ -160,18 +177,23 @@ static void fr_window_close_callback(GLFWwindow* gwindow) {
   fr_events_push_head(e);
 }
 
-static void fr_window_scroll_callback(GLFWwindow* gwindow, SysDouble xoffset, SysDouble yoffset) {
+static void fr_window_scroll_callback(GLFWwindow* gwindow,
+    SysDouble xoffset, 
+    SysDouble yoffset) {
   sys_debug_N("%s", "window_scroll");
 }
 
-static void fr_window_cursor_enter_callback(GLFWwindow* gwindow, SysInt entered) {
+static void fr_window_cursor_enter_callback(GLFWwindow* gwindow,
+    SysInt entered) {
   // sys_debug_N("%s", "cursor_enter");
 }
 
 static void fr_window_maximize_callback(GLFWwindow* window, int maximized) {
 }
 
-static void fr_window_framebuffer_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
+static void fr_window_framebuffer_size_callback(GLFWwindow* gwindow,
+    SysInt width, 
+    SysInt height) {
   FrWindow *self = fr_glfw_get_window(gwindow);
 
   FrEvent *e = fr_event_any_new_I(self, FR_EVENT_T_FRAMEBUFFER_RESIZE);
@@ -183,7 +205,9 @@ static void fr_window_focus_callback(GLFWwindow* gwindow, SysInt focused) {
   sys_debug_N("window_focus :%d", focused);
 }
 
-static void fr_window_size_callback(GLFWwindow* gwindow, SysInt width, SysInt height) {
+static void fr_window_size_callback(GLFWwindow* gwindow,
+    SysInt width, 
+    SysInt height) {
   FrWindow *self = fr_glfw_get_window(gwindow);
 
   FrEvent *e = fr_event_any_new_I(self, FR_EVENT_T_WINDOW_RESIZE);
@@ -191,7 +215,9 @@ static void fr_window_size_callback(GLFWwindow* gwindow, SysInt width, SysInt he
   fr_events_push_head(e);
 }
 
-static void fr_window_pos_callback(GLFWwindow* gwindow, SysInt xpos, SysInt ypos) {
+static void fr_window_pos_callback(GLFWwindow* gwindow,
+    SysInt xpos, 
+    SysInt ypos) {
   // sys_debug_N("%s", "window_pos");
 }
 
@@ -320,8 +346,14 @@ void fr_window_setup(void) {
 }
 
 #if defined(VK_VERSION_1_0)
-void fr_window_create_vk_surface(FrWindow *self, VkInstance instance, VkSurfaceKHR *surfacekhr) {
-  if (glfwCreateWindowSurface(instance, self->gwindow, NULL, surfacekhr) != VK_SUCCESS) {
+void fr_window_create_vk_surface(FrWindow *self,
+    VkInstance instance, 
+    VkSurfaceKHR *surfacekhr) {
+  if (glfwCreateWindowSurface(instance,
+        self->gwindow, 
+        NULL, 
+        surfacekhr) != VK_SUCCESS) {
+
     sys_error_N("%s", SYS_("failed to create vulkan surface"));
   }
 }
@@ -332,7 +364,9 @@ static void i_device_imp(FrIDeviceInterface *iface) {
 }
 
 /* object api */
-static void fr_window_construct(FrWindow *self, FrDisplay *display, FrWindow *share) {
+static void fr_window_construct(FrWindow *self,
+    FrDisplay *display, 
+    FrWindow *share) {
 
   GLFWwindow *gwindow = NULL;
   GLFWwindow *gshare;

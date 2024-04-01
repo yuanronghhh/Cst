@@ -3,7 +3,9 @@
 SYS_DEFINE_TYPE(CstAlgorithm, cst_algorithm, SYS_TYPE_OBJECT);
 
 
-void cst_algorithm_measure(CstAlgorithm *self, CstRenderNode * rnode, CstLayout * layout) {
+void cst_algorithm_measure(CstAlgorithm *self,
+    CstRenderNode * rnode, 
+    CstLayout * layout) {
   sys_return_if_fail(self != NULL);
 
   CstAlgorithmClass *cls = CST_ALGORITHM_GET_CLASS(self);
@@ -12,7 +14,9 @@ void cst_algorithm_measure(CstAlgorithm *self, CstRenderNode * rnode, CstLayout 
   cls->measure(self, rnode, layout);
 }
 
-void cst_algorithm_layout(CstAlgorithm *self, CstRenderNode * rnode, CstLayout * layout) {
+void cst_algorithm_layout(CstAlgorithm *self,
+    CstRenderNode * rnode, 
+    CstLayout * layout) {
   sys_return_if_fail(self != NULL);
 
   CstAlgorithmClass *cls = CST_ALGORITHM_GET_CLASS(self);
@@ -21,7 +25,9 @@ void cst_algorithm_layout(CstAlgorithm *self, CstRenderNode * rnode, CstLayout *
   cls->layout(self, rnode, layout);
 }
 
-static void cst_algorithm_layout_i(CstAlgorithm* self, CstRenderNode * rnode, CstLayout * layout) {
+static void cst_algorithm_layout_i(CstAlgorithm* self,
+    CstRenderNode * rnode, 
+    CstLayout * layout) {
 }
 
 /* object api */

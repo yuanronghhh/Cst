@@ -22,7 +22,8 @@ CstLayerNode* cst_layer_node_get_children(CstLayerNode* self) {
   return lcls->get_children(self);
 }
 
-void cst_layer_node_set_render_node(CstLayerNode *self, CstRenderNode* render_node) {
+void cst_layer_node_set_render_node(CstLayerNode *self,
+    CstRenderNode* render_node) {
   sys_return_if_fail(self != NULL);
 
   self->render_node = render_node;

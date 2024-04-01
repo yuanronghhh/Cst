@@ -307,7 +307,10 @@ void cst_module_set_g_module(CstModule *m) {
 void cst_module_setup(void) {
   sys_assert(g_module_ht == NULL);
 
-  g_module_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+  g_module_ht = sys_hash_table_new_full(sys_str_hash,
+      (SysEqualFunc)sys_str_equal, 
+      NULL, 
+      (SysDestroyFunc)_sys_object_unref);
 }
 
 void cst_module_teardown(void) {
@@ -320,14 +323,22 @@ static void cst_module_construct_i(FrEnv* o, SysHashTable* ht, FrEnv* parent) {
   FR_ENV_CLASS(cst_module_parent_class)->construct(o, ht, parent);
 }
 
-static void cst_module_construct(CstModule *self, CstModule *pmodule, const SysChar* path) {
+static void cst_module_construct(CstModule *self,
+    CstModule *pmodule, 
+    const SysChar* path) {
   SysHashTable *ht;
 
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, (SysDestroyFunc)_sys_object_unref);
+  ht = sys_hash_table_new_full(sys_str_hash,
+      (SysEqualFunc)sys_str_equal, 
+      sys_free, 
+      (SysDestroyFunc)_sys_object_unref);
   self->path = path;
 
   cst_module_construct_i(FR_ENV(self), ht, FR_ENV(pmodule));
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, sys_free, NULL);
+  ht = sys_hash_table_new_full(sys_str_hash,
+      (SysEqualFunc)sys_str_equal, 
+      sys_free,
+      NULL);
 
   self->function_env = fr_env_new_I(ht, NULL);
   self->root_component = NULL;

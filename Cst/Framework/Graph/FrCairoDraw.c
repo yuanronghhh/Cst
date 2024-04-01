@@ -112,7 +112,7 @@ SysInt cairo_rounded_rectangle_i(FrDrawBrush* cr,
 static void cairo_overlay_i(FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, SysInt y) {
 
   cairo_set_source_surface(cr, surface, x, y);
-  cairo_set_operator(cr, CAIRO_OPERATOR_OVERLAY);
+  cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
 static void i_draw_imp(FrIDrawInterface *iface) {
@@ -124,6 +124,7 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->create = cairo_create;
   iface->stroke = cairo_stroke;
   iface->clip = cairo_clip;
+  iface->fill = cairo_fill;
   iface->destroy = cairo_destroy;
   iface->rounded_rectangle = cairo_rounded_rectangle_i;
   iface->image_surface_create = cairo_image_surface_create_i;

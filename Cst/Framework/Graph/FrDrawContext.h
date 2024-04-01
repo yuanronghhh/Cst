@@ -23,6 +23,7 @@ struct _FrDrawContext {
   FrIDevice* idevice;
 
   SysHArray* surfaces;
+  FrCompositor *compositor;
   SysBool is_painting;
 };
 
@@ -33,9 +34,16 @@ SYS_API FrDrawContext* fr_draw_context_new_I(FrIDraw* iface, FrIDevice* idevice)
 SYS_API SysBool fr_draw_context_frame_need_draw(FrDrawContext *self);
 SYS_API void fr_draw_context_frame_begin(FrDrawContext *self, FrRegion *region);
 SYS_API void fr_draw_context_frame_end(FrDrawContext *self, FrRegion *region);
-SYS_API void fr_draw_context_get_buffer_size (FrDrawContext *self, SysInt *width, SysInt *height);
-SYS_API FrSurface *fr_draw_context_get_surface_by_idx(FrDrawContext *self, SysInt idx);
-SYS_API void fr_draw_context_set_surfaces(FrDrawContext *self, SysHArray * surfaces);
+SYS_API void fr_draw_context_get_buffer_size (FrDrawContext *self,
+    SysInt *width,
+    SysInt *height);
+
+SYS_API FrSurface *fr_draw_context_get_surface_by_idx(FrDrawContext *self,
+    SysInt idx);
+
+SYS_API void fr_draw_context_set_surfaces(FrDrawContext *self,
+    SysHArray * surfaces);
+
 SYS_API SysHArray * fr_draw_context_get_surfaces(FrDrawContext *self);
 
 void fr_draw_context_set_is_painting(FrDrawContext *self, SysBool is_painting);

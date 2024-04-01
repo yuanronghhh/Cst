@@ -26,7 +26,9 @@ void cst_i_layer_set_root (CstLayer *self, CstLayerNode *root) {
   CST_I_LAYER_GET_IFACE(self)->set_root(self, root);
 }
 
-void cst_i_layer_append_node (CstLayer* self, CstLayerNode *parent, CstLayerNode* node) {
+void cst_i_layer_append_node (CstLayer* self,
+    CstLayerNode *parent, 
+    CstLayerNode* node) {
   sys_return_if_fail(self != NULL);
 
   CST_I_LAYER_GET_IFACE(self)->append_node(self, parent, node);

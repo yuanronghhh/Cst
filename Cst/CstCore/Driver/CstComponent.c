@@ -24,7 +24,10 @@ static const SysChar* CST_COMPONENT_PROP_NAMES[] = {
 void cst_component_setup(void) {
   sys_assert(g_component_ht == NULL);
 
-  g_component_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
+  g_component_ht = sys_hash_table_new_full(sys_str_hash,
+      (SysEqualFunc)sys_str_equal, 
+      NULL, 
+      (SysDestroyFunc)_sys_object_unref);
 }
 
 void cst_component_teardown(void) {
@@ -58,7 +61,9 @@ SysBool cst_component_remove_g_component(const SysChar *id) {
 void cst_component_set_g_component(CstComponent *m) {
   sys_return_if_fail(m != NULL);
 
-  sys_hash_table_insert(g_component_ht, (SysPointer)cst_component_get_id(m), (SysPointer)m);
+  sys_hash_table_insert(g_component_ht,
+      (SysPointer)cst_component_get_id(m), 
+      (SysPointer)m);
 }
 
 void cst_component_set_parent(CstComponent *self, CstComponent * parent) {
@@ -74,11 +79,15 @@ CstComponent * cst_component_get_parent(CstComponent *self) {
 }
 
 CST_COMPONENT_BODY_ENUM cst_component_body_get_by_name(const SysChar * name) {
-  return fr_get_type_by_name(COMPONENT_BODY_NAMES, ARRAY_SIZE(COMPONENT_BODY_NAMES), name);
+  return fr_get_type_by_name(COMPONENT_BODY_NAMES,
+      ARRAY_SIZE(COMPONENT_BODY_NAMES), 
+      name);
 }
 
 CST_COMPONENT_PROP_ENUM cst_component_prop_get_by_name(const SysChar * name) {
-  return fr_get_type_by_name(CST_COMPONENT_PROP_NAMES, ARRAY_SIZE(CST_COMPONENT_PROP_NAMES), name);
+  return fr_get_type_by_name(CST_COMPONENT_PROP_NAMES,
+      ARRAY_SIZE(CST_COMPONENT_PROP_NAMES), 
+      name);
 }
 
 CstComponent* cst_component_new(void) {
@@ -88,7 +97,9 @@ CstComponent* cst_component_new(void) {
 static SysBool component_print(CstNode *node, SysPointer user_data) {
   CstComponent *self = user_data;
 
-  sys_debug_N("%s,%s,%s", cst_component_get_id(self), cst_node_get_name(node), cst_node_get_id(node));
+  sys_debug_N("%s,%s,%s", cst_component_get_id(self),
+      cst_node_get_name(node), 
+      cst_node_get_id(node));
 
   return true;
 }
@@ -174,7 +185,9 @@ void cst_component_set_value_map(CstComponent *self, CstValueMap *map) {
   fr_env_set(self->value_maps_env, cst_value_map_key(map), (SysPointer)map);
 }
 
-CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode *v_parent, CstComNode *com_node) {
+CstRenderNode* cst_component_realize(CstComponent *self,
+    CstRenderNode *v_parent, 
+    CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstRenderNode *root = cst_node_realize_r(self->layout_node, v_parent, com_node);
@@ -182,7 +195,9 @@ CstRenderNode* cst_component_realize(CstComponent *self, CstRenderNode *v_parent
   return root;
 }
 
-SysHArray *cst_component_parse_base(CstComponent *self, const SysChar *base[], SysUInt len) {
+SysHArray *cst_component_parse_base(CstComponent *self,
+    const SysChar *base[], 
+    SysUInt len) {
   SysHArray * list;
   const SysChar *pname;
   CstCssGroup *ng;
@@ -222,8 +237,14 @@ static void cst_component_construct_i(CstComponent *self, CstComponentContext *c
   CstComponent *v_pcomponent = cst_component_context_get_v_pcomponent(c);
   // CstModule* v_module = cst_component_context_get_v_module(c);
 
-  ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)_sys_object_unref);
-  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self), ht, FR_ENV(v_pcomponent));
+  ht = sys_hash_table_new_full(sys_str_hash,
+      (SysEqualFunc)sys_str_equal, 
+      NULL, 
+      (SysDestroyFunc)_sys_object_unref);
+
+  FR_ENV_CLASS(cst_component_parent_class)->construct(FR_ENV(self),
+      ht, 
+      FR_ENV(v_pcomponent));
 
   self->layout_node = NULL;
 }

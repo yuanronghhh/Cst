@@ -43,14 +43,21 @@ CstModule* cst_module_load_path(CstModule* parent, const SysChar* path);
 void cst_module_setup(void);
 void cst_module_teardown(void);
 
-FrEventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_name);
+FrEventFunc cst_module_get_event_function(CstModule *self,
+    const SysChar *func_name);
 
 CstRenderNode* cst_module_realize(CstModule* self, CstRenderNode* v_parent);
 
-void cst_module_set_function(CstModule *self, const SysChar *func_name, SysFunc func);
+void cst_module_set_function(CstModule *self,
+    const SysChar *func_name, 
+    SysFunc func);
+
 SysFunc cst_module_get_function(CstModule *self, const SysChar *func_name);
 
-void cst_module_set_component(CstModule * self, const SysChar * key, CstComponent * comp);
+void cst_module_set_component(CstModule * self,
+    const SysChar * key, 
+    CstComponent * comp);
+
 CstComponent* cst_module_get_component(CstModule *self, const SysChar *comp_name);
 
 #define cst_module_set_root_node(m, n) cst_component_set_layout_node(cst_module_get_root_component(m), n)

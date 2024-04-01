@@ -116,6 +116,8 @@ set(SRC
 
   ./Graph/FrGraph.c
   ./Graph/FrGraph.h
+  ./Graph/FrCompositor.c
+  ./Graph/FrCompositor.h
   ./Graph/FrDraw.c
   ./Graph/FrDraw.h
   ./Graph/FrIDraw.c

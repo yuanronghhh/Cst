@@ -238,7 +238,9 @@ void cst_node_print_r(CstNode* node, SysPointer user_data) {
   cst_node_handle_bfs_r(node, (CstNodeFunc)cst_node_print_node, user_data);
 }
 
-CstRenderNode* cst_node_realize(CstNode *self, CstRenderNode *v_parent, CstComNode *com_node) {
+CstRenderNode* cst_node_realize(CstNode *self,
+    CstRenderNode *v_parent, 
+    CstComNode *com_node) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   CstNodeClass* ncls = CST_NODE_GET_CLASS(self);

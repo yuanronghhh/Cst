@@ -7,6 +7,7 @@ SYS_BEGIN_DECLS
 
 #include <Framework/Graph/FrGraph.h>
 #include <Framework/Graph/FrDraw.h>
+#include <Framework/Graph/FrCompositor.h>
 #include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrCairoDraw.h>

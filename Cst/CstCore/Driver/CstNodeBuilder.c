@@ -72,7 +72,9 @@ void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map) {
   self->v_nodemap_list = sys_list_prepend(self->v_nodemap_list, map);
 }
 
-SysBool cst_node_builder_awatch_name(CstNodeBuilder *self, const SysChar *name, const SysChar *func_name) {
+SysBool cst_node_builder_awatch_name(CstNodeBuilder *self,
+    const SysChar *name, 
+    const SysChar *func_name) {
   sys_return_val_if_fail(self != NULL, false);
 
   SysType type = fr_awatch_get_type_by_name(name);
@@ -91,7 +93,8 @@ void cst_node_builder_add_awatch(CstNodeBuilder *self, FrAWatch* map) {
   self->v_awatch_list = sys_list_prepend(self->v_awatch_list, map);
 }
 
-void cst_node_builder_set_v_css_list(CstNodeBuilder *self, SysHArray * v_css_list) {
+void cst_node_builder_set_v_css_list(CstNodeBuilder *self,
+    SysHArray * v_css_list) {
   sys_return_if_fail(self != NULL);
 
   self->v_css_list = v_css_list;
@@ -136,9 +139,10 @@ void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node) {
     g = cst_css_group_get_by_id(cst_css_env_get_gcss_env(), self->v_name);
     if (g == NULL) {
 
-      sys_warning_N("set system css failed, config maybe not correct: %s", self->v_name);
+      sys_warning_N("set system css failed, config maybe not correct: %s",
+          self->v_name);
     }
-    
+
     cst_css_group_set_r(self->v_css_list, g);
   }
   cst_node_set_v_css_list(node, self->v_css_list);

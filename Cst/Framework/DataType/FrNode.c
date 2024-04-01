@@ -19,14 +19,18 @@ SysBool hnode_handle(SysHNode* o, SysPointer user_data) {
   return pass->func(self, pass->user_data);
 }
 
-void fr_node_handle_bfs_r(FrNode *self, FrNodeFunc func, SysPointer user_data) {
+void fr_node_handle_bfs_r(FrNode *self,
+    FrNodeFunc func, 
+    SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   HNodePass pass = { .func = func, .user_data = user_data };
 
   sys_hnode_handle_bfs_r(&self->tree, (SysHNodeFunc)hnode_handle, &pass);
 }
 
-void fr_node_handle_node_ff_r(FrNode *self, FrNodeFunc func, SysPointer user_data) {
+void fr_node_handle_node_ff_r(FrNode *self,
+    FrNodeFunc func, 
+    SysPointer user_data) {
   sys_return_if_fail(self != NULL);
   HNodePass pass = { .func = func, .user_data = user_data };
 

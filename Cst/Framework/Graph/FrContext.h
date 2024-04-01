@@ -40,7 +40,7 @@ void fr_context_move_to (FrContext* self,SysDouble x,SysDouble y);
 void fr_context_save(FrContext* self);
 void fr_context_restore(FrContext* self);
 void fr_context_overlay(FrContext* self, FrSurface *surface, SysInt x, SysInt y);
-void fr_context_stoke_debug (FrContext *self);
+void fr_context_stoke_debug(FrContext* self, SysInt i);
 
 /* font */
 SYS_API void fr_context_draw_text(FrContext* self, PangoLayout* layout, SysInt x, SysInt y);

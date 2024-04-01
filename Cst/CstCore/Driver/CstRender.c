@@ -82,7 +82,9 @@ FrRegion *render_create_region(FrIDevice *device) {
   return region;
 }
 
-static void render_layout_surfaces(SysHArray *surfs, CstRenderNode *rnode, CstLayout *layout) {
+static void render_layout_surfaces(SysHArray *surfs,
+    CstRenderNode *rnode, 
+    CstLayout *layout) {
   for (SysUInt i = 0; i < surfs->len; i++) {
     CstSurface *s = surfs->pdata[i];
 
@@ -137,10 +139,13 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   layout = cst_layout_new_I(draw_context, region);
 
   fr_draw_context_frame_begin(draw_context, region);
+
   rnode = self->body_rnode;
   init_body_layout_info(rnode, layout);
+
   alg = cst_flex_algorithm_new_I();
   cst_algorithm_layout(alg, rnode, layout);
+
   fr_draw_context_frame_end(draw_context, region);
 
   fr_region_destroy(region);
@@ -148,7 +153,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_object_unref(alg);
 }
 
-void cst_render_resize_device(CstRender *self) {
+void cst_render_resize_surface(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
   SysInt width = 0;
@@ -156,10 +161,12 @@ void cst_render_resize_device(CstRender *self) {
 
   fr_i_device_get_size(self->device, &width, &height);
 
-  cst_render_request_resize_device(self, width, height);
+  cst_render_request_resize_surface(self, width, height);
 }
 
-void cst_render_request_resize_device(CstRender *self, SysInt width, SysInt height) {
+void cst_render_request_resize_surface(CstRender *self,
+    SysInt width, 
+    SysInt height) {
   sys_return_if_fail(self != NULL);
 #if 0
   FrRegion *region;
@@ -202,7 +209,7 @@ CstSurface* cst_render_get_default_surface(void) {
 
 /* object api */
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
-  CstSurface* surf;
+  CstSurface* paint_surface;
   FrWindow *window;
   FrDisplay* display;
   FrIDevice *device;
@@ -210,19 +217,22 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
   if (is_offscreen) {
     self->device = NULL;
-    surf = cst_surface_create_image_surface(800, 600);
+    paint_surface = cst_surface_create_image_surface(800, 600);
+
+    sys_harray_add(&self->surfaces, paint_surface);
   } else {
     display = fr_display_new_I();
     window = fr_window_top_new(display);
     device = FR_I_DEVICE(window);
     fr_i_device_get_size(device, &width, &height);
 
-    surf = cst_surface_create_device_surface(device, width, height);
+    paint_surface = cst_surface_create_image_surface(width, height);
+
+    sys_harray_add(&self->surfaces, paint_surface);
+
     self->display = display;
     self->device = device;
   }
-
-  sys_harray_add(&self->surfaces, surf);
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

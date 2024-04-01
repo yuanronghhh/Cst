@@ -21,17 +21,17 @@ void fr_context_fill_background (FrContext *self, SysInt width, SysInt height) {
   FrDrawBrush *cr = self->v.cr;
   FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
-  idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
+  idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 0.8);
   idraw_iface->rectangle(cr, 0, 0, width, height);
   idraw_iface->paint(cr);
 }
 
-void fr_context_stoke_debug (FrContext *self) {
+void fr_context_stoke_debug (FrContext *self, SysInt i) {
   FrDrawBrush *cr = self->v.cr;
   FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
-  idraw_iface->set_source_rgba(cr, 1.0, 0.0, 0.0, 0.8);
-  idraw_iface->rectangle(cr, 20, 30, 200, 300);
+  idraw_iface->set_source_rgba(cr, 1.0, 0.0, 0.0, 1.0);
+  idraw_iface->rectangle(cr, 20 + i * 5, 30 + i * 5, 200, 100);
   idraw_iface->stroke(cr);
 }
 

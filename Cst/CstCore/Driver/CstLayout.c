@@ -11,7 +11,9 @@ CstLayout* cst_layout_new(void) {
   return sys_object_new(CST_TYPE_LAYOUT, NULL);
 }
 
-static void cst_layout_construct(CstLayout* self, FrDrawContext *draw_context, FrRegion *region) {
+static void cst_layout_construct(CstLayout* self,
+    FrDrawContext *draw_context, 
+    FrRegion *region) {
   self->state = 0;
   self->region = region;
   self->draw_context = draw_context;

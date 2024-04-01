@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstAbsNode.h>
 
-#define PNODE_TO_ABS_NODE(o) (CstAbsNode *)(((SysUInt8 *)o) - offsetof(CstAbsNode, pnode));
+#define PNODE_TO_ABS_NODE(o) ((CstAbsNode *)(((SysUInt8 *)o) - offsetof(CstAbsNode, pnode)))
 
 SYS_DEFINE_TYPE(CstAbsNode, cst_abs_node, CST_TYPE_LAYER_NODE);
 

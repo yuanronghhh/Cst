@@ -13,8 +13,8 @@ SYS_BEGIN_DECLS
 struct _CstAlgorithmClass {
   SysObjectClass parent;
 
-  void (*layout) (CstAlgorithm *self, CstRenderNode* rnode, CstLayout* layout);
   void (*measure) (CstAlgorithm *self, CstRenderNode * rnode, CstLayout *layout);
+  void (*layout) (CstAlgorithm *self, CstRenderNode* rnode, CstLayout* layout);
 };
 
 struct _CstAlgorithm {

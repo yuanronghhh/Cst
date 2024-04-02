@@ -18,6 +18,8 @@ struct _CstFlexContext {
   SysObject parent;
 
   /* <private> */
+  CstFlexLine **lines;
+  SysUInt n_lines;
 };
 
 SYS_API SysType cst_flex_context_get_type(void);

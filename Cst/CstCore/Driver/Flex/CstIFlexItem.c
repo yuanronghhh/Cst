@@ -37,8 +37,8 @@ const FrRect* cst_i_flex_item_get_bound (CstIFlexItem *self) {
   return CST_I_FLEX_ITEM_GET_IFACE(self)->get_bound(self);
 }
 
-SysHArray* cst_i_flex_item_get_lines (CstIFlexItem *self) {
+SysHArray* cst_i_flex_item_get_nodes (CstIFlexItem *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return CST_I_FLEX_ITEM_GET_IFACE(self)->get_lines(self);
+  return CST_I_FLEX_ITEM_GET_IFACE(self)->get_nodes(self);
 }

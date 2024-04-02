@@ -18,7 +18,7 @@ struct _CstIFlexItemInterface {
   const FrRect* (*get_bound) (CstIFlexItem *self);
   SysInt (*get_width) (CstIFlexItem *self);
   SysInt (*get_direction) (CstIFlexItem *self);
-  SysHArray* (*get_lines) (CstIFlexItem *self);
+  SysHArray* (*get_nodes) (CstIFlexItem *self);
 };
 
 SysType cst_i_flex_item_get_type(void);
@@ -27,7 +27,7 @@ const SysChar* cst_i_flex_item_get_name (CstIFlexItem *self);
 const FrSInt4 *cst_i_flex_item_get_padding (CstIFlexItem *self);
 const FrRect* cst_i_flex_item_get_bound (CstIFlexItem *self);
 SysInt cst_i_flex_item_get_direction (CstIFlexItem *self);
-SysHArray* cst_i_flex_item_get_lines (CstIFlexItem *self);
+SysHArray* cst_i_flex_item_get_nodes (CstIFlexItem *self);
 
 SYS_END_DECLS
 

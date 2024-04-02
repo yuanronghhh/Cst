@@ -12,16 +12,22 @@ static void layout_horizonal(CstAlgorithm* self,
     CstIFlexItem* rnode,
     CstFlexContext* ctx) {
 
-  SysHArray* line = cst_i_flex_item_get_lines(rnode);
+  SysHArray* nodes = cst_i_flex_item_get_nodes(rnode);
   CstIFlexItem *item;
 
-  for(SysUInt i = 0; i < line->len; i++) {
-    item = line->pdata[i];
+  for(SysUInt i = 0; i < nodes->len; i++) {
+    item = nodes->pdata[i];
 
     sys_debug_N("%s", cst_i_flex_item_get_name(item));
   }
 
-  sys_harray_free(line, true);
+  sys_harray_free(nodes, true);
+}
+
+static void cst_flex_algorithm_measure_i(CstAlgorithm* self,
+    CstRenderNode* rnode,
+    CstLayout* layout) {
+
 }
 
 static void cst_flex_algorithm_layout_i(CstAlgorithm* self,
@@ -78,6 +84,7 @@ static void cst_flex_algorithm_class_init(CstFlexAlgorithmClass* cls) {
 
   ocls->dispose = cst_flex_algorithm_dispose;
   acls->layout = cst_flex_algorithm_layout_i;
+  acls->measure = cst_flex_algorithm_measure_i;
 }
 
 void cst_flex_algorithm_init(CstFlexAlgorithm* self) {

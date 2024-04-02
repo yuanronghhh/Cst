@@ -144,6 +144,7 @@ void cst_render_render(CstRender *self, CstModule *v_module) {
   init_body_layout_info(rnode, layout);
 
   alg = cst_flex_algorithm_new_I();
+  cst_algorithm_measure(alg, rnode, layout);
   cst_algorithm_layout(alg, rnode, layout);
 
   fr_draw_context_frame_end(draw_context, region);

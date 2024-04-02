@@ -67,7 +67,7 @@ CstRenderNode* i_layer_node_get_parent(CstRenderNode* self) {
   return cst_layer_node_get_render_node(cnode);
 }
 
-static SysHArray* i_flex_item_get_lines(CstIFlexItem *item) {
+static SysHArray* i_flex_item_get_nodes(CstIFlexItem *item) {
   CstRenderNode *rnode;
   CstRenderNode *self;
   SysHArray *lines;
@@ -110,7 +110,7 @@ static void i_flex_item_imp(CstIFlexItemInterface *iface) {
   iface->get_bound = i_flex_item_get_bound;
   iface->get_direction = i_flex_item_get_direction;
   iface->get_width = i_flex_item_get_width;
-  iface->get_lines = i_flex_item_get_lines;
+  iface->get_nodes = i_flex_item_get_nodes;
 }
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {

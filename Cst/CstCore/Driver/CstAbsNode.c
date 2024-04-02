@@ -1,21 +1,53 @@
 #include <CstCore/Driver/CstAbsNode.h>
+#include <CstCore/Driver/CstILayerNode.h>
 
-#define PNODE_TO_ABS_NODE(o) ((CstAbsNode *)(((SysUInt8 *)o) - offsetof(CstAbsNode, pnode)))
+#define PNODE_TO(o, TypeName) ((TypeName *)(((SysUInt8 *)o) - offsetof(CstAbsNode, pnode)))
 
-SYS_DEFINE_TYPE(CstAbsNode, cst_abs_node, CST_TYPE_LAYER_NODE);
+static void i_layer_node_imp(CstILayerNodeInterface *iface);
+SYS_DEFINE_WITH_CODE(CstAbsNode, cst_abs_node, CST_TYPE_LAYER_NODE,
+    SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_LAYER_NODE, i_layer_node_imp));
 
-CstLayerNode *cst_abs_node_get_children_i(CstLayerNode *o) {
+static CstLayerNode *i_layer_node_get_children_i(CstLayerNode *o) {
   CstAbsNode *anode = CST_ABS_NODE(o);
+  SysPNode *pnode = sys_pnode_next(&anode->pnode);
 
-  CstAbsNode *p = PNODE_TO_ABS_NODE(sys_pnode_next(&anode->pnode));
-  return CST_LAYER_NODE(p);
+  return PNODE_TO(pnode, CstLayerNode);
 }
 
-CstLayerNode* cst_abs_node_get_parent_i(CstLayerNode *o) {
+static CstLayerNode* i_layer_node_get_parent_i(CstLayerNode *o) {
   CstAbsNode *anode = CST_ABS_NODE(o);
-  CstAbsNode* p = PNODE_TO_ABS_NODE(sys_pnode_prev(&anode->pnode));
+  SysPNode* pnode = sys_pnode_prev(&anode->pnode);
 
-  return CST_LAYER_NODE(p);
+  return PNODE_TO(pnode, CstLayerNode);
+}
+
+static void i_layer_node_iterate_node_i(CstLayerNode* o,
+  CstLayerNodeFunc func,
+  SysPointer user_data) {
+
+  CstLayerNode *node;
+  CstILayerNodeInterface *iface = CST_I_LAYER_NODE_GET_IFACE(o);
+
+  for(node = o; node; node = iface->get_next(node)) {
+    if(!func(node, user_data)) {
+      break;
+    }
+  }
+}
+
+static CstLayerNode* i_layer_node_get_next_i(CstLayerNode *o) {
+  CstAbsNode *self = CST_ABS_NODE(o);
+  SysPNode *pnode = sys_pnode_prev(&self->pnode);
+
+  return PNODE_TO(pnode, CstLayerNode);
+}
+
+
+static void i_layer_node_imp(CstILayerNodeInterface *iface) {
+  iface->get_parent = i_layer_node_get_parent_i;
+  iface->get_children = i_layer_node_get_children_i;
+  iface->get_next = i_layer_node_get_next_i;
+  iface->iterate_node = i_layer_node_iterate_node_i;
 }
 
 /* object api */
@@ -43,11 +75,8 @@ static void cst_abs_node_dispose(SysObject* o) {
 
 static void cst_abs_node_class_init(CstAbsNodeClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  CstLayerNodeClass *lcls = CST_LAYER_NODE_CLASS(cls);
 
   ocls->dispose = cst_abs_node_dispose;
-  lcls->get_children = cst_abs_node_get_children_i;
-  lcls->get_parent = cst_abs_node_get_parent_i;
 }
 
 void cst_abs_node_init(CstAbsNode* self) {

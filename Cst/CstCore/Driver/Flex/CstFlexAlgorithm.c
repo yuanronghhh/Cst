@@ -1,6 +1,7 @@
 #include <CstCore/Driver/Flex/CstFlexAlgorithm.h>
 
 #include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/Flex/CstIFlexItem.h>
 #include <CstCore/Driver/Flex/CstFlexLine.h>
 #include <CstCore/Driver/Flex/CstFlexContext.h>
 
@@ -8,21 +9,19 @@ SYS_DEFINE_TYPE(CstFlexAlgorithm, cst_flex_algorithm, CST_TYPE_ALGORITHM);
 
 
 static void layout_horizonal(CstAlgorithm* self,
-    CstFlexItem* rnode,
+    CstIFlexItem* rnode,
     CstFlexContext* ctx) {
 
-  SysHArray* lines = cst_flex_context_get_lines(ctx);
-  CstFlexItem *item;
+  SysHArray* line = cst_i_flex_item_get_lines(rnode);
+  CstIFlexItem *item;
 
-  for(SysUInt i = 0; i < lines->len; i++) {
-    CstFlexLine *line = lines->pdata[i];
+  for(SysUInt i = 0; i < line->len; i++) {
+    item = line->pdata[i];
 
-    for (SysUInt j = 0; j < line->items.len; j++) {
-      item = line->items.pdata[j];
-
-      sys_debug_N("%s", cst_flex_item_get_name(item));
-    }
+    sys_debug_N("%s", cst_i_flex_item_get_name(item));
   }
+
+  sys_harray_free(line, true);
 }
 
 static void cst_flex_algorithm_layout_i(CstAlgorithm* self,
@@ -31,8 +30,8 @@ static void cst_flex_algorithm_layout_i(CstAlgorithm* self,
 
   CstFlexContext *ctx = cst_flex_context_new_I();
 
-  CstFlexItem *item = CST_FLEX_ITEM(rnode);
-  CST_DIRECTION_ENUM dr = cst_flex_item_get_direction(item);
+  CstIFlexItem *item = CST_I_FLEX_ITEM(rnode);
+  CST_DIRECTION_ENUM dr = cst_i_flex_item_get_direction(item);
 
   switch (dr)
   {

@@ -1,30 +1,9 @@
 #include <CstCore/Driver/Flex/CstFlexContext.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstRenderNode.h>
-#include <CstCore/Driver/Flex/CstFlexItem.h>
+#include <CstCore/Driver/Flex/CstIFlexItem.h>
 
 SYS_DEFINE_TYPE(CstFlexContext, cst_flex_context, SYS_TYPE_OBJECT);
-
-void cst_flex_context_add_line(CstFlexContext *self, CstFlexLine *line) {
-  sys_harray_add(&self->lines, line);
-}
-
-SysHArray * cst_flex_context_get_lines(CstFlexContext *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return &self->lines;
-}
-
-void cst_flex_context_add_nodes(CstFlexContext *self, CstRenderNode* rnode) {
-  //CstBoxNode *cnode = cst_render_node_children(rnode);
-  //if (cnode == NULL) { return; }
-
-  //for(; cnode; cnode = cst_box_node_next(cnode)) {
-  //  CstFlexItem *item = CST_FLEX_ITEM(cst_render_node(cnode));
-
-  //  sys_harray_add(&self->lines, item);
-  //}
-}
 
 /* object api */
 static void cst_flex_context_construct(CstFlexContext *self) {
@@ -55,6 +34,5 @@ static void cst_flex_context_class_init(CstFlexContextClass* cls) {
 }
 
 void cst_flex_context_init(CstFlexContext* self) {
-  sys_harray_init_with_free_func(&self->lines, (SysDestroyFunc)_sys_object_unref);
 }
 

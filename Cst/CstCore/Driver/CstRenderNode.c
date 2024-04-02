@@ -9,14 +9,14 @@
 #include <CstCore/Front/Common/CstIComNode.h>
 #include <CstCore/Driver/CstNode.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
-#include <CstCore/Driver/Flex/CstFlexItem.h>
+#include <CstCore/Driver/Flex/CstIFlexItem.h>
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayer.h>
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstSurface.h>
+#include <CstCore/Driver/CstLayerNode.h>
 #include <CstCore/Driver/CstILayerNode.h>
-#include <CstCore/Driver/CstILayer.h>
 #include <CstCore/Driver/CstLayerNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 
@@ -26,14 +26,10 @@
 static SysMutex gnode_meta_lock;
 static SysHashTable* g_node_meta_ht = NULL;
 
-static void render_node_flex_item_imp(CstFlexItemInterface* item);
-static void render_node_i_com_node_imp(CstIComNodeInterface* item);
-
+static void i_flex_item_imp(CstIFlexItemInterface* iface);
 
 SYS_DEFINE_WITH_CODE(CstRenderNode, cst_render_node, CST_TYPE_LAYOUT_NODE,
-  SYS_IMPLEMENT_INTERFACE(CST_TYPE_FLEX_ITEM, render_node_flex_item_imp)
-  SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_COM_NODE, render_node_i_com_node_imp)
-);
+  SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_FLEX_ITEM, i_flex_item_imp));
 
 void cst_render_node_set_rctx(CstRenderNode *self, CstRenderContext* rctx) {
   sys_return_if_fail(self != NULL);
@@ -47,38 +43,74 @@ CstRenderContext* cst_render_node_get_rctx(CstRenderNode *self) {
   return self->rctx;
 }
 
-static SysInt render_node_get_width (CstFlexItem *item) {
+static SysInt i_flex_item_get_width (CstIFlexItem *item) {
   CstRenderNode* self = CST_RENDER_NODE(item);
 
   return cst_render_node_get_width(self);
 }
 
-static SysInt render_node_get_direction(CstFlexItem *item) {
+static CstRenderNode* cst_render_node_get_children(CstLayerNode * o) {
+  CstLayerNode* cnode = cst_i_layer_node_get_children(o);
+
+  return cst_layer_node_get_render_node(cnode);
+}
+
+CstRenderNode* i_layer_node_get_next(CstRenderNode* self) {
+  CstLayerNode* cnode = cst_i_layer_node_get_next(self->layer_node);
+
+  return cst_layer_node_get_render_node(cnode);
+}
+
+CstRenderNode* i_layer_node_get_parent(CstRenderNode* self) {
+  CstLayerNode* cnode = cst_i_layer_node_get_parent(self->layer_node);
+
+  return cst_layer_node_get_render_node(cnode);
+}
+
+static SysHArray* i_flex_item_get_lines(CstIFlexItem *item) {
+  CstRenderNode *rnode;
+  CstRenderNode *self;
+  SysHArray *lines;
+  CstLayerNode* lnode;
+
+  self = CST_RENDER_NODE(item);
+  lines = sys_harray_new_with_free_func((SysDestroyFunc)_sys_object_unref);
+  lnode = cst_i_layer_node_get_children(self->layer_node);
+
+  for (; lnode; lnode = cst_i_layer_node_get_next(lnode)) {
+    rnode = cst_layer_node_get_render_node(lnode);
+
+    sys_object_ref(rnode);
+    sys_harray_add(lines, rnode);
+  }
+
+  return lines;
+}
+
+static SysInt i_flex_item_get_direction(CstIFlexItem *item) {
   CstRenderNode* rnode = CST_RENDER_NODE(item);
 
   return cst_render_node_get_direction(rnode);
 }
 
-static const FrRect* render_node_get_bound(CstFlexItem* item) {
+static const FrRect* i_flex_item_get_bound(CstIFlexItem* item) {
   CstRenderNode* rnode = CST_RENDER_NODE(item);
 
   return cst_render_node_get_bound(rnode);
 }
 
-static const SysChar* render_node_get_name(CstFlexItem* item) {
+static const SysChar* i_flex_item_get_name(CstIFlexItem* item) {
   CstRenderNode* rnode = CST_RENDER_NODE(item);
 
   return cst_render_node_get_name(rnode);
 }
 
-static void render_node_i_com_node_imp(CstIComNodeInterface* iface) {
-}
-
-static void render_node_flex_item_imp(CstFlexItemInterface *iface) {
-  iface->get_name = render_node_get_name;
-  iface->get_bound = render_node_get_bound;
-  iface->get_direction = render_node_get_direction;
-  iface->get_width = render_node_get_width;
+static void i_flex_item_imp(CstIFlexItemInterface *iface) {
+  iface->get_name = i_flex_item_get_name;
+  iface->get_bound = i_flex_item_get_bound;
+  iface->get_direction = i_flex_item_get_direction;
+  iface->get_width = i_flex_item_get_width;
+  iface->get_lines = i_flex_item_get_lines;
 }
 
 void cst_render_node_prepare(CstRenderNode *self, CstLayout *layout) {
@@ -246,26 +278,17 @@ SysType cst_render_node_get_meta(const SysChar* name) {
 
 static SysBool node_unlink_one(CstLayerNode* self, SysPointer user_data) {
   sys_return_val_if_fail(self != NULL, false);
-  CstRenderNode* rnode = cst_layer_node_get_render_node(self);
+  CstRenderNode* rnode = cst_layer_node_get_render_node(CST_LAYER_NODE(self));
 
   sys_object_unref(rnode);
   return true;
 }
 
-CstRenderNode* cst_render_node_get_children_i(CstRenderNode* self) {
-  CstLayerNode *cnode = cst_layer_node_get_children(self->layer_node);
-
-  return cst_layer_node_get_render_node(cnode);
-}
-
 void cst_render_node_unlink_node_r(CstRenderNode* self) {
   sys_return_if_fail(self != NULL);
   CstLayerNode* lnode = self->layer_node;
-  CstLayer* layer = cst_layer_node_get_layer(lnode);
 
-  sys_assert(CST_LAYER(layer) != NULL);
-
-  cst_i_layer_iterate_node(layer, lnode, (CstLayerNodeFunc)node_unlink_one, NULL);
+  cst_i_layer_node_iterate_node(lnode, (CstLayerNodeFunc)node_unlink_one, NULL);
 }
 
 void cst_render_node_setup(void) {

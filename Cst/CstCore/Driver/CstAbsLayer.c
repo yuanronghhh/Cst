@@ -43,7 +43,7 @@ static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
 
   self = ctx->v_layer;
   region = ctx->v_region;
-  lnode = rnode->layer_node;
+  lnode = cst_render_node_get_layer_node(rnode);
   bound = cst_render_node_get_bound(rnode);
 
   sys_return_val_if_fail(region != NULL, false);
@@ -75,10 +75,6 @@ static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
 }
 
 static void cst_abs_layer_check_i(CstLayer *o, CstLayout *layout) {
-  // CstAbsLayer* self = CST_ABS_LAYER(o);
-
-  // FrRegion *region = cst_layout_get_region(layout);
-  // AbsLayerPass ctx = { o, region };
 }
 
 static CstLayerNode *cst_abs_layer_new_node_i(CstLayer *layer) {
@@ -95,28 +91,12 @@ static void cst_abs_layer_append_node_i(CstLayer *o,
   sys_pqueue_push_tail_link(&self->pqueue, &abs_node->pnode);
 }
 
-static void cst_abs_layer_iterate_node_i(CstLayer* o,
-  CstLayerNode* lnode,
-  CstLayerNodeFunc func,
-  SysPointer user_data) {
-
-  CstAbsLayer *self = CST_ABS_LAYER(o);
-  // CstLayerNode *node = NULL;
-
-  sys_queue_foreach(&(self->pqueue), node) {
-    if(!func(node->data, user_data)) {
-      break;
-    }
-  }
-}
-
 static void i_layer_imp(CstILayerInterface *iface) {
   iface->check = cst_abs_layer_check_i;
   iface->get_root = cst_abs_layer_get_root_i;
   iface->set_root = cst_abs_layer_set_root_i;
   iface->new_node = cst_abs_layer_new_node_i;
   iface->append_node = cst_abs_layer_append_node_i;
-  iface->iterate_node = cst_abs_layer_iterate_node_i;
 }
 
 /* object api */

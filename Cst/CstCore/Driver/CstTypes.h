@@ -160,8 +160,8 @@ typedef struct _CstRenderContextClass CstRenderContextClass;
 typedef struct _CstFlexContext CstFlexContext;
 typedef struct _CstFlexContextClass CstFlexContextClass;
 
-typedef struct _CstFlexItem CstFlexItem;
-typedef struct _CstFlexItemInterface CstFlexItemInterface;
+typedef struct _CstIFlexItem CstIFlexItem;
+typedef struct _CstIFlexItemInterface CstIFlexItemInterface;
 
 typedef struct _CstFlexAlgorithm CstFlexAlgorithm;
 typedef struct _CstFlexAlgorithmClass CstFlexAlgorithmClass;
@@ -228,7 +228,7 @@ typedef void (*CstCssFree) (CstCssValue *value);
 typedef SysBool (*CstLayerNodeFunc) (CstLayerNode *lnode, SysPointer user_data);
 typedef void (*CstRenderNodeFunc) (CstRenderNode *rnode, SysPointer user_data);
 typedef void (*CstCssFunc) (CstRenderNode *rnode, CstLayout *layout, SysPointer user_data);
-typedef void (*CstNodeRealizeFunc) (CstNode *self, CstLayerNode* parent, CstModule *v_module, CstComNode *v_com_node, CstLayout *layout);
+typedef void (*CstNodeRealizeFunc) (CstNode *self, CstILayerNode* parent, CstModule *v_module, CstComNode *v_com_node, CstLayout *layout);
 
 SYS_END_DECLS
 

@@ -34,10 +34,10 @@ void cst_i_layer_append_node (CstLayer* self,
   CST_I_LAYER_GET_IFACE(self)->append_node(self, parent, node);
 }
 
-void cst_i_layer_new_node (CstLayer* self) {
-  sys_return_if_fail(self != NULL);
+CstLayerNode* cst_i_layer_new_node(CstLayer* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
-  CST_I_LAYER_GET_IFACE(self)->new_node(self);
+  return CST_I_LAYER_GET_IFACE(self)->new_node(self);
 }
 
 void cst_i_layer_iterate_node (CstLayer* self,

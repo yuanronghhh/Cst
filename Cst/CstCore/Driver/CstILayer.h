@@ -22,9 +22,9 @@ struct _CstILayerInterface {
   void (*check) (CstLayer *self, CstLayout *layout);
   void (*set_root) (CstLayer *self, CstLayerNode *root);
   void (*append_node) (CstLayer* self, CstLayerNode *parent, CstLayerNode* node);
-  CstLayerNode *(*new_node) (CstLayer* self);
+  CstLayerNode* (*new_node) (CstLayer* self);
   void (*iterate_node) (CstLayer* self,
-      CstLayerNode *lnode, 
+      CstLayerNode *lnode,
       CstLayerNodeFunc func, 
       SysPointer user_data);
 };
@@ -36,9 +36,9 @@ CstLayerNode* cst_i_layer_get_root (CstLayer* self);
 void cst_i_layer_check (CstLayer *self, CstLayout *layout);
 void cst_i_layer_set_root (CstLayer *self, CstLayerNode *root);
 void cst_i_layer_append_node (CstLayer* self,
-    CstLayerNode *parent, 
-    CstLayerNode* node);
-void cst_i_layer_new_node (CstLayer* self);
+  CstLayerNode*parent,
+  CstLayerNode* node);
+CstLayerNode* cst_i_layer_new_node (CstLayer* self);
 void cst_i_layer_iterate_node (CstLayer* self,
     CstLayerNode *lnode, 
     CstLayerNodeFunc func, 

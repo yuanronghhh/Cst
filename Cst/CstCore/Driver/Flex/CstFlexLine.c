@@ -7,14 +7,14 @@ static CstFlexLine *cst_flex_line_dclone_i(const CstFlexLine* line) {
   CstFlexLine* nline = cst_flex_line_new();
 
   for (SysUInt i = 0; i < line->items.len; i++) {
-    CstFlexItem* item = (CstFlexItem *)sys_object_dclone(line->items.pdata[i]);
-    cst_flex_item_add(nline, item);
+    CstIFlexItem* item = (CstIFlexItem *)sys_object_dclone(line->items.pdata[i]);
+    cst_flex_line_add(nline, item);
   }
 
   return nline;
 }
 
-void cst_flex_item_add(CstFlexLine* self, CstFlexItem *item) {
+void cst_flex_line_add(CstFlexLine* self, CstIFlexItem *item) {
   sys_harray_add(&self->items, item);
 }
 

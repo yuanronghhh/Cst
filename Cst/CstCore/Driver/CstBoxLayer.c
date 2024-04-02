@@ -51,7 +51,7 @@ static SysBool box_layer_mark_one(CstRenderNode* rnode, BoxLayerPass* ctx) {
 
   self = ctx->v_layer;
   region = ctx->v_region;
-  lnode = rnode->layer_node;
+  lnode = cst_render_node_get_layer_node(rnode);
   bound = cst_render_node_get_bound(rnode);
 
   sys_return_val_if_fail(region != NULL, false);

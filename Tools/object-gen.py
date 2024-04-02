@@ -61,19 +61,17 @@ void ${type_name}_${func_name} (${func_args});\
 
 interface_func_return_template = """\
 ${func_return} ${type_name}_${func_name} (${func_args}) {
-  ${TypeNameNoI}Interface *self = ${type_name_no_i}_get_iface();
   sys_return_val_if_fail(self != NULL, ${return_default});
 
-  return self->${func_name}(${func_args_name});
+  return ${TYPE_NAME}_GET_IFACE(self)->${func_name}(${func_args_name});
 }
 """
 
 interface_func_template = """\
 void ${type_name}_${func_name} (${func_args}) {
-  ${TypeNameNoI}Interface *self = ${type_name_no_i}_get_iface();
   sys_return_if_fail(self != NULL);
 
-  self->${func_name}(${func_args_name});
+  ${TYPE_NAME}_GET_IFACE(self)->${func_name}(${func_args_name});
 }
 """
 
@@ -409,13 +407,13 @@ class TemplateInfo:
         return ("%s_TYPE_%s" % (self.p_sep_struct[0], "_".join(self.p_sep_struct[1:]))).upper()
 
 class TemplateGenerator:
-    def __init__(self, structStr, relpath, header_path):
-        self.sInfo = TemplateInfo(structStr)
+    def __init__(self, relpath, header_path):
         self.relpath = Path(relpath).as_posix()
         self.header_path = header_path
         self.dstDir = Path(relpath).absolute().as_posix()
 
-    def gen_with_tpl(self, tpl, info):
+    @staticmethod
+    def gen_with_tpl(info, tpl, header_path):
         r = tpl.replace("${TYPE_NAME}", info.get_TYPE_NAME())\
                 .replace("${FN_TYPE_NAME}", info.get_FN_TYPE_NAME())\
                 .replace("${PARENT_TYPE}", info.get_PARENT_TYPE())\
@@ -425,25 +423,25 @@ class TemplateGenerator:
                 .replace("${TypeName}", info.get_TypeName())\
                 .replace("${type_name}", info.get_type_name())\
                 .replace("${struct_str}", info.get_struct_str())\
-                .replace("${header_path}", self.header_path)
+                .replace("${header_path}", header_path)
 
         return r
 
-    def generate_file(self):
-        info = self.sInfo
+
+    def generate_file(self, info):
         if info.is_interface:
-            self.generate_interface()
+            self.generate_interface_file()
             return
 
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
         c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
 
-        result = self.gen_with_tpl(h_template, info)
+        result = self.gen_with_tpl(info, h_template, self.header_path)
         fp = open(h_file, "w+")
         fp.write(result)
         fp.close()
 
-        result = self.gen_with_tpl(c_template, info)
+        result = self.gen_with_tpl(info, c_template, self.header_path)
         fp = open(c_file, "w+")
         fp.write(result)
         fp.close()
@@ -497,8 +495,8 @@ class TemplateGenerator:
 
         return func_codes
 
-    def gen_c_interface_file(self, info):
-        result = self.gen_with_tpl(interface_c_template, info)
+    def gen_c_interface_result(self, info):
+        result = self.gen_with_tpl(info, interface_c_template, self.header_path)
 
         func_codes = ""
         for prop in info.props:
@@ -510,8 +508,8 @@ class TemplateGenerator:
         result = result.replace("${FUNC_IMPL_CODES}", func_codes)
         return result
 
-    def gen_h_interface_file(self, info):
-        result = self.gen_with_tpl(interface_h_template, info)
+    def gen_h_interface_result(self, info):
+        result = self.gen_with_tpl(info, interface_h_template, self.header_path)
         has_return = False
 
         func_codes = ""
@@ -522,17 +520,17 @@ class TemplateGenerator:
         result = result.replace("${FUNC_DEFINE_CODES}", func_codes)
         return result
 
-    def generate_interface(self):
-        info = self.sInfo
+    def generate_interface_file(self):
+        info = self.info
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
         c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
 
-        result = self.gen_h_interface_file(info)
+        result = self.gen_h_interface_result(info)
         fp = open(h_file, "w+")
         fp.write(result)
         fp.close()
 
-        result = self.gen_c_interface_file(info)
+        result = self.gen_c_interface_result(info)
         fp = open(c_file, "w+")
         fp.write(result)
         fp.close()
@@ -561,8 +559,8 @@ class TemplateGenerator:
         return -1
 
     def generate_field(self):
-        props = self.sInfo.props
-        info = self.sInfo
+        props = self.info.props
+        info = self.info
 
         #define sys_object_add_property(TYPE, TypeName, full_type, field_type, field_name) \
         tpl = "sys_object_add_property(%s, %s, \"%s\", %s, %s);"
@@ -580,15 +578,6 @@ class TemplateGenerator:
                 data_type,
                 p.name))
 
-
-template_struct = """
-struct _FrIDrawInterface {
-  SysTypeInterface parent;
-
-  /* <private> */
-  void (*overlay) (FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, SysInt y);
-};
-"""
 
 draw_template = """\
 ${return_type} (*${func_name}) (${args});\
@@ -642,14 +631,29 @@ def gen_interface_for_cairo():
 
     f.close()
 
-def main():
+def gen_interface_result():
     dst = "./Cst/Framework/Graph"
     header_path = "Framework/Graph"
 
-    gen = TemplateGenerator(template_struct, dst, header_path)
-    r = gen.gen_h_interface_file(gen.sInfo)
-    r += gen.gen_c_interface_file(gen.sInfo)
+    template_struct = """
+struct _CstILayerNodeInterface {
+  SysTypeInterface parent;
+
+  void (*iterate_node) (CstLayerNode *self, CstLayerNodeFunc func, SysPointer user_data);
+  CstLayerNode *(*get_children) (CstLayerNode *self);
+  CstLayerNode *(*get_parent) (CstLayerNode *self);
+  CstLayerNode *(*get_next) (CstLayerNode *self);
+};
+"""
+
+    info = TemplateInfo(template_struct)
+    gen = TemplateGenerator(dst, header_path)
+    r = gen.gen_h_interface_result(info)
+    r += gen.gen_c_interface_result(info)
     print(r)
+
+def main():
+    gen_interface_result()
 
 if __name__ == '__main__':
     main()

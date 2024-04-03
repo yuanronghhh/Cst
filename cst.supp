@@ -1,7 +1,0 @@
-{
-  _FcConfigParse
-  Memcheck:Leak
-  ...
-  fun:_FcConfigParse
-  ...
-}

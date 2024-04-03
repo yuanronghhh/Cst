@@ -83,7 +83,7 @@ static void cst_text_paint_self_i(CstRenderNode *rnode, CstLayout *layout) {
 
   PangoLayout *playout = self->playout;
   FrContext* cr = cst_surface_get_cr(surface);
-  const FrRect *bound = cst_render_node_get_bound(rnode);
+  const FrBound *bound = cst_render_node_get_bound(rnode);
   const FrSInt4 *m4 = cst_render_node_get_margin(rnode);
 
   fr_context_show_text(cr, playout, bound->x, bound->y, m4->m1, m4->m0);

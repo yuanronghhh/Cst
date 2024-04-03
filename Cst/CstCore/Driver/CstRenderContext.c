@@ -167,7 +167,7 @@ SysInt cst_render_context_get_direction(CstRenderContext *self) {
   return self->direction;
 }
 
-SysBool cst_render_context_check_wrap(CstRenderContext* self, const FrRect *rbound) {
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FrBound *rbound) {
   sys_return_val_if_fail(self != NULL, false);
 
   if(!self->wrap) {

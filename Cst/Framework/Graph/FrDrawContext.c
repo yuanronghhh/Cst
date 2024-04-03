@@ -55,6 +55,9 @@ FrSurface* fr_draw_context_get_surface_by_idx(FrDrawContext* self, SysInt idx) {
 }
 
 void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(self->surfaces != NULL);
+
   FrSurface** p;
 
   p = (FrSurface**)(self->surfaces->pdata);
@@ -69,7 +72,7 @@ void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
 
 static void surface_clip(FrContext* cr, FrRegion* region) {
   int n_boxes, i;
-  FrRect box = { 0 };
+  FrBound box = { 0 };
 
   n_boxes = fr_region_num_rectangles(region);
   for (i = 0; i < n_boxes; i++) {

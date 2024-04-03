@@ -82,7 +82,7 @@ static SysInt i_flex_item_get_direction(CstIFlexItem *item) {
   return cst_render_node_get_direction(rnode);
 }
 
-static const FrRect* i_flex_item_get_bound(CstIFlexItem* item) {
+static const FrBound* i_flex_item_get_bound(CstIFlexItem* item) {
   CstRenderNode* rnode = CST_RENDER_NODE(item);
 
   return cst_render_node_get_bound(rnode);
@@ -181,7 +181,7 @@ SysObject* cst_render_node_dclone_i(SysObject *o) {
 void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   sys_return_if_fail(self != NULL);
 
-  const FrRect* bound = cst_render_node_get_bound(self);
+  const FrBound* bound = cst_render_node_get_bound(self);
 
   if (prnode) {
     sys_debug_N("<%s,%s> <%s,%s> <%d,%d,%d,%d>",
@@ -339,7 +339,7 @@ CstLayerNode * cst_render_node_get_layer_node(CstRenderNode *self) {
 
 static void cst_render_node_paint_self_i(CstRenderNode *self, CstLayout *layout) {
   FrContext *cr = cst_surface_get_cr(self->surface);
-  const FrRect *bound = cst_render_node_get_bound(self);
+  const FrBound *bound = cst_render_node_get_bound(self);
 
   fr_context_fill_bound(cr, bound);
 }

@@ -28,9 +28,9 @@ SYS_API FrContext *fr_context_new(void);
 
 SYS_API FrContext *fr_context_new_I(FrSurface *surface);
 void fr_context_fill_background (FrContext *self, SysInt width, SysInt height);
-void fr_context_fill_bound(FrContext* self, const FrRect* bound);
+void fr_context_fill_bound(FrContext* self, const FrBound* bound);
 void fr_context_stroke(FrContext *self);
-void fr_context_stroke_mp(FrContext* self, const FrRect* bound, const FrSInt4* m4, const FrSInt4* p4);
+void fr_context_stroke_mp(FrContext* self, const FrBound* bound, const FrSInt4* m4, const FrSInt4* p4);
 void fr_context_set_color(FrContext* self, FrColor *color);
 void fr_context_set_source_surface (FrContext* self, FrSurface* surface,SysDouble x,SysDouble y);
 void fr_context_rectangle (FrContext* self,SysDouble x,SysDouble y,SysDouble width,SysDouble height);

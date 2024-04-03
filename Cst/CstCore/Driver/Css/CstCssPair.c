@@ -195,7 +195,7 @@ void cst_css_pair_set_color(CstRenderNode* rnode, CstLayout *layout, SysPointer 
 void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt64 d) {
   sys_return_if_fail(rnode != NULL);
 
-  const FrRect *bound;
+  const FrBound *bound;
   SysInt pwidth;
   FrSInt4 m4;
   CstLayoutNode* lnode;
@@ -212,7 +212,7 @@ void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt6
 void cst_css_pair_height_percent(CstRenderNode * rnode, CstLayout *layout, SysInt64 d) {
   sys_return_if_fail(rnode != NULL);
 
-  const FrRect* bound;
+  const FrBound* bound;
   SysInt pheight;
   FrSInt4 m4;
   CstLayoutNode* lnode;

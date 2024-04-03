@@ -82,7 +82,7 @@ void cst_render_context_inherit(CstRenderContext *self, CstRenderContext *pctx, 
 void cst_render_context_set_direction(CstRenderContext *self, SysInt direction);
 SysInt cst_render_context_get_direction(CstRenderContext *self);
 
-SysBool cst_render_context_check_wrap(CstRenderContext* self, const FrRect *rbound);
+SysBool cst_render_context_check_wrap(CstRenderContext* self, const FrBound *rbound);
 
 void cst_render_context_layout_self(CstRenderContext *self, CstRenderNode *rnode, CstLayout *layout);
 

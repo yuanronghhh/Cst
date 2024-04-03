@@ -12,7 +12,7 @@ static SysBool fr_awatch_mouse_release_check_i(FrAWatch *o, FrEvent *e) {
   FrAWatchMouseRelease *self = FR_AWATCH_MOUSE_RELEASE(o);
   FrACursorMove *acursor;
   SysDouble x = 0, y = 0;
-  const FrRect *bound;
+  const FrBound *bound;
 
   if(!fr_event_is(e, FR_TYPE_EVENT_MOUSEKEY)) {
     return false;

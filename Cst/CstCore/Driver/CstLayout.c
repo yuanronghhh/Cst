@@ -90,21 +90,47 @@ void layout_node_r(CstRenderNode* rnode) {
   cst_algorithm_layout(alg, rnode, rctx);
 }
 
-void cst_layout_layout_root(CstLayout* self, CstRenderNode* rnode) {
-  SysInt width = 0, height = 0;
+void cst_layout_layout_prepare(CstLayout* self, CstRenderNode* rnode) {
   FrDrawContext* draw_context = self->draw_context;
+  SysInt width = 0, height = 0;
   FrRegion* region = self->region;
 
   fr_draw_context_get_buffer_size(draw_context, &width, &height);
+
   init_body(rnode, width, height);
   fr_draw_context_set_surfaces(draw_context, &self->surfaces);
+}
+
+void cst_layout_layout_begin(CstLayout* self, CstRenderNode* rnode) {
+  FrDrawContext* draw_context = self->draw_context;
+  FrRegion* region = self->region;
 
   fr_draw_context_frame_begin(draw_context, region);
-  layout_node_r(rnode);
+}
+
+void cst_layout_layout_end(CstLayout* self, CstRenderNode* rnode) {
+  FrDrawContext* draw_context = self->draw_context;
+  FrRegion* region = self->region;
+
   fr_draw_context_frame_end(draw_context, region);
 }
 
+void cst_layout_layout_root(CstLayout* self, CstRenderNode* rnode) {
+  layout_node_r(rnode);
+}
+
 void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode) {
+  FrDrawContext* draw_context = self->draw_context;
+  CstSurface* ns = cst_layout_get_default_surface(self);
+
+  FrContext* cr = fr_context_new_I(FR_SURFACE(ns));
+  const FrBound* bound = cst_render_node_get_bound(rnode);
+  const FrSInt4* m4 = cst_render_node_get_margin(rnode);
+  const FrSInt4* p4 = cst_render_node_get_padding(rnode);
+
+  fr_context_stroke_mp(cr, bound, m4, p4);
+
+  sys_object_unref(cr);
 }
 
 /* object api */

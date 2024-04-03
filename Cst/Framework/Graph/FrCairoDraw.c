@@ -10,7 +10,7 @@ static void i_draw_imp(FrIDrawInterface *iface);
 SYS_DEFINE_WITH_CODE(FrCairoDraw, fr_cairo_draw, FR_TYPE_DRAW,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_DRAW, i_draw_imp));
 
-void cairo_stroke_mp_i(FrDrawBrush* cr, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4) {
+void cairo_stroke_mp_i(FrDrawBrush* cr, const FrBound *bound, const FrSInt4* m4, const FrSInt4* p4) {
   sys_return_if_fail(cr != NULL);
   sys_return_if_fail(m4 != NULL);
   sys_return_if_fail(p4 != NULL);
@@ -25,7 +25,7 @@ void cairo_stroke_mp_i(FrDrawBrush* cr, const FrRect *bound, const FrSInt4* m4, 
   cairo_stroke(cr);
 }
 
-void cairo_context_fill_bound_i(FrDrawBrush* cr, const FrRect *bound) {
+void cairo_context_fill_bound_i(FrDrawBrush* cr, const FrBound *bound) {
   sys_return_if_fail(cr != NULL);
   sys_return_if_fail(bound != NULL);
 

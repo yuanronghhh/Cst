@@ -30,7 +30,7 @@ const FrSInt4 *cst_i_flex_item_get_padding (CstIFlexItem *self) {
   return CST_I_FLEX_ITEM_GET_IFACE(self)->get_padding(self);
 }
 
-const FrRect* cst_i_flex_item_get_bound (CstIFlexItem *self) {
+const FrBound* cst_i_flex_item_get_bound (CstIFlexItem *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return CST_I_FLEX_ITEM_GET_IFACE(self)->get_bound(self);

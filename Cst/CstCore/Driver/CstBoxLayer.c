@@ -46,7 +46,7 @@ static SysBool box_layer_mark_one(CstRenderNode* rnode, BoxLayerPass* ctx) {
   CstLayerNode* lnode;
   CstLayer* self;
   FrRegion* region;
-  const FrRect* bound;
+  const FrBound* bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;

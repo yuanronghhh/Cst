@@ -79,7 +79,7 @@ void cst_layout_node_set_xy(CstLayoutNode* self, SysInt x, SysInt y) {
   self->bound.y = y;
 }
 
-void cst_layout_node_set_bound(CstLayoutNode* self, const FrRect *bound) {
+void cst_layout_node_set_bound(CstLayoutNode* self, const FrBound *bound) {
   sys_return_if_fail(self != NULL);
 
   *(&self->bound) = *bound;
@@ -164,7 +164,7 @@ void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext *ctx) {
   }
 }
 
-const FrRect *cst_layout_node_get_bound(CstLayoutNode* self) {
+const FrBound *cst_layout_node_get_bound(CstLayoutNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return &self->bound;
@@ -173,7 +173,7 @@ const FrRect *cst_layout_node_get_bound(CstLayoutNode* self) {
 void cst_layout_node_fill_rectangle(CstLayoutNode *self, FrContext* cr) {
   sys_return_if_fail(self != NULL);
 
-  const FrRect* bound = &self->bound;
+  const FrBound* bound = &self->bound;
 
   fr_context_fill_bound(cr, bound);
 }
@@ -182,7 +182,7 @@ void cst_layout_node_stroke_rectangle(CstLayoutNode *self, FrContext* cr) {
   sys_return_if_fail(self != NULL);
 
   const FrSInt4 *m4, *p4;
-  const FrRect* bound;
+  const FrBound* bound;
 
   m4 = &self->margin;
   p4 = &self->padding;

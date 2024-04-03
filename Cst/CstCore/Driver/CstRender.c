@@ -53,7 +53,7 @@ FrIDevice *cst_render_get_default_device(CstRender *self) {
 
 static FrRegion *idevice_create_region(FrIDevice *device) {
   FrRegion *region;
-  FrRect bound = { 0 };
+  FrBound bound = { 0 };
 
   fr_i_device_get_size(device, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
@@ -77,26 +77,42 @@ static void render_realize(CstRender *self,
   self->body_rnode = body;
 }
 
-void cst_render_render(CstRender *self, CstModule *v_module) {
-  sys_return_if_fail(self != NULL);
-
-  FrRegion *region;
-  CstLayout* layout;
+static CstLayout* render_create_layout(CstRender* self) {
+  FrRegion* region;
   FrDrawContext* draw_context;
 
   draw_context = self->draw_context;
   region = idevice_create_region(self->device);
-  layout = cst_layout_new_I(draw_context, region);
+  return cst_layout_new_I(draw_context, region);
+}
 
-  render_realize(self, v_module, layout);
+void render_render(CstRender* self, CstLayout *layout) {
+  FrDrawContext* draw_context;
+
+  draw_context = self->draw_context;
+
   cst_layout_layout_root(layout, self->body_rnode);
   cst_layout_paint_root(layout, self->body_rnode);
+}
+
+void cst_render_render(CstRender *self, CstModule *v_module) {
+  sys_return_if_fail(self != NULL);
+  CstLayout* layout;
+ 
+  layout = render_create_layout(self);
+
+  render_realize(self, v_module, layout);
+
+  cst_layout_layout_prepare(layout, self->body_rnode);
+  render_render(self, layout);
 
   sys_object_unref(layout);
 }
 
 void cst_render_resize_surface(CstRender *self) {
   sys_return_if_fail(self != NULL);
+
+  render_render(self, layout);
 }
 
 /* object api */

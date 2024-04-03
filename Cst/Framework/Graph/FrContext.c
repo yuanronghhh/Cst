@@ -6,7 +6,7 @@
 
 SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
 
-void fr_context_fill_bound(FrContext* self, const FrRect *bound) {
+void fr_context_fill_bound(FrContext* self, const FrBound *bound) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(bound != NULL);
 
@@ -52,7 +52,7 @@ void fr_context_rectangle (FrContext* self,SysDouble x,SysDouble y,SysDouble wid
   fr_i_draw_rectangle(self->v.cr, x, y, width, height);
 }
 
-void fr_context_stroke_mp(FrContext* self, const FrRect *bound, const FrSInt4* m4, const FrSInt4* p4) {
+void fr_context_stroke_mp(FrContext* self, const FrBound *bound, const FrSInt4* m4, const FrSInt4* p4) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(m4 != NULL);
   sys_return_if_fail(p4 != NULL);

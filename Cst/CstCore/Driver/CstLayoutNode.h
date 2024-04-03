@@ -14,7 +14,7 @@ SYS_BEGIN_DECLS
 struct _CstLayoutNode {
   SysObject parent;
 
-  FrRect bound;
+  FrBound bound;
 
   FrSInt4 border;
   FrSInt4 margin;
@@ -46,8 +46,8 @@ void cst_layout_node_get_size(CstLayoutNode* self, SysInt *width, SysInt *height
 void cst_layout_node_maybe_expand(CstLayoutNode* self, CstRenderContext* ctx);
 void cst_layout_node_get_mbp(CstLayoutNode* self, FrSInt4* m4);
 
-const FrRect *cst_layout_node_get_bound(CstLayoutNode* self);
-void cst_layout_node_set_bound(CstLayoutNode* self, const FrRect *bound);
+const FrBound *cst_layout_node_get_bound(CstLayoutNode* self);
+void cst_layout_node_set_bound(CstLayoutNode* self, const FrBound *bound);
 
 void cst_layout_node_set_margin(CstLayoutNode *self, const FrSInt4 * margin);
 const FrSInt4 * cst_layout_node_get_margin(CstLayoutNode *self);

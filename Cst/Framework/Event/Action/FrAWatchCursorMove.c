@@ -8,7 +8,7 @@ SYS_DEFINE_TYPE(FrAWatchCursorMove, fr_awatch_cursor_move, FR_TYPE_AWATCH);
 
 static SysBool fr_awatch_cursor_move_check_i(FrAWatch *o, FrEvent *e) {
   FrAWatchCursorMove *self = FR_AWATCH_CURSOR_MOVE(o);
-  const FrRect *bound;
+  const FrBound *bound;
   FrACursorMove *mv;
 
   SysDouble x = 0, y = 0;

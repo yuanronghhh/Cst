@@ -39,7 +39,7 @@ static SysBool abs_layer_mark_one(CstRenderNode* rnode, AbsLayerPass* ctx) {
   CstLayerNode* lnode;
   CstLayer* self;
   FrRegion* region;
-  const FrRect* bound;
+  const FrBound* bound;
 
   self = ctx->v_layer;
   region = ctx->v_region;

@@ -16,7 +16,7 @@ static SysBool fr_awatch_mouse_press_check_i(FrAWatch *o, FrEvent *e) {
   FrAWatchMousePress *self = FR_AWATCH_MOUSE_PRESS(o);
   FrACursorMove *acursor;
   SysDouble x = 0, y = 0;
-  const FrRect *bound;
+  const FrBound *bound;
 
   if(!fr_event_is(e, FR_TYPE_EVENT_MOUSEKEY)) {
     return false;

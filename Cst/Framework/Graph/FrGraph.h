@@ -17,7 +17,7 @@ typedef  struct  _FrPoint          FrPoint;
 typedef  struct  _FrInt4           FrInt4;
 typedef  struct  _FrSInt4          FrSInt4;
 typedef  struct _cairo_region  FrRegion;
-typedef  struct _cairo_rectangle_int FrRect;
+typedef  struct _cairo_rectangle_int FrBound;
 
 typedef struct _cairo FrDrawBrush;
 typedef struct _cairo_surface FrDrawSurface;
@@ -54,7 +54,7 @@ struct _FrSInt4 {
 SYS_API FrColor *fr_color_clone(FrColor *o);
 SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FrColor *color);
 SYS_API FrColor* fr_color_rgba_new(const SysChar *rgba);
-SYS_API SysBool fr_rect_in_range(const FrRect *rect, SysInt x, SysInt y);
+SYS_API SysBool fr_rect_in_range(const FrBound *rect, SysInt x, SysInt y);
 SYS_API FrSInt4* fr_sint4_clone(FrSInt4* m);
 SYS_API FrSInt4* fr_sint4_new(void);
 SYS_API void fr_sint4_free(FrSInt4* o);

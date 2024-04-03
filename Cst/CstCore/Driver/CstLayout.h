@@ -37,6 +37,9 @@ CstSurface* cst_layout_get_default_surface(CstLayout* self);
 CstSurface* cst_layout_get_surface(CstLayout* self, SysUInt surf_idx);
 void cst_layout_layout_root(CstLayout* self, CstRenderNode* rnode);
 void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode);
+void cst_layout_layout_prepare(CstLayout* self, CstRenderNode* rnode);
+void cst_layout_layout_begin(CstLayout* self, CstRenderNode* rnode);
+void cst_layout_layout_end(CstLayout* self, CstRenderNode* rnode);
 
 void cst_layout_set_region(CstLayout *self, FrRegion * region);
 FrRegion * cst_layout_get_region(CstLayout *self);

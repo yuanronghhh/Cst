@@ -163,7 +163,7 @@ typedef  struct  _FrMonoContext   FrMonoContext;
 
 typedef SysBool (*FrEventCheckFunc) (FrEvent *e, SysPointer user_data);
 typedef SysInt (*FrEventFunc) (FrEvent *e, SysPointer user_data);
-typedef const FrRect* (*FrGetBoundFunc) (SysPointer user_data);
+typedef const FrBound* (*FrGetBoundFunc) (SysPointer user_data);
 typedef SysBool (*FrNodeFunc) (FrNode* node, SysPointer user_data);
 
 

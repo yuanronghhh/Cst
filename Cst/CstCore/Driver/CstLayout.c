@@ -110,6 +110,8 @@ void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode) {
 /* object api */
 static void cst_layout_init(CstLayout *self) {
   CstSurface* paint_surface = cst_surface_create_image_surface(800, 600);
+  
+  sys_harray_init_with_free_func(&self->surfaces, _sys_object_unref);
   sys_harray_add(&self->surfaces, paint_surface);
 }
 
@@ -118,6 +120,7 @@ static void cst_layout_dispose(SysObject* o) {
   CstLayout* self = CST_LAYOUT(o);
 
   sys_clear_pointer(&self->draw_context, _sys_object_unref);
+  sys_harray_destroy(&self->surfaces);
   fr_region_destroy(self->region);
 
   SYS_OBJECT_CLASS(cst_layout_parent_class)->dispose(o);

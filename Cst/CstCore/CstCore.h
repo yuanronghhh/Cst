@@ -28,6 +28,14 @@ SYS_BEGIN_DECLS
 #include <CstCore/Driver/CstRenderContext.h>
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstNodeBuilder.h>
+#include <CstCore/Driver/CstAlgorithm.h>
+#include <CstCore/Driver/FlexLayout/CstFlexAlgorithm.h>
+#include <CstCore/Driver/FlexLayout/CstFlexContext.h>
+#include <CstCore/Driver/FlexLayout/CstFlexLine.h>
+#include <CstCore/Driver/FlexLayout/CstIFlexItem.h>
+#include <CstCore/Driver/FlexLayout/CstFlexBox.h>
+#include <CstCore/Driver/BoxLayout/CstLBoxContext.h>
+
 
 void cst_core_setup (void);
 void cst_core_teardown (void);

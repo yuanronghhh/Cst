@@ -288,13 +288,18 @@ CstRenderNode *cst_node_new_render_node(CstNode* self) {
     return NULL;
   }
 
+  if (self->alg_type == 0) {
+    sys_warning_N("%s", "node must be set algorithm type before realize.");
+    return NULL;
+  }
+
   tp = self->rnode_type;
   rnode = sys_object_new(tp, NULL);
 
-  tp = self->alg_type;
+  tp = self->rctx_type;
   rctx = sys_object_new(tp, NULL);
 
-  alg = cst_algorithm_get_by_type(tp);
+  alg = cst_algorithm_get_by_type(self->alg_type);
 
   param.id = self->id;
   param.name = self->name;

@@ -142,6 +142,7 @@ static void cst_render_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->device, _sys_object_unref);
     sys_clear_pointer(&self->display, _sys_object_unref);
+    sys_clear_pointer(&self->draw_context, _sys_object_unref);
   }
 
   sys_clear_pointer(&self->body_rnode, cst_render_node_unlink_node_r);

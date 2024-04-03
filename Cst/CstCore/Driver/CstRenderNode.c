@@ -44,12 +44,6 @@ static SysInt i_flex_item_get_width (CstIFlexItem *item) {
   return cst_render_node_get_width(self);
 }
 
-static CstRenderNode* cst_render_node_get_children(CstLayerNode * o) {
-  CstLayerNode* cnode = cst_i_layer_node_get_children(o);
-
-  return cst_layer_node_get_render_node(cnode);
-}
-
 CstRenderNode* i_layer_node_get_next(CstRenderNode* self) {
   CstLayerNode* cnode = cst_i_layer_node_get_next(self->layer_node);
 
@@ -375,6 +369,7 @@ CstAlgorithm * cst_render_node_get_algorithm(CstRenderNode *self) {
 static void cst_render_node_dispose(SysObject* o) {
   CstRenderNode* self = CST_RENDER_NODE(o);
 
+  sys_clear_pointer(&self->algorithm, _sys_object_unref);
   sys_clear_pointer(&self->render_context, _sys_object_unref);
   sys_harray_free(self->v_css_list, true);
   self->v_css_list = NULL;
@@ -399,7 +394,7 @@ void cst_render_node_construct(CstRenderNode* self, CstRenderNodeContext *param)
   self->id = sys_strdup(param->id);
   self->name = sys_strdup(param->name);
   self->algorithm = sys_object_ref(param->algorithm);
-  self->render_context = sys_object_ref(param->render_context);
+  self->render_context = param->render_context;
 }
 
 CstRenderNode *cst_render_node_new(void) {

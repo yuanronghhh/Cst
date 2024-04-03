@@ -1,0 +1,15 @@
+#ifndef __CST_CONFIG_H__
+#define __CST_CONFIG_H__
+
+#define APP_NAME "Cst"
+
+#define CST_USE_MONO ${USE_MONO}
+#define GETTEXT_PACKAGE APP_NAME
+#define CST_PROJECT_DIR "${CMAKE_SOURCE_DIR}"
+#define CST_BINARY_DIR "${CMAKE_BINARY_DIR}"
+
+#if CST_USE_MONO
+#define CST_MONO_HOME CST_PROJECT_DIR"/../lib/win64_vc14/mono"
+#endif
+
+#endif

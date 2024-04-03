@@ -1,0 +1,16 @@
+#ifndef __FR_EVENT_MF_H__
+#define __FR_EVENT_MF_H__
+
+#include <Framework/FRCommon.h>
+
+SYS_BEGIN_DECLS
+
+#include <Framework/Event/Base/FREventCursorMove.h>
+#include <Framework/Event/Base/FREventMouseKey.h>
+#include <Framework/Event/Base/FREventKey.h>
+#include <Framework/Event/Base/FREvent.h>
+
+SYS_END_DECLS
+
+#endif
+

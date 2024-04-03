@@ -1,0 +1,32 @@
+import CButton from "./CstButton.cst";
+
+/**
+ * layout for cst parser
+ */
+Layout: {
+  GtkGrid<class:"menu-bg", orientation:1 >: {
+    GtkBox: {
+      CButton<label: "button2">: null,
+      GtkMenuBar<id: "menu">: {
+        GtkMenuItem<label: "文件", submenu: {
+          GtkImageMenuItem<label: "gtk-new", use_stock: true>: null,
+          GtkImageMenuItem<label: "gtk-open", use_stock: true>: null
+        }>: null,
+        GtkMenuItem<label: "编辑", submenu: {
+          GtkImageMenuItem<label: "gtk-edit", use_stock: true>: null
+        }>: null,
+        GtkMenuItem<label: "视图">: null,
+        GtkMenuItem<label: "分类">: null,
+        GtkMenuItem<label: "下载">: null,
+        GtkMenuItem<label: "帮助", submenu: {
+          GtkImageMenuItem<label: "gtk-help", use_stock: true>: null,
+        }>: null,
+      }
+    },
+    GtkGrid: {
+      GtkPaned<class:"menu">: {
+        GtkButton<id:"b1", label:"切换图片", @clicked: "switch_image(\"img\")", class: ["gray-background"]>: 123
+      }
+    }
+  }
+}

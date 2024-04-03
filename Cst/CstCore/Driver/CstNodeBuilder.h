@@ -1,0 +1,82 @@
+#ifndef __CST_NODE_BUILDER_H__
+#define __CST_NODE_BUILDER_H__
+
+#include <CstCore/Driver/CstCommon.h>
+
+SYS_BEGIN_DECLS
+
+
+#define CST_TYPE_NODE_BUILDER (cst_node_builder_get_type())
+#define CST_NODE_BUILDER(o) ((CstNodeBuilder* )sys_object_cast_check(o, CST_TYPE_NODE_BUILDER))
+#define CST_NODE_BUILDER_CLASS(o) ((CstNodeBuilderClass *)sys_class_cast_check(o, CST_TYPE_NODE_BUILDER))
+#define CST_NODE_BUILDER_GET_CLASS(o) sys_instance_get_class(o, CstNodeBuilderClass)
+
+
+struct _CstNodeBuilder {
+  SysObject parent;
+
+  CstModule *v_module;
+  CstComponent *v_component;
+  SysList *v_awatch_list;
+  SysList *v_nodemap_list;
+  SysHArray *v_css_list;
+
+  const SysChar* v_name;
+  const SysChar* v_id;
+  const SysChar *v_tag;
+
+  SysInt v_layer_index;
+  SysChar *v_value;
+  SysChar *v_label;
+  SysInt  v_z_index;
+};
+
+struct _CstNodeBuilderClass {
+  SysObjectClass parent;
+};
+
+SysType cst_node_builder_get_type(void);
+CstNodeBuilder *cst_node_builder_new(void);
+
+void cst_node_builder_build_node(CstNodeBuilder *self, CstNode *node);
+void cst_node_builder_build_com_node(CstNodeBuilder *self, CstComNode *cnode);
+void cst_node_builder_build_text(CstNodeBuilder* self, CstRenderNode* rnode);
+
+SysBool cst_node_builder_parse_layer_name(CstNodeBuilder* o, const SysChar* pstr);
+SysChar* cst_builder_node_extract_index(const SysChar* str, SysInt slen);
+
+SysBool cst_node_builder_parse_base(CstNodeBuilder* o,
+  CstComponent* v_component,
+  const SysChar* base[],
+  SysUInt len);
+
+SysBool cst_node_builder_parse_value_bind(
+  CstNodeBuilder* o,
+  CstComponent* v_component,
+  const SysChar* key,
+  const SysChar* expr_str);
+
+SysBool cst_node_builder_parse_action_bind(
+  CstNodeBuilder* o,
+  CstComponent* comp,
+  const SysChar* watch_name,
+  const SysChar* func_name,
+  SysChar** bind_var);
+
+SysBool cst_node_builder_parse_action(
+  CstNodeBuilder* bnode,
+  CstModule* v_module,
+  CstComponent* v_component,
+  const SysChar* watch_name,
+  const SysChar* func_name);
+
+
+void cst_node_builder_add_nodemap(CstNodeBuilder *self, CstNodeMap* map);
+void cst_node_builder_set_v_value(CstNodeBuilder *self, const SysChar *v_value);
+void cst_node_builder_set_id(CstNodeBuilder *self, const SysChar *v_id);
+void cst_node_builder_set_v_label(CstNodeBuilder *self, const SysChar *v_label);
+void cst_node_builder_add_awatch(CstNodeBuilder *self, FrAWatch* map);
+
+SYS_END_DECLS
+
+#endif

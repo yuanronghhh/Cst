@@ -1,0 +1,32 @@
+#ifndef __CST_CSS_COLOR_H__
+#define __CST_CSS_COLOR_H__
+
+#include <CstCore/Driver/Css/CstCssValue.h>
+
+SYS_BEGIN_DECLS
+
+
+#define CST_TYPE_CSS_COLOR (cst_css_color_get_type())
+#define CST_CSS_COLOR(o) ((CstCssColor* )sys_object_cast_check(o, CST_TYPE_CSS_COLOR))
+#define CST_CSS_COLOR_CLASS(o) ((CstCssColorClass *)sys_class_cast_check(o, CST_TYPE_CSS_COLOR))
+#define CST_CSS_COLOR_GET_CLASS(o) sys_instance_get_class(o, CstCssColorClass)
+
+struct _CstCssColor {
+  CstCssValue parent;
+
+  /* <private> */
+  FRColor v;
+};
+
+struct _CstCssColorClass {
+  CstCssValueClass parent;
+};
+
+SYS_API SysType cst_css_color_get_type(void);
+SYS_API CstCssValue *cst_css_color_new(void);
+
+SYS_END_DECLS
+
+#endif
+
+

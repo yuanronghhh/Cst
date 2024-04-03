@@ -1,0 +1,50 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+  /usr/lib/x86_64-linux-gnu
+)
+
+set(HARFBUZZ_FILES "")
+FIND_PATH(HARFBUZZ_INCLUDE_DIR
+  NAMES hb.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES include include/harfbuzz harfbuzz/include/harfbuzz)
+
+FIND_LIBRARY(HARFBUZZ_LIBRARY
+  NAMES harfbuzz
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib harfbuzz/lib)
+LIST(APPEND HARFBUZZ_LIBRARY "${HARFBUZZ_LIBRARY}")
+
+if(WIN32)
+  FIND_FILE(HARFBUZZ_SUBSET_FILE
+    NAMES "harfbuzz-subset.dll"
+    HINTS ${search_dirs}
+    PATH_SUFFIXES harfbuzz/bin bin)
+  LIST(APPEND HARFBUZZ_FILES "${HARFBUZZ_SUBSET_FILE}")
+
+  FIND_FILE(HARFBUZZ_FILE
+    NAMES "harfbuzz.dll"
+    HINTS ${search_dirs}
+    PATH_SUFFIXES harfbuzz/bin bin)
+  LIST(APPEND HARFBUZZ_FILES "${HARFBUZZ_FILE}")
+endif()
+
+if (UNIX)
+  LIST(APPEND HARFBUZZ_LIBRARY "graphite2")
+endif()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(HARFBUZZ DEFAULT_MSG
+  HARFBUZZ_LIBRARY HARFBUZZ_INCLUDE_DIR)
+
+IF(HARFBUZZ_FOUND)
+  SET(HARFBUZZ_LIBRARIES ${HARFBUZZ_LIBRARY})
+  SET(HARFBUZZ_INCLUDE_DIRS ${HARFBUZZ_INCLUDE_DIR})
+ENDIF(HARFBUZZ_FOUND)
+
+MARK_AS_ADVANCED(
+  HARFBUZZ_INCLUDE_DIR
+  HARFBUZZ_LIBRARY
+)

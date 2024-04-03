@@ -1,0 +1,75 @@
+#ifndef __FR_GRAPH_H__
+#define __FR_GRAPH_H__
+
+#include <Framework/ThirdParty/FrCairo.h>
+#include <pixman.h>
+
+SYS_BEGIN_DECLS
+
+typedef enum _FR_REGION_OVERLAP_ENUM {
+  FR_REGION_OVERLAP_IN = CAIRO_REGION_OVERLAP_IN,
+  FR_REGION_OVERLAP_OUT = CAIRO_REGION_OVERLAP_OUT,
+  FR_REGION_OVERLAP_PART = CAIRO_REGION_OVERLAP_PART
+} FR_REGION_OVERLAP_ENUM;
+
+typedef  struct  _FrRGBA           FrColor;
+typedef  struct  _FrPoint          FrPoint;
+typedef  struct  _FrInt4           FrInt4;
+typedef  struct  _FrSInt4          FrSInt4;
+typedef  struct _cairo_region  FrRegion;
+typedef  struct _cairo_rectangle_int FrRect;
+
+typedef struct _cairo FrDrawBrush;
+typedef struct _cairo_surface FrDrawSurface;
+typedef struct _cairo_pattern FrDrawPattern;
+
+#define FrImage pixman_image_t
+
+struct _FrPoint {
+  SysInt x;
+  SysInt y;
+};
+
+struct _FrRGBA {
+  SysDouble r;
+  SysDouble g;
+  SysDouble b;
+  SysDouble a;
+};
+
+struct _FrInt4 {
+  SysInt m0;
+  SysInt m1;
+  SysInt m2;
+  SysInt m3;
+};
+
+struct _FrSInt4 {
+  SysInt16 m0;
+  SysInt16 m1;
+  SysInt16 m2;
+  SysInt16 m3;
+};
+
+SYS_API FrColor *fr_color_clone(FrColor *o);
+SYS_API SysBool fr_color_rgba_parse(const SysChar *rgba, FrColor *color);
+SYS_API FrColor* fr_color_rgba_new(const SysChar *rgba);
+SYS_API SysBool fr_rect_in_range(const FrRect *rect, SysInt x, SysInt y);
+SYS_API FrSInt4* fr_sint4_clone(FrSInt4* m);
+SYS_API FrSInt4* fr_sint4_new(void);
+SYS_API void fr_sint4_free(FrSInt4* o);
+
+#define fr_region_destroy cairo_region_destroy
+#define fr_region_ref cairo_region_reference
+#define fr_region_create_rectangle cairo_region_create_rectangle
+#define fr_region_create cairo_region_create
+#define fr_region_union_rectangle cairo_region_union_rectangle
+#define fr_region_contains_rectangle cairo_region_contains_rectangle
+#define fr_region_intersect_rectangle cairo_region_intersect_rectangle
+#define fr_region_is_empty cairo_region_is_empty
+#define fr_region_get_rectangle cairo_region_get_rectangle
+#define fr_region_num_rectangles cairo_region_num_rectangles
+
+SYS_END_DECLS
+
+#endif

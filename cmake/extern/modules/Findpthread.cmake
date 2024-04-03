@@ -1,0 +1,57 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+  /lib/x86_64-linux-gnu
+)
+
+FIND_PATH(PTHREAD_INCLUDE_DIR
+  NAMES pthread.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES pthreads/include include
+)
+
+if(UNIX)
+  FIND_LIBRARY(PTHREAD_LIBRARY
+    NAMES pthread
+    HINTS ${search_dirs}
+    PATH_SUFFIXES pthreads/lib lib64)
+endif()
+
+if(WIN32)
+  set(PTHREAD_FILE_COMPONENTS
+    "pthreadVC3.dll"
+    "pthreadVCE3.dll"
+    "pthreadVSE3.dll")
+
+  FIND_LIBRARY(PTHREAD_LIBRARY
+    NAMES pthreadVC3 pthreadVCE3 pthreadVSE3
+    HINTS ${search_dirs}
+    PATH_SUFFIXES pthreads/lib lib64 lib)
+
+  FOREACH(COMPONENT ${PTHREAD_FILE_COMPONENTS})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+    FIND_FILE(PTHREAD_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES pthreads/bin
+      )
+
+    LIST(APPEND PTHREAD_FILES "${PTHREAD_${COMPONENT}_FILE}")
+  ENDFOREACH()
+endif()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PTHREAD DEFAULT_MSG
+  PTHREAD_LIBRARY PTHREAD_INCLUDE_DIR)
+
+IF(PTHREAD_FOUND)
+  SET(PTHREAD_LIBRARIES ${PTHREAD_LIBRARY})
+  SET(PTHREAD_INCLUDE_DIRS ${PTHREAD_INCLUDE_DIR})
+ENDIF(PTHREAD_FOUND)
+
+MARK_AS_ADVANCED(
+  PTHREAD_INCLUDE_DIR
+  PTHREAD_LIBRARY
+)

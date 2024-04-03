@@ -1,0 +1,130 @@
+#include <Framework/Event/FREventPrivate.h>
+
+
+#define MAX_EVNET_REF (1 << 20)
+
+static SysQueue g_events;
+static FREventFunc event_func = NULL;
+static SysPointer event_data = NULL;
+static SysQueue g_event_node;
+
+static const SysChar *FR_EVENT_NAMES[] = {
+  "FR_EVENT_WINDOW_RESIZE",
+  "FR_EVENT_WINDOW_EXPOSE",
+  "FR_EVENT_WINDOW_CURSOR",
+  "FR_EVENT_WINDOW_CLOSE",
+  "FR_EVENT_WINDOW_REFRESH",
+  "FR_EVENT_WINDOW",
+  "FR_EVENT_GAMEPAD",
+  "FR_EVENT_HAT",
+  "FR_EVENT_JOYSTICK",
+  "FR_EVENT_KEYBOARD",
+  "FR_EVENT_MOUSE_BUTTON",
+  "FR_EVENT_INPUT",
+  "FR_EVENT_SYSTEM",
+  "FR_EVENT_NODE",
+  "FR_EVENT_LAST"
+};
+
+void fr_events_push_head(FREvent *event) {
+  sys_queue_push_head(&g_events, event);
+}
+
+void fr_events_set_handler(FREventFunc func, SysPointer user_data) {
+  event_func = func;
+  event_data = user_data;
+}
+
+FR_EVENT_ENUM fr_event_get_node_event_by_name(const SysChar *name) {
+  return fr_get_type_by_name(FR_EVENT_NAMES, ARRAY_SIZE(FR_EVENT_NAMES), name);
+}
+
+FREvent *fr_event_get() {
+  FREvent *e = sys_queue_pop_tail(&g_events);
+
+  if (e != NULL) {
+    return e;
+  }
+
+  return NULL;
+}
+
+FRWindow* fr_event_get_window(FREvent *e) {
+  sys_return_val_if_fail(e != NULL, NULL);
+
+  return e->window;
+}
+
+void fr_event_dispatch(FREvent *e) {
+  sys_return_if_fail(e != NULL);
+
+  (*event_func)(e, event_data);
+
+  fr_event_free(e);
+}
+
+FREvents *fr_events_new(void) {
+  FREvents *e_queue = sys_queue_new();
+  return e_queue;
+}
+
+void fr_events_setup(void) {
+  sys_queue_init(&g_events);
+  sys_queue_init(&g_event_node);
+}
+
+void fr_events_teardown(void) {
+  for (SysList *node = (&g_events)->head; node; node = node->next) {
+    fr_event_free(node->data);
+  }
+}
+
+SysBool fr_events_check(void) {
+  SysUInt count = sys_queue_get_length(&g_events);
+  return count > 0;
+}
+
+/* FREvent */
+SysInt fr_event_get_event_type(FREvent *e) {
+  sys_return_val_if_fail(e != NULL, -1);
+
+  return e->type;
+}
+
+void fr_event_create(FREvent *e, FR_EVENT_ENUM type, FRWindow* window) {
+  e->window = window;
+  e->type = type;
+
+  sys_ref_count_init(e);
+}
+
+void fr_event_free(FREvent *event) {
+  sys_free_N(event);
+}
+
+void fr_event_unref(FREvent *e) {
+  sys_return_if_fail(e != NULL);
+  sys_return_if_fail(SYS_REF_VALID_CHECK(e, MAX_EVNET_REF));
+
+  if (!sys_ref_count_dec(e)) {
+    return;
+  }
+
+  fr_event_free(e);
+}
+
+void fr_event_ref(FREvent *e) {
+  sys_return_if_fail(e != NULL);
+  sys_return_if_fail(SYS_REF_VALID_CHECK(e, MAX_EVNET_REF));
+
+  sys_ref_count_inc(e);
+}
+
+void* fr_event_cast_check(FREvent *e, SysInt type) {
+  if (e->type != type) {
+    sys_warning_N("case event type failed: %s", e);
+    return NULL;
+  }
+
+  return e;
+}

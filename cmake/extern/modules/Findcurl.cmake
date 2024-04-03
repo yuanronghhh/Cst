@@ -1,0 +1,34 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+  /usr/lib/x86_64-linux-gnu
+)
+
+FIND_PATH(CURL_INCLUDE_DIR
+  NAMES curl/curl.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES curl/include include
+)
+
+if(WIN32)
+FIND_LIBRARY(CURL_LIBRARY
+  NAMES libcurl
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib curl/lib
+)
+endif()
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(CURL DEFAULT_MSG
+  CURL_LIBRARY CURL_INCLUDE_DIR)
+
+IF(CURL_FOUND)
+  SET(CURL_LIBRARIES ${CURL_LIBRARY})
+  SET(CURL_INCLUDE_DIRS ${CURL_INCLUDE_DIR})
+ENDIF(CURL_FOUND)
+
+MARK_AS_ADVANCED(
+  CURL_INCLUDE_DIR
+  CURL_LIBRARY
+)

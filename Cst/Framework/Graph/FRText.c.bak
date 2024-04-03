@@ -1,0 +1,128 @@
+#include <Framework/Graph/FRText.h>
+
+/**
+ * this file is only for font usage example.
+ **/
+
+struct _FRTextPrivate {
+  SysChar *text;
+  cairo_text_extents_t ed;
+  SysInt font_size;
+  SysInt width;
+  SysInt height;
+  SysChar *font_desc_name;
+};
+
+SYS_DEFINE_TYPE_WITH_PRIVATE(FRText, fr_text, SYS_TYPE_OBJECT);
+
+void fr_text_hello(FRContext *cr, const SysChar *text) {
+}
+
+void fr_text_show(FRText *self, FRContext *cr) {
+ 
+}
+
+void fr_text_get_size(FRText *self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
+
+  FRTextPrivate *priv = self->priv;
+
+  *width = priv->width;
+  *height = priv->height;
+}
+
+void fr_text_set_font_size(FRText *self, SysInt font_size) {
+  sys_return_if_fail(self != NULL);
+
+  FRTextPrivate *priv = self->priv;
+
+  priv->font_size = font_size;
+}
+
+SysInt fr_text_get_font_size(FRText *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  FRTextPrivate *priv = self->priv;
+
+  return priv->font_size;
+}
+
+void fr_text_set_text(FRText *self, const SysChar * text) {
+  sys_return_if_fail(self != NULL);
+
+  FRTextPrivate *priv = self->priv;
+
+  if(priv->text) {
+    sys_clear_pointer(&priv->text, sys_free);
+  }
+
+  priv->text = sys_strdup(text);
+}
+
+const SysChar * fr_text_get_text(FRText *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  FRTextPrivate *priv = self->priv;
+
+  return priv->text;
+}
+
+void fr_text_set_font_desc(FRText *self, const SysChar *desc) {
+  sys_return_if_fail(self != NULL);
+
+  FRTextPrivate *priv = self->priv;
+
+  if (priv->font_desc_name) {
+    sys_clear_pointer(&priv->font_desc_name, sys_free);
+  }
+
+  priv->font_desc_name = sys_strdup (desc);
+}
+
+const SysChar* fr_text_get_family(FRText *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  FRTextPrivate *priv = self->priv;
+
+  return priv->font_desc_name;
+}
+
+FRText *fr_text_clone(FRText *o) {
+  return o;
+}
+
+/* object api */
+static void fr_text_construct(SysObject *o) {
+}
+
+FRText* fr_text_new(void) {
+  return sys_object_new(FR_TYPE_TEXT, NULL);
+}
+
+FRText *fr_text_new_I(void) {
+  FRText *o = fr_text_new();
+
+  fr_text_construct(SYS_OBJECT(o));
+
+  return o;
+}
+
+static void fr_text_dispose(SysObject* o) {
+
+  SYS_OBJECT_CLASS(fr_text_parent_class)->dispose(o);
+}
+
+static void fr_text_class_init(FRTextClass* cls) {
+  SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+
+  ocls->construct = (SysObjectFunc)fr_text_construct;
+  ocls->dispose = fr_text_dispose;
+}
+
+void fr_text_init(FRText *self) {
+  FRTextPrivate *priv = self->priv = fr_text_get_private(self);
+
+  priv->text = NULL;
+  priv->font_size = 14;
+  priv->font_desc_name = "serif";
+}

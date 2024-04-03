@@ -1,0 +1,36 @@
+#ifndef __${TYPE_NAME}_H__
+#define __${TYPE_NAME}_H__
+
+/***
+ * ${TypeName} auto generated from ComponentCode.header
+ */
+
+#include "Front/CstUICore.h"
+
+SYS_BEGIN_DECLS
+
+#define ${TYPE_NAME}_TYPE (${type_name}_get_type())
+
+#define ${TYPE_NAME}(o) ((${TypeName}* )o)
+#define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)o)
+#define ${TYPE_NAME}_GET_CLASS(o) sys_instance_get_class(o, ${TypeName}Class)
+
+typedef struct _${TypeName} ${TypeName};
+typedef struct _${TypeName}Class ${TypeName}Class;
+typedef struct _${TypeName}Private ${TypeName}Private;
+
+struct _${TypeName} {
+  CstComponent parent;
+  ${TypeName}Private *priv;
+};
+
+struct _${TypeName}Class {
+  CstComponentClass parent;
+};
+
+SYS_API SysType ${type_name}_get_type(void);
+SYS_API ${TypeName}* ${type_name}_new(void);
+
+SYS_END_DECLS
+
+#endif

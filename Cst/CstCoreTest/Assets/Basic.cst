@@ -1,0 +1,88 @@
+%{
+  #include <stdio.h>
+  #define MATH_POWER(t) (t < 0.5 ? Math.pow(t * 2, 6) / 2 : 1 - Math.pow(t * -2 + 2, 6) / 2)
+%}
+
+/**
+ * 测试 comment
+ */
+Component<name:"ComponetName">: {
+  Style: {
+    "btn": {
+      "color": "red"
+    },
+    "blue-btn": <base:["btn"]>: {
+      "color": "blue",
+    },
+    "white-btn": <base:["btn", "click-btn"]>: {
+      "color": "white",
+      "left": @{expr: "parent.x + 10"},
+    },
+
+    /*
+    List<style> pstyle = custom_style_lookup(style_table, "btn");
+    List<style> nstyle = copy(pstyle);
+    List<string> sstyle = {
+      { "color": "white" },
+      { "left":  parent.x + 10 }
+    };
+
+    nstyle.extend(sstyle);
+    cst_style_custom_add(".white-btn", nstyle);
+    */
+  },
+
+  Animation: null,
+
+  Data: {
+    people: {
+      name: "nm1",
+      age: 12
+    }
+  },
+
+  Modules: {
+  },
+
+  Props: {
+  },
+
+  ChildComponent: {
+    path: ["ui/child.cst"]
+  },
+
+  Layout: {
+    CstGrid<class:"menu-bg", orientation:1>: {
+      CstBox: {
+        CButton<label: "button2">: null,
+        CstMenuBar<class: "menu">: {
+          CstMenuItem<label: "文件", submenu: {
+            CstImageMenuItem<label: "gtk-new", use_stock: true>: null,
+            CstImageMenuItem<label: "gtk-open", use_stock: true>: null
+          }>: null,
+          CstMenuItem<label: "编辑", submenu: {
+            CstImageMenuItem<label: "gtk-edit", use_stock: true>: null
+          }>: null,
+          CstMenuItem<label: "视图">: null,
+          CstTemplate<expr: "for name, idx in list">: {
+            CstMenuItem<label: "@name">: null,
+            CstMenuItem<label: "@idx">: null,
+          },
+          CstMenuItem<label: "帮助", submenu: {
+            CstImageMenuItem<label: "gtk-help", use_stock: true>: null,
+          }>: null,
+        }
+      },
+      CstGrid: {
+        CstPaned<class:"menu">: {
+          CstButton<class:"b1", label:"切换图片", @clicked: "switch_image(\"img\")", class: ["gray-background"]>: 123
+        }
+      }
+    }
+  },
+
+  Function: {%
+    static void switch_image(CButton *btn) {
+    }
+  %}
+}

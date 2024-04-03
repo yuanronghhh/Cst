@@ -1,0 +1,21 @@
+#ifndef __FR_ACTION_MF_H__
+#define __FR_ACTION_MF_H__
+
+#include <Framework/FRCommon.h>
+
+SYS_BEGIN_DECLS
+
+#include <Framework/Event/Action/FRAWatchCursorMove.h>
+#include <Framework/Event/Action/FRAWatchMousePress.h>
+#include <Framework/Event/Action/FRAWatchKey.h>
+#include <Framework/Event/Action/FRAWatch.h>
+
+#include <Framework/Event/Action/FRACursorMove.h>
+#include <Framework/Event/Action/FRAMouseKey.h>
+#include <Framework/Event/Action/FRAKey.h>
+#include <Framework/Event/Action/FRAction.h>
+
+SYS_END_DECLS
+
+#endif
+

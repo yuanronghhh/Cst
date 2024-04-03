@@ -1,0 +1,15 @@
+// Layout<name:"BaseLayout">: {
+//   CstDiv: null,
+// }
+
+// Widget<name:"BaseWidget">: {
+//   CstButton: null,
+// }
+
+Style: {
+  CstDiv: {
+    x: "parent_x + parent_y + 1",
+    y: "parent_y",
+    background: "rgba(1.0,1.0,1.0,1.0)"
+  },
+}

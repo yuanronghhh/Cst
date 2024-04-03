@@ -1,0 +1,55 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(EXPAT_INCLUDE_DIR
+  NAMES expat_external.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES expat/include
+)
+
+FIND_LIBRARY(EXPAT_LIBRARY
+  NAMES libexpat.lib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib expat/lib
+)
+
+set(EXPAT_FILES "")
+IF(WIN32)
+  set(EXPAT_FILE
+    "libexpat.dll"
+  )
+  FOREACH(COMPONENT ${EXPAT_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+
+    FIND_FILE(EXPAT_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES expat/bin
+    )
+
+    LIST(APPEND EXPAT_FILES "${EXPAT_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
+
+set(EXPAT_DEPS
+)
+add_dep_for_libray_N(expat "${EXPAT_DEPS}")
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(EXPAT DEFAULT_MSG
+  EXPAT_LIBRARY EXPAT_INCLUDE_DIR)
+
+IF(EXPAT_FOUND)
+  SET(EXPAT_LIBRARIES ${EXPAT_LIBRARY})
+  SET(EXPAT_INCLUDE_DIRS ${EXPAT_INCLUDE_DIR})
+ENDIF(EXPAT_FOUND)
+
+MARK_AS_ADVANCED(
+  EXPAT_INCLUDE_DIR
+  EXPAT_LIBRARY
+)
+

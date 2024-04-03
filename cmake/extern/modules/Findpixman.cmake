@@ -1,0 +1,56 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(PIXMAN_INCLUDE_DIR
+  NAMES pixman.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES pixman/include/pixman-1
+)
+
+FIND_LIBRARY(PIXMAN_LIBRARY
+  NAMES pixman-1.lib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib pixman/lib
+)
+
+set(PIXMAN_FILES "")
+IF(WIN32)
+  set(PIXMAN_FILE
+    "pixman-1-0.dll"
+  )
+  FOREACH(COMPONENT ${PIXMAN_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+
+    FIND_FILE(PIXMAN_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES pixman/bin
+    )
+
+    LIST(APPEND PIXMAN_FILES "${PIXMAN_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
+
+set(PIXMAN_DEPS
+  libpng
+  vcpkg-tool-meson
+)
+add_dep_for_libray_N(pixman "${PIXMAN_DEPS}")
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PIXMAN DEFAULT_MSG
+  PIXMAN_LIBRARY PIXMAN_INCLUDE_DIR)
+
+IF(PIXMAN_FOUND)
+  SET(PIXMAN_LIBRARIES ${PIXMAN_LIBRARY})
+  SET(PIXMAN_INCLUDE_DIRS ${PIXMAN_INCLUDE_DIR})
+ENDIF(PIXMAN_FOUND)
+
+MARK_AS_ADVANCED(
+  PIXMAN_INCLUDE_DIR
+  PIXMAN_LIBRARY
+)

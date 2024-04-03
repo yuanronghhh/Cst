@@ -1,0 +1,3 @@
+*.c text eof=lf
+*.h text eof=lf
+*.txt text eof=lf

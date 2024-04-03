@@ -1,0 +1,41 @@
+#include <CstCore/Driver/Css/CstCssColor.h>
+#include <CstCore/Driver/CstRenderNode.h>
+#include <CstCore/Driver/Css/CstCssParser.h>
+
+
+SYS_DEFINE_TYPE(CstCssColor, cst_css_color, CST_TYPE_CSS_VALUE);
+
+
+static CstCssValue* cst_css_color_parse_i(CstCssParser* parser) {
+  CstCssValue* o = cst_css_color_new();
+  CstCssColor* self = CST_CSS_COLOR(o);
+
+  if (cst_css_parser_parse_color(parser, &self->v)) {
+    sys_object_unref(self);
+  }
+
+  return CST_CSS_VALUE(self);
+}
+
+/* object api */
+static void cst_css_color_dispose(SysObject* o) {
+  CstCssColor *self = CST_CSS_COLOR(o);
+
+  SYS_OBJECT_CLASS(cst_css_color_parent_class)->dispose(o);
+}
+
+CstCssValue *cst_css_color_new(void) {
+  return sys_object_new(CST_TYPE_CSS_COLOR, NULL);
+}
+
+static void cst_css_color_class_init(CstCssColorClass* cls) {
+  SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  CstCssValueClass *vcls = CST_CSS_VALUE_CLASS(cls);
+
+  ocls->dispose = cst_css_color_dispose;
+  vcls->parse = cst_css_color_parse_i;
+}
+
+static void cst_css_color_init(CstCssColor *self) {
+}
+

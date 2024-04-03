@@ -1,0 +1,36 @@
+Component<id: "layout-component">: {
+  Style: {
+    "box1": {
+      margin: [10,10,10,10],
+      padding: [10,10,10,10]
+    },
+    "text-demo": {
+      font-family: "consolas",
+      font-size: 14
+    }
+  },
+
+  /**
+   *
+   *    +----------+++++++++++++++
+   *    +          |a         |  +
+   *    +    aa    |          |  +
+   *    +          |          |  +
+   *    +----------+-----------  +
+   *    +                        +
+   *    ++++++++++++++++++++++++++
+   *
+   */
+
+  Layout: {
+    LGrid: {
+      LBox<id: "box1">: {
+        Text<id: "text1", base: ["text-demo"], value: "a">: null,
+        Text<id: "text2", base: ["text-demo"], value: "a">: null
+      },
+      LBox<id: "box2">: {
+        Text<id: "text3", base: ["text-demo"], value: "a">: null
+      }
+    }
+  }
+}

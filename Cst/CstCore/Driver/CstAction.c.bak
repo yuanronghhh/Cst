@@ -1,0 +1,515 @@
+#include <CstCore/Front/Common/CstNode.h>
+#include <CstCore/Driver/FRAWatch.h>
+#include <CstCore/Driver/CstAction.h>
+
+#define CST_MAX_ACTION 10
+#define DISTANCE(x1,y1,x2,y2) sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))
+#define CST_A_MULTIKEY(o) ((CstAMultiKey*)o)
+#define CST_A_CURSOR(o) ((CstACursor*)o)
+
+
+struct _CstAction {
+  const SysChar *name;
+  CST_ACTION_ENUM type;
+  SysList *awatchs;
+  FREvent *ebase;
+
+  CstActionClass *cls_ptr;
+};
+
+struct _CstADClick {
+  FRAction parent;
+
+  SysInt key_interval;
+  SysInt last_key;
+};
+
+struct _CstAScroll {
+  FRAction parent;
+};
+
+struct _CstAMultiKey {
+  FRAction parent;
+
+  SysInt last_key;
+};
+
+struct _CstAMultiDrag {
+  FRAction parent;
+  SysInt length;
+  /* Type: FRDrag */
+  SysList *values;
+};
+
+struct _CstADragStart {
+  FRAction parent;
+
+  SysInt x;
+  SysInt y;
+  SysInt distance;
+};
+
+struct _CstADragEnd {
+  FRAction parent;
+
+  SysInt x;
+  SysInt y;
+};
+
+struct _CstADrag {
+  SysInt button;
+  SysInt action;
+
+  CstADragStart drag_start;
+  CstADragEnd drag_end;
+};
+
+struct _CstACursor {
+  FRAction parent;
+
+  SysDouble x;
+  SysDouble y;
+};
+
+/* key state*/
+static FRAction g_window_resize;
+static FRAction g_window_expose;
+static FRAction g_window_refresh;
+static FRAction g_window_close;
+static FRAction g_key_press;
+static FRAction g_key_release;
+static FRAction g_key_repeat;
+static CstAMultiKey g_multi_key_press;
+static CstAMultiDrag g_multi_drag;
+static CstAScroll g_scroll_in;
+static CstAScroll g_scroll_out;
+static CstADClick g_double_click;
+static FRAction g_mouse_press;
+static FRAction g_mouse_release;
+static CstACursor g_cursor_move;
+
+static SysHashTable *g_action_ht = NULL;
+
+void cst_action_emit_window_close(FREvent *e) {
+}
+
+FRAction* cst_action_get_by_event(FREvent *ebase) {
+  FRAction *action = NULL;
+  FREventKey *kevt;
+  FREventMouseKey *mevt;
+  SysInt key_action;
+  SysInt etype = fr_event_get_event_type(ebase);
+
+  switch (etype) {
+    case FR_EVENT_TKEY:
+      kevt = FR_EVENT_KEY(ebase);
+      key_action = fr_event_key_action(kevt);
+
+      if (key_action == FR_KEY_PRESS) {
+        action = &g_key_press;
+      }
+
+      if (key_action == FR_KEY_RELEASE) {
+        action = &g_key_release;
+      }
+
+      if (key_action == FR_KEY_REPEAT) {
+        action = &g_key_repeat;
+      }
+      break;
+    case FR_EVENT_TWINDOW_CLOSE:
+      action = &g_window_close;
+      break;
+    case FR_EVENT_TWINDOW_REFRESH:
+      action = &g_window_refresh;
+      break;
+    case FR_EVENT_TWINDOW_EXPOSE:
+      action = &g_window_expose;
+      break;
+    case FR_EVENT_TWINDOW_RESIZE:
+      action = &g_window_resize;
+      break;
+    case FR_EVENT_TMOUSEKEY:
+      mevt = FR_EVENT_MOUSEKEY(ebase);
+      key_action = fr_event_mousekey_action(mevt);
+
+      if (key_action == FR_KEY_PRESS) {
+        action = &g_mouse_press;
+      }
+
+      if (key_action == FR_KEY_RELEASE) {
+        action = &g_mouse_release;
+      }
+      break;
+    case FR_EVENT_TCURSORMOVE:
+      action = CST_ACTION(&g_cursor_move);
+      break;
+    default:
+      sys_warning_N("Not support event type: %d.", etype);
+      break;
+  }
+
+  return action;
+}
+
+SysInt cst_action_type(FRAction *action) {
+  sys_return_val_if_fail(action != NULL, -1);
+
+  return action->type;
+}
+
+void cst_action_emit_event(FREvent *e) {
+  CstAMultiKey *multi_key = &g_multi_key_press;
+  FRAction *action = cst_action_get_by_event(e);
+  if (action == NULL) {
+    return;
+  }
+
+  cst_action_set_event(action, e);
+  cst_action_set_event(CST_ACTION(multi_key), e);
+
+  cst_action_emit(action);
+
+  if (fr_event_get_event_type(e) == FR_EVENT_TKEY) {
+    cst_action_emit(CST_ACTION(multi_key));
+  }
+}
+
+SysBool action_cursor_in_range(FRAction *action, FRAWatch *awatch) {
+  CstACursor *cur = &g_cursor_move;
+
+  FRRect rect;
+  CstNode *node = cst_awatch_get_node(awatch);
+
+  cst_node_get_bound_bp(node, &rect);
+
+  return (cur->x >= rect.x && cur->y >= rect.y && cur->x <= rect.x + rect.width && cur->y <= rect.y + rect.height);
+}
+
+SYS_INLINE SysBool cst_awatch_check(FRAction *action, FRAWatch *awatch) {
+  if (action->cls_ptr->check_awatch) {
+    return action->cls_ptr->check_awatch(action, awatch);
+  }
+
+  return true;
+}
+
+void cst_action_awatchs_emit(FRAction *action) {
+  sys_return_if_fail(action != NULL);
+
+  sys_list_foreach(action->awatchs, node) {
+    FRAWatch *awatch = node->data;
+
+    if (cst_awatch_check(action, awatch)) {
+      cst_awatch_dispatch(action, awatch);
+    }
+  }
+}
+
+void cst_action_emit(FRAction *action) {
+  if (action->cls_ptr->emit) {
+    action->cls_ptr->emit(action);
+  }
+}
+
+static SYS_INLINE void cst_action_create(FRAction *action) {
+  if (action->cls_ptr->create) {
+    action->cls_ptr->create(action);
+  }
+}
+
+void cst_action_destroy(FRAction *action) {
+  if (action->cls_ptr->destroy) {
+    action->cls_ptr->destroy(action);
+  }
+}
+
+static void cst_action_destroy_i(FRAction *action) {
+  sys_assert(action->cls_ptr != NULL && "action class should not be null, double destroy ?");
+
+  sys_list_free_full(action->awatchs, (SysDestroyFunc)_sys_object_unref);
+
+  if (action->ebase) {
+    action->ebase = NULL;
+  }
+
+  action->cls_ptr = NULL;
+}
+
+/* window_resize action */
+void cst_action_window_resize_create(FRAction *action) {
+}
+
+void cst_action_window_resize_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_window_resize_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* window_expose action */
+void cst_action_window_expose_create(FRAction *action) {
+}
+
+void cst_action_window_expose_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_window_expose_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* window_refresh action */
+void cst_action_window_refresh_create(FRAction *action) {
+}
+
+void cst_action_window_refresh_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_window_refresh_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* window_close action */
+void cst_action_window_close_create(FRAction *action) {
+}
+
+void cst_action_window_close_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_window_close_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* key_press action */
+void cst_akey_press_create(FRAction *action) {
+}
+
+void cst_akey_press_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_akey_press_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* key_release action */
+void cst_akey_release_create(FRAction *action) {
+}
+
+void cst_akey_release_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_akey_release_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* key_repeat action */
+void cst_akey_repeat_create(FRAction *action) {
+}
+
+void cst_akey_repeat_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_akey_repeat_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* multi_key_press action */
+void cst_action_multi_key_press_create(FRAction *action) {
+  CstAMultiKey *multi = CST_A_MULTIKEY(action);
+
+  multi->last_key = FR_KEY_UNKNOWN;
+}
+
+void cst_action_multi_key_press_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_multi_key_press_emit(FRAction *action) {
+  sys_return_if_fail(action != NULL);
+
+  CstAMultiKey *multi = CST_A_MULTIKEY(action);
+  FREventKey *kevt;
+  FREvent *evt = fr_action_get_event(action);
+
+  kevt = FR_EVENT_KEY(evt);
+  sys_return_if_fail(evt != NULL);
+
+  FRWindow *window = fr_event_get_window(evt);
+
+  if (multi->last_key == FR_KEY_UNKNOWN) {
+    multi->last_key = fr_event_key_key(kevt);
+    return;
+  }
+
+  SysInt lk = fr_window_get_key(window, multi->last_key);
+
+  if (lk == FR_KEY_PRESS && fr_event_key_action(kevt) == FR_KEY_PRESS) {
+    cst_action_awatchs_emit(action);
+
+    multi->last_key = FR_KEY_UNKNOWN;
+  }
+}
+
+/* multi_drag action */
+void cst_action_multi_drag_create(FRAction *action) {
+}
+
+void cst_action_multi_drag_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_multi_drag_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* scroll_in action */
+void cst_action_scroll_in_create(FRAction *action) {
+}
+
+void cst_action_scroll_in_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_scroll_in_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* scroll_out action */
+void cst_action_scroll_out_create(FRAction *action) {
+}
+
+void cst_action_scroll_out_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_scroll_out_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* double_click action */
+void cst_action_double_click_create(FRAction *action) {
+}
+
+void cst_action_double_click_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_double_click_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* mouse_press action */
+void cst_action_mouse_press_create(FRAction *action) {
+}
+
+void cst_action_mouse_press_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_mouse_press_emit(FRAction *action) {
+  cst_action_awatchs_emit(action);
+}
+
+/* mouse_release action */
+void cst_action_mouse_release_create(FRAction *action) {
+}
+
+void cst_action_mouse_release_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_mouse_release_emit(FRAction *action) {
+
+  cst_action_awatchs_emit(action);
+}
+
+/* mouse_repeat action */
+void cst_action_mouse_repeat_create(FRAction *action) {
+}
+
+void cst_action_mouse_repeat_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_mouse_repeat_emit(FRAction *action) {
+
+  cst_action_awatchs_emit(action);
+}
+
+/* cursor_move action */
+void cst_action_cursor_move_create(FRAction *action) {
+}
+
+void cst_action_cursor_move_destroy(FRAction *action) {
+  cst_action_destroy_i(action);
+}
+
+void cst_action_cursor_move_emit(FRAction *action) {
+  FREventCursorMove *cur_event = FR_EVENT_CURSORMOVE(fr_action_get_event(action));
+  CstACursor *acur = CST_A_CURSOR(action);
+
+  fr_event_cusormove_pos(cur_event, &acur->x, &acur->y);
+
+  cst_action_awatchs_emit(action);
+}
+
+static CstActionClass  window_resize_class    =  {  &g_window_resize,               cst_action_window_resize_create,    cst_action_window_resize_destroy,    cst_action_window_resize_emit   , NULL };
+static CstActionClass  window_expose_class    =  {  &g_window_expose,               cst_action_window_expose_create,    cst_action_window_expose_destroy,    cst_action_window_expose_emit   , NULL };
+static CstActionClass  window_refresh_class   =  {  &g_window_refresh,              cst_action_window_refresh_create,   cst_action_window_refresh_destroy,   cst_action_window_refresh_emit  , NULL };
+static CstActionClass  window_close_class     =  {  &g_window_close,                cst_action_window_close_create,     cst_action_window_close_destroy,     cst_action_window_close_emit    , NULL };
+static CstActionClass  key_press_class        =  {  &g_key_press,                   cst_akey_press_create,        cst_akey_press_destroy,        cst_akey_press_emit       , NULL };
+static CstActionClass  key_release_class      =  {  &g_key_release,                 cst_akey_release_create,      cst_akey_release_destroy,      cst_akey_release_emit     , NULL };
+static CstActionClass  key_repeat_class       =  {  &g_key_repeat,                  cst_akey_repeat_create,       cst_akey_repeat_destroy,       cst_akey_repeat_emit      , NULL };
+static CstActionClass  multi_key_press_class  =  {  CST_ACTION(&g_multi_key_press), cst_action_multi_key_press_create,  cst_action_multi_key_press_destroy,  cst_action_multi_key_press_emit , NULL };
+static CstActionClass  multi_drag_class       =  {  CST_ACTION(&g_multi_drag),      cst_action_multi_drag_create,       cst_action_multi_drag_destroy,       cst_action_multi_drag_emit      , NULL };
+static CstActionClass  scroll_in_class        =  {  CST_ACTION(&g_scroll_in),       cst_action_scroll_in_create,        cst_action_scroll_in_destroy,        cst_action_scroll_in_emit       , NULL };
+static CstActionClass  scroll_out_class       =  {  CST_ACTION(&g_scroll_out),      cst_action_scroll_out_create,       cst_action_scroll_out_destroy,       cst_action_scroll_out_emit      , NULL };
+static CstActionClass  double_click_class     =  {  CST_ACTION(&g_double_click),    cst_action_double_click_create,     cst_action_double_click_destroy,     cst_action_double_click_emit    , NULL };
+static CstActionClass  mouse_press_class      =  {  &g_mouse_press,                 cst_action_mouse_press_create,      cst_action_mouse_press_destroy,      cst_action_mouse_press_emit     , action_cursor_in_range };
+static CstActionClass  mouse_release_class    =  {  &g_mouse_release,               cst_action_mouse_release_create,    cst_action_mouse_release_destroy,    cst_action_mouse_release_emit   , action_cursor_in_range };
+static CstActionClass  cursor_move_class      =  {  CST_ACTION(&g_cursor_move),     cst_action_cursor_move_create,      cst_action_cursor_move_destroy,      cst_action_cursor_move_emit     , NULL };
+
+void cst_action_bind_class(const SysChar *name, CST_ACTION_ENUM type, CstActionClass *cls) {
+  FRAction *action = cls->node;
+
+  action->name = name;
+  action->cls_ptr = cls;
+  action->type = type;
+  action->awatchs = NULL;
+  action->ebase = NULL;
+
+  cst_action_create(action);
+
+  sys_hash_table_insert(g_action_ht, (SysPointer)action->name, action);
+}
+
+void cst_action_setup(void) {
+  g_action_ht = sys_hash_table_new_full(sys_str_hash, (SysEqualFunc)sys_str_equal, NULL, (SysDestroyFunc)cst_action_destroy);
+
+  cst_action_bind_class("window_resize",    FR_ACTION_TWINDOW_RESIZE,   &window_resize_class    );
+  cst_action_bind_class("window_expose",    FR_ACTION_TWINDOW_EXPOSE,   &window_expose_class    );
+  cst_action_bind_class("window_refresh",   FR_ACTION_TWINDOW_REFRESH,  &window_refresh_class   );
+  cst_action_bind_class("window_close",     FR_ACTION_TWINDOW_CLOSE,    &window_close_class     );
+  cst_action_bind_class("key_press",        FR_ACTION_TKEY_PRESS,       &key_press_class        );
+  cst_action_bind_class("key_release",      FR_ACTION_TKEY_RELEASE,     &key_release_class      );
+  cst_action_bind_class("key_repeat",       FR_ACTION_TKEY_REPEAT,      &key_repeat_class       );
+  cst_action_bind_class("multi_key_press",  FR_ACTION_TMULTI_KEY_PRESS, &multi_key_press_class  );
+  cst_action_bind_class("multi_drag",       FR_ACTION_TMULTI_DRAG,      &multi_drag_class       );
+  cst_action_bind_class("scroll_in",        FR_ACTION_TSCROLL_IN,       &scroll_in_class        );
+  cst_action_bind_class("scroll_out",       FR_ACTION_TSCROLL_OUT,      &scroll_out_class       );
+  cst_action_bind_class("double_click",     FR_ACTION_TDOUBLE_CLICK,    &double_click_class     );
+  cst_action_bind_class("mouse_press",      FR_ACTION_TMOUSE_PRESS,     &mouse_press_class      );
+  cst_action_bind_class("mouse_release",    FR_ACTION_TMOUSE_RELEASE,   &mouse_release_class    );
+  cst_action_bind_class("cursor_move",      FR_ACTION_TCORSOR_MOVE,     &cursor_move_class      );
+}
+
+void cst_action_teardown(void) {
+  sys_hash_table_unref(g_action_ht);
+}

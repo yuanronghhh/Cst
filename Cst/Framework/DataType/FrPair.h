@@ -1,0 +1,40 @@
+#ifndef __FR_PAIR__
+#define __FR_PAIR__
+
+#include <Framework/FrCommon.h>
+
+SYS_BEGIN_DECLS
+
+
+#define FR_TYPE_PAIR (fr_pair_get_type())
+#define FR_PAIR(o) ((FrPair* )sys_object_cast_check(o, FR_TYPE_PAIR))
+#define FR_PAIR_CLASS(o) ((FrPairClass *)sys_class_cast_check(o, FR_TYPE_PAIR))
+#define FR_PAIR_GET_CLASS(o) sys_instance_get_class(o, FrPairClass)
+
+
+struct _FrPair {
+  SysObject parent;
+
+  SysPointer key;
+  SysPointer value;
+  /* <private> */
+};
+
+struct _FrPairClass {
+  SysObjectClass parent;
+  void (*construct) (FrPair *o, SysPointer key, SysPointer value);
+
+  /* virtual */
+  SysDestroyFunc key_destroy;
+  SysDestroyFunc value_destroy;
+};
+
+
+SYS_API SysType fr_pair_get_type(void);
+SYS_API FrPair * fr_pair_new(void);
+SYS_API FrPair *fr_pair_new_I(SysPointer key, SysPointer value);
+
+SYS_END_DECLS
+
+#endif
+

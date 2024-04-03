@@ -1,0 +1,55 @@
+set(search_dirs
+  ${LIBDIR}
+  /usr/local
+  /usr
+)
+
+FIND_PATH(ZLIB_INCLUDE_DIR
+  NAMES zconf.h
+  HINTS ${search_dirs}
+  PATH_SUFFIXES zlib/include
+)
+
+FIND_LIBRARY(ZLIB_LIBRARY
+  NAMES zlib
+  HINTS ${search_dirs}
+  PATH_SUFFIXES lib64 lib zlib/lib
+)
+
+set(ZLIB_FILES "")
+IF(WIN32)
+  set(ZLIB_FILE
+    "zlib1.dll"
+  )
+  FOREACH(COMPONENT ${ZLIB_FILE})
+    STRING(TOUPPER ${COMPONENT} UPPERCOMPONENT)
+
+
+    FIND_FILE(ZLIB_${COMPONENT}_FILE
+      NAMES ${COMPONENT}
+      HINTS ${search_dirs}
+      PATH_SUFFIXES zlib/bin
+    )
+
+    LIST(APPEND ZLIB_FILES "${ZLIB_${COMPONENT}_FILE}")
+  ENDFOREACH()
+ENDIF()
+
+set(ZLIB_DEPS
+)
+add_dep_for_libray_N(zlib "${ZLIB_DEPS}")
+
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(ZLIB DEFAULT_MSG
+  ZLIB_LIBRARY ZLIB_INCLUDE_DIR)
+
+IF(ZLIB_FOUND)
+  SET(ZLIB_LIBRARIES ${ZLIB_LIBRARY})
+  SET(ZLIB_INCLUDE_DIRS ${ZLIB_INCLUDE_DIR})
+ENDIF(ZLIB_FOUND)
+
+MARK_AS_ADVANCED(
+  ZLIB_INCLUDE_DIR
+  ZLIB_LIBRARY
+)
+

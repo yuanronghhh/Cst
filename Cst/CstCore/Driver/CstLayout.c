@@ -93,22 +93,23 @@ void layout_node_r(CstRenderNode* rnode) {
 void cst_layout_layout_prepare(CstLayout* self, CstRenderNode* rnode) {
   FrDrawContext* draw_context = self->draw_context;
   SysInt width = 0, height = 0;
-  FrRegion* region = self->region;
 
   fr_draw_context_get_buffer_size(draw_context, &width, &height);
-
   init_body(rnode, width, height);
+
   fr_draw_context_set_surfaces(draw_context, &self->surfaces);
 }
 
-void cst_layout_layout_begin(CstLayout* self, CstRenderNode* rnode) {
+void cst_layout_layout_begin(CstLayout* self) {
+  sys_return_if_fail(self != NULL);
+
   FrDrawContext* draw_context = self->draw_context;
   FrRegion* region = self->region;
 
   fr_draw_context_frame_begin(draw_context, region);
 }
 
-void cst_layout_layout_end(CstLayout* self, CstRenderNode* rnode) {
+void cst_layout_layout_end(CstLayout* self) {
   FrDrawContext* draw_context = self->draw_context;
   FrRegion* region = self->region;
 
@@ -120,14 +121,16 @@ void cst_layout_layout_root(CstLayout* self, CstRenderNode* rnode) {
 }
 
 void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode) {
-  FrDrawContext* draw_context = self->draw_context;
   CstSurface* ns = cst_layout_get_default_surface(self);
+  FrSurface *surface =  FR_SURFACE(ns);
 
-  FrContext* cr = fr_context_new_I(FR_SURFACE(ns));
+  FrContext* cr = fr_context_new_I(surface);
   const FrBound* bound = cst_render_node_get_bound(rnode);
   const FrSInt4* m4 = cst_render_node_get_margin(rnode);
   const FrSInt4* p4 = cst_render_node_get_padding(rnode);
+  FrColor color = {1.0, 0.0, 0.0, 1.0};
 
+  fr_context_set_color(cr, &color);
   fr_context_stroke_mp(cr, bound, m4, p4);
 
   sys_object_unref(cr);
@@ -136,8 +139,8 @@ void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode) {
 /* object api */
 static void cst_layout_init(CstLayout *self) {
   CstSurface* paint_surface = cst_surface_create_image_surface(800, 600);
-  
-  sys_harray_init_with_free_func(&self->surfaces, _sys_object_unref);
+
+  sys_harray_init_with_free_func(&self->surfaces, (SysDestroyFunc)_sys_object_unref);
   sys_harray_add(&self->surfaces, paint_surface);
 }
 

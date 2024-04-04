@@ -25,7 +25,6 @@ SYS_API FrCompositor *fr_compositor_new(void);
 
 SYS_API FrCompositor *fr_compositor_new_I(void);
 SYS_API void fr_compositor_surface_overlay(
-  FrSurface* pb,
   FrSurface* pn,
   FrContext* pb_cr);
 

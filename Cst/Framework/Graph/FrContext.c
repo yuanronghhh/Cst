@@ -143,6 +143,7 @@ static void fr_context_construct(FrContext *self, FrSurface *surface) {
   FrDrawSurface *draw_surface = fr_surface_get_draw_surface(surface);
 
   self->v.cr = fr_i_draw_create(draw_surface);
+  self->surface = sys_object_ref(surface);
 }
 
 FrContext* fr_context_new(void) {
@@ -161,6 +162,7 @@ static void fr_context_dispose(SysObject* o) {
   FrContext *self = FR_CONTEXT(o);
 
   sys_clear_pointer(&self->v.cr, fr_i_draw_destroy);
+  sys_clear_pointer(&self->surface, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_context_parent_class)->dispose(o);
 }

@@ -77,42 +77,44 @@ static void render_realize(CstRender *self,
   self->body_rnode = body;
 }
 
-static CstLayout* render_create_layout(CstRender* self) {
-  FrRegion* region;
-  FrDrawContext* draw_context;
+static CstLayout* render_new_layout(CstRender* self) {
+  sys_return_val_if_fail(self  != NULL, NULL);
 
-  draw_context = self->draw_context;
-  region = idevice_create_region(self->device);
-  return cst_layout_new_I(draw_context, region);
+  FrRegion* region = idevice_create_region(self->device);
+
+  return cst_layout_new_I(self->draw_context, region);
 }
 
 void render_render(CstRender* self, CstLayout *layout) {
-  FrDrawContext* draw_context;
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(layout != NULL);
 
-  draw_context = self->draw_context;
+  cst_layout_layout_begin(layout);
 
   cst_layout_layout_root(layout, self->body_rnode);
   cst_layout_paint_root(layout, self->body_rnode);
+
+  cst_layout_layout_end(layout);
 }
 
 void cst_render_render(CstRender *self, CstModule *v_module) {
   sys_return_if_fail(self != NULL);
-  CstLayout* layout;
- 
-  layout = render_create_layout(self);
+  CstLayout* layout = render_new_layout(self);
 
   render_realize(self, v_module, layout);
 
   cst_layout_layout_prepare(layout, self->body_rnode);
   render_render(self, layout);
 
-  sys_object_unref(layout);
+  sys_clear_pointer(&layout, _sys_object_unref);
 }
 
 void cst_render_resize_surface(CstRender *self) {
   sys_return_if_fail(self != NULL);
 
+  CstLayout* layout = render_new_layout(self);
   render_render(self, layout);
+  sys_clear_pointer(&layout, _sys_object_unref);
 }
 
 /* object api */

@@ -39,6 +39,8 @@ void fr_draw_context_set_surfaces(FrDrawContext* self, SysHArray* surfaces) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(surfaces != NULL);
 
+  sys_assert(self->surfaces == NULL);
+
   self->surfaces = surfaces;
 }
 
@@ -54,17 +56,20 @@ FrSurface* fr_draw_context_get_surface_by_idx(FrDrawContext* self, SysInt idx) {
   return self->surfaces->pdata[idx];
 }
 
-void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
+static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->surfaces != NULL);
 
-  FrSurface** p;
+  FrSurface* p;
+  FrContext* cr;
 
-  p = (FrSurface**)(self->surfaces->pdata);
-  for (SysUInt i = 0; i < self->surfaces->len; i++, p++) {
-    *p = fr_surface_update_surface(*p, self->idevice_surface, width, height);
+  for (SysUInt i = 0; i < self->surfaces->len; i++) {
+    p = self->surfaces->pdata[i];
 
-    FrContext* cr = fr_context_new_I(*p);
+    cr = fr_context_new_I(p);
+
+    fr_surface_update_surface(p, self->idevice_surface, width, height);
+
     fr_context_fill_background(cr, width, height);
     sys_object_unref(cr);
   }
@@ -87,12 +92,17 @@ static void surface_clip(FrContext* cr, FrRegion* region) {
 
 void fr_draw_context_frame_begin(FrDrawContext* self, FrRegion* region) {
   sys_return_if_fail(self != NULL);
+  sys_return_if_fail(region != NULL);
+
+  self = FR_DRAW_CONTEXT(self);
+
   SysInt width = 0, height = 0;
 
   fr_i_device_get_size(self->idevice, &width, &height);
   self->idevice_surface = fr_surface_create_device_surface_full(
       self->idevice,
       width, height);
+
   surface_update(self, width, height);
 
   self->is_painting = true;
@@ -110,15 +120,17 @@ static void surface_composite(FrDrawContext* self) {
     pb = paint_surfaces->pdata[i - 1];
 
     cr = fr_context_new_I(pb);
-    fr_compositor_surface_overlay(pb, pn, cr);
-    sys_object_unref(cr);
+
+    fr_compositor_surface_overlay(pn, cr);
+
+    sys_clear_pointer(&cr, _sys_object_unref);
   }
 
   pn = paint_surfaces->pdata[0];
   pb = self->idevice_surface;
 
   cr = fr_context_new_I(pb);
-  fr_compositor_surface_overlay(pb, pn, cr);
+  fr_compositor_surface_overlay(pn, cr);
   sys_object_unref(cr);
 }
 

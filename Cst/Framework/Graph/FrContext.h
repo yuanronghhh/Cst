@@ -21,6 +21,8 @@ struct _FrContext {
   union ctx {
     FrDrawBrush *cr;
   } v;
+
+  FrSurface *surface;
 };
 
 SYS_API SysType fr_context_get_type(void);

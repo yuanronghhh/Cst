@@ -5,7 +5,6 @@
 SYS_DEFINE_TYPE(FrCompositor, fr_compositor, SYS_TYPE_OBJECT);
 
 void fr_compositor_surface_overlay(
-  FrSurface* pb, 
   FrSurface* pn,
   FrContext* pb_cr) {
 

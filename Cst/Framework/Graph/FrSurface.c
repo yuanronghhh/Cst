@@ -9,11 +9,18 @@ SYS_DEFINE_TYPE(FrSurface, fr_surface, SYS_TYPE_OBJECT);
 
 
 FrSurface *fr_surface_update_surface(FrSurface *self,
-    FrSurface *device_surface, 
-    SysInt width, 
+    FrSurface *device_surface,
+    SysInt width,
     SysInt height) {
-  FrDrawSurface * new_surface = 
+
+  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(device_surface != NULL, NULL);
+
+  sys_assert(self->draw_surface != NULL);
+
+  FrDrawSurface * new_surface =
     fr_i_draw_surface_create_similar_image(self->draw_surface, width, height);
+  if(new_surface == NULL) { return NULL; }
 
   sys_clear_pointer(&self->draw_surface, fr_i_draw_surface_destroy);
   self->draw_surface = new_surface;

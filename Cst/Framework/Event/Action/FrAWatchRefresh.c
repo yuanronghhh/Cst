@@ -7,27 +7,24 @@ SYS_DEFINE_TYPE(FrAWatchRefresh, fr_awatch_refresh, FR_TYPE_AWATCH);
 
 
 static SysBool fr_awatch_refresh_check_i(FrAWatch *o, FrEvent *e) {
-  FrAWatchRefresh *self = FR_AWATCH_REFRESH(o);
   SysInt64 current;
-
-  if(!fr_event_is(e, FR_TYPE_EVENT_REFRESH)) {
-    return false;
-  }
-
-  if(self->is_refreshing) {
-    return false;
-  }
+  SysInt64 diff;
+  FrAWatchRefresh *self = FR_AWATCH_REFRESH(o);
 
   current = sys_get_monotonic_time();
-  if (self->last_clock == 0) {
-    self->last_clock = current;
-    return true;
+  diff = (current - self->last_clock);
+
+  if(diff < self->rate_time) {
+    return false;
   }
 
-  SysBool r = (current - self->last_clock) > self->rate_time;
-  self->last_clock = r ? current : self->last_clock;
+  if (diff < self->cost_time) {
+    return false;
+  }
 
-  return r;
+  self->last_clock = current;
+
+  return true;
 }
 
 FrAWatch *fr_awatch_refresh_new(void) {
@@ -51,11 +48,15 @@ SysObject *fr_awatch_refresh_clone_i(SysObject *o) {
 }
 
 void fr_awatch_refresh_dispatch_i (FrAWatch *o, FrEvent *e) {
-  FR_AWATCH_CLASS(fr_awatch_refresh_parent_class)->dispatch(o, e);
-
   FrAWatchRefresh *self = FR_AWATCH_REFRESH(o);
+  SysInt64 start;
+  SysInt64 end;
 
-  self->is_refreshing = false;
+  start = sys_get_monotonic_time();
+  FR_AWATCH_CLASS(fr_awatch_refresh_parent_class)->dispatch(o, e);
+  end = sys_get_monotonic_time();
+
+  self->cost_time = end - start;
 }
 
 /* object api */
@@ -69,7 +70,7 @@ void fr_awatch_refresh_construct_i(FrAWatch* o, FrAWatchBuilder *builder) {
 
   FR_AWATCH_CLASS(fr_awatch_refresh_parent_class)->construct(o, builder);
 
-  self->rate_time = (1 / 70.0) * 1e3;
+  self->rate_time = (1 / 70.0) * 1e6;
 }
 
 static void fr_awatch_refresh_class_init(FrAWatchRefreshClass* cls) {

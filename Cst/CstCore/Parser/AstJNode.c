@@ -66,22 +66,22 @@ SysBool ast_print_jnode(JNode* node, SysPointer user_data) {
 
   switch (node->type) {
   case AstJInt:
-    sys_debug_N("[int] %ld", node->v.v_int);
+    sys_info_N("[int] %ld", node->v.v_int);
     break;
   case AstJDouble:
-    sys_debug_N("[double] %lf", node->v.v_double);
+    sys_info_N("[double] %lf", node->v.v_double);
     break;
   case AstJNull:
-    sys_debug_N("[null] %s", node->v.v_node);
+    sys_info_N("[null] %s", node->v.v_node);
     break;
   case AstJBool:
-    sys_debug_N("[bool] %d", node->v.v_bool);
+    sys_info_N("[bool] %d", node->v.v_bool);
     break;
   case AstJSource:
-    sys_debug_N("[v_source] %s", node->v.v_source->string);
+    sys_info_N("[v_source] %s", node->v.v_source->string);
     break;
   case AstJString:
-    sys_debug_N("[string] %s", node->v.v_string);
+    sys_info_N("[string] %s", node->v.v_string);
     break;
   case AstJProperty:
   case AstJObject:
@@ -92,7 +92,7 @@ SysBool ast_print_jnode(JNode* node, SysPointer user_data) {
     ast_print_jnode(node->v.v_node, user_data);
     break;
   case AstJPair:
-    sys_debug_N("[pairkey] %s", node->v.v_pair->key);
+    sys_info_N("[pairkey] %s", node->v.v_pair->key);
     if (node->v.v_pair->prop) {
       ast_print_jnode(node->v.v_pair->prop, user_data);
     }
@@ -142,7 +142,7 @@ JNode* ast_jnode_clone_r(JNode* jnode) {
     nnode = ast_jnode_clone_r(jnode);
     break;
   case AstJPair:
-    sys_debug_N("[pairkey] %s", jnode->v.v_pair->key);
+    sys_info_N("[pairkey] %s", jnode->v.v_pair->key);
     if (jnode->v.v_pair->prop) {
     }
     break;

@@ -22,7 +22,7 @@ struct _FrDrawContext {
   FrSurface* idevice_surface;
   FrIDevice* idevice;
 
-  SysHArray* surfaces;
+  SysHArray surfaces;
   FrCompositor *compositor;
   SysBool is_painting;
 };
@@ -41,10 +41,9 @@ SYS_API void fr_draw_context_get_buffer_size (FrDrawContext *self,
 SYS_API FrSurface *fr_draw_context_get_surface_by_idx(FrDrawContext *self,
     SysInt idx);
 
-SYS_API void fr_draw_context_set_surfaces(FrDrawContext *self,
-    SysHArray * surfaces);
-
+SYS_API void fr_draw_context_add_surface(FrDrawContext* self, FrSurface *surface);
 SYS_API SysHArray * fr_draw_context_get_surfaces(FrDrawContext *self);
+SYS_API FrSurface* fr_draw_context_get_default_surface(FrDrawContext* self);
 
 void fr_draw_context_set_is_painting(FrDrawContext *self, SysBool is_painting);
 SysBool fr_draw_context_get_is_painting(FrDrawContext *self);

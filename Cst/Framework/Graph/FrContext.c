@@ -21,7 +21,7 @@ void fr_context_fill_background (FrContext *self, SysInt width, SysInt height) {
   FrDrawBrush *cr = self->v.cr;
   FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
-  idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 0.8);
+  idraw_iface->set_source_rgba(cr, 1.0, 1.0, 1.0, 1.0);
   idraw_iface->rectangle(cr, 0, 0, width, height);
   idraw_iface->paint(cr);
 }
@@ -161,8 +161,8 @@ FrContext *fr_context_new_I(FrSurface *surface) {
 static void fr_context_dispose(SysObject* o) {
   FrContext *self = FR_CONTEXT(o);
 
-  sys_clear_pointer(&self->v.cr, fr_i_draw_destroy);
   sys_clear_pointer(&self->surface, _sys_object_unref);
+  sys_clear_pointer(&(self->v.cr), fr_i_draw_destroy);
 
   SYS_OBJECT_CLASS(fr_context_parent_class)->dispose(o);
 }

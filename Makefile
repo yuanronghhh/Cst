@@ -58,13 +58,17 @@ clean:
 
 run-linux:
 	@#export LSAN_OPTIONS=verbosity=1:log_threads=1
-	${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
+	@${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
+
+prof-linux:
+	@${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS}
+	@gprof ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME} ${ARGS} > perf.log
 
 run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --servername GVIM1 --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --servername GVIM --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	# @gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}
@@ -101,8 +105,11 @@ cst-test-build:
 cst-test-debug: cst-test-build
 	@make PROJ_NAME="CstCoreTest" debug-${PLATFORM}
 
-cst-test: cst-test-build
+cst-test-run: cst-test-build
 	@make PROJ_NAME="CstCoreTest" run-${PLATFORM}
+
+cst-test-prof: cst-test-build
+	@make PROJ_NAME="CstCoreTest" prof-${PLATFORM}
 
 cst-test-check: cst-test-build
 	@make PROJ_NAME="CstCoreTest" check-${PLATFORM}
@@ -122,7 +129,7 @@ system-check:
 		--suppressions=cst.supp  \
 		./build/Cst/System/TestSuite/SystemTestSuite ${ARGS}
 
-system: system-build
+system-run: system-build
 	@./build/Cst/System/TestSuite/${BUILD_TYPE}/SystemTestSuite
 
 system-debug: system-build
@@ -146,7 +153,7 @@ cst-cli-build:
 cst-cli-debug: cst-cli-build
 	@make PROJ_NAME="CstCli" PROJ_NAME_FILE=${BUILD_DIR}/CstCli/CstCli debug-${PLATFORM}
 
-cst-cli: cst-cli-build
+cst-cli-run: cst-cli-build
 	@make PROJ_NAME="CstCli" run-${PLATFORM}
 
 mini-build:
@@ -155,7 +162,7 @@ mini-build:
 mini-debug: mini-build
 	@make PROJ_NAME="Mini" debug-${PLATFORM}
 
-mini: mini-build
+mini-run: mini-build
 	@make PROJ_NAME="Mini" run-${PLATFORM}
 
 mini-check: mini-build

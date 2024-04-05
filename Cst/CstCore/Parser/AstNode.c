@@ -11,22 +11,22 @@ SysBool ast_print_node(AstNode *node, SysPointer user_data) {
 
   switch (node->type) {
     case AstRoot:
-      sys_debug_N("%s", "[AstRoot]");
+      sys_info_N("%s", "[AstRoot]");
       break;
     case AstImport:
-      sys_debug_N("%s", "[AstImport]");
+      sys_info_N("%s", "[AstImport]");
       break;
     case AstSource:
-      sys_debug_N("%s", "[AstSource]");
+      sys_info_N("%s", "[AstSource]");
       break;
     case AstComponent:
-      sys_debug_N("%s", "[AstComponent]");
+      sys_info_N("%s", "[AstComponent]");
       break;
     case AstJsonNode:
-      sys_debug_N("%s", "[AstJsonNode]");
+      sys_info_N("%s", "[AstJsonNode]");
       break;
     case AstInvalid:
-      sys_debug_N("%s", "[AstInvalid]");
+      sys_info_N("%s", "[AstInvalid]");
       break;
     default:
       break;

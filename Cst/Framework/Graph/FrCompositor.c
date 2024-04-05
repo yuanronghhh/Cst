@@ -29,7 +29,7 @@ FrCompositor *fr_compositor_new_I(void) {
 }
 
 static void fr_compositor_dispose(SysObject* o) {
-  FrCompositor *self = FR_COMPOSITOR(o);
+  // FrCompositor *self = FR_COMPOSITOR(o);
 
   SYS_OBJECT_CLASS(fr_compositor_parent_class)->dispose(o);
 }

@@ -28,7 +28,7 @@ FrSurface *fr_surface_update_surface(FrSurface *self,
   return self;
 }
 
-FrSurface *fr_surface_image_surface_create(SysInt width, SysInt height) {
+FrSurface *fr_surface_create_image_surface(SysInt width, SysInt height) {
   FrDrawSurface *draw_surface = fr_i_draw_image_surface_create(width, height);
   if(draw_surface == NULL) { return NULL; }
 

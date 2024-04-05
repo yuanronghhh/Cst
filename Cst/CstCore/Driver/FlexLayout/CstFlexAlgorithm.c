@@ -12,12 +12,12 @@ static void layout_horizonal(CstAlgorithm* self,
     CstFlexContext* ctx) {
 
   SysHArray* nodes = cst_i_flex_item_get_nodes(rnode);
-  CstIFlexItem *item;
+  // CstIFlexItem *item;
 
   for(SysUInt i = 0; i < nodes->len; i++) {
-    item = nodes->pdata[i];
+    // item = nodes->pdata[i];
 
-    sys_debug_N("%s", cst_i_flex_item_get_name(item));
+    // sys_info_N("%s", cst_i_flex_item_get_name(item));
   }
 
   sys_harray_free(nodes, true);

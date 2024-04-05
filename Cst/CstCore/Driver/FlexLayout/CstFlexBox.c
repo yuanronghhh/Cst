@@ -3,40 +3,6 @@
 
 SYS_DEFINE_TYPE(CstFlexBox, cst_flex_box, SYS_TYPE_OBJECT);
 
-
-void layout_horizontal(CstFlexBox* self, CstLayout* layout, bool isRtl) {
-  for (SysUInt i = 0; i < self->lines.len; i++) {
-    CstFlexLine* line = self->lines.pdata[i];
-
-    // measure
-
-    // layout
-    for(SysUInt j = 0; j < line->items.len; i++) {
-    }
-  }
-}
-
-void cst_flex_on_layout(CstFlexBox *self, CstLayout *layout) {
-  SysInt layoutDirection = 0; // cst_layout_get_view_direction(layout);
-  SysInt mFlexDirection = self->direction;
-  SysBool isRtl = layoutDirection == mFlexDirection;
-
-  switch (mFlexDirection) {
-    case FLEX_DIRECTION_ROW:
-      layout_horizontal(self, layout, isRtl);
-      break;
-    case FLEX_DIRECTION_ROW_REVERSE:
-      layout_horizontal(self, layout, isRtl);
-      break;
-    case FLEX_DIRECTION_COLUMN:
-      break;
-    case FLEX_DIRECTION_COLUMN_REVERSE:
-      break;
-    default:
-      sys_error_N("Invalid flex direction is set: %s", mFlexDirection);
-  }
-}
-
 /* object api */
 static void cst_flex_box_construct(CstFlexBox *self) {
 

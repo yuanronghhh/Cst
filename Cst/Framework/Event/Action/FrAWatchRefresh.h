@@ -19,6 +19,7 @@ struct _FrAWatchRefresh {
 
   /* <private> */
   SysInt64 last_clock;
+  SysInt64 cost_time;
   SysDouble rate_time;
   SysBool is_refreshing;
   SysPointer app_data;

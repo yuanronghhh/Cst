@@ -21,9 +21,6 @@ struct _CstLayout {
   FrRegion* region;
 
   FrDrawContext *draw_context;
-
-  /* CstSurface */
-  SysHArray surfaces;
 };
 
 struct _CstLayoutClass {
@@ -33,8 +30,7 @@ struct _CstLayoutClass {
 SysType cst_layout_get_type(void);
 CstLayout *cst_layout_new(void);
 CstLayout *cst_layout_new_I(FrDrawContext *draw_context, FrRegion *region);
-CstSurface* cst_layout_get_default_surface(CstLayout* self);
-CstSurface* cst_layout_get_surface(CstLayout* self, SysUInt surf_idx);
+#define cst_layout_get_default_surface(o) ((CstSurface *)fr_draw_context_get_default_surface((o)->draw_context))
 void cst_layout_layout_root(CstLayout* self, CstRenderNode* rnode);
 void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode);
 void cst_layout_layout_prepare(CstLayout* self, CstRenderNode* rnode);

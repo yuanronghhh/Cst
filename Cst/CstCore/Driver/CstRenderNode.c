@@ -184,7 +184,7 @@ void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
   const FrBound* bound = cst_render_node_get_bound(self);
 
   if (prnode) {
-    sys_debug_N("<%s,%s> <%s,%s> <%d,%d,%d,%d>",
+    sys_info_N("<%s,%s> <%s,%s> <%d,%d,%d,%d>",
       cst_render_node_get_name(prnode),
       cst_render_node_get_id(prnode),
       cst_render_node_get_name(self),
@@ -193,7 +193,7 @@ void cst_render_node_print(CstRenderNode *self, CstRenderNode* prnode) {
 
   } else {
 
-    sys_debug_N("<%s,%s> <%d,%d,%d,%d>",
+    sys_info_N("<%s,%s> <%d,%d,%d,%d>",
       cst_render_node_get_name(self),
       cst_render_node_get_id(self),
       bound->x, bound->y, bound->width, bound->height);

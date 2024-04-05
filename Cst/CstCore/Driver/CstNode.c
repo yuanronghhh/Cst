@@ -219,12 +219,12 @@ SysBool cst_node_print_node(CstNode* node, SysPointer user_data) {
   CstNode* pnode = cst_node_get_parent(node);
   
   if (pnode) {
-    sys_debug_N("<%s,%s> <%s,%s>", 
+    sys_info_N("<%s,%s> <%s,%s>", 
       cst_node_get_name(pnode), cst_node_get_id(pnode),
       cst_node_get_name(node), cst_node_get_id(node));
 
   } else {
-    sys_debug_N("<%s,%s>",
+    sys_info_N("<%s,%s>",
       cst_node_get_name(node), cst_node_get_id(node));
   }
 

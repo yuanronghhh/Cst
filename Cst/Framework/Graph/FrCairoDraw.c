@@ -51,11 +51,6 @@ FrDrawSurface* cairo_create_surface_i(FrIDevice* device, SysInt width, SysInt he
   HDC hdc = GetDC(hwd);
   surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 
-  cairo_t* cr = cairo_create(surface);
-  cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-  cairo_paint(cr);
-  cairo_destroy(cr);
-
 #elif SYS_OS_UNIX
   FrDisplay* display = fr_window_get_display(window);
   Window xwindow = fr_window_get_x11_window(window);
@@ -68,6 +63,11 @@ FrDrawSurface* cairo_create_surface_i(FrIDevice* device, SysInt width, SysInt he
     nvisual,
     width, height);
 #endif
+
+  cairo_t* cr = cairo_create(surface);
+  cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+  cairo_paint(cr);
+  cairo_destroy(cr);
 
   return surface;
 }

@@ -123,6 +123,7 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
   FrDisplay* display;
   FrIDevice *device;
   FrIDraw* idraw;
+  CstSurface* paint_surface;
 
   if (is_offscreen) {
 
@@ -138,6 +139,9 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
     self->draw_context = fr_draw_context_new_I(idraw, device);
     self->display = display;
     self->device = device;
+
+    paint_surface = cst_surface_create_image_surface(800, 600);
+    fr_draw_context_add_surface(self->draw_context, FR_SURFACE(paint_surface));
   }
 }
 
@@ -163,7 +167,10 @@ static void cst_render_dispose(SysObject* o) {
     sys_clear_pointer(&self->draw_context, _sys_object_unref);
   }
 
-  sys_clear_pointer(&self->body_rnode, cst_render_node_unlink_node_r);
+  if(self->body_rnode) {
+
+    sys_clear_pointer(&self->body_rnode, cst_render_node_unlink_node_r);
+  }
 
   SYS_OBJECT_CLASS(cst_render_parent_class)->dispose(o);
 }

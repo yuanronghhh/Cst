@@ -30,7 +30,7 @@ SysBool cst_parser_parse(CstParser* self, CstParserRContext *ctx) {
     return false;
   }
 
-  sys_debug_N(SYS_("Parse successful: %s"), cst_parser_get_filename(self));
+  sys_info_N(SYS_("Parse successful: %s"), cst_parser_get_filename(self));
   return true;
 }
 

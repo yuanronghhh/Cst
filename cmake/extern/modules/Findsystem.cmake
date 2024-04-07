@@ -20,7 +20,6 @@ set(SYSTEM_FILES "")
 
 IF(WIN32)
   set(SYSTEM_FILE
-    "system.dll"
   )
 
   FOREACH(COMPONENT ${SYSTEM_FILE})

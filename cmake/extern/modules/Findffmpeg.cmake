@@ -38,6 +38,16 @@ IF(WIN32)
 
     LIST(APPEND FFMPEG_FILES "${FFMPEG_${COMPONENT}_FILE}")
   ENDFOREACH()
+
+  LIST(APPEND FFMPEG_LIBRARY 
+    "${LIBDIR}/ffmpeg/lib/avcodec.lib"
+    "${LIBDIR}/ffmpeg/lib/avdevice.lib"
+    "${LIBDIR}/ffmpeg/lib/avfilter.lib"
+    "${LIBDIR}/ffmpeg/lib/avformat.lib"
+    "${LIBDIR}/ffmpeg/lib/avutil.lib"
+    "${LIBDIR}/ffmpeg/lib/swresample.lib"
+    "${LIBDIR}/ffmpeg/lib/swscale.lib"
+  )
 ENDIF()
 
 set(FFMPEG_DEPS

@@ -35,6 +35,11 @@ if(WIN32)
 
     LIST(APPEND VLD_FILES "${VLD_${COMPONENT}_FILE}")
   ENDFOREACH()
+
+  LIST(APPEND VLD_LIBRARY
+    "dbghelp.lib"
+    "ws2_32.lib"
+  )
 endif()
 
 INCLUDE(FindPackageHandleStandardArgs)

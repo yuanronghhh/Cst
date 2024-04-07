@@ -49,7 +49,6 @@ find_package(cairo REQUIRED)
 find_package(gtk REQUIRED)
 find_package(mono REQUIRED)
 
-set(DBG_LIBRAREIS "Dbghelp.lib")
 set(SDL2_MIXER_DIR ${SDL2_DIR})
 set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_INCLUDE_DIRS})
 set(SDL2_MIXER_DLL ${SDL2_MIXER_DLL}/lib/SDL2_mixer.dll)

@@ -1,18 +1,21 @@
 set(INC
   ../
-
-  ${GLIB_INCLUDE_DIRS}
-  ${PANGO_INCLUDE_DIRS}
-  ${CAIRO_INCLUDE_DIRS}
-  ${VLD_INCLUDE_DIRS}
-  ${GLAD_INCLUDE_DIRS}
-  ${GLFW3_INCLUDE_DIRS}
-  ${TINYEXPR_INCLUDE_DIRS}
-  ${PANGOFC_INCLUDE_DIRS}
-  ${OPENSSL_INCLUDE_DIRS}
 )
 
-set(INC_SYS
+set(EXTERNAL_LIBS
+  "unity"
+  "pthread"
+  "openssl"
+  "vld"
+  "pango"
+  "pangocairo"
+  "cairo"
+  "glib"
+  "glad"
+  "glfw3"
+  "pangofc"
+  "tinyexpr"
+  "system"
 )
 
 set(UNIX_SRC
@@ -152,37 +155,11 @@ elseif(APPLE)
   LIST(APPEND SRC ${COCOA_SRC})
 endif()
 
-add_dep_libs(FRFramework "${SRC}" "${INC}" "${INC_SYS}")
-
-set_property(TARGET FRFramework PROPERTY FOLDER CstProject)
-
-add_dependencies(FRFramework
-  System
+add_library(FrFramework "${SRC}")
+add_deps_N(FrFramework
+  "${INC}"
+  "${INNER_LIBS}"
+  ""
+  "${EXTERNAL_LIBS}"
 )
-
-target_link_libraries(FRFramework
-  System
-  ${OPENSSL_LIBRARIES}
-  ${PANGOFC_LIBRARIES}
-  ${GLIB_LIBRARIES}
-  ${MONO_LIBRARIES}
-  ${PIXMAN_LIBRARIES}
-  ${X11_LIBRARIES}
-  ${CAIRO_LIBRARIES}
-  ${PANGOCAIRO_LIBRARIES}
-  ${PANGO_LIBRARIES}
-  ${HARFBUZZ_LIBRARIES}
-  ${VLD_LIBRARIES}
-  ${TINYEXPR_LIBRARIES}
-  ${GLAD_LIBRARIES}
-  ${GLFW3_LIBRARIES}
-  ${X11_LIBRARIES}
-  ${LLVM_LIBRARIES}
-  ${GL_LIBRARIES}
-  ${FONTCONFIG_LIBRARIES}
-  ${FREETYPE_LIBRARIES}
-  ${VULKAN_LIBRARIES}
-  ${ZLIB_LIBRARIES}
-  ${VKVG_LIBRARIES}
-  ${SYSTEM_LIBRARIES}
-)
+set_property(TARGET FrFramework PROPERTY FOLDER CstProject)

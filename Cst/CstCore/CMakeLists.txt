@@ -1,19 +1,24 @@
 set(INC
   ../
-
-  ${GLIB_INCLUDE_DIRS}
-  ${PANGO_INCLUDE_DIRS}
-  ${CAIRO_INCLUDE_DIRS}
-  ${VLD_INCLUDE_DIRS}
-  ${GLFW3_INCLUDE_DIRS}
-  ${UNITY_INCLUDE_DIRS}
-  ${GLAD_INCLUDE_DIRS}
-  ${OPENSSL_INCLUDE_DIRS}
 )
 
-set(INC_SYS
+set(EXTERNAL_LIBS
+  "unity"
+  "pthread"
+  "openssl"
+  "vld"
+  "pango"
+  "pangocairo"
+  "cairo"
+  "glib"
+  "glad"
+  "glfw3"
+  "system"
 )
 
+set(INNER_LIBS
+  "FrFramework"
+)
 
 set(C_API_SRC
   ./Front/CstType.h
@@ -159,7 +164,7 @@ set(SRC
 
 if(USE_MONO)
 else()
-    LIST(APPEND SRC ${C_API_SRC})
+  LIST(APPEND SRC ${C_API_SRC})
 endif()
 
 add_custom_target(CstCliGen
@@ -168,20 +173,16 @@ add_custom_target(CstCliGen
 )
 set_property(TARGET CstCliGen PROPERTY FOLDER CstProject)
 
-add_dep_libs(CstCore "${SRC}" "${INC}" "${INC_SYS}")
-
-add_dependencies(CstCore
-  FRFramework
-  System
+add_library(CstCore "${SRC}")
+add_deps_N(CstCore
+  "${INC}"
+  "${INNER_LIBS}"
+  ""
+  "${EXTERNAL_LIBS}"
 )
 
-target_link_libraries(CstCore
-  FRFramework
-  System
-  ${CAIRO_LIBRARIES}
-  ${PANGO_LIBRARIES}
-  ${GLIB_LIBRARIES}
-  ${OPENSSL_LIBRARIES}
+add_dependencies(CstCore
+  ${INNER_LIBS}
 )
 set_property(TARGET CstCore PROPERTY FOLDER CstProject)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/Config/CstConfig.h.in

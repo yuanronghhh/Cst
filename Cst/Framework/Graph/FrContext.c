@@ -2,7 +2,6 @@
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrDraw.h>
-#include <Framework/Graph/FrIDraw.h>
 
 SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
 
@@ -117,6 +116,12 @@ void fr_context_draw_text(FrContext* self, PangoLayout* layout, SysInt x, SysInt
 
   iface->move_to(self->v.cr, x, y);
   iface->show_layout(self->v.cr, layout);
+}
+
+void fr_context_print_text(FrContext* self, SysInt x, SysInt y, const SysChar *text) {
+  FrIDrawInterface* iface = fr_draw_get_iface();
+
+  iface->print_text(self->v.cr, x, y, text);
 }
 
 void fr_context_show_text(FrContext* self, PangoLayout *layout,

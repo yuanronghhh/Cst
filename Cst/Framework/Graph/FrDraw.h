@@ -1,7 +1,7 @@
 #ifndef __FR_DRAW_H__
 #define __FR_DRAW_H__
 
-#include <Framework/FrCommon.h>
+#include <Framework/Graph/FrIDraw.h>
 
 
 SYS_BEGIN_DECLS

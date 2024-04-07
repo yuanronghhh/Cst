@@ -1,21 +1,26 @@
-SET(INC
+set(INC
   ../
+)
 
-  ${VKVG_INCLUDE_DIRS}
-  ${VLD_INCLUDE_DIRS}
-  ${GLAD_INCLUDE_DIRS}
-  ${GLFW3_INCLUDE_DIRS}
-  ${PTHREAD_INCLUDE_DIRS}
-  ${CAIRO_INCLUDE_DIRS}
-  ${FONTCONFIG_INCLUDE_DIRS}
-  ${FREETYPE_INCLUDE_DIRS}
-  ${PIXMAN_INCLUDE_DIRS}
-  ${MONO_INCLUDE_DIRS}
-  ${TINYEXPR_INCLUDE_DIRS}
-  ${OPENSSL_INCLUDE_DIRS}
-  ${GLIB_INCLUDE_DIR}
-  ${PANGO_INCLUDE_DIRS}
-  ${PANGOFC_INCLUDE_DIRS}
+set(EXTERNAL_LIBS
+  "unity"
+  "pthread"
+  "openssl"
+  "vld"
+  "pango"
+  "pangocairo"
+  "cairo"
+  "glib"
+  "glad"
+  "glfw3"
+  "system"
+  "pangofc"
+  "tinyexpr"
+)
+
+set(INNER_LIBS
+  "FrFramework"
+  "CstCore"
 )
 
 set(SRC
@@ -28,26 +33,14 @@ set(SRC
 
 include_dep_dirs(${INC})
 add_executable(CstCli "${SRC}")
+add_deps_N(CstCli
+  "${INC}"
+  "${INNER_LIBS}"
+  ""
+  "${EXTERNAL_LIBS}"
+)
 set_property(TARGET CstCli PROPERTY FOLDER CstProject)
 
 add_dependencies(CstCli
-  CstCore
-)
-
-target_link_libraries(CstCli
-  CstCore
-  System
-  ${MONO_LIBRARIES}
-  ${PANGOCAIRO_LIBRARIES}
-  ${PIXMAN_LIBRARIES}
-  ${FONTCONFIG_LIBRARIES}
-  ${FREETYPE_LIBRARIES}
-  ${VLD_LIBRARIES}
-  ${CAIRO_LIBRARIES}
-  ${PTHREAD_LIBRARY}
-  ${VKVG_LIBRARIES}
-  ${GLFW3_LIBRARIES}
-  ${OPENSSL_LIBRARIES}
-  ${GLIB_LIBRARIES}
-  ${PANGO_LIBRARIES}
+  ${INNER_LIBS}
 )

@@ -1,15 +1,17 @@
 #include <Framework/Graph/FrCompositor.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>
+#include <Framework/Graph/FrDraw.h>
 
 SYS_DEFINE_TYPE(FrCompositor, fr_compositor, SYS_TYPE_OBJECT);
 
 void fr_compositor_surface_overlay(
   FrSurface* pn,
   FrContext* pb_cr) {
+  FrIDrawInterface *idraw_iface = fr_draw_get_iface();
 
-  fr_context_overlay(pb_cr, pn, 0, 0);
-  fr_context_paint(pb_cr);
+  idraw_iface->overlay(pb_cr->v.cr, pn->draw_surface, 0, 0);
+  idraw_iface->paint(pb_cr->v.cr);
 }
 
 /* object api */

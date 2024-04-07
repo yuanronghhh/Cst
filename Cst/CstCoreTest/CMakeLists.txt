@@ -1,8 +1,8 @@
-set(CST_TEST_INC
+set(INC
   ../
 )
 
-set(CST_TEST_EXTERNAL_LIBS
+set(EXTERNAL_LIBS
   "unity"
   "pthread"
   "openssl"
@@ -13,11 +13,11 @@ set(CST_TEST_EXTERNAL_LIBS
   "glib"
   "glad"
   "glfw3"
+  "system"
 )
 
-set(CST_TEST_INNER_LIBS
-  "FRFramework"
-  "System"
+set(INNER_LIBS
+  "FrFramework"
   "CstCore"
 )
 
@@ -67,12 +67,9 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/TestConfig.h.in
 
 add_executable(CstCoreTest "${SRC}")
 set_property(TARGET CstCoreTest PROPERTY FOLDER CstProject)
-
-LIST(APPEND CST_TEST_INNER_LIBS ${SYSTEM_LIBRARIES})
-
 add_deps_N(CstCoreTest
-  "${CST_TEST_INC}"
-  "${CST_TEST_INNER_LIBS}"
+  "${INC}"
+  "${INNER_LIBS}"
   ""
-  "${CST_TEST_EXTERNAL_LIBS}"
+  "${EXTERNAL_LIBS}"
 )

@@ -1,6 +1,5 @@
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Device/FrIDevice.h>
-#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrDraw.h>
 #include <Framework/Graph/FrContext.h>
 

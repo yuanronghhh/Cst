@@ -1,4 +1,3 @@
-add_subdirectory(System)
 add_subdirectory(Framework)
 add_subdirectory(CstCore)
 add_subdirectory(CstCli)

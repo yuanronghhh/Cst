@@ -144,35 +144,32 @@ function(add_dep_libs__impl
 endfunction()
 
 macro(add_cc_flags_custom_test
-        name
-    )
+    name)
 
-    string(TOUPPER ${name} _name_upper)
-    message(STATUS "${name}")
-    if(DEFINED CMAKE_C_FLAGS_${_name_upper})
-        message(STATUS "Using custom CFLAGS: CMAKE_C_FLAGS_${_name_upper} in \"${CMAKE_CURRENT_SOURCE_DIR}\"")
-        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${_name_upper}}" ${ARGV1})
-    endif()
-    if(DEFINED CMAKE_CXX_FLAGS_${_name_upper})
-        message(STATUS "Using custom CXXFLAGS: CMAKE_CXX_FLAGS_${_name_upper} in \"${CMAKE_CURRENT_SOURCE_DIR}\"")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_name_upper}}" ${ARGV1})
-    endif()
-    unset(_name_upper)
-
+  string(TOUPPER ${name} _name_upper)
+  message(STATUS "${name}")
+  if(DEFINED CMAKE_C_FLAGS_${_name_upper})
+    message(STATUS "Using custom CFLAGS: CMAKE_C_FLAGS_${_name_upper} in \"${CMAKE_CURRENT_SOURCE_DIR}\"")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CMAKE_C_FLAGS_${_name_upper}}" ${ARGV1})
+  endif()
+  if(DEFINED CMAKE_CXX_FLAGS_${_name_upper})
+    message(STATUS "Using custom CXXFLAGS: CMAKE_CXX_FLAGS_${_name_upper} in \"${CMAKE_CURRENT_SOURCE_DIR}\"")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_${_name_upper}}" ${ARGV1})
+  endif()
+  unset(_name_upper)
 endmacro()
 
 function(add_dep_libs
-        name
-        sources
-        includes
-        includes_sys
-    )
+    name
+    sources
+    includes
+    includes_sys)
 
-    add_cc_flags_custom_test(${name} PARENT_SCOPE)
+  add_cc_flags_custom_test(${name} PARENT_SCOPE)
 
-    add_dep_libs__impl(${name} "${sources}" "${includes}" "${includes_sys}")
+  add_dep_libs__impl(${name} "${sources}" "${includes}" "${includes_sys}")
 
-    set_property(GLOBAL APPEND PROPERTY LINK_LIBS ${name})
+  set_property(GLOBAL APPEND PROPERTY LINK_LIBS ${name})
 endfunction()
 
 macro(define_include_var

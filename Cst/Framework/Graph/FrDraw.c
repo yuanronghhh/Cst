@@ -1,5 +1,4 @@
 #include <Framework/Graph/FrDraw.h>
-#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrCairoDraw.h>
 #include <Framework/Graph/FrSurface.h>
@@ -7,6 +6,7 @@
 #include <Framework/Device/FrIDevice.h>
 
 static FrDraw *g_draw = NULL;
+static FrIDrawInterface *g_draw_iface = NULL;
 
 SYS_DEFINE_TYPE(FrDraw, fr_draw, SYS_TYPE_OBJECT);
 
@@ -16,6 +16,7 @@ void fr_draw_setup(const SysChar *name) {
 
   if(sys_str_equal(name, "cairo")) {
     g_draw = fr_cairo_draw_new_I();
+    g_draw_iface = FR_I_DRAW_GET_IFACE(g_draw);
   }
 }
 
@@ -35,9 +36,7 @@ FrIDraw * fr_draw_get_g_idraw(void) {
 FrIDrawInterface* fr_draw_get_iface(void) {
   sys_assert(g_draw != NULL && "FrIDrawInterface must be inited before use.");
 
-  FrIDrawInterface *iface = FR_I_DRAW_GET_IFACE(g_draw);
-
-  return iface;
+  return g_draw_iface;
 }
 
 static void fr_draw_construct(FrDraw *self) {

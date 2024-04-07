@@ -1,6 +1,5 @@
 #include <Framework/Graph/FrDrawContext.h>
 #include <Framework/Graph/FrContext.h>
-#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Graph/FrCompositor.h>
 #include <Framework/Device/FrIDevice.h>
@@ -77,14 +76,18 @@ static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
 
   FrSurface* p;
   FrContext* cr;
+  FrColor color = {0.0, 0.0, 1.0, 1.0};
 
   for (SysUInt i = 0; i < self->surfaces.len; i++) {
     p = self->surfaces.pdata[i];
 
-    cr = fr_context_new_I(p);
-
     fr_surface_update_surface(p, self->idevice_surface, width, height);
+
+    cr = fr_context_new_I(p);
     fr_context_fill_background(cr, width, height);
+
+    fr_context_set_color(cr, &color);
+    fr_context_print_text(cr, 10, 20, "中文");
 
     sys_clear_pointer(&cr, _sys_object_unref);
   }

@@ -1,9 +1,7 @@
 #include <Framework/Graph/FrFontContext.h>
-#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrDraw.h>
 
 SYS_DEFINE_TYPE(FrFontContext, fr_font_context, FR_TYPE_CONTEXT);
-
 
 /* object api */
 static void fr_font_context_construct(FrFontContext *self) {

@@ -584,10 +584,10 @@ void fr_i_draw_show_layout(FrDrawBrush* cr, PangoLayout* layout) {
 }
 
 SysInt fr_i_draw_rounded_rectangle(FrDrawBrush* cr,
-    SysDouble x, 
-    SysDouble y, 
-    SysDouble w, 
-    SysDouble h, 
+    SysDouble x,
+    SysDouble y,
+    SysDouble w,
+    SysDouble h,
     SysDouble radius) {
   FrIDrawInterface* self = fr_draw_get_iface();
   sys_return_val_if_fail(self != NULL, -1);
@@ -596,8 +596,8 @@ SysInt fr_i_draw_rounded_rectangle(FrDrawBrush* cr,
 }
 
 void fr_i_draw_context_overlay (FrDrawBrush* cr,
-    FrDrawSurface *surface, 
-    SysInt x, 
+    FrDrawSurface *surface,
+    SysInt x,
     SysInt y) {
   FrIDrawInterface* self = fr_draw_get_iface();
   sys_return_if_fail(self != NULL);
@@ -605,3 +605,10 @@ void fr_i_draw_context_overlay (FrDrawBrush* cr,
   self->overlay(cr, surface, x, y);
 }
 
+void fr_i_draw_print_text (FrDrawBrush* cr, SysDouble x,SysDouble y, const SysChar *text) {
+  FrIDrawInterface* self = fr_draw_get_iface();
+
+  sys_return_if_fail(self != NULL);
+
+  self->print_text(cr, x, y, text);
+}

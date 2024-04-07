@@ -18,5 +18,3 @@ elseif(UNIX)
 elseif(MSYS)
   include(${CMAKE_CURRENT_LIST_DIR}/config/platform_msys.cmake)
 endif()
-
-log("${OS_ARCHITECH}")

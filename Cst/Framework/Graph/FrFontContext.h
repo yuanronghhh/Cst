@@ -1,7 +1,7 @@
 #ifndef __FR_FONT_CONTEXT_H__
 #define __FR_FONT_CONTEXT_H__
 
-#include <Framework/Graph/FrContext.h>
+#include <Framework/FrCommon.h>
 
 SYS_BEGIN_DECLS
 

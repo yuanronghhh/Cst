@@ -1,5 +1,4 @@
 #include <Framework/Graph/FrCairoDraw.h>
-#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
@@ -115,6 +114,11 @@ static void cairo_overlay_i(FrDrawBrush* cr, FrDrawSurface *surface, SysInt x, S
   cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
 }
 
+static void cairo_print_text_i (FrDrawBrush* cr, SysDouble x,SysDouble y, const SysChar *text) {
+  cairo_move_to(cr, x, y);
+  cairo_show_text(cr, text);
+}
+
 static void i_draw_imp(FrIDrawInterface *iface) {
   iface->overlay = cairo_overlay_i;
   iface->set_source_rgba = cairo_set_source_rgba;
@@ -132,6 +136,7 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->surface_create_similar_image = cairo_surface_create_similar_image_i;
   iface->surface_flush = cairo_surface_flush;
   iface->surface_destroy = cairo_surface_destroy;
+  iface->print_text = cairo_print_text_i;
 }
 
 /* object api */

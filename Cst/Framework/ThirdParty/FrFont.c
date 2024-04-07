@@ -3,7 +3,7 @@
 static PangoFontMap *font_map = NULL;
 
 void fr_font_setup(void) {
-  sys_debug_N("%s", "init pango font map, maybe slow ...");
+  sys_debug_N("%s", "init pango font map, maybe slow on win32 ...");
 
   SYS_LEAK_IGNORE_BEGIN;
   font_map = pango_cairo_font_map_get_default();

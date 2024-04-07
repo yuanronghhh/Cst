@@ -1,6 +1,8 @@
 if(WIN32)
   set(CMAKE_FIND_LIBRARY_PREFIXES "")
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib" ".dll")
+  set(CMAKE_LIBRARY_SUFFIX "lib")
+  set(CMAKE_DLL_SUFFIXE "dll")
 
   set(SYS_SEARCH_DIRS "$ENV{ProgramW6432}")
   if(NOT ${SYS_SEARCH_DIRS} STREQUAL "")
@@ -9,4 +11,8 @@ if(WIN32)
 elseif(UNIX)
   set(CMAKE_FIND_LIBRARY_PREFIXES "lib")
   set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so")
+
+  set(CMAKE_LIBRARY_PREFIX "lib")
+  set(CMAKE_LIBRARY_SUFFIX "a")
+  set(CMAKE_DLL_SUFFIXE "so")
 endif()

@@ -184,6 +184,32 @@ macro(define_include_var
   define_var_cached(${uname} ${value})
 endmacro()
 
+macro(target_copy_release_files
+    name
+)
+  string(TOUPPER ${name} _name_upper)
+
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    file(COPY ./
+      DESTINATION ${LIBDIR}/${name}/include/${name}
+      FILES_MATCHING
+      PATTERN "*.h")
+
+    if(WIN32)
+      file(COPY ${CMAKE_CURRENT_BINARY_DIR}/Release/${name}.lib
+        DESTINATION ${LIBDIR}/${name}/lib
+        FILES_MATCHING
+        PATTERN "*.lib")
+    elseif(UNIX)
+      file(COPY ${CMAKE_CURRENT_BINARY_DIR}/lib${name}.a
+        DESTINATION ${LIBDIR}/${name}/lib
+        FILES_MATCHING
+        PATTERN "*.a")
+    else()
+    endif()
+  endif()
+endmacro()
+
 function(target_copy_files)
   if(WIN32)
     # Parse the arguments
@@ -204,7 +230,6 @@ function(target_copy_files)
       COMMAND ${CMAKE_COMMAND} -E copy_if_different ${TSOURCE} $<TARGET_FILE_DIR:${TNAME}>)
   endif()
 endfunction()
-
 
 macro(found_module
     components

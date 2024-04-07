@@ -39,10 +39,8 @@ find_package(lzma REQUIRED)
 find_package(expat REQUIRED)
 find_package(jpegturbo REQUIRED)
 find_package(gdkpixbuf REQUIRED)
-
-if(DEBUG)
-  find_package(vld REQUIRED)
-endif()
+find_package(vld REQUIRED)
+# find_package(system REQUIRED)
 
 find_package(glib REQUIRED)
 find_package(pango REQUIRED)

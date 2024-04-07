@@ -38,8 +38,8 @@ SYS_API void fr_draw_context_get_buffer_size (FrDrawContext *self,
     SysInt *width,
     SysInt *height);
 
-SYS_API FrSurface *fr_draw_context_get_surface_by_idx(FrDrawContext *self,
-    SysInt idx);
+SYS_API FrSurface* fr_draw_context_get_surface_by_idx(FrDrawContext* self,
+    SysUInt idx);
 
 SYS_API void fr_draw_context_add_surface(FrDrawContext* self, FrSurface *surface);
 SYS_API SysHArray * fr_draw_context_get_surfaces(FrDrawContext *self);

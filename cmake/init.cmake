@@ -8,7 +8,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/extern/extern.cmake)
 include(CMakePrintHelpers)
 
 if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
-     set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
 endif()
 
 if(WIN32)

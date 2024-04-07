@@ -1,7 +1,3 @@
-set(OS_ARCHITECH "Win64")
-set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${OS_ARCHITECH}_vc14)
-set(CMAKE_C_COMPILER "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.39.33519/bin/Hostx64/x64/cl.exe")
-
 if(NOT EXISTS "${LIBDIR}/")
   message(FATAL_ERROR "Windows requires pre-compiled libs at: '${LIBDIR}'")
 endif()
@@ -41,7 +37,7 @@ find_package(jpegturbo REQUIRED)
 find_package(gdkpixbuf REQUIRED)
 find_package(ffmpeg REQUIRED)
 find_package(vld REQUIRED)
-find_package(system REQUIRED)
+# find_package(system REQUIRED)
 
 find_package(glib REQUIRED)
 find_package(pango REQUIRED)
@@ -64,9 +60,7 @@ set(GL_LIBRARIES opengl32.lib)
 
 set(ADDTIONAL_LIBRARIES
   kernel32.lib
-  ws2_32.lib
   user32.lib
-  gdi32.lib
   winspool.lib
   comdlg32.lib
   advapi32.lib

@@ -20,9 +20,7 @@ static GLFWwindow* fr_window_create_window_i(SysInt width,
     const SysChar *title, 
     GLFWwindow *gshare) {
   GLFWwindow *gwindow;
-  SYS_LEAK_IGNORE_BEGIN;
   gwindow = glfwCreateWindow(width, height, title, NULL, gshare);
-  SYS_LEAK_IGNORE_END;
 
   return gwindow;
 }
@@ -285,56 +283,40 @@ void fr_window_set_data(FrWindow *self, SysPointer data) {
 }
 
 void fr_wait_events(void) {
-  SYS_LEAK_IGNORE_BEGIN;
-    glfwWaitEvents();
-  SYS_LEAK_IGNORE_END;
+  glfwWaitEvents();
 }
 
 void fr_post_empty_events(void) {
-  SYS_LEAK_IGNORE_BEGIN;
-    glfwPostEmptyEvent();
-  SYS_LEAK_IGNORE_END;
+  glfwPostEmptyEvent();
 }
 
 void fr_poll_events(void) {
-  SYS_LEAK_IGNORE_BEGIN;
-    glfwPollEvents();
-  SYS_LEAK_IGNORE_END;
+  glfwPollEvents();
 }
 
 void fr_window_swap_buffers(FrWindow *self) {
   sys_return_if_fail(self != NULL);
-
-
-  SYS_LEAK_IGNORE_BEGIN;
-    glfwSwapBuffers(self->gwindow);
-  SYS_LEAK_IGNORE_END;
+  glfwSwapBuffers(self->gwindow);
 }
 
 void fr_window_teardown(void) {
-  SYS_LEAK_IGNORE_BEGIN;
-    glfwTerminate();
-  SYS_LEAK_IGNORE_END;
+  glfwTerminate();
 }
 
 void fr_window_setup(void) {
-  SYS_LEAK_IGNORE_BEGIN;
     if (!glfwInit()) {
       sys_error_N("%s", SYS_("GFLW failed to init"));
       fr_window_teardown();
     }
-  SYS_LEAK_IGNORE_END;
 #if FR_GL_API 
   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 #else
 
 #if USE_VULKAN
-  SYS_LEAK_IGNORE_BEGIN;
-    if (!glfwVulkanSupported()) {
-      sys_error_N("%s", SYS_("glfwVulkanSupported return false."));
-      fr_window_deinit();
-    }
-  SYS_LEAK_IGNORE_END;
+  if (!glfwVulkanSupported()) {
+    sys_error_N("%s", SYS_("glfwVulkanSupported return false."));
+    fr_window_deinit();
+  }
 #endif
 
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
@@ -412,9 +394,7 @@ static void fr_window_dispose(SysObject* o) {
   fr_glfw_set_window(self->gwindow, NULL);
   fr_window_event_teardown(self);
 
-  SYS_LEAK_IGNORE_BEGIN;
   glfwDestroyWindow(self->gwindow);
-  SYS_LEAK_IGNORE_END;
 
   sys_clear_pointer(&self->display, _sys_object_unref);
 

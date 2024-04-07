@@ -4,9 +4,7 @@
 #include <Framework/Graph/FrCompositor.h>
 #include <Framework/Device/FrIDevice.h>
 
-
 SYS_DEFINE_TYPE(FrDrawContext, fr_draw_context, SYS_TYPE_OBJECT);
-
 
 SysBool fr_draw_context_frame_need_draw(FrDrawContext* self) {
   sys_return_val_if_fail(self != NULL, false);
@@ -59,7 +57,7 @@ SysHArray* fr_draw_context_get_surfaces(FrDrawContext* self) {
 }
 
 FrSurface* fr_draw_context_get_surface_by_idx(FrDrawContext* self,
-    SysInt idx) {
+    SysUInt idx) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   if (idx >= self->surfaces.len) {

@@ -37,7 +37,7 @@ find_package(jpegturbo REQUIRED)
 find_package(gdkpixbuf REQUIRED)
 find_package(ffmpeg REQUIRED)
 find_package(vld REQUIRED)
-# find_package(system REQUIRED)
+find_package(system REQUIRED)
 
 find_package(glib REQUIRED)
 find_package(pango REQUIRED)

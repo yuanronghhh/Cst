@@ -192,6 +192,7 @@ function(target_copy_release_files
     -Dtarget_name=${name}
     -Dtarget_path=${CMAKE_CURRENT_SOURCE_DIR}
     -Dtarget_bin=${CMAKE_CURRENT_BINARY_DIR}
+    -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -P ${CMAKE_MODULE_PATH}/../extern/release.cmake
     COMMENT "Running Release .."
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}

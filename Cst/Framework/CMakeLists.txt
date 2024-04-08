@@ -15,7 +15,7 @@ set(EXTERNAL_LIBS
   "glfw3"
   "pangofc"
   "tinyexpr"
-  "system"
+  "System"
 )
 
 set(UNIX_SRC

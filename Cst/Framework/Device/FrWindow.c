@@ -20,7 +20,10 @@ static GLFWwindow* fr_window_create_window_i(SysInt width,
     const SysChar *title, 
     GLFWwindow *gshare) {
   GLFWwindow *gwindow;
+
+  SYS_LEAK_IGNORE_BEGIN;
   gwindow = glfwCreateWindow(width, height, title, NULL, gshare);
+  SYS_LEAK_IGNORE_END;
 
   return gwindow;
 }
@@ -304,10 +307,13 @@ void fr_window_teardown(void) {
 }
 
 void fr_window_setup(void) {
-    if (!glfwInit()) {
-      sys_error_N("%s", SYS_("GFLW failed to init"));
-      fr_window_teardown();
-    }
+  SYS_LEAK_IGNORE_BEGIN;
+  if (!glfwInit()) {
+    sys_error_N("%s", SYS_("GFLW failed to init"));
+    fr_window_teardown();
+  }
+  SYS_LEAK_IGNORE_END;
+
 #if FR_GL_API 
   glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 #else

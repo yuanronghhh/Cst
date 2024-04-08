@@ -12,7 +12,7 @@ function(release_copy_files
     PATTERN "*.h")
 
   if(WIN32)
-    file(COPY ${target_bin}/${target_name}
+    file(COPY ${target_bin}/${CMAKE_BUILD_TYPE}/${target_name}.lib
       DESTINATION ${LIBDIR}/${target_name}/lib
       FILES_MATCHING
       PATTERN "*.lib")

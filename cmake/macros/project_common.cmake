@@ -135,7 +135,7 @@ function(add_dep_libs__impl
   include_dep_dirs("${includes}")
   include_dep_dirs_sys("${includes_sys}")
 
-  add_library(${name} SHARED ${sources})
+  add_library(${name} STATIC ${sources})
 
   code_source_group("${sources}")
 
@@ -187,15 +187,14 @@ endmacro()
 function(target_copy_release_files
     name
 )
-  string(TOUPPER ${name} _name_upper)
-
   add_custom_command(TARGET ${name} POST_BUILD
     COMMAND ${CMAKE_COMMAND}
     -Dtarget_name=${name}
     -Dtarget_path=${CMAKE_CURRENT_SOURCE_DIR}
+    -Dtarget_bin=${CMAKE_CURRENT_BINARY_DIR}
     -P ${CMAKE_MODULE_PATH}/../extern/release.cmake
     COMMENT "Running Release .."
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   )
 endfunction()
 

@@ -7,13 +7,13 @@ set(search_dirs
 FIND_PATH(SYSTEM_INCLUDE_DIR
   NAMES System/SysCore.h
   HINTS ${search_dirs}
-  PATH_SUFFIXES system/include
+  PATH_SUFFIXES System/include
 )
 
 FIND_LIBRARY(SYSTEM_LIBRARY
   NAMES System
   HINTS ${search_dirs}
-  PATH_SUFFIXES system/lib
+  PATH_SUFFIXES System/lib
 )
 
 set(SYSTEM_FILES "")

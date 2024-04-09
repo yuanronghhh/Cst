@@ -3,6 +3,7 @@ set(INC
 )
 
 set(EXTERNAL_LIBS
+  "System"
   "unity"
   "pthread"
   "openssl"
@@ -15,7 +16,6 @@ set(EXTERNAL_LIBS
   "glfw3"
   "pangofc"
   "tinyexpr"
-  "System"
 )
 
 set(UNIX_SRC

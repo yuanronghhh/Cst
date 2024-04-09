@@ -17,11 +17,13 @@ function(release_copy_files
       FILES_MATCHING
       PATTERN "*.lib")
   elseif(UNIX)
-    file(COPY ${target_bin}/lib${target_name}.a
+    file(COPY ${_LIB}
       DESTINATION ${LIBDIR}/${target_name}/lib
       FILES_MATCHING
       PATTERN "*.a")
   endif()
+
+  log("Copy file to: ${LIBDIR}/${target_name}/lib")
 endfunction()
 release_copy_files(
   ${target_name}

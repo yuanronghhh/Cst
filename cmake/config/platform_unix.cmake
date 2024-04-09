@@ -5,7 +5,7 @@ if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   set(CMAKE_C_FLAGS "-Wall -g -rdynamic")
   # set(CMAKE_C_FLAGS "-Wall -pg -rdynamic")
 else()
-  set(CMAKE_C_FLAGS "-Os")
+  set(CMAKE_C_FLAGS "-O3")
 endif()
 
 find_package(PkgConfig)

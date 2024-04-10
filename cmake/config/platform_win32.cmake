@@ -37,6 +37,7 @@ find_package(jpegturbo REQUIRED)
 find_package(gdkpixbuf REQUIRED)
 find_package(ffmpeg REQUIRED)
 find_package(vld REQUIRED)
+find_package(sdl2 REQUIRED)
 find_package(system REQUIRED)
 
 find_package(glib REQUIRED)
@@ -44,11 +45,6 @@ find_package(pango REQUIRED)
 find_package(cairo REQUIRED)
 find_package(gtk REQUIRED)
 find_package(mono REQUIRED)
-
-set(SDL2_MIXER_DIR ${SDL2_DIR})
-set(SDL2_MIXER_INCLUDE_DIRS ${SDL2_INCLUDE_DIRS})
-set(SDL2_MIXER_DLL ${SDL2_MIXER_DLL}/lib/SDL2_mixer.dll)
-set(SDL2_MIXER_LIBRARIES ${SDL2_DIR}/lib/SDL2_mixer.lib)
 
 set(MPG123_LIBRARIES "libmpg123.lib")
 

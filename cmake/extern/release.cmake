@@ -17,7 +17,7 @@ function(release_copy_files
       FILES_MATCHING
       PATTERN "*.lib")
   elseif(UNIX)
-    file(COPY ${_LIB}
+    file(COPY ${target_bin}/lib${target_name}.a
       DESTINATION ${LIBDIR}/${target_name}/lib
       FILES_MATCHING
       PATTERN "*.a")

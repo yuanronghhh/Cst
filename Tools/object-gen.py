@@ -131,6 +131,8 @@ ${TypeName} *${type_name}_new_I(void) {
 static void ${type_name}_dispose(SysObject* o) {
   ${TypeName} *self = ${TYPE_NAME}(o);
 
+  UNUSED(self);
+
   SYS_OBJECT_CLASS(${type_name}_parent_class)->dispose(o);
 }
 

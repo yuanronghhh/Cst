@@ -31,7 +31,6 @@ typedef struct _${TypeName}Interface ${TypeName}Interface;
 ${struct_str}
 
 SysType ${type_name}_get_type(void);
-
 ${FUNC_DEFINE_CODES}
 
 SYS_END_DECLS
@@ -41,7 +40,6 @@ SYS_END_DECLS
 
 interface_c_template = """\
 #include <${header_path}/${TypeName}.h>
-#include <${header_path}/FrDraw.h>
 
 SYS_DEFINE_INTERFACE(${TypeName}, ${type_name}, SYS_TYPE_OBJECT);
 
@@ -432,7 +430,7 @@ class TemplateGenerator:
 
     def generate_file(self, info):
         if info.is_interface:
-            self.generate_interface_file()
+            self.generate_interface_file(info)
             return
 
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
@@ -522,8 +520,7 @@ class TemplateGenerator:
         result = result.replace("${FUNC_DEFINE_CODES}", func_codes)
         return result
 
-    def generate_interface_file(self):
-        info = self.info
+    def generate_interface_file(self, info):
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
         c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
 
@@ -633,29 +630,23 @@ def gen_interface_for_cairo():
 
     f.close()
 
-def gen_interface_result():
-    dst = "./Cst/Framework/Graph"
-    header_path = "Framework/Graph"
+def gen_struct_result():
+    dst = "D:/GreyHound/PRIVATE/Git/CstDemo/Cst/CstDemo/libs"
+    header_path = "CstDemo/libs"
 
     template_struct = """
-struct _CstILayerNodeInterface {
-  SysTypeInterface parent;
+struct _FrPacketQueue {
+  SysObject parent;
 
-  void (*iterate_node) (CstLayerNode *self, CstLayerNodeFunc func, SysPointer user_data);
-  CstLayerNode *(*get_children) (CstLayerNode *self);
-  CstLayerNode *(*get_parent) (CstLayerNode *self);
-  CstLayerNode *(*get_next) (CstLayerNode *self);
+  /* <private> */
 };
 """
-
     info = TemplateInfo(template_struct)
     gen = TemplateGenerator(dst, header_path)
-    r = gen.gen_h_interface_result(info)
-    r += gen.gen_c_interface_result(info)
-    print(r)
+    gen.generate_file(info)
 
 def main():
-    gen_interface_result()
+    gen_struct_result()
 
 if __name__ == '__main__':
     main()

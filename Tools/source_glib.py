@@ -9,10 +9,11 @@ logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 def rename_glib(file):
     f = open(file, "r+", encoding="utf-8")
     data = f.read()
-    ndata = data.replace("G_", "SYS_")\
-            .replace("g_", "sys_")\
+    ndata = data\
             .replace("gboolean", "SysBool")\
             .replace("GReal", "SysReal")\
+            .replace("GQueue", "SysQueue")\
+            .replace("GAsyncQueue", "SysAsyncQueue")\
             .replace("gpointer", "SysPointer")\
             .replace("GError", "SysError")\
             .replace("GThread", "SysThread")\
@@ -50,13 +51,17 @@ def rename_glib(file):
             .replace("GList", "SysList")\
             .replace("GPollFD", "SysPollFD")\
             .replace("GWakeup", "SysWakeup")\
+            .replace("GCompareDataFunc", "SysCompareDataFunc")\
+            .replace("GLIB_AVAILABLE_IN_2_46\n", "")\
             .replace("GLIB_AVAILABLE_STATIC_INLINE_IN_2_70\n", "")\
             .replace("GLIB_AVAILABLE_IN_2_74\n", "")\
             .replace("GLIB_AVAILABLE_IN_ALL\n", "")\
             .replace("GLIB_.*", "")\
             .replace("GLIB_VAR", "")\
             .replace("GIOCondition", "SysIOCondition")\
-            .replace("GUnixSignalWatchSource", "SysUnixSignalWatchSource")
+            .replace("GUnixSignalWatchSource", "SysUnixSignalWatchSource")\
+            .replace("G_", "SYS_")\
+            .replace("g_", "sys_")
 
     f.seek(0)
     f.truncate()
@@ -64,4 +69,4 @@ def rename_glib(file):
     f.close()
 
 if __name__ == '__main__':
-    rename_glib("D:/GreyHound/PRIVATE/Git/Cst/Cst/Framework/DataType/FRPoll.c")
+    rename_glib("/home/greyhound/Git/CstDemo/Cst/System/DataTypes/SysAsyncQueue.c")

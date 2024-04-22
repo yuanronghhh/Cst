@@ -6,6 +6,11 @@ function(release_copy_files
     target_path
     target_bin)
 
+  if(${CMAKE_BUILD_TYPE} STREQUAL "Release") 
+  else()
+    return()
+  endif()
+
   file(COPY ${target_path}
     DESTINATION ${LIBDIR}/${target_name}/include
     FILES_MATCHING

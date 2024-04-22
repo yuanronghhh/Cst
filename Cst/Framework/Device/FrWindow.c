@@ -8,8 +8,8 @@
 #define fr_glfw_get_window(gwindow) ((FrWindow *)glfwGetWindowUserPointer(gwindow))
 #define fr_glfw_set_window(gwindow, window) glfwSetWindowUserPointer(gwindow, window)
 
-static void fr_window_event_setup(FrWindow *self);
-static void fr_window_event_teardown(FrWindow *self);
+static void fr_window_event_register(FrWindow *self);
+static void fr_window_event_unregister(FrWindow *self);
 static void i_device_imp(FrIDeviceInterface *iface);
 
 SYS_DEFINE_WITH_CODE(FrWindow, fr_window, SYS_TYPE_OBJECT,
@@ -230,7 +230,7 @@ static void fr_window_refresh_callback(GLFWwindow* gwindow) {
   fr_events_dispatch(e);
 }
 
-static void fr_window_event_teardown(FrWindow *self) {
+static void fr_window_event_unregister(FrWindow *self) {
   sys_return_if_fail(self != NULL);
 
   GLFWwindow *gwindow = self->gwindow;
@@ -250,7 +250,7 @@ static void fr_window_event_teardown(FrWindow *self) {
   glfwSetWindowMaximizeCallback(gwindow, NULL);
 }
 
-static void fr_window_event_setup(FrWindow *self) {
+static void fr_window_event_register(FrWindow *self) {
   sys_return_if_fail(self != NULL);
 
   GLFWwindow *gwindow = self->gwindow;
@@ -377,7 +377,7 @@ static void fr_window_construct(FrWindow *self,
 
   self->gwindow = gwindow;
   fr_glfw_set_window(gwindow, self);
-  fr_window_event_setup(self);
+  fr_window_event_register(self);
 }
 
 FrWindow* fr_window_new(void) {
@@ -398,7 +398,7 @@ static void fr_window_dispose(SysObject* o) {
   FrWindow *self = FR_WINDOW(o);
 
   fr_glfw_set_window(self->gwindow, NULL);
-  fr_window_event_teardown(self);
+  fr_window_event_unregister(self);
 
   glfwDestroyWindow(self->gwindow);
 

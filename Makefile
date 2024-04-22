@@ -68,7 +68,7 @@ run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --servername GVIM --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --servername VIM --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	# @gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}

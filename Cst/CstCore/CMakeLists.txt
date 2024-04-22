@@ -3,6 +3,7 @@ set(INC
 )
 
 set(EXTERNAL_LIBS
+  "System"
   "unity"
   "pthread"
   "openssl"
@@ -13,7 +14,6 @@ set(EXTERNAL_LIBS
   "glib"
   "glad"
   "glfw3"
-  "system"
 )
 
 set(INNER_LIBS

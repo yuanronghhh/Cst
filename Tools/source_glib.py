@@ -6,6 +6,60 @@ from pathlib import Path
 
 logging.basicConfig(format="%(message)s", level=logging.DEBUG)
 
+
+def rename_tbox(file):
+    f = open(file, "r+", encoding="utf-8")
+    data = f.read()
+    ndata = data\
+            .replace("SysBool", "tb_bool_t")\
+            .replace("NULL", "tb_null_t")\
+            .replace("sys_debug_N", "tb_trace_d")\
+            .replace("sys_error_N", "tb_trace_e")\
+            .replace("sys_info_N", "tb_trace_i")\
+            .replace("tb_return_if_fail", "tb_assert_and_check_return")\
+            .replace("SYS_TYPE_OBJECT", "TB_TYPE_TOBJECT")\
+            .replace("IFaceEntry", "tb_iface_entry_t")\
+            .replace("IFaceData", "tb_iface_data_t")\
+            .replace("TypeData", "tb_type_data_t")\
+            .replace("SysTypeInitFunc", "tb_type_init_func_t")\
+            .replace("SysInstanceInitFunc", "tb_instance_init_func_t")\
+            .replace("SysTypeFinalizeFunc", "tb_finalize_func_t")\
+            .replace("SysRecMutex", "tb_rec_mutex_t")\
+            .replace("SysParamClass", "tb_param_class_t")\
+            .replace("SysParam", "tb_param_t")\
+            .replace("SysHArray", "tb_harray_t")\
+            .replace("SysSList", "tb_slist_t")\
+            .replace("SysHashTable", "tb_hash_table_t")\
+            .replace("SysMutex", "tb_mutex_t")\
+            .replace("SysUInt", "tb_uint_t")\
+            .replace("SysRWLock", "tb_rw_lock_t")\
+            .replace("SysDestroyFunc", "tb_destroy_func_t")\
+            .replace("SysPointer", "tb_pointer_t")\
+            .replace("SysTypeInfo", "tb_type_info_t")\
+            .replace("SysRefHook", "tb_ref_hook_func_t")\
+            .replace("SysTypeInterface", "tb_type_interface_t")\
+            .replace("SysTypeClass", "tb_type_class_t")\
+            .replace("TypeNode", "tb_type_node_t")\
+            .replace("SysTypeClass", "tb_type_class_t")\
+            .replace("SysObjectClass", "tb_tobject_class_t")\
+            .replace("SysObject", "tb_tobject_t")\
+            .replace("sys_return_if_fail", "tb_assert_and_check_return")\
+            .replace("sys_return_val_if_fail", "tb_assert_and_check_return_val")\
+            .replace("SYS_REF_CHECK", "TB_REF_CHECK")\
+            .replace("sys_type_class", "tb_type_class")\
+            .replace("InstanceData", "tb_instance_data_t")\
+            .replace("SysRef", "tb_ref_t")\
+            .replace("SysType", "tb_type_t")\
+            .replace("SYS_", "TB_")\
+            .replace("sys_", "tb_")\
+            .replace("SysChar", "tb_char_t")\
+            .replace("SysInt", "tb_int_t")
+
+    f.seek(0)
+    f.truncate()
+    f.write(ndata)
+    f.close()
+
 def rename_glib(file):
     f = open(file, "r+", encoding="utf-8")
     data = f.read()
@@ -63,10 +117,14 @@ def rename_glib(file):
             .replace("G_", "SYS_")\
             .replace("g_", "sys_")
 
+
     f.seek(0)
     f.truncate()
     f.write(ndata)
     f.close()
 
 if __name__ == '__main__':
-    rename_glib("/home/greyhound/Git/CstDemo/Cst/System/DataTypes/SysAsyncQueue.c")
+    # rename_tbox("/home/greyhound/Git/tbox/src/tbox/object/param.c")
+    # rename_tbox("/home/greyhound/Git/tbox/src/tbox/object/tobject.c")
+    rename_tbox("/home/greyhound/Git/tbox/src/demo/object/tobject.c")
+    # rename_glib("/home/greyhound/Git/CstDemo/Cst/System/DataTypes/SysAsyncQueue.c")

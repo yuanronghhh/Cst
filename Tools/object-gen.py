@@ -17,7 +17,7 @@ interface_h_template = """\
 #ifndef __${TYPE_NAME}__
 #define __${TYPE_NAME}__
 
-#include <Framework/FrCommon.h>
+#include <CstDemo/media/MediaCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -41,7 +41,6 @@ SYS_END_DECLS
 
 interface_c_template = """\
 #include <${header_path}/${TypeName}.h>
-#include <${header_path}/FrDraw.h>
 
 SYS_DEFINE_INTERFACE(${TypeName}, ${type_name}, SYS_TYPE_OBJECT);
 
@@ -432,7 +431,7 @@ class TemplateGenerator:
 
     def generate_file(self, info):
         if info.is_interface:
-            self.generate_interface_file()
+            self.generate_interface_file(info)
             return
 
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
@@ -522,8 +521,7 @@ class TemplateGenerator:
         result = result.replace("${FUNC_DEFINE_CODES}", func_codes)
         return result
 
-    def generate_interface_file(self):
-        info = self.info
+    def generate_interface_file(self, info):
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
         c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
 
@@ -560,9 +558,8 @@ class TemplateGenerator:
 
         return -1
 
-    def generate_field(self):
-        props = self.info.props
-        info = self.info
+    def generate_field(self, info):
+        props = info.props
 
         #define sys_object_add_property(TYPE, TypeName, full_type, field_type, field_name) \
         tpl = "sys_object_add_property(%s, %s, \"%s\", %s, %s);"
@@ -634,14 +631,14 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_interface_result():
-    dst = "/home/greyhound/Git/CstDemo/Cst/CstDemo/libs"
-    header_path = "CstDemo/tests"
+    dst = "/home/greyhound/Git/CstDemo/Cst/CstDemo/media"
+    header_path = "CstDemo/media"
 
     template_struct = """
-struct _FrMedia {
-  SysObject parent;
+struct _FrIStreamInterface {
+  SysTypeInterface parent;
 
-  /* <private> */
+  FrPacket *(*read_packet) (FrIStream *stream);
 };
 """
 

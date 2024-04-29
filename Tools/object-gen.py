@@ -17,7 +17,7 @@ interface_h_template = """\
 #ifndef __${TYPE_NAME}__
 #define __${TYPE_NAME}__
 
-#include <CstDemo/media/MediaCommon.h>
+#include <Framework/FrCommon.h>
 
 SYS_BEGIN_DECLS
 
@@ -31,7 +31,6 @@ typedef struct _${TypeName}Interface ${TypeName}Interface;
 ${struct_str}
 
 SysType ${type_name}_get_type(void);
-
 ${FUNC_DEFINE_CODES}
 
 SYS_END_DECLS
@@ -647,7 +646,7 @@ struct _FrIStreamInterface {
     gen.generate_file(info)
 
 def main():
-    gen_interface_result()
+    gen_struct_result()
 
 if __name__ == '__main__':
     main()

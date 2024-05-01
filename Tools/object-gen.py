@@ -90,13 +90,13 @@ typedef struct _${TypeName} ${TypeName};
 typedef struct _${TypeName}Class ${TypeName}Class;
 
 struct _${TypeName}Class {
-  ${ParentType}Class parent;
+  ${ParentTypeName}Class parent;
 };
 ${struct_str}
 SYS_API SysType ${type_name}_get_type(void);
-SYS_API ${TypeName} *${type_name}_new(void);
+SYS_API ${ParentTypeName} *${type_name}_new(void);
 
-SYS_API ${TypeName} *${type_name}_new_I(void);
+SYS_API ${ParentTypeName} *${type_name}_new_I(void);
 
 SYS_END_DECLS
 
@@ -110,18 +110,18 @@ c_template = """\
 SYS_DEFINE_TYPE(${TypeName}, ${type_name}, ${TYPE_PARENT});
 
 /* object api */
-static void ${type_name}_construct(${TypeName} *self) {
+static void ${type_name}_construct(${SelfTypeName} *self) {
 
 }
 
-${TypeName}* ${type_name}_new(void) {
+${ParentTypeName}* ${type_name}_new(void) {
   return sys_object_new(${FN_TYPE_NAME}, NULL);
 }
 
-${TypeName} *${type_name}_new_I(void) {
-  ${TypeName} *o = ${type_name}_new();
+${ParentTypeName} *${type_name}_new_I(void) {
+  ${ParentTypeName} *o = ${type_name}_new();
 
-  ${type_name}_construct(o);
+  ${type_name}_construct_i(o);
 
   return o;
 }
@@ -388,7 +388,7 @@ class TemplateInfo:
 
         return "_".join(self.p_sep_struct).upper()
 
-    def get_ParentType(self):
+    def get_ParentTypeName(self):
         if not self.pinfo:
             return ""
 
@@ -414,11 +414,19 @@ class TemplateGenerator:
 
     @staticmethod
     def gen_with_tpl(info, tpl, header_path):
+        parentType = info.get_ParentTypeName()
+        selfType = info.get_TypeName()
+
+        if parentType != "SysObject" and \
+                parentType != "SysTypeInstance":
+            selfType = parentType
+
         r = tpl.replace("${TYPE_NAME}", info.get_TYPE_NAME())\
                 .replace("${FN_TYPE_NAME}", info.get_FN_TYPE_NAME())\
                 .replace("${PARENT_TYPE}", info.get_PARENT_TYPE())\
                 .replace("${TYPE_PARENT}", info.get_TYPE_PARENT())\
-                .replace("${ParentType}", info.get_ParentType())\
+                .replace("${ParentTypeName}", parentType)\
+                .replace("${SelfTypeName}", selfType)\
                 .replace("${typename}", info.get_typename())\
                 .replace("${TypeName}", info.get_TypeName())\
                 .replace("${type_name}", info.get_type_name())\
@@ -629,7 +637,7 @@ def gen_interface_for_cairo():
 
     f.close()
 
-def gen_interface_result():
+def gen_struct_result():
     dst = "/home/greyhound/Git/CstDemo/Cst/CstDemo/media"
     header_path = "CstDemo/media"
 

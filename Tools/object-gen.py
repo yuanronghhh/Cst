@@ -77,7 +77,7 @@ h_template = """\
 #ifndef __${TYPE_NAME}_H__
 #define __${TYPE_NAME}_H__
 
-#include <${header_path}/FrCommon.h>
+#include <${common_path}>
 
 SYS_BEGIN_DECLS
 
@@ -94,9 +94,9 @@ struct _${TypeName}Class {
 };
 ${struct_str}
 SYS_API SysType ${type_name}_get_type(void);
-SYS_API ${ParentTypeName} *${type_name}_new(void);
+SYS_API ${SelfTypeName} *${type_name}_new(void);
 
-SYS_API ${ParentTypeName} *${type_name}_new_I(void);
+SYS_API ${SelfTypeName} *${type_name}_new_I(void);
 
 SYS_END_DECLS
 
@@ -110,16 +110,16 @@ c_template = """\
 SYS_DEFINE_TYPE(${TypeName}, ${type_name}, ${TYPE_PARENT});
 
 /* object api */
-static void ${type_name}_construct(${SelfTypeName} *self) {
+static void ${type_name}_construct_i(${SelfTypeName} *self) {
 
 }
 
-${ParentTypeName}* ${type_name}_new(void) {
+${SelfTypeName}* ${type_name}_new(void) {
   return sys_object_new(${FN_TYPE_NAME}, NULL);
 }
 
-${ParentTypeName} *${type_name}_new_I(void) {
-  ${ParentTypeName} *o = ${type_name}_new();
+${SelfTypeName} *${type_name}_new_I(void) {
+  ${SelfTypeName} *o = ${type_name}_new();
 
   ${type_name}_construct_i(o);
 
@@ -407,13 +407,14 @@ class TemplateInfo:
         return ("%s_TYPE_%s" % (self.p_sep_struct[0], "_".join(self.p_sep_struct[1:]))).upper()
 
 class TemplateGenerator:
-    def __init__(self, relpath, header_path):
+    def __init__(self, relpath, header_path, common_path):
         self.relpath = Path(relpath).as_posix()
         self.header_path = header_path
+        self.common_path = common_path
         self.dstDir = Path(relpath).absolute().as_posix()
 
     @staticmethod
-    def gen_with_tpl(info, tpl, header_path):
+    def gen_with_tpl(info, tpl, header_path, common_path):
         parentType = info.get_ParentTypeName()
         selfType = info.get_TypeName()
 
@@ -431,6 +432,7 @@ class TemplateGenerator:
                 .replace("${TypeName}", info.get_TypeName())\
                 .replace("${type_name}", info.get_type_name())\
                 .replace("${struct_str}", info.get_struct_str())\
+                .replace("${common_path}", common_path)\
                 .replace("${header_path}", header_path)
 
         return r
@@ -444,12 +446,18 @@ class TemplateGenerator:
         h_file = self.dstDir + "/" + info.get_TypeName() + ".h"
         c_file = self.dstDir + "/" + info.get_TypeName() + ".c"
 
-        result = self.gen_with_tpl(info, h_template, self.header_path)
+        result = self.gen_with_tpl(info,
+                                   h_template, 
+                                   self.header_path, 
+                                   self.common_path)
         fp = open(h_file, "w+")
         fp.write(result)
         fp.close()
 
-        result = self.gen_with_tpl(info, c_template, self.header_path)
+        result = self.gen_with_tpl(info,
+                                   c_template, 
+                                   self.header_path, 
+                                   self.common_path)
         fp = open(c_file, "w+")
         fp.write(result)
         fp.close()
@@ -638,19 +646,20 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = "/home/greyhound/Git/CstDemo/Cst/CstDemo/media"
-    header_path = "CstDemo/media"
+    dst = "/home/greyhound/Git/CstDemo/Cst/CstDemo/libs"
+    header_path = "CstDemo/libs"
+    common_path = "CstDemo/DemoCommon.h"
 
     template_struct = """
-struct _FrIStreamInterface {
-  SysTypeInterface parent;
+struct _FrShader {
+  SysObject parent;
 
-  FrPacket *(*read_packet) (FrIStream *stream);
+  /* <private> */
 };
 """
 
     info = TemplateInfo(template_struct)
-    gen = TemplateGenerator(dst, header_path)
+    gen = TemplateGenerator(dst, header_path, common_path)
     gen.generate_file(info)
 
 def main():

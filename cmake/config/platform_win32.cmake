@@ -36,7 +36,11 @@ find_package(expat REQUIRED)
 find_package(jpegturbo REQUIRED)
 find_package(gdkpixbuf REQUIRED)
 find_package(ffmpeg REQUIRED)
-find_package(vld REQUIRED)
+
+if(USE_DEBUGGER)
+  find_package(vld REQUIRED)
+endif()
+
 find_package(sdl2 REQUIRED)
 find_package(system REQUIRED)
 
@@ -58,6 +62,7 @@ set(ADDTIONAL_LIBRARIES
   kernel32.lib
   user32.lib
   winspool.lib
+  ws2_32.lib
   comdlg32.lib
   advapi32.lib
   shell32.lib
@@ -76,7 +81,7 @@ set(CRT_LIBRAREIS
 add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 
-add_definitions("/MT")
+add_definitions("/MD")
 add_definitions("/MP")
 add_definitions("/W3")
 add_definitions("/WX")

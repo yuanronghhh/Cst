@@ -16,6 +16,7 @@ set(EXTERNAL_LIBS
   "glfw3"
   "pangofc"
   "tinyexpr"
+  "ffmpeg"
 )
 
 set(UNIX_SRC
@@ -47,6 +48,8 @@ set(SRC
   ./ThirdParty/FrFont.h
   ./ThirdParty/FrExpr.h
   ./ThirdParty/FrExpr.c
+  ./ThirdParty/FrLibav.c
+  ./ThirdParty/FrLibav.h
 
   ./Event/FrEventCore.h
   ./Event/Base/FrEvent.c
@@ -92,6 +95,62 @@ set(SRC
   ./Event/Action/FrACursorMove.h
   ./Event/FrEvents.c
   ./Event/FrEvents.h
+
+  ./Media/FrAudioDecoder.c
+  ./Media/FrAudioDecoder.h
+  ./Media/FrAudioFrame.c
+  ./Media/FrAudioFrame.h
+  ./Media/FrCairoRender.c
+  ./Media/FrCairoRender.h
+  ./Media/FrDecoder.c
+  ./Media/FrDecoder.h
+  ./Media/FrFrameDecoder.c
+  ./Media/FrFrameDecoder.h
+  ./Media/FrGlRender.c
+  ./Media/FrGlRender.h
+  ./Media/FrIDecoder.c
+  ./Media/FrIDecoder.h
+  ./Media/FrImageScale.c
+  ./Media/FrImageScale.h
+  ./Media/FrIMedia.c
+  ./Media/FrIMedia.h
+  ./Media/FrIMediaRender.c
+  ./Media/FrIMediaRender.h
+  ./Media/FrIStream.c
+  ./Media/FrIStream.h
+  ./Media/FrMedia.c
+  ./Media/FrMedia.h
+  ./Media/FrMediaDecoder.c
+  ./Media/FrMediaDecoder.h
+  ./Media/FrMediaFile.c
+  ./Media/FrMediaFile.h
+  ./Media/FrMediaFilter.c
+  ./Media/FrMediaFilter.h
+  ./Media/FrMediaFrame.c
+  ./Media/FrMediaFrame.h
+  ./Media/FrMediaPacket.c
+  ./Media/FrMediaPacket.h
+  ./Media/FrMediaPlayer.c
+  ./Media/FrMediaPlayer.h
+  ./Media/FrMediaStream.c
+  ./Media/FrMediaStream.h
+  ./Media/FrPacket.c
+  ./Media/FrPacket.h
+  ./Media/FrPacketDecoder.c
+  ./Media/FrPacketDecoder.h
+  ./Media/FrPipeline.c
+  ./Media/FrPipeline.h
+  ./Media/FrStream.c
+  ./Media/FrStream.h
+  ./Media/FrVideoDecoder.c
+  ./Media/FrVideoDecoder.h
+  ./Media/FrVideoFrame.c
+  ./Media/FrVideoFrame.h
+  ./Media/FrMediaCommon.c
+  ./Media/FrMediaCommon.h
+  ./Media/FrMediaTypes.h
+  ./Media/FrMediaCore.h
+  ./Media/FrMediaCore.c
 
   ./Device/FrIDevice.c
   ./Device/FrIDevice.h

@@ -1,0 +1,46 @@
+#ifndef __FR_MEDIA_PLAYER_H__
+#define __FR_MEDIA_PLAYER_H__
+
+#include <Framework/Media/FrPipeline.h>
+
+SYS_BEGIN_DECLS
+
+#define FR_TYPE_MEDIA_PLAYER (fr_media_player_get_type())
+#define FR_MEDIA_PLAYER(o) ((FrMediaPlayer* )sys_object_cast_check(o, FR_TYPE_MEDIA_PLAYER))
+#define FR_MEDIA_PLAYER_CLASS(o) ((FrMediaPlayerClass *)sys_class_cast_check(o, FR_TYPE_MEDIA_PLAYER))
+#define FR_MEDIA_PLAYER_GET_CLASS(o) sys_instance_get_class(o, FrMediaPlayerClass)
+
+struct _FrMediaPlayerClass {
+  SysObjectClass parent;
+};
+
+struct _FrMediaPlayer {
+  SysObject parent;
+
+  /* <private>*/
+  FrMediaFile *file;
+  FrPipeline pipeline;
+
+  SysBool use_hwaccel;
+  SysInt64 paused;
+  SysInt64 seek_position;
+  SysBool running;
+};
+
+SYS_API SysType fr_media_player_get_type(void);
+SYS_API FrMediaPlayer *fr_media_player_new(void);
+
+SYS_API FrMediaPlayer *fr_media_player_new_I(FrMediaFile *file);
+SysInt fr_media_player_run(FrMediaPlayer* self);
+void fr_media_player_play(FrMediaPlayer* self);
+void fr_media_player_set_pause(FrMediaPlayer *self);
+SysInt64 fr_media_player_get_pause(FrMediaPlayer *self);
+FrDecoder* fr_player_get_decoder(FrMediaPlayer* self, FR_MEDIA_ENUM type);
+SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render);
+
+void fr_media_player_set_running(FrMediaPlayer *self, SysBool running);
+SysBool fr_media_player_get_running(FrMediaPlayer *self);
+
+SYS_END_DECLS
+
+#endif

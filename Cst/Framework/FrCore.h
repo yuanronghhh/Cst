@@ -27,6 +27,8 @@ SYS_BEGIN_DECLS
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Device/FrIDevice.h>
 
+#include <Framework/Media/FrMediaCore.h>
+
 #include <Framework/FrTypes.h>
 #include <Framework/FrCommon.h>
 #include <Framework/Event/FrEventCore.h>

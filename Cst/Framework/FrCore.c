@@ -6,7 +6,7 @@ void fr_core_setup(void) {
   if (inited) { return; }
 
   sys_setup();
-
+  fr_ffmpeg_setup();
   fr_main_setup();
   fr_window_setup();
 
@@ -37,7 +37,6 @@ void fr_core_teardown(void) {
   fr_events_teardown();
   fr_window_teardown();
   fr_main_teardown();
-
 
   sys_teardown();
 

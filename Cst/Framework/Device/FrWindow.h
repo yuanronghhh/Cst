@@ -1,7 +1,7 @@
 #ifndef __FR_WINDOW_H__
 #define __FR_WINDOW_H__
 
-#include <Framework/FrCommon.h>
+#include <Framework/Device/FrDevice.h>
 
 SYS_BEGIN_DECLS
 
@@ -11,11 +11,11 @@ SYS_BEGIN_DECLS
 #define FR_WINDOW_GET_CLASS(o) sys_instance_get_class(o, FrWindowClass)
 
 struct _FrWindowClass {
-  SysObjectClass parent;
+  FrDeviceClass parent;
 };
 
 struct _FrWindow {
-  SysObject parent;
+  FrDevice parent;
 
   /* <private> */
   GLFWwindow* gwindow;

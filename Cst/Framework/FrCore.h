@@ -5,12 +5,12 @@
 
 SYS_BEGIN_DECLS
 
+#include <Framework/Media/FrMediaCore.h>
+
 #include <Framework/Graph/FrGraph.h>
-#include <Framework/Graph/FrDraw.h>
-#include <Framework/Graph/FrCompositor.h>
+#include <Framework/Graph/FrDrawManager.h>
 #include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrContext.h>
-#include <Framework/Graph/FrCairoDraw.h>
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Graph/FrDrawContext.h>
 
@@ -25,15 +25,14 @@ SYS_BEGIN_DECLS
 
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
-#include <Framework/Device/FrIDevice.h>
-
-#include <Framework/Media/FrMediaCore.h>
+#include <Framework/Device/FrDevice.h>
 
 #include <Framework/FrTypes.h>
 #include <Framework/FrCommon.h>
 #include <Framework/Event/FrEventCore.h>
 
 #include <Framework/ThirdParty/FrGlib.h>
+#include <Framework/ThirdParty/FrLibav.h>
 #include <Framework/ThirdParty/FrGlfw.h>
 #include <Framework/ThirdParty/FrCairo.h>
 #include <Framework/ThirdParty/FrFont.h>

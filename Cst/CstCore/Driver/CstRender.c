@@ -9,6 +9,7 @@
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/CstModule.h>
 #include <CstCore/Driver/CstRenderContext.h>
+#include <Framework/Device/FrIDevice.h>
 
 SYS_DEFINE_TYPE(CstRender, cst_render, SYS_TYPE_OBJECT);
 
@@ -45,17 +46,17 @@ CstRender *cst_render_new(void) {
   return sys_object_new(CST_TYPE_RENDER, NULL);
 }
 
-FrIDevice *cst_render_get_default_device(CstRender *self) {
+FrDevice *cst_render_get_default_device(CstRender *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->device;
 }
 
-static FrRegion *idevice_create_region(FrIDevice *device) {
+static FrRegion *idevice_create_region(FrDevice *device) {
   FrRegion *region;
   FrBound bound = { 0 };
 
-  fr_i_device_get_size(device, &bound.width, &bound.height);
+  fr_i_device_get_size(FR_I_DEVICE(device), &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
 
   return region;
@@ -121,9 +122,9 @@ void cst_render_resize_surface(CstRender *self) {
 static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
   FrWindow *window;
   FrDisplay* display;
-  FrIDevice *device;
+  FrDevice *device;
   FrIDraw* idraw;
-  CstSurface* paint_surface;
+  FrSurface* paint_surface;
 
   if (is_offscreen) {
 
@@ -133,15 +134,16 @@ static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
 
     display = fr_display_new_I();
     window = fr_window_top_new(display);
-    device = FR_I_DEVICE(window);
-    idraw = fr_draw_get_g_idraw();
+    device = FR_DEVICE(window);
+    idraw = fr_draw_manager_get_g_idraw();
 
     self->draw_context = fr_draw_context_new_I(idraw, device);
     self->display = display;
     self->device = device;
 
-    paint_surface = cst_surface_create_image_surface(800, 600);
-    fr_draw_context_add_surface(self->draw_context, FR_SURFACE(paint_surface));
+    FrSurfaceContext info = {.width = 800, .height = 600};
+    paint_surface = cst_surface_create_image_surface(&info);
+    fr_draw_context_add_surface(self->draw_context, paint_surface);
   }
 }
 

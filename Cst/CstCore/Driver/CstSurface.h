@@ -26,12 +26,12 @@ struct _CstSurface {
 };
 
 SysType cst_surface_get_type(void);
-CstSurface *cst_surface_new(void);
+FrSurface* cst_surface_new(void);
 
-CstSurface *cst_surface_new_I(FrDrawSurface *draw_surface);
+FrSurface *cst_surface_new_I(FrSurfaceContext *info);
 CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type);
-CstSurface* cst_surface_create_device_surface(FrIDevice *device, SysInt width, SysInt height);
-CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height);
+FrSurface* cst_surface_create_device_surface(FrDevice *device, FrSurfaceContext *info);
+FrSurface* cst_surface_create_image_surface(FrSurfaceContext *info);
 
 void cst_surface_set_cr(CstSurface *self, FrContext * cr);
 FrContext * cst_surface_get_cr(CstSurface *self);

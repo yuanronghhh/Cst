@@ -11,7 +11,6 @@ SYS_BEGIN_DECLS
 #define FR_DISPLAY_CLASS(o) ((FrDisplayClass *)sys_class_cast_check(o, FR_TYPE_DISPLAY))
 #define FR_DISPLAY_GET_CLASS(o) sys_instance_get_class(o, FrDisplayClass)
 
-
 struct _FrDisplayClass {
   SysObjectClass parent;
 };

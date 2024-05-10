@@ -18,14 +18,19 @@ struct _FrContext {
   SysObject parent;
 
   /* <private> */
-  FrDrawBrush *ctx;
   FrSurface *surface;
+  SysPointer ctx;
+  PangoLayout *layout;
 };
 
 SYS_API SysType fr_context_get_type(void);
 SYS_API FrContext *fr_context_new(void);
 
 SYS_API FrContext *fr_context_new_I(FrSurface *surface);
+SYS_API void fr_context_stroke_mp(FrContext* self, const FrBound *bound, const FrSInt4* m4, const FrSInt4* p4);
+SYS_API void fr_context_rectangle_red(FrContext* cr, SysInt x, SysInt y);
+SYS_API void fr_context_stoke_debug(FrContext* cr, SysInt i);
+SYS_API void fr_context_fill_bound(FrContext* self, const FrBound* bound);
 
 SYS_END_DECLS
 

@@ -1,8 +1,9 @@
 #include <Framework/Graph/FrDrawContext.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>
-#include <Framework/Graph/FrCompositor.h>
+#include <Framework/Graph/FrDrawManager.h>
 #include <Framework/Device/FrIDevice.h>
+#include <Framework/Device/FrDevice.h>
 
 SYS_DEFINE_TYPE(FrDrawContext, fr_draw_context, SYS_TYPE_OBJECT);
 
@@ -29,7 +30,7 @@ void fr_draw_context_get_buffer_size(FrDrawContext* self,
     SysInt* width,
     SysInt* height) {
 
-  fr_i_device_get_size(self->idevice, width, height);
+  fr_i_device_get_size(FR_I_DEVICE(self->device), width, height);
 }
 
 void fr_draw_context_add_surface(FrDrawContext* self, FrSurface *surface) {
@@ -75,17 +76,20 @@ static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
   FrSurface* p;
   FrContext* cr;
   FrColor color = {0.0, 0.0, 1.0, 1.0};
+  FrIDrawInterface *draw_iface = fr_draw_manager_get_iface();
 
   for (SysUInt i = 0; i < self->surfaces.len; i++) {
     p = self->surfaces.pdata[i];
 
-    fr_surface_update_surface(p, self->idevice_surface, width, height);
+    draw_iface->resize_surface(p, self->device_surface, width, height);
 
     cr = fr_context_new_I(p);
-    fr_context_fill_background(cr, width, height);
 
-    fr_context_set_color(cr, &color);
-    fr_context_print_text(cr, 10, 20, "中文");
+    draw_iface->set_color(cr, &color);
+    draw_iface->paint(cr);
+
+    draw_iface->set_color(cr, &color);
+    draw_iface->show_text(cr, 10, 20, "中文");
 
     sys_clear_pointer(&cr, _sys_object_unref);
   }
@@ -94,16 +98,17 @@ static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
 static void surface_clip(FrContext* cr, FrRegion* region) {
   int n_boxes, i;
   FrBound box = { 0 };
+  FrIDrawInterface *draw_iface = fr_draw_manager_get_iface();
 
   n_boxes = fr_region_num_rectangles(region);
   for (i = 0; i < n_boxes; i++) {
     fr_region_get_rectangle(region, i, &box);
-    fr_context_rectangle(cr, box.x, box.y, box.width, box.height);
+    draw_iface->rectangle(cr, box.x, box.y, box.width, box.height);
   }
 
-  fr_context_rectangle(cr, box.x, box.y, box.width, box.height);
-  fr_context_clip(cr);
-  fr_context_paint(cr);
+  draw_iface->rectangle(cr, box.x, box.y, box.width, box.height);
+  draw_iface->clip(cr);
+  draw_iface->paint(cr);
 }
 
 void fr_draw_context_frame_begin(FrDrawContext* self, FrRegion* region) {
@@ -111,11 +116,10 @@ void fr_draw_context_frame_begin(FrDrawContext* self, FrRegion* region) {
   sys_return_if_fail(region != NULL);
   SysInt width = 0, height = 0;
 
-  fr_i_device_get_size(self->idevice, &width, &height);
+  fr_i_device_get_size(FR_I_DEVICE(self->device), &width, &height);
 
-  self->idevice_surface = fr_surface_create_device_surface_full(
-      self->idevice,
-      width, height);
+  FrSurfaceContext info = {.width = width, .height = height };
+  self->device_surface = fr_device_create_surface(self->device, &info);
 
   surface_update(self, width, height);
 
@@ -127,6 +131,7 @@ static void surface_composite(FrDrawContext* self) {
   FrSurface* pb, * pn;
   FrContext* cr;
   SysHArray* paint_surfaces = &self->surfaces;
+  FrIDrawInterface *draw_iface = fr_draw_manager_get_iface();
 
   if (paint_surfaces->len < 1) { return; }
 
@@ -135,45 +140,46 @@ static void surface_composite(FrDrawContext* self) {
     pb = paint_surfaces->pdata[i - 1];
 
     cr = fr_context_new_I(pb);
-    fr_compositor_surface_overlay(pn, cr);
+    draw_iface->overlay(cr, pn, 0, 0);
     sys_clear_pointer(&cr, _sys_object_unref);
   }
 
   pn = paint_surfaces->pdata[0];
-  pb = self->idevice_surface;
+  pb = self->device_surface;
 
   cr = fr_context_new_I(pb);
-  fr_compositor_surface_overlay(pn, cr);
+  draw_iface->overlay(cr, pn, 0, 0);
   sys_object_unref(cr);
 }
 
 void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
   sys_return_if_fail(self != NULL);
+  FrIDrawInterface* draw_iface = fr_draw_manager_get_iface();
 
   surface_composite(self);
 
-  fr_surface_flush(self->idevice_surface);
-  sys_clear_pointer(&self->idevice_surface, _sys_object_unref);
+  draw_iface->surface_flush(self->device_surface);
+  sys_clear_pointer(&self->device_surface, _sys_object_unref);
 
   self->is_painting = false;
 }
 
 /* object api */
-static void fr_draw_context_construct(FrDrawContext *self, FrIDraw* iface,
-    FrIDevice *idevice) {
-  self->iface = sys_object_ref(iface);
-  self->idevice = sys_object_ref(idevice);
-  self->idevice_surface = NULL;
+static void fr_draw_context_construct(FrDrawContext *self,
+    FrIDraw* iface,
+    FrDevice *device) {
+  self->device = sys_object_ref(device);
+  self->device_surface = NULL;
 }
 
 FrDrawContext* fr_draw_context_new(void) {
   return sys_object_new(FR_TYPE_DRAW_CONTEXT, NULL);
 }
 
-FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrIDevice* idevice) {
+FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrDevice* device) {
   FrDrawContext *o = fr_draw_context_new();
 
-  fr_draw_context_construct(o, iface, idevice);
+  fr_draw_context_construct(o, iface, device);
 
   return o;
 }
@@ -181,8 +187,7 @@ FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrIDevice* idevice) {
 static void fr_draw_context_dispose(SysObject* o) {
   FrDrawContext *self = FR_DRAW_CONTEXT(o);
 
-  sys_clear_pointer(&self->idevice, _sys_object_unref);
-  sys_clear_pointer(&self->iface, _sys_object_unref);
+  sys_clear_pointer(&self->device, _sys_object_unref);
   sys_harray_destroy(&self->surfaces);
 
   SYS_OBJECT_CLASS(fr_draw_context_parent_class)->dispose(o);

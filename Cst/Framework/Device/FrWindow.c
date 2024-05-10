@@ -1,9 +1,7 @@
 #include <Framework/Device/FrWindow.h>
-
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrIDevice.h>
 #include <Framework/Event/FrEventCore.h>
-
 
 #define fr_glfw_get_window(gwindow) ((FrWindow *)glfwGetWindowUserPointer(gwindow))
 #define fr_glfw_set_window(gwindow, window) glfwSetWindowUserPointer(gwindow, window)
@@ -12,7 +10,7 @@ static void fr_window_event_register(FrWindow *self);
 static void fr_window_event_unregister(FrWindow *self);
 static void i_device_imp(FrIDeviceInterface *iface);
 
-SYS_DEFINE_WITH_CODE(FrWindow, fr_window, SYS_TYPE_OBJECT,
+SYS_DEFINE_WITH_CODE(FrWindow, fr_window, FR_TYPE_DEVICE,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_DEVICE, i_device_imp));
 
 static GLFWwindow* fr_window_create_window_i(SysInt width,

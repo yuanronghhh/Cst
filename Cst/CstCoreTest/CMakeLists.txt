@@ -14,6 +14,7 @@ set(EXTERNAL_LIBS
   "glib"
   "glad"
   "glfw3"
+  "ffmpeg"
 )
 
 set(INNER_LIBS

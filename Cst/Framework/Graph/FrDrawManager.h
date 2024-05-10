@@ -1,0 +1,38 @@
+#ifndef __FR_DRAW_MANAGER_H__
+#define __FR_DRAW_MANAGER_H__
+
+#include <Framework/Graph/FrIDraw.h>
+
+
+SYS_BEGIN_DECLS
+
+
+#define FR_TYPE_DRAW_MANAGER (fr_draw_manager_get_type())
+#define FR_DRAW_MANAGER_MANAGER(o) ((FrDrawManager* )sys_object_cast_check(o, FR_TYPE_DRAW_MANAGER))
+#define FR_DRAW_MANAGER_CLASS(o) ((FrDrawManagerClass *)sys_class_cast_check(o, FR_TYPE_DRAW_MANAGER))
+#define FR_DRAW_MANAGER_GET_CLASS(o) sys_instance_get_class(o, FrDrawManagerClass)
+
+
+struct _FrDrawManagerClass {
+  SysObjectClass parent;
+
+  void (*construct) (FrDrawManager *o);
+};
+
+struct _FrDrawManager {
+  SysObject parent;
+
+  /* <private> */
+};
+
+SYS_API SysType fr_draw_manager_get_type(void);
+
+SYS_API void fr_draw_manager_setup(const SysChar *name);
+SYS_API void fr_draw_manager_teardown(void);
+SYS_API FrIDrawInterface* fr_draw_manager_get_iface(void);
+SYS_API FrIDraw* fr_draw_manager_get_g_idraw(void);
+
+SYS_END_DECLS
+
+#endif
+

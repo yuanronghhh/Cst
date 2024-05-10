@@ -4,10 +4,9 @@
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstAlgorithm.h>
 #include <CstCore/Driver/CstRenderNode.h>
-
+#include <Framework/Graph/FrIDraw.h>
 
 SYS_DEFINE_TYPE(CstSurface, cst_surface, FR_TYPE_SURFACE);
-
 
 CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -27,16 +26,13 @@ CstLayer* cst_surface_get_layer_by_type(CstSurface* self, SysInt layer_type) {
   return NULL;
 }
 
-CstSurface* cst_surface_create_image_surface(SysInt width, SysInt height) {
-  FrDrawSurface *draw_surface = fr_i_draw_image_surface_create(width, height);
-
-  return cst_surface_new_I(draw_surface);
+FrSurface* cst_surface_create_image_surface(FrSurfaceContext *info) {
+  return cst_surface_new_I(info);
 }
 
-CstSurface* cst_surface_create_device_surface(FrIDevice *device, SysInt width, SysInt height) {
-  FrDrawSurface* draw_surface = fr_i_draw_create_surface(device, width, height);
+FrSurface* cst_surface_create_device_surface(FrDevice *device, FrSurfaceContext *info) {
 
-  return cst_surface_new_I(draw_surface);
+  return fr_device_create_surface_by_type(device, CST_TYPE_SURFACE, info);
 }
 
 void cst_surface_set_cr(CstSurface *self, FrContext * cr) {
@@ -52,21 +48,23 @@ FrContext * cst_surface_get_cr(CstSurface *self) {
 }
 
 /* object api */
-static void cst_surface_construct(CstSurface *self, FrDrawSurface* draw_surface) {
-  FR_SURFACE_CLASS(cst_surface_parent_class)->construct(FR_SURFACE(self), draw_surface);
+static void cst_surface_construct_i(FrSurface *o, FrSurfaceContext *info) {
+
+  CstSurface *self = CST_SURFACE(o);
+  FR_SURFACE_CLASS(cst_surface_parent_class)->construct(o, info);
 
   self->box_layer = cst_box_layer_new_I();
   self->abs_layer = cst_abs_layer_new_I();
 }
 
-CstSurface* cst_surface_new(void) {
+FrSurface* cst_surface_new(void) {
   return sys_object_new(CST_TYPE_SURFACE, NULL);
 }
 
-CstSurface *cst_surface_new_I(FrDrawSurface *draw_surface) {
-  CstSurface *o = cst_surface_new();
+FrSurface *cst_surface_new_I(FrSurfaceContext *info) {
+  FrSurface *o = cst_surface_new();
 
-  cst_surface_construct(o, draw_surface);
+  cst_surface_construct_i(o, info);
 
   return o;
 }

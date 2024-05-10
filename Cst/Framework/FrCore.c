@@ -11,7 +11,7 @@ void fr_core_setup(void) {
   fr_window_setup();
 
 #if defined(CAIRO_VERSION)
-  fr_draw_setup("cairo");
+  fr_draw_manager_setup("cairo");
 #endif
 
   fr_events_setup();
@@ -27,7 +27,7 @@ void fr_core_teardown(void) {
   if(!inited) { return; }
 
 #if defined(CAIRO_VERSION)
-  fr_draw_teardown();
+  fr_draw_manager_teardown();
 #endif
 
 #if defined(MONO_CORLIB_VERSION)

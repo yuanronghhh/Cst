@@ -100,8 +100,6 @@ set(SRC
   ./Media/FrAudioDecoder.h
   ./Media/FrAudioFrame.c
   ./Media/FrAudioFrame.h
-  ./Media/FrCairoRender.c
-  ./Media/FrCairoRender.h
   ./Media/FrDecoder.c
   ./Media/FrDecoder.h
   ./Media/FrFrameDecoder.c
@@ -154,6 +152,8 @@ set(SRC
 
   ./Device/FrIDevice.c
   ./Device/FrIDevice.h
+  ./Device/FrDevice.c
+  ./Device/FrDevice.h
   ./Device/FrDisplay.c
   ./Device/FrDisplay.h
   ./Device/FrWindow.c
@@ -178,20 +178,19 @@ set(SRC
 
   ./Graph/FrGraph.c
   ./Graph/FrGraph.h
-  ./Graph/FrCompositor.c
-  ./Graph/FrCompositor.h
-  ./Graph/FrDraw.c
-  ./Graph/FrDraw.h
+  ./Graph/FrDrawManager.c
+  ./Graph/FrDrawManager.h
   ./Graph/FrIDraw.c
   ./Graph/FrIDraw.h
   ./Graph/FrDrawContext.c
   ./Graph/FrDrawContext.h
+  ./Graph/FrCairoDrawContext.c
+  ./Graph/FrCairoDrawContext.h
+
   ./Graph/FrSurface.c
   ./Graph/FrSurface.h
   ./Graph/FrContext.c
   ./Graph/FrContext.h
-  ./Graph/FrCairoDraw.c
-  ./Graph/FrCairoDraw.h
   # ./Graph/FrText.c
   # ./Graph/FrText.h
 

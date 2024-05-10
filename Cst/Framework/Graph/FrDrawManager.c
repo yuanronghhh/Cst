@@ -1,0 +1,63 @@
+#include <Framework/Graph/FrDrawManager.h>
+#include <Framework/Graph/FrContext.h>
+#include <Framework/Graph/FrCairoDrawContext.h>
+#include <Framework/Graph/FrSurface.h>
+#include <Framework/Device/FrDisplay.h>
+#include <Framework/Device/FrIDevice.h>
+
+static FrDrawContext *g_draw = NULL;
+static FrIDrawInterface *g_draw_iface = NULL;
+
+SYS_DEFINE_TYPE(FrDrawManager, fr_draw_manager, SYS_TYPE_OBJECT);
+
+void fr_draw_manager_setup(const SysChar *name) {
+  sys_assert(g_draw == NULL);
+  fr_font_setup();
+
+  if(sys_str_equal(name, "cairo")) {
+    g_draw = fr_cairo_draw_context_new_I();
+    g_draw_iface = FR_I_DRAW_GET_IFACE(g_draw);
+  }
+}
+
+void fr_draw_manager_teardown(void) {
+  sys_assert(g_draw != NULL);
+  fr_font_teardown();
+
+  sys_clear_pointer(&g_draw, _sys_object_unref);
+}
+
+FrIDraw * fr_draw_manager_get_g_idraw(void) {
+  sys_assert(g_draw != NULL && "FrIDrawInterface must be inited before use.");
+
+  return FR_I_DRAW(g_draw);
+}
+
+FrIDrawInterface* fr_draw_manager_get_iface(void) {
+  sys_assert(g_draw != NULL && "FrIDrawInterface must be inited before use.");
+
+  return g_draw_iface;
+}
+
+static void fr_draw_manager_construct(FrDrawManager *self) {
+}
+
+/* object api */
+FrDrawManager* fr_draw_manager_new(void) {
+  return sys_object_new(FR_TYPE_DRAW_MANAGER, NULL);
+}
+
+static void fr_draw_manager_dispose(SysObject* o) {
+
+  SYS_OBJECT_CLASS(fr_draw_manager_parent_class)->dispose(o);
+}
+
+static void fr_draw_manager_class_init(FrDrawManagerClass* cls) {
+  SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+
+  cls->construct = fr_draw_manager_construct;
+  ocls->dispose = fr_draw_manager_dispose;
+}
+
+void fr_draw_manager_init(FrDrawManager *self) {
+}

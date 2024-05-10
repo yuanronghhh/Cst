@@ -19,8 +19,8 @@ struct _FrDrawContext {
 
   /* <private> */
   FrIDraw *iface;
-  FrSurface* idevice_surface;
-  FrIDevice* idevice;
+  FrSurface* device_surface;
+  FrDevice* device;
 
   SysHArray surfaces;
   FrCompositor *compositor;
@@ -30,7 +30,7 @@ struct _FrDrawContext {
 SYS_API SysType fr_draw_context_get_type(void);
 SYS_API FrDrawContext *fr_draw_context_new(void);
 
-SYS_API FrDrawContext* fr_draw_context_new_I(FrIDraw* iface, FrIDevice* idevice);
+SYS_API FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrDevice* device);
 SYS_API SysBool fr_draw_context_frame_need_draw(FrDrawContext *self);
 SYS_API void fr_draw_context_frame_begin(FrDrawContext *self, FrRegion *region);
 SYS_API void fr_draw_context_frame_end(FrDrawContext *self, FrRegion *region);

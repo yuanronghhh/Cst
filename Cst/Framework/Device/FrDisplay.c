@@ -1,9 +1,7 @@
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Event/Base/FrEvent.h>
 
-
 SYS_DEFINE_TYPE(FrDisplay, fr_display, SYS_TYPE_OBJECT);
-
 
 /* object api */
 FrDisplay* fr_display_new(void) {

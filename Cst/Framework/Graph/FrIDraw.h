@@ -12,10 +12,10 @@ SYS_BEGIN_DECLS
 struct _FrIDrawInterface {
   SysTypeInterface parent;
 
+  FrSurface *(*resize_surface)(FrSurface *self, FrSurface *device_surface, SysInt width, SysInt height);
   SysInt (*rounded_rectangle) (FrContext* cr, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius);
+  void (*surface_create) (FrSurface* o, FrSurfaceContext *info);
   FrSurface* (*surface_create_similar_image) (FrSurface* other, SysInt width, SysInt height);
-  FrSurface* (*image_surface_create) (SysInt width, SysInt height);
-  FrSurface* (*create_surface) (FrIDevice *device, SysInt width, SysInt height);
   FrSurface* (*get_target) (FrContext* cr);
   FrSurface* (*image_surface_create_from_png) (const char * filename);
   FrSurface* (*surface_create_for_rectangle) (FrSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
@@ -60,7 +60,7 @@ struct _FrIDrawInterface {
   void (*set_font_size) (FrContext* cr,SysDouble size);
   void (*set_line_width) (FrContext* cr,SysDouble width);
   void (*set_source_rgb) (FrContext* cr,SysDouble red,SysDouble green,SysDouble blue);
-  void (*set_source_rgba) (FrContext* cr,SysDouble red,SysDouble green,SysDouble blue,SysDouble alpha);
+  void (*set_color) (FrContext* cr, FrColor *color);
   void (*set_source_surface) (FrContext* cr,FrSurface* surface,SysDouble x,SysDouble y);
   void (*stroke) (FrContext* cr);
   void (*stroke_extents) (FrContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
@@ -81,16 +81,14 @@ struct _FrIDrawInterface {
   void (*surface_show_page) (FrSurface* surface);
   void (*surface_unmap_image) (FrSurface* surface,FrSurface* image);
   void (*update_layout) (FrContext* cr, PangoLayout* layout);
-  void (*show_layout) (FrContext* cr, PangoLayout* layout);
   void (*overlay) (FrContext* cr, FrSurface *surface, SysInt x, SysInt y);
-  void (*print_text) (FrContext* cr, SysDouble x,SysDouble y, const SysChar *text);
+  void (*show_layout) (FrContext* cr, PangoLayout* layout);
 };
 
 SysType fr_i_draw_get_type(void);
 
+void fr_i_draw_surface_create (FrSurface* o, FrSurfaceContext *info);
 FrSurface* fr_i_draw_surface_create_similar_image (FrSurface* other, SysInt width, SysInt height);
-FrSurface* fr_i_draw_image_surface_create (SysInt width, SysInt height);
-FrSurface* fr_i_draw_create_surface (FrIDevice *device, SysInt width, SysInt height);
 FrSurface* fr_i_draw_get_target (FrContext* cr);
 FrSurface* fr_i_draw_image_surface_create_from_png (const char * filename);
 FrSurface* fr_i_draw_surface_create_for_rectangle (FrSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
@@ -134,8 +132,7 @@ void fr_i_draw_scale (FrContext* cr,SysDouble sx,SysDouble sy);
 void fr_i_draw_set_dash (FrContext* cr,const SysDouble * dashes,SysInt num_dashes,SysDouble offset);
 void fr_i_draw_set_font_size (FrContext* cr,SysDouble size);
 void fr_i_draw_set_line_width (FrContext* cr,SysDouble width);
-void fr_i_draw_set_source_rgb (FrContext* cr,SysDouble red,SysDouble green,SysDouble blue);
-void fr_i_draw_set_source_rgba (FrContext* cr,SysDouble red,SysDouble green,SysDouble blue,SysDouble alpha);
+void fr_i_draw_set_color (FrContext* cr, FrColor *color);
 void fr_i_draw_set_source_surface (FrContext* cr,FrSurface* surface,SysDouble x,SysDouble y);
 void fr_i_draw_stroke (FrContext* cr);
 void fr_i_draw_stroke_extents (FrContext* cr,SysDouble * x1,SysDouble * y1,SysDouble * x2,SysDouble * y2);
@@ -159,7 +156,7 @@ void fr_i_draw_update_layout(FrContext* cr, PangoLayout* layout);
 void fr_i_draw_show_layout(FrContext* cr, PangoLayout* layout);
 SysInt fr_i_draw_rounded_rectangle(FrContext* cr, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius);
 void fr_i_draw_context_overlay (FrContext* cr, FrSurface *surface, SysInt x, SysInt y);
-void fr_i_draw_print_text (FrContext* cr, SysDouble x,SysDouble y, const SysChar *text);
+FrSurface* fr_i_draw_resize_surface (FrSurface *surface, FrSurface *device_surface, SysInt width, SysInt height);
 
 SYS_END_DECLS
 

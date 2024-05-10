@@ -21,7 +21,7 @@ struct _CstRender {
 
   /* < private > */
   FrDisplay *display;
-  FrIDevice *device;
+  FrDevice *device;
   FrDrawContext* draw_context;
   CstRenderNode *body_rnode;
 };
@@ -33,7 +33,7 @@ void cst_render_setup(void);
 void cst_render_teardown(void);
 CstRender *cst_render_get_g_render(void);
 
-FrIDevice *cst_render_get_default_device(CstRender *self);
+FrDevice *cst_render_get_default_device(CstRender *self);
 void cst_render_resize_surface(CstRender *self);
 
 void cst_render_rerender(CstRender* self, CstLayout* layout);

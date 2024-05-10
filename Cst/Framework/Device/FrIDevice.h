@@ -3,7 +3,6 @@
 
 #include <Framework/FrCommon.h>
 
-
 SYS_BEGIN_DECLS
 
 #define FR_TYPE_I_DEVICE (fr_i_device_get_type())
@@ -15,7 +14,7 @@ struct _FrIDeviceInterface {
   SysTypeInterface parent;
 
   /* <private> */
-  void (*get_size) (FrIDevice *self, SysInt *width, SysInt *height);
+  void (*get_size) (FrIDevice* self, SysInt* width, SysInt* height);
 };
 
 SysType fr_i_device_get_type(void);

@@ -13,29 +13,24 @@ SYS_BEGIN_DECLS
 struct _FrSurfaceClass {
   SysObjectClass parent;
 
-  void (*construct) (FrSurface *self, FrDrawSurface* draw_surface);
+  void (*construct) (FrSurface *self, FrSurfaceContext *info);
 };
 
 struct _FrSurface {
   SysObject parent;
 
   /* <private> */
-  FrDrawSurface *ctx;
+  SysPointer ctx;
+};
+
+struct _FrSurfaceContext {
+  SysInt width;
+  SysInt height;
 };
 
 SYS_API SysType fr_surface_get_type(void);
+void fr_surface_construct(FrSurface* self, FrSurfaceContext *info);
 SYS_API FrSurface *fr_surface_new(void);
-SYS_API FrSurface* fr_surface_create_device_surface(FrIDevice* device);
-SYS_API FrSurface* fr_surface_create_device_surface_full(FrIDevice* device, SysInt width, SysInt height);
-SYS_API FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface, SysInt width, SysInt height);
-SYS_API FrSurface *fr_surface_create_image_surface(SysInt width, SysInt height);
-SYS_API void fr_surface_set_source_surface(FrSurface *surface, FrSurface *dst_surface);
-
-SYS_API void fr_surface_set_draw_surface(FrSurface *self, FrDrawSurface * draw_surface);
-SYS_API FrDrawSurface * fr_surface_get_draw_surface(FrSurface *self);
-SYS_API void fr_surface_flush(FrSurface *self);
-SYS_API FrSurface *fr_surface_update_surface(FrSurface *self, FrSurface *idevice_surface, SysInt width, SysInt height);
-SYS_API FrContext *fr_surface_creat_cr(FrSurface *self);
 
 SYS_END_DECLS
 

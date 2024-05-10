@@ -14,7 +14,6 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FrGraph.h>
 #include <Framework/Event/Base/FrEventMapping.h>
 #include <Framework/FrTypes.h>
-#include <png.h>
 
 SYS_API SysInt fr_get_type_by_name(const SysChar *names[], SysInt len, const SysChar *name);
 SYS_API const SysChar* fr_get_name_by_type(const SysChar *names[], SysInt len, SysInt type);

@@ -1,7 +1,8 @@
 #ifndef __FR_CAIRO_DRAW_H__
 #define __FR_CAIRO_DRAW_H__
 
-#include <Framework/Graph/FrDraw.h>
+#include <Framework/Graph/FrDrawContext.h>
+#include <Framework/Graph/FrIDraw.h>
 
 SYS_BEGIN_DECLS
 
@@ -11,11 +12,11 @@ SYS_BEGIN_DECLS
 #define FR_CAIRO_DRAW_GET_CLASS(o) sys_instance_get_class(o, FrCairoDrawClass)
 
 struct _FrCairoDrawClass {
-  FrDrawClass parent;
+  FrDrawContextClass parent;
 };
 
 struct _FrCairoDraw {
-  FrDraw parent;
+  FrDrawContext parent;
 
   /* <private> */
 };

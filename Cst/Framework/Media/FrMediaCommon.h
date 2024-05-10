@@ -5,8 +5,6 @@
 
 SYS_BEGIN_DECLS
 
-#include <Framework/Media/FrMediaTypes.h>
-
 SYS_END_DECLS
 
 #endif

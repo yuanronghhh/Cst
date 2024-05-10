@@ -60,13 +60,50 @@ void test_fr_draw_context(void) {
   fr_draw_context_add_surface(draw_context, FR_SURFACE(paint_surface));
 
   render_render(draw_context, idevice);
-  render_render(draw_context, idevice);
 
   sys_clear_pointer(&draw_context, _sys_object_unref);
   sys_clear_pointer(&idevice, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
   sys_harray_free(surfaces, true);
 }
+
+void test_video_player(void) {
+  FrWindow *window;
+  FrDisplay* display;
+  FrIDevice *idevice;
+  FrIDraw* idraw;
+  FrDrawContext *draw_context;
+  FrMediaFile *mfile;
+  FrMediaPlayer *mplayer;
+  FrIMediaRender *imrender;
+  CstSurface* paint_surface;
+
+  display = fr_display_new_I();
+  window = fr_window_top_new(display);
+  idevice = FR_I_DEVICE(window);
+  idraw = fr_draw_get_g_idraw();
+
+  paint_surface = cst_surface_create_image_surface(800, 600);
+  draw_context = fr_draw_context_new_I(idraw, idevice);
+  fr_draw_context_add_surface(draw_context, FR_SURFACE(paint_surface));
+
+  imrender = FR_I_MEDIA_RENDER(draw_context);
+  mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
+  mplayer = fr_media_player_new_I(mfile);
+  fr_media_player_run(mplayer);
+
+  fr_media_player_render(mplayer, imrender);
+
+
+  sys_object_unref(imrender);
+  sys_object_unref(mplayer);
+  sys_object_unref(mfile);
+
+  sys_clear_pointer(&draw_context, _sys_object_unref);
+  sys_clear_pointer(&idevice, _sys_object_unref);
+  sys_clear_pointer(&display, _sys_object_unref);
+}
+
 
 void test_fr_window_leak(void) {
   GLFWwindow *gwindow;
@@ -80,7 +117,8 @@ void test_fr_window_leak(void) {
 void test_fr_init(int argc, SysChar * argv[]) {
   UNITY_BEGIN();
   {
-    RUN_TEST(test_fr_draw_context);
+    RUN_TEST(test_video_player);
+    // RUN_TEST(test_fr_draw_context);
     // RUN_TEST(test_fr_basic);
     // RUN_TEST(test_fr_window_leak);
     // RUN_TEST(test_fr_window_basic);

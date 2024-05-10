@@ -43,6 +43,7 @@ SYS_BEGIN_DECLS
 #include <libavfilter/avfilter.h>
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>
+#include <png.h>
 
 
 SYS_END_DECLS

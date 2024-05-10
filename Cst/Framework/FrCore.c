@@ -38,6 +38,7 @@ void fr_core_teardown(void) {
   fr_window_teardown();
   fr_main_teardown();
 
+  fr_ffmpeg_teardown();
   sys_teardown();
 
   inited = false;

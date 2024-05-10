@@ -166,6 +166,7 @@ typedef SysInt (*FrEventFunc) (FrEvent *e, SysPointer user_data);
 typedef const FrBound* (*FrGetBoundFunc) (SysPointer user_data);
 typedef SysBool (*FrNodeFunc) (FrNode* node, SysPointer user_data);
 
+#include <Framework/Media/FrMediaTypes.h>
 
 SYS_END_DECLS
 

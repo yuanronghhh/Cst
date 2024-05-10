@@ -7,6 +7,7 @@ BUILD_TYPE:=Debug
 PROJ_NAME_FILE:=
 SURFIX=
 ARGS=
+VIM_SESSION=GVIM1
 OS_BUILD_TYPE=${BUILD_TYPE}
 VS_ENV=
 
@@ -38,7 +39,7 @@ config:
 	@mv compile_flags2.txt compile_flags.txt
 
 build-linux: config
-	@${MAKE} -C "$(BUILD_DIR)" -s -j4
+	@${MAKE} -C "$(BUILD_DIR)" -s -j8
 
 build-win32: config
 	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
@@ -68,7 +69,7 @@ run-win32:
 	@${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX} ${ARGS}
 
 debug-linux:
-	@gvim --servername VIM --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
+	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug c ${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}<cr>'
 
 debug-win32:
 	# @gdb ${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${SURFIX}
@@ -133,7 +134,7 @@ system-run: system-build
 	@./build/Cst/System/TestSuite/${BUILD_TYPE}/SystemTestSuite
 
 system-debug: system-build
-	@gvim --servername GVIM1 --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
+	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug c ./build/Cst/System/TestSuite/SystemTestSuite<cr>'
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:

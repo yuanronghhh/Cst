@@ -18,8 +18,7 @@ struct _FrCairoRender {
   SysObject parent;
 
   /* <private> */
-  GLFWwindow *gwindow;
-  cairo_surface_t *window_surface;
+  FrContext *cr;
 };
 
 SYS_API SysType fr_cairo_render_get_type(void);

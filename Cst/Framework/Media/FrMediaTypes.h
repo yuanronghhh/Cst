@@ -1,7 +1,7 @@
 #ifndef __FR_MEDIA_TYPES__
 #define __FR_MEDIA_TYPES__
 
-#include <Framework/FrCommon.h>
+#include <Framework/ThirdParty/FrLibav.h>
 
 SYS_BEGIN_DECLS
 

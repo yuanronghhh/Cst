@@ -26,8 +26,8 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrFrameDecoder.h>
 #include <Framework/Media/FrIMediaRender.h>
 
-void ffmpeg_setup(void);
-void ffmpeg_teardown(void);
+void fr_ffmpeg_setup(void);
+void fr_ffmpeg_teardown(void);
 
 SYS_END_DECLS
 

@@ -6,7 +6,6 @@
 
 SYS_DEFINE_TYPE(FrSurface, fr_surface, SYS_TYPE_OBJECT);
 
-
 FrSurface *fr_surface_update_surface(FrSurface *self,
     FrSurface *device_surface,
     SysInt width,
@@ -15,53 +14,22 @@ FrSurface *fr_surface_update_surface(FrSurface *self,
   sys_return_val_if_fail(self != NULL, NULL);
   sys_return_val_if_fail(device_surface != NULL, NULL);
 
-  sys_assert(self->draw_surface != NULL);
+  sys_assert(self->ctx != NULL);
 
   FrDrawSurface * new_surface =
-    fr_i_draw_surface_create_similar_image(self->draw_surface, width, height);
+    fr_i_draw_surface_create_similar_image(self->ctx, width, height);
   if(new_surface == NULL) { return NULL; }
 
-  sys_clear_pointer(&self->draw_surface, fr_i_draw_surface_destroy);
-  self->draw_surface = new_surface;
+  sys_clear_pointer(&self->ctx, fr_i_draw_surface_destroy);
+  self->ctx = new_surface;
 
   return self;
-}
-
-FrSurface *fr_surface_create_image_surface(SysInt width, SysInt height) {
-  FrDrawSurface *draw_surface = fr_i_draw_image_surface_create(width, height);
-  if(draw_surface == NULL) { return NULL; }
-
-  FrSurface* surface = fr_surface_new();
-  surface->draw_surface = draw_surface;
-
-  return surface;
-}
-
-FrSurface *fr_surface_create_image_surface_from_surface(FrSurface *surface,
-    SysInt width, 
-    SysInt height) {
-  FrDrawSurface * draw_surface =
-    fr_i_draw_surface_create_similar_image(surface->draw_surface, width, height);
-
-  return fr_surface_create_draw_surface(draw_surface);
-}
-
-void fr_surface_set_draw_surface(FrSurface *self, FrDrawSurface * draw_surface) {
-  sys_return_if_fail(self != NULL);
-
-  self->draw_surface = draw_surface;
-}
-
-FrDrawSurface * fr_surface_get_draw_surface(FrSurface *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->draw_surface;
 }
 
 void fr_surface_flush(FrSurface *self) {
   sys_return_if_fail(self != NULL);
 
-  fr_i_draw_surface_flush(self->draw_surface);
+  fr_i_draw_surface_flush(self->ctx);
 }
 
 FrSurface* fr_surface_create_device_surface_full(FrIDevice *device,
@@ -83,7 +51,7 @@ FrSurface* fr_surface_create_device_surface(FrIDevice* device) {
 
 /* object api */
 static void fr_surface_construct(FrSurface *self, FrDrawSurface *draw_surface) {
-  self->draw_surface = draw_surface;
+  self->ctx = draw_surface;
 }
 
 FrSurface* fr_surface_new(void) {
@@ -115,7 +83,7 @@ FrSurface *fr_surface_create_surface(FrIDevice *device,
 static void fr_surface_dispose(SysObject* o) {
   FrSurface *self = FR_SURFACE(o);
 
-  sys_clear_pointer(&self->draw_surface, fr_i_draw_surface_destroy);
+  sys_clear_pointer(&self->ctx, fr_i_draw_surface_destroy);
 
   SYS_OBJECT_CLASS(fr_surface_parent_class)->dispose(o);
 }

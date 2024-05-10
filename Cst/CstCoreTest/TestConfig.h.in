@@ -3,5 +3,6 @@
 
 #define TEST_FILE1 "${CMAKE_CURRENT_LIST_DIR}/Front/AppButton.cst"
 #define TEST_FILE2 "${CMAKE_CURRENT_LIST_DIR}/Front/AppComponent.cst"
+#define TEST_VIDEO_FILE  "/media/greyhound/Storage/PRIVATE/Videos/134.mp4"
 
 #endif

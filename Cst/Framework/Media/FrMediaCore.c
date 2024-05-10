@@ -15,7 +15,7 @@ static void ffp_log_callback_brief(void *ptr,
   // sys_vfprintf(stdout, fmt, vl);
 }
 
-void ffmpeg_setup(void) {
+void fr_ffmpeg_setup(void) {
   if(inited) { return; }
 
 #if LIBAV_DEVICE
@@ -31,7 +31,7 @@ void ffmpeg_setup(void) {
   inited = true;
 }
 
-void ffmpeg_teardown(void) {
+void fr_ffmpeg_teardown(void) {
   if(!inited) { return; }
 
   avformat_network_deinit();

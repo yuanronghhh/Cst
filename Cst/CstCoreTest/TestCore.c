@@ -1,4 +1,4 @@
-#include "TestCore.h"
+#include <CstCoreTest/TestCore.h>
 
 #define CHECK_TYPE CST_TYPE_APPLICATION
 
@@ -52,8 +52,8 @@ int main(int argc, SysChar* argv[]) {
 #endif
 
   // test_basic_init(argc, argv);
-  test_app_init(argc, argv);
-  // test_fr_init(argc, argv);
+  // test_app_init(argc, argv);
+  test_fr_init(argc, argv);
   // test_window_init(argc, argv);
   // test_module_init(argc, argv);
   // test_parser_init(argc, argv);

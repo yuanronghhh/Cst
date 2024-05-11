@@ -1,4 +1,4 @@
-#include "TestWindow.h"
+#include <CstCoreTest/TestWindow.h>
 
 static void test_window_basic(void) {
   CstRender *render;

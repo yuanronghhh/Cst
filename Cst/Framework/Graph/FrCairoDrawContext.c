@@ -110,11 +110,7 @@ static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame) {
     return;
   }
 #endif
-
-  cairo_save(paint_cr);
   cairo_rectangle_red_i(paint_cr, 0, 10);
-
-  cairo_restore(paint_cr);
   sys_clear_pointer(&paint_cr, cairo_destroy);
 
   cairo_overlay_i(window_cr, paint_surface, 0, 0);
@@ -257,6 +253,15 @@ static SysInt fr_context_rounded_rectangle(FrContext* self,
   return cairo_rounded_rectangle_i(cr, x, y, w, h, radius);
 }
 
+static void cairo_show_text_i (cairo_t *cr,
+    SysDouble x,
+    SysDouble y, 
+    const SysChar *text) {
+
+  cairo_move_to(cr, x, y);
+  cairo_show_text(cr, text);
+}
+
 static void i_media_render_imp(FrIMediaRenderInterface *iface) {
   iface->render_video = i_media_render_video; 
   iface->render_audio = i_media_render_audio; 
@@ -314,21 +319,9 @@ static void fr_context_restore(FrContext* self) {
 }
 
 /* font */
-static void fr_context_draw_text(FrContext* self,
-    PangoLayout* layout, 
-    SysInt x, 
-    SysInt y) {
+static void fr_context_show_text(FrContext* self, const SysChar *text) {
 
-  cairo_move_to(self->ctx, x, y);
-  pango_cairo_show_layout(self->ctx, layout);
-}
-
-static void fr_context_show_text(FrContext* self,
-    SysInt x, 
-    SysInt y, 
-    const SysChar *text) {
-
-  cairo_show_text_i(self->ctx, x, y, text);
+  cairo_show_text(self->ctx, text);
 }
 
 static void fr_context_show_layout(FrContext* self, PangoLayout *layout) {
@@ -368,13 +361,12 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->surface_create_similar_image = fr_surface_create_similar_image;
   iface->surface_flush = fr_surface_flush;
   iface->surface_destroy = fr_surface_destroy;
-  iface->show_text = fr_context_show_text;
   iface->show_layout = fr_context_show_layout;
   iface->paint = fr_context_paint;
   iface->surface_create = fr_surface_create;
   iface->save = fr_context_save;
   iface->restore = fr_context_restore;
-  iface->draw_text = fr_context_draw_text;
+  iface->show_text = fr_context_show_text;
 }
 
 /* object api */

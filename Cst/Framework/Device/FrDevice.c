@@ -28,6 +28,11 @@ FrSurface* fr_device_create_surface (FrDevice* self,
   return o;
 }
 
+void fr_device_get_size (FrDevice* self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
+
+}
+
 /* object api */
 static void fr_device_construct_i(FrDevice *self) {
 

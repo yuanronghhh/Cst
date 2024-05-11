@@ -19,7 +19,7 @@ static SysMutex g_render_lock;
 void cst_render_setup(void) {
   cst_algorithm_setup();
 
-  g_render = cst_render_new_I(false);
+  g_render = cst_render_new_I(true);
   sys_mutex_init(&g_render_lock);
 }
 
@@ -118,33 +118,31 @@ void cst_render_resize_surface(CstRender *self) {
   sys_clear_pointer(&layout, _sys_object_unref);
 }
 
-/* object api */
-static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
+void cst_render_create_window(CstRender *self) {
   FrWindow *window;
   FrDisplay* display;
   FrDevice *device;
-  FrIDraw* idraw;
+
   FrSurface* paint_surface;
+  display = fr_display_new_I();
+  window = fr_window_top_new(display);
+  device = FR_DEVICE(window);
 
-  if (is_offscreen) {
+  self->draw_context = fr_draw_context_new_I(device);
+  self->display = display;
+  self->device = device;
 
-    self->device = NULL;
+  FrSurfaceContext info = {.width = 800, .height = 600};
+  paint_surface = cst_surface_create_image_surface(&info);
+  fr_draw_context_add_surface(self->draw_context, paint_surface);
+}
 
-  } else {
+/* object api */
+static void cst_render_construct(CstRender *self, SysBool is_offscreen) {
+  if(!is_offscreen) {
 
-    display = fr_display_new_I();
-    window = fr_window_top_new(display);
-    device = FR_DEVICE(window);
-    idraw = fr_draw_manager_get_g_idraw();
-
-    self->draw_context = fr_draw_context_new_I(idraw, device);
-    self->display = display;
-    self->device = device;
-
-    FrSurfaceContext info = {.width = 800, .height = 600};
-    paint_surface = cst_surface_create_image_surface(&info);
-    fr_draw_context_add_surface(self->draw_context, paint_surface);
-  }
+    cst_render_create_window(self);
+  } 
 }
 
 CstRender* cst_render_new_I(SysBool is_offscreen) {

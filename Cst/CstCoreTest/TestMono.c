@@ -1,4 +1,4 @@
-#include "TestMono.h"
+#include <CstCoreTest/TestMono.h>
 
 #if CST_USE_MONO
 static void _test_mono_basic(void) {

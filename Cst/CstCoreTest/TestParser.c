@@ -1,4 +1,4 @@
-#include "TestParser.h"
+#include <CstCoreTest/TestParser.h>
 
 
 static void test_parser_basic(void) {

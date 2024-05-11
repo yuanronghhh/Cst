@@ -89,7 +89,7 @@ static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
     draw_iface->paint(cr);
 
     draw_iface->set_color(cr, &color);
-    draw_iface->show_text(cr, 10, 20, "中文");
+    fr_context_show_text_p(cr, 10, 20, "中文");
 
     sys_clear_pointer(&cr, _sys_object_unref);
   }
@@ -165,9 +165,7 @@ void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
 }
 
 /* object api */
-static void fr_draw_context_construct(FrDrawContext *self,
-    FrIDraw* iface,
-    FrDevice *device) {
+static void fr_draw_context_construct(FrDrawContext *self, FrDevice *device) {
   self->device = sys_object_ref(device);
   self->device_surface = NULL;
 }
@@ -176,10 +174,10 @@ FrDrawContext* fr_draw_context_new(void) {
   return sys_object_new(FR_TYPE_DRAW_CONTEXT, NULL);
 }
 
-FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrDevice* device) {
+FrDrawContext *fr_draw_context_new_I(FrDevice* device) {
   FrDrawContext *o = fr_draw_context_new();
 
-  fr_draw_context_construct(o, iface, device);
+  fr_draw_context_construct(o, device);
 
   return o;
 }

@@ -18,19 +18,17 @@ struct _FrDrawContext {
   SysObject parent;
 
   /* <private> */
-  FrIDraw *iface;
   FrSurface* device_surface;
   FrDevice* device;
 
   SysHArray surfaces;
-  FrCompositor *compositor;
   SysBool is_painting;
 };
 
 SYS_API SysType fr_draw_context_get_type(void);
 SYS_API FrDrawContext *fr_draw_context_new(void);
 
-SYS_API FrDrawContext *fr_draw_context_new_I(FrIDraw *iface, FrDevice* device);
+SYS_API FrDrawContext *fr_draw_context_new_I(FrDevice* device);
 SYS_API SysBool fr_draw_context_frame_need_draw(FrDrawContext *self);
 SYS_API void fr_draw_context_frame_begin(FrDrawContext *self, FrRegion *region);
 SYS_API void fr_draw_context_frame_end(FrDrawContext *self, FrRegion *region);

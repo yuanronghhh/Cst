@@ -1,8 +1,8 @@
 #ifndef __TEST_BASIC__
 #define __TEST_BASIC__
 
-#include "TestCommon.h"
-#include "Front/AppBox.h"
+#include <CstCoreTest/TestCommon.h>
+#include <CstCoreTest/Front/AppBox.h>
 
 SYS_BEGIN_DECLS
 

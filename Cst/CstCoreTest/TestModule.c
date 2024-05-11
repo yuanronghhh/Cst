@@ -1,4 +1,4 @@
-#include "TestModule.h"
+#include <CstCoreTest/TestModule.h>
 
 static void test_module_load(void) {
   SysChar *entry = CST_PROJECT_DIR"/Cst/CstCoreTest/Front/AppButton.cst";

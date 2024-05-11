@@ -1,7 +1,7 @@
 #ifndef __TEST_MONO__
 #define __TEST_MONO__
 
-#include "TestCommon.h"
+#include <CstCoreTest/TestCommon.h>
 
 SYS_BEGIN_DECLS
 

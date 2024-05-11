@@ -19,8 +19,6 @@ typedef  struct  _FrSInt4          FrSInt4;
 typedef  struct _cairo_region  FrRegion;
 typedef  struct _cairo_rectangle_int FrBound;
 
-#define FrImage pixman_image_t
-
 struct _FrPoint {
   SysInt x;
   SysInt y;

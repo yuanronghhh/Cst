@@ -2,7 +2,7 @@
  * LayoutComponent auto generated from ComponentCode.code
  */
 
-#include "LayoutComponent.h"
+#include <CstCoreTest/Front/LayoutComponent.h>
 
 struct _LayoutComponentPrivate {
   SysChar reserved;

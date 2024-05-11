@@ -1,7 +1,7 @@
 #ifndef __TEST_FRAMEWORK__
 #define __TEST_FRAMEWORK__
 
-#include "TestCommon.h"
+#include <CstCoreTest/TestCommon.h>
 
 SYS_BEGIN_DECLS
 

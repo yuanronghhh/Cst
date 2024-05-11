@@ -1,4 +1,4 @@
-#include "TestLayout.h"
+#include <CstCoreTest/TestLayout.h>
 
 #define USE_OFFSREEN_RENDER false
 

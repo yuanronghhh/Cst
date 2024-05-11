@@ -13,6 +13,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Graph/FrDrawContext.h>
+#include <Framework/Graph/FrImage.h>
 
 #include <Framework/DataType/FrMain.h>
 #include <Framework/DataType/FrSource.h>
@@ -26,6 +27,8 @@ SYS_BEGIN_DECLS
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Device/FrDevice.h>
+#include <Framework/Device/FrIDevice.h>
+#include <Framework/Device/FrImageDevice.h>
 
 #include <Framework/FrTypes.h>
 #include <Framework/FrCommon.h>

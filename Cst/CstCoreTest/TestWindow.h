@@ -1,7 +1,7 @@
 #ifndef __TEST_WINDOW__
 #define __TEST_WINDOW__
 
-#include "TestCommon.h"
+#include <CstCoreTest/TestCommon.h>
 
 SYS_BEGIN_DECLS
 

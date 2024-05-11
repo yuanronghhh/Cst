@@ -14,6 +14,7 @@ struct _FrDeviceClass {
   SysObjectClass parent;
 
   FrSurface* (*create_surface) (FrDevice* idevice, SysInt width, SysInt height);
+  void (*get_size) (FrDevice* idevice, SysInt *width, SysInt *height);
 };
 
 struct _FrDevice {
@@ -30,6 +31,8 @@ SYS_API FrDevice *fr_device_new_I(void);
 
 FrSurface* fr_device_create_surface (FrDevice* self, 
     FrSurfaceContext *info);
+
+void fr_device_get_size (FrDevice* idevice, SysInt *width, SysInt *height);
 
 FrSurface* fr_device_create_surface_by_type (FrDevice* self, 
     SysType surface_type,

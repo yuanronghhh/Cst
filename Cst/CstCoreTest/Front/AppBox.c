@@ -2,7 +2,7 @@
  * AppBox auto generated from ComponentCode.code
  */
 
-#include "AppBox.h"
+#include <CstCoreTest/Front/AppBox.h>
 
 SYS_DEFINE_TYPE(AppBox, app_box, CST_TYPE_COMPONENT);
 

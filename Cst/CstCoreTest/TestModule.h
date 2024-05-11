@@ -1,7 +1,7 @@
 #ifndef __TEST_MODULE__
 #define __TEST_MODULE__
 
-#include "TestCommon.h"
+#include <CstCoreTest/TestCommon.h>
 
 SYS_BEGIN_DECLS
 

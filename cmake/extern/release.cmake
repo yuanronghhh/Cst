@@ -7,6 +7,7 @@ function(release_copy_files
     target_bin)
 
   if(${CMAKE_BUILD_TYPE} STREQUAL "Release") 
+    log("Copy file to: ${LIBDIR}/${target_name}/lib")
   else()
     return()
   endif()
@@ -27,8 +28,6 @@ function(release_copy_files
       FILES_MATCHING
       PATTERN "*.a")
   endif()
-
-  log("Copy file to: ${LIBDIR}/${target_name}/lib")
 endfunction()
 release_copy_files(
   ${target_name}

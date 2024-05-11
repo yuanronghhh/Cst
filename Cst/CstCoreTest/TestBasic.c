@@ -1,4 +1,4 @@
-#include "TestBasic.h"
+#include <CstCoreTest/TestBasic.h>
 
 static void test_leak(void) {
   CstModule* v_module;

@@ -1,8 +1,8 @@
 #ifndef __TEST_LAYOUT__
 #define __TEST_LAYOUT__
 
-#include "TestCommon.h"
-#include "Front/LayoutComponent.h"
+#include <CstCoreTest/TestCommon.h>
+#include <CstCoreTest/Front/LayoutComponent.h>
 
 SYS_BEGIN_DECLS
 

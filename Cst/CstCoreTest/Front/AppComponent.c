@@ -2,7 +2,7 @@
  * AppComponent auto generated from ComponentCode.code
  */
 
-#include "AppComponent.h"
+#include <CstCoreTest/Front/AppComponent.h>
 
 SYS_DEFINE_TYPE(AppComponent, app_component, CST_TYPE_COMPONENT);
 

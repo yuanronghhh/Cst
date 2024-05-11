@@ -1,7 +1,7 @@
 #ifndef __TEST_PARSER__
 #define __TEST_PARSER__
 
-#include "TestCommon.h"
+#include <CstCoreTest/TestCommon.h>
 
 SYS_BEGIN_DECLS
 

@@ -37,6 +37,12 @@ FrSurface* fr_surface_new(void) {
   return sys_object_new(FR_TYPE_SURFACE, NULL);
 }
 
+FrSurface* fr_surface_new_I(FrSurfaceContext* info) {
+  FrSurface* o = fr_surface_new();
+  fr_surface_construct_i(o, info);
+  return o;
+}
+
 static void fr_surface_dispose(SysObject* o) {
   FrSurface *self = FR_SURFACE(o);
 

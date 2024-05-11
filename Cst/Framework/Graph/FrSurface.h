@@ -31,6 +31,7 @@ struct _FrSurfaceContext {
 SYS_API SysType fr_surface_get_type(void);
 void fr_surface_construct(FrSurface* self, FrSurfaceContext *info);
 SYS_API FrSurface *fr_surface_new(void);
+FrSurface* fr_surface_new_I(FrSurfaceContext* info);
 
 SYS_END_DECLS
 

@@ -2,7 +2,7 @@
  * AppButton auto generated from ComponentCode.code
  */
 
-#include "AppButton.h"
+#include <CstCoreTest/Front/AppButton.h>
 
 SYS_DEFINE_TYPE(AppButton, app_button, CST_TYPE_COMPONENT);
 

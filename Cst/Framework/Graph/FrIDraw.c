@@ -582,6 +582,14 @@ void fr_i_draw_context_overlay (FrContext* cr,
   self->overlay(cr, surface, x, y);
 }
 
+void fr_i_draw_show_text (FrContext* cr, const SysChar *text) {
+  FrIDrawInterface* self = fr_draw_manager_get_iface();
+
+  sys_return_if_fail(self != NULL);
+
+  self->show_text(cr, text);
+}
+
 FrSurface* fr_i_draw_resize_surface (FrSurface *surface, FrSurface *device_surface, SysInt width, SysInt height) {
   FrIDrawInterface *self = fr_draw_manager_get_iface();
   sys_return_val_if_fail(self != NULL, NULL);

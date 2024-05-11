@@ -1,9 +1,9 @@
 #ifndef __TEST_COMMON__
 #define __TEST_COMMON__
 
-#include "TestConfig.h"
+#include <CstCoreTest/TestConfig.h>
 #include <CstCore/CstCore.h>
-#include "unity.h"
+#include <unity.h>
 
 SYS_BEGIN_DECLS
 

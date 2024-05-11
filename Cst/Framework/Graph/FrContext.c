@@ -62,10 +62,15 @@ void fr_context_show_layout_m(FrContext* self,
   idraw_iface->show_layout(self, layout);
 }
 
-void fr_context_show_text (FrContext* cr,
+void fr_context_show_text_p (FrContext* self,
     SysInt x, 
     SysInt y, 
     const SysChar *text) {
+
+  FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+
+  idraw_iface->move_to(self, x , y);
+  idraw_iface->show_text(self, text);
 }
 
 /* object api */

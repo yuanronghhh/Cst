@@ -166,6 +166,8 @@ def match_return_default(nstr):
     if nstr in default_return_dict:
         return default_return_dict[nstr]
 
+    return "void"
+
 def parse_args_list(arg_str):
     if not arg_str:
         return None
@@ -272,12 +274,11 @@ class TemplateInfo:
 
         self.props = self.parse_props(self.tpl[2:-1])
 
-        self.pinfo = self.parse_pinfo(self.tpl[2]);
-        if not self.pinfo:
+        if not self.props:
             logging.error("struct not parse parent info: %s", self.tpl[2])
             sys.exit(-1)
         else:
-            self.p_sep_struct = self.seperate_struct(self.pinfo.type)
+            self.p_sep_struct = self.seperate_struct(self.props[0].type)
 
     def parse_prop(self, line):
         prop = None
@@ -383,25 +384,25 @@ class TemplateInfo:
         return "_".join(self.sep_struct).upper()
 
     def get_PARENT_TYPE(self):
-        if not self.pinfo:
+        if not self.p_sep_struct:
             return ""
 
         return "_".join(self.p_sep_struct).upper()
 
     def get_ParentTypeName(self):
-        if not self.pinfo:
+        if not self.p_sep_struct:
             return ""
 
         return "".join(self.p_sep_struct)
 
     def get_FN_TYPE_NAME(self):
-        if not self.pinfo:
+        if not self.p_sep_struct:
             return ""
 
         return ("%s_TYPE_%s" % (self.sep_struct[0], "_".join(self.sep_struct[1:]))).upper()
 
     def get_TYPE_PARENT(self):
-        if not self.pinfo:
+        if not self.p_sep_struct:
             return ""
 
         return ("%s_TYPE_%s" % (self.p_sep_struct[0], "_".join(self.p_sep_struct[1:]))).upper()
@@ -466,7 +467,7 @@ class TemplateGenerator:
         tpl = ""
 
         return_code = prop.type
-        if return_code == "SysTypeInterface":
+        if return_code == "SysTypeInterface" or return_code == "SysObject":
             return ""
 
         return_default = match_return_default(return_code)
@@ -511,8 +512,22 @@ class TemplateGenerator:
 
         return func_codes
 
+
+    def gen_c_result(self, info):
+        result = self.gen_with_tpl(info, interface_c_template, self.header_path, self.common_path)
+
+        func_codes = ""
+        for prop in info.props:
+            func_codes += self.gen_interface_c_func_codes(prop, info)
+            func_codes += "\n"
+
+        func_codes = func_codes[0:-1]
+
+        result = result.replace("${FUNC_IMPL_CODES}", func_codes)
+        return result
+
     def gen_c_interface_result(self, info):
-        result = self.gen_with_tpl(info, interface_c_template, self.header_path)
+        result = self.gen_with_tpl(info, interface_c_template, self.header_path, self.common_path)
 
         func_codes = ""
         for prop in info.props:
@@ -525,7 +540,7 @@ class TemplateGenerator:
         return result
 
     def gen_h_interface_result(self, info):
-        result = self.gen_with_tpl(info, interface_h_template, self.header_path)
+        result = self.gen_with_tpl(info, interface_h_template, self.header_path, self.common_path)
         has_return = False
 
         func_codes = ""
@@ -646,21 +661,22 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = "/home/greyhound/Git/CstDemo/Cst/CstDemo/libs"
-    header_path = "CstDemo/libs"
-    common_path = "CstDemo/MediaCommon.h"
+    dst = "D:/GreyHound/PRIVATE/Git/Cst/Cst/Framework/Graph"
+    header_path = "Framework/Graph"
+    common_path = "Framework/FrCommon.h"
 
     template_struct = """
-struct _FrCairoRender {
+struct _FrRenderManager {
   SysObject parent;
 
   /* <private> */
 };
 """
-
     info = TemplateInfo(template_struct)
     gen = TemplateGenerator(dst, header_path, common_path)
-    gen.generate_file(info)
+
+    result = gen.gen_c_interface_result(info)
+    print(result)
 
 def main():
     gen_struct_result()

@@ -156,6 +156,8 @@ set(SRC
   ./Device/FrDevice.h
   ./Device/FrDisplay.c
   ./Device/FrDisplay.h
+  ./Device/FrImageDevice.c
+  ./Device/FrImageDevice.h
   ./Device/FrWindow.c
   ./Device/FrWindow.h
 
@@ -186,6 +188,8 @@ set(SRC
   ./Graph/FrDrawContext.h
   ./Graph/FrCairoDrawContext.c
   ./Graph/FrCairoDrawContext.h
+  ./Graph/FrImage.c
+  ./Graph/FrImage.h
 
   ./Graph/FrSurface.c
   ./Graph/FrSurface.h

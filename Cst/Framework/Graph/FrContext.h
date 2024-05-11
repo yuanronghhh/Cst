@@ -31,6 +31,17 @@ SYS_API void fr_context_stroke_mp(FrContext* self, const FrBound *bound, const F
 SYS_API void fr_context_rectangle_red(FrContext* cr, SysInt x, SysInt y);
 SYS_API void fr_context_stoke_debug(FrContext* cr, SysInt i);
 SYS_API void fr_context_fill_bound(FrContext* self, const FrBound* bound);
+SYS_API void fr_context_show_layout_m(FrContext* self,
+    PangoLayout *layout,
+    SysInt x,
+    SysInt y, 
+    SysInt m1, 
+    SysInt m0);
+
+void fr_context_show_text_p (FrContext* self,
+    SysInt x, 
+    SysInt y, 
+    const SysChar *text);
 
 SYS_END_DECLS
 

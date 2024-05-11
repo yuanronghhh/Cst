@@ -35,6 +35,7 @@ CstRender *cst_render_get_g_render(void);
 
 FrDevice *cst_render_get_default_device(CstRender *self);
 void cst_render_resize_surface(CstRender *self);
+void cst_render_create_window(CstRender *self);
 
 void cst_render_rerender(CstRender* self, CstLayout* layout);
 void cst_render_render(CstRender *self, CstModule *v_module);

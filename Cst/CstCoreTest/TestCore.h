@@ -5,14 +5,14 @@
 
 SYS_BEGIN_DECLS
 
-#include "TestBasic.h"
-#include "TestWindow.h"
-#include "TestApp.h"
-#include "TestModule.h"
-#include "TestParser.h"
-#include "TestLayout.h"
-#include "TestMono.h"
-#include "TestFramework.h"
+#include <CstCoreTest/TestBasic.h>
+#include <CstCoreTest/TestWindow.h>
+#include <CstCoreTest/TestApp.h>
+#include <CstCoreTest/TestModule.h>
+#include <CstCoreTest/TestParser.h>
+#include <CstCoreTest/TestLayout.h>
+#include <CstCoreTest/TestMono.h>
+#include <CstCoreTest/TestFramework.h>
 
 SYS_END_DECLS
 

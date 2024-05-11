@@ -10,9 +10,6 @@ SYS_BEGIN_DECLS
 #define FR_IMAGE_CLASS(o) ((FrImageClass *)sys_class_cast_check(o, FR_TYPE_IMAGE))
 #define FR_IMAGE_GET_CLASS(o) sys_instance_get_class(o, FrImageClass)
 
-typedef struct _FrImage FrImage;
-typedef struct _FrImageClass FrImageClass;
-
 struct _FrImageClass {
   SysObjectClass parent;
 };

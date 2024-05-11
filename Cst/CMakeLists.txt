@@ -1,4 +1,5 @@
 add_subdirectory(Framework)
+add_subdirectory(FrameworkTest)
 add_subdirectory(CstCore)
 add_subdirectory(CstCli)
 add_subdirectory(CstCoreTest)

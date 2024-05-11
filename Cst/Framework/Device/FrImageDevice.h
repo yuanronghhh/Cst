@@ -2,6 +2,7 @@
 #define __FR_IMAGE_DEVICE_H__
 
 #include <Framework/Device/FrDevice.h>
+#include <Framework/Graph/FrImage.h>
 
 SYS_BEGIN_DECLS
 

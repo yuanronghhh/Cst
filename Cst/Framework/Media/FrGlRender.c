@@ -69,7 +69,7 @@ static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame) {
 }
 
 static void i_media_render_audio(FrIMediaRender *o, FrAudioFrame *frame) {
-  FrGlRender *self = FR_GL_RENDER(o);
+  // FrGlRender *self = FR_GL_RENDER(o);
 }
 
 static void i_media_render_imp(FrIMediaRenderInterface *iface) {

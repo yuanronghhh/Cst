@@ -17,6 +17,7 @@ set(EXTERNAL_LIBS
   "pangofc"
   "tinyexpr"
   "ffmpeg"
+  "png"
 )
 
 set(UNIX_SRC
@@ -217,11 +218,11 @@ elseif(APPLE)
   LIST(APPEND SRC ${COCOA_SRC})
 endif()
 
-add_library(FrFramework "${SRC}")
-add_deps_N(FrFramework
+add_library(Framework "${SRC}")
+add_deps_N(Framework
   "${INC}"
   "${INNER_LIBS}"
   ""
   "${EXTERNAL_LIBS}"
 )
-set_property(TARGET FrFramework PROPERTY FOLDER CstProject)
+set_property(TARGET Framework PROPERTY FOLDER CstProject)

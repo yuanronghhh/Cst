@@ -18,7 +18,7 @@ set(EXTERNAL_LIBS
 )
 
 set(INNER_LIBS
-  "FrFramework"
+  "Framework"
 )
 
 set(C_API_SRC

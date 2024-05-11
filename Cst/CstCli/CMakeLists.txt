@@ -20,7 +20,7 @@ set(EXTERNAL_LIBS
 )
 
 set(INNER_LIBS
-  "FrFramework"
+  "Framework"
   "CstCore"
 )
 

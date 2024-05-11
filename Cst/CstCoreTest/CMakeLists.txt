@@ -15,10 +15,11 @@ set(EXTERNAL_LIBS
   "glad"
   "glfw3"
   "ffmpeg"
+  "png"
 )
 
 set(INNER_LIBS
-  "FrFramework"
+  "Framework"
   "CstCore"
 )
 

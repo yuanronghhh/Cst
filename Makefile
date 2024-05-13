@@ -1,6 +1,6 @@
-include ./MakeTools/MakeEnv.makefile
+include ./MakeTools/MakeCmake.makefile
 BUILD_TYPE:=Debug
-VIM_SESSION:=GVIM1
+VIM_SESSION:=GVIM
 project := Framework \
 					 FrameworkTest \
 					 CstCoreTest \

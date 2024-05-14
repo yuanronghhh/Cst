@@ -10,14 +10,12 @@ static FrIDrawInterface *g_draw_iface = NULL;
 
 SYS_DEFINE_TYPE(FrDrawManager, fr_draw_manager, SYS_TYPE_OBJECT);
 
-void fr_draw_manager_setup(const SysChar *name) {
+void fr_draw_manager_setup(FrDrawContext *draw) {
   sys_assert(g_draw == NULL);
   fr_font_setup();
 
-  if(sys_str_equal(name, "cairo")) {
-    g_draw = fr_cairo_draw_context_new_I();
-    g_draw_iface = FR_I_DRAW_GET_IFACE(g_draw);
-  }
+  g_draw = draw;
+  g_draw_iface = FR_I_DRAW_GET_IFACE(g_draw);
 }
 
 void fr_draw_manager_teardown(void) {
@@ -55,7 +53,6 @@ static void fr_draw_manager_dispose(SysObject* o) {
 static void fr_draw_manager_class_init(FrDrawManagerClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
-  cls->construct = fr_draw_manager_construct;
   ocls->dispose = fr_draw_manager_dispose;
 }
 

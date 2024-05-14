@@ -12,6 +12,8 @@ SYS_BEGIN_DECLS
 
 struct _FrDrawContextClass {
   SysObjectClass parent;
+
+  void (*construct) (FrDrawContext* self, FrDevice* device);
 };
 
 struct _FrDrawContext {
@@ -35,6 +37,8 @@ SYS_API void fr_draw_context_frame_end(FrDrawContext *self, FrRegion *region);
 SYS_API void fr_draw_context_get_buffer_size (FrDrawContext *self,
     SysInt *width,
     SysInt *height);
+
+SYS_API void fr_draw_context_construct(FrDrawContext* self, FrDevice* device);
 
 SYS_API FrSurface* fr_draw_context_get_surface_by_idx(FrDrawContext* self,
     SysUInt idx);

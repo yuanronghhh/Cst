@@ -10,10 +10,6 @@ void fr_core_setup(void) {
   fr_main_setup();
   fr_window_setup();
 
-#if defined(CAIRO_VERSION)
-  fr_draw_manager_setup("cairo");
-#endif
-
   fr_events_setup();
 
 #if defined(MONO_CORLIB_VERSION)
@@ -25,10 +21,6 @@ void fr_core_setup(void) {
 
 void fr_core_teardown(void) {
   if(!inited) { return; }
-
-#if defined(CAIRO_VERSION)
-  fr_draw_manager_teardown();
-#endif
 
 #if defined(MONO_CORLIB_VERSION)
   fr_mono_setup(FR_MONO_HOME);

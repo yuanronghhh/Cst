@@ -371,13 +371,20 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->show_text = fr_context_show_text;
 }
 
+static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {
+
+  FR_DRAW_CONTEXT_CLASS(fr_cairo_draw_context_parent_class)->construct(o, device);
+}
+
 /* object api */
 FrDrawContext* fr_cairo_draw_context_new(void) {
   return sys_object_new(FR_TYPE_CAIRO_DRAW_CONTEXT, NULL);
 }
 
-FrDrawContext *fr_cairo_draw_context_new_I(void) {
+FrDrawContext *fr_cairo_draw_context_new_I(FrDevice *device) {
   FrDrawContext *o = fr_cairo_draw_context_new();
+
+  fr_cairo_context_construct_i(o, device);
 
   return o;
 }
@@ -389,7 +396,9 @@ static void fr_cairo_draw_context_dispose(SysObject* o) {
 
 static void fr_cairo_draw_context_class_init(FrCairoDrawContextClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FrDrawContextClass* dcls = FR_DRAW_CONTEXT_CLASS(cls);
 
+  dcls->construct = fr_cairo_context_construct_i;
   ocls->dispose = fr_cairo_draw_context_dispose;
 }
 

@@ -15,8 +15,6 @@ SYS_BEGIN_DECLS
 
 struct _FrDrawManagerClass {
   SysObjectClass parent;
-
-  void (*construct) (FrDrawManager *o);
 };
 
 struct _FrDrawManager {
@@ -27,7 +25,7 @@ struct _FrDrawManager {
 
 SYS_API SysType fr_draw_manager_get_type(void);
 
-SYS_API void fr_draw_manager_setup(const SysChar *name);
+SYS_API void fr_draw_manager_setup(FrDrawContext *draw);
 SYS_API void fr_draw_manager_teardown(void);
 SYS_API FrIDrawInterface* fr_draw_manager_get_iface(void);
 SYS_API FrIDraw* fr_draw_manager_get_g_idraw(void);

@@ -5,6 +5,8 @@
 #include <Framework/Device/FrIDevice.h>
 #include <Framework/Device/FrDevice.h>
 
+FrIDrawInterface* draw_iface;
+
 SYS_DEFINE_TYPE(FrDrawContext, fr_draw_context, SYS_TYPE_OBJECT);
 
 SysBool fr_draw_context_frame_need_draw(FrDrawContext* self) {
@@ -164,8 +166,18 @@ void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
   self->is_painting = false;
 }
 
+void fr_draw_context_construct(FrDrawContext* self, FrDevice* device) {
+  sys_return_if_fail(self != NULL);
+
+  FrDrawContextClass* cls = FR_DRAW_CONTEXT_GET_CLASS(self);
+
+  sys_return_if_fail(cls->construct);
+
+  cls->construct(self, device);
+}
+
 /* object api */
-static void fr_draw_context_construct(FrDrawContext *self, FrDevice *device) {
+static void fr_draw_context_construct_i(FrDrawContext *self, FrDevice *device) {
   self->device = sys_object_ref(device);
   self->device_surface = NULL;
 }
@@ -194,6 +206,7 @@ static void fr_draw_context_dispose(SysObject* o) {
 static void fr_draw_context_class_init(FrDrawContextClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
+  cls->construct = fr_draw_context_construct_i;
   ocls->dispose = fr_draw_context_dispose;
 }
 

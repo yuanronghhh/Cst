@@ -13,6 +13,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Graph/FrDrawContext.h>
+#include <Framework/Graph/FrCairoDrawContext.h>
 #include <Framework/Graph/FrImage.h>
 
 #include <Framework/DataType/FrMain.h>

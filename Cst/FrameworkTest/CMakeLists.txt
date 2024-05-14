@@ -1,5 +1,4 @@
 set(EXTERNAL_LIBS
-  "System"
   "unity"
   "pthread"
   "openssl"
@@ -16,6 +15,7 @@ set(EXTERNAL_LIBS
 )
 
 set(INNER_LIBS
+  "System"
   "Framework"
 )
 
@@ -23,6 +23,7 @@ set(INC
   ../
   ./tests/
   ${INIT_HOME}/../Cst/
+  ${CMAKE_SOURCE_DIR}/../CstDemo/Cst/
 )
 
 set(SRC

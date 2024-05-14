@@ -153,7 +153,9 @@ static void cairo_context_fill_bound_i(FrContext* self, const FrBound *bound) {
 
 /* surface */
 static void fr_surface_create(FrSurface* o, FrSurfaceContext *info) {
-  cairo_surface_t *draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, info->width, info->height);
+  cairo_surface_t *draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+      info->width, 
+      info->height);
   if(draw_surface == NULL) { return; }
 
   o->ctx = draw_surface;

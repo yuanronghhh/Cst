@@ -9,6 +9,12 @@ project := Framework \
 					 CstCli \
 					 CstClient
 
+ifeq ($(OS), Linux)
+	BIN_FILE=${BUILD_DIR}/Cst/${PROJ_NAME}/${PROJ_NAME}
+else
+	BIN_FILE=${BUILD_DIR}/Cst/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${BIN_SURFIX} ${ARGS}
+endif
+
 # -------------------- CstCli start --------------------
 cst-cli-gen:
 	@#gen ${PROJ}.yy.c ${PROJ}.yy.h

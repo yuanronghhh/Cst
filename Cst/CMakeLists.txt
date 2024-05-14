@@ -1,3 +1,4 @@
+add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/Cst/System" ${CMAKE_BINARY_DIR}/CstDemo/Cst/System)
 add_subdirectory(Framework)
 add_subdirectory(FrameworkTest)
 add_subdirectory(CstCore)

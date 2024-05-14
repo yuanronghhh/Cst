@@ -46,7 +46,7 @@ FrSurface* fr_surface_new_I(FrSurfaceContext* info) {
 static void fr_surface_dispose(SysObject* o) {
   FrSurface *self = FR_SURFACE(o);
 
-  sys_clear_pointer(&self->ctx, fr_i_draw_surface_destroy);
+  fr_i_draw_surface_destroy(self);
 
   SYS_OBJECT_CLASS(fr_surface_parent_class)->dispose(o);
 }

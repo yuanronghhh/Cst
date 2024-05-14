@@ -37,6 +37,7 @@ static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_cou
 }
 
 int main(int argc, SysChar* argv[]) {
+  sys_set_debugger(true);
   sys_setup();
 
 #if 1

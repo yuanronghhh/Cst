@@ -1,7 +1,7 @@
 #include <FrameworkTest/TestCore.h>
 #include <FrameworkTest/tests/TestVideo.h>
 
-#define CHECK_TYPE FR_TYPE_DRAW_CONTEXT
+#define CHECK_TYPE FR_TYPE_MEDIA_FILE
 
 void setUp(void) {
 }

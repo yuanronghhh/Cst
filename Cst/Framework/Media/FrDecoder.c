@@ -28,13 +28,15 @@ void fr_decoder_unlock(FrDecoder* self) {
 }
 
 void fr_decoder_wait(FrDecoder *self) {
-
+  sys_async_queue_lock(&self->queue);
   sys_cond_wait(&self->queue.cond, &self->queue.mutex);
+  sys_async_queue_unlock(&self->queue);
 }
 
 void fr_decoder_wakeup(FrDecoder *self) {
-
+  sys_async_queue_lock(&self->queue);
   sys_cond_signal(&self->queue.cond);
+  sys_async_queue_unlock(&self->queue);
 }
 
 static SysPointer decoder_thread(SysPointer user_data) {
@@ -56,7 +58,6 @@ static SysPointer decoder_thread(SysPointer user_data) {
       break;
     }
   }
-  fr_decoder_stop(self);
 
   return NULL;
 }
@@ -77,6 +78,9 @@ SysInt fr_decoder_start(FrDecoder* self) {
 
 void fr_decoder_stop(FrDecoder* self) {
   self->running = false;
+
+  fr_decoder_wakeup(self);
+  sys_thread_join(self->thread);
 }
 
 void fr_decoder_set_running(FrDecoder *self, SysBool running) {

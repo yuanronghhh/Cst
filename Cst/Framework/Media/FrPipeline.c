@@ -65,9 +65,10 @@ void fr_pipeline_run(FrPipeline *self, FrMediaFile *file) {
 SysBool fr_pipeline_destroy_i(SysObject *o) {
   FrPipeline *self = FR_PIPELINE(o);
 
-
   fr_decoder_stop(self->video_decoder);
   fr_decoder_stop(self->audio_decoder);
+  fr_decoder_stop(self->packet_decoder);
+
   sys_async_queue_clear(&self->image_queue);
   sys_async_queue_clear(&self->sample_queue);
 

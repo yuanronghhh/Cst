@@ -98,7 +98,6 @@ void test_video_player(void) {
   sys_object_unref(mplayer);
   sys_object_unref(mfile);
 
-  sys_clear_pointer(&draw_context, _sys_object_unref);
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
 

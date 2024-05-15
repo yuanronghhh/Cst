@@ -29,10 +29,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
       sys_debug_N("%d", self->serial);
       fr_decoder_push_packet(box->video_decoder, pkt);
 
-      if (self->serial > 2000) {
-
-        return FR_MEDIA_STATE_EOF;
-      }
+      return FR_MEDIA_STATE_EOF;
       break;
     case FR_MEDIA_AUDIO:
       fr_decoder_push_packet(box->audio_decoder, pkt);

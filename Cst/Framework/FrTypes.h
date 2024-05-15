@@ -68,9 +68,6 @@ typedef  struct  _FrDisplayClass      FrDisplayClass;
 typedef struct _FrDevice FrDevice;
 typedef struct _FrDeviceClass FrDeviceClass;
 
-typedef  struct  _FrDrawManager              FrDrawManager;
-typedef  struct  _FrDrawManagerClass         FrDrawManagerClass;
-
 typedef struct _FrCairoDrawContext FrCairoDrawContext;
 typedef struct _FrCairoDrawContextClass FrCairoDrawContextClass;
 
@@ -86,6 +83,9 @@ typedef struct _FrImageClass FrImageClass;
 
 typedef struct _FrContext FrContext;
 typedef struct _FrContextClass FrContextClass;
+
+typedef struct _FrFrontContext FrFrontContext;
+typedef struct _FrFrontContextClass FrFontContextClass;
 
 typedef struct _FrDrawContext FrDrawContext;
 typedef struct _FrDrawContextClass FrDrawContextClass;

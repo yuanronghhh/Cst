@@ -17,7 +17,7 @@ FrDecoder *fr_pipeline_get_decoder(FrPipeline *self, FR_MEDIA_ENUM type) {
   }
 }
 
-static FrDecoder* create_media_decoder(FrMediaFile* file,
+static FrDecoder* run_media_decoder(FrMediaFile* file,
     FR_MEDIA_ENUM mediaType,
     FrPipeline *self) {
 
@@ -42,7 +42,7 @@ void fr_pipeline_run(FrPipeline *self, FrMediaFile *file) {
   FrDecoder *dec;
   FrVideoDecoder *vdec;
 
-  dec = create_media_decoder(file,
+  dec = run_media_decoder(file,
       FR_MEDIA_VIDEO,
       self);
   vdec = FR_VIDEO_DECODER(dec);
@@ -50,7 +50,7 @@ void fr_pipeline_run(FrPipeline *self, FrMediaFile *file) {
 
   self->video_decoder = dec;
 
-  dec = create_media_decoder(file,
+  dec = run_media_decoder(file,
       FR_MEDIA_AUDIO,
       self);
   self->audio_decoder = dec;
@@ -65,9 +65,14 @@ void fr_pipeline_run(FrPipeline *self, FrMediaFile *file) {
 SysBool fr_pipeline_destroy_i(SysObject *o) {
   FrPipeline *self = FR_PIPELINE(o);
 
-  fr_decoder_stop(self->video_decoder);
-  fr_decoder_stop(self->audio_decoder);
   fr_decoder_stop(self->packet_decoder);
+  sys_clear_pointer(&self->packet_decoder, _sys_object_unref);
+
+  fr_decoder_stop(self->video_decoder);
+  sys_clear_pointer(&self->video_decoder, _sys_object_unref);
+
+  fr_decoder_stop(self->audio_decoder);
+  sys_clear_pointer(&self->audio_decoder, _sys_object_unref);
 
   sys_async_queue_clear(&self->image_queue);
   sys_async_queue_clear(&self->sample_queue);

@@ -181,8 +181,6 @@ set(SRC
 
   ./Graph/FrGraph.c
   ./Graph/FrGraph.h
-  ./Graph/FrDrawManager.c
-  ./Graph/FrDrawManager.h
   ./Graph/FrIDraw.c
   ./Graph/FrIDraw.h
   ./Graph/FrDrawContext.c

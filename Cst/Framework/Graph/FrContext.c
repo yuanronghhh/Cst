@@ -1,8 +1,7 @@
-#include "FrContext.h"
 #include <Framework/Graph/FrContext.h>
+#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrSurface.h>
 #include <Framework/Graph/FrContext.h>
-#include <Framework/Graph/FrDrawManager.h>
 
 SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
 
@@ -12,7 +11,7 @@ SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
    sys_return_if_fail(p4 != NULL);
    sys_return_if_fail(bound != NULL);
  
-   FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+   FrIDrawInterface* idraw_iface = fr_i_draw_get_g_iface();
 
    SysInt x = bound->x + m4->m3;
    SysInt y = bound->y + m4->m0;
@@ -24,7 +23,7 @@ SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
  }
 
  void fr_context_rectangle_red(FrContext* cr, SysInt x, SysInt y) {
-   FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+   FrIDrawInterface* idraw_iface = fr_i_draw_get_g_iface();
    FrColor color = { 1.0, 0.0, 0.0, 1.0 };
 
    idraw_iface->set_color(cr, &color);
@@ -33,7 +32,7 @@ SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
  }
 
  void fr_context_stoke_debug(FrContext* cr, SysInt i) {
-   FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+   FrIDrawInterface* idraw_iface = fr_i_draw_get_g_iface();
    FrColor color = { 1.0, 0.0, 0.0, 1.0 };
 
    idraw_iface->set_color(cr, &color);
@@ -44,7 +43,7 @@ SYS_DEFINE_TYPE(FrContext, fr_context, SYS_TYPE_OBJECT);
  void fr_context_fill_bound(FrContext* self, const FrBound* bound) {
    sys_return_if_fail(self != NULL);
    sys_return_if_fail(bound != NULL);
-   FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+   FrIDrawInterface* idraw_iface = fr_i_draw_get_g_iface();
 
    idraw_iface->rectangle(self, bound->x, bound->y, bound->width, bound->height);
    idraw_iface->fill(self);
@@ -56,7 +55,7 @@ void fr_context_show_layout_m(FrContext* self,
     SysInt y, 
     SysInt m1, 
     SysInt m0) {
-  FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+  FrIDrawInterface* idraw_iface = fr_i_draw_get_g_iface();
 
   idraw_iface->move_to(self, x + m1, y + m0);
   idraw_iface->show_layout(self, layout);
@@ -67,7 +66,7 @@ void fr_context_show_text_p (FrContext* self,
     SysInt y, 
     const SysChar *text) {
 
-  FrIDrawInterface* idraw_iface = fr_draw_manager_get_iface();
+  FrIDrawInterface* idraw_iface = fr_i_draw_get_g_iface();
 
   idraw_iface->move_to(self, x , y);
   idraw_iface->show_text(self, text);

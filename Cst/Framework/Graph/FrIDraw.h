@@ -87,6 +87,9 @@ struct _FrIDrawInterface {
 };
 
 SysType fr_i_draw_get_type(void);
+void fr_i_draw_setup(FrIDraw *draw);
+void fr_i_draw_teardown(void);
+FrIDrawInterface* fr_i_draw_get_g_iface(void);
 
 void fr_i_draw_surface_create (FrSurface* o, FrSurfaceContext *info);
 FrSurface* fr_i_draw_surface_create_similar_image (FrSurface* other, SysInt width, SysInt height);

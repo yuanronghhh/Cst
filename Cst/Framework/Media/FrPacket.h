@@ -26,6 +26,7 @@ SYS_API FrPacket *fr_packet_new(void);
 
 void fr_packet_set_serial(FrPacket *self, SysInt serial);
 SysInt fr_packet_get_serial(FrPacket *self);
+SysBool fr_packet_empty(FrPacket* self);
 
 SYS_END_DECLS
 

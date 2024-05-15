@@ -8,7 +8,6 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrMediaCore.h>
 
 #include <Framework/Graph/FrGraph.h>
-#include <Framework/Graph/FrDrawManager.h>
 #include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>

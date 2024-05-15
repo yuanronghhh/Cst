@@ -1,11 +1,12 @@
 #include <Framework/Graph/FrDrawContext.h>
+#include <Framework/Graph/FrCairoDrawContext.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Graph/FrSurface.h>
-#include <Framework/Graph/FrDrawManager.h>
 #include <Framework/Device/FrIDevice.h>
 #include <Framework/Device/FrDevice.h>
+#include <Framework/Graph/FrIDraw.h>
 
-FrIDrawInterface* draw_iface;
+static FrDrawContext* g_draw = NULL;
 
 SYS_DEFINE_TYPE(FrDrawContext, fr_draw_context, SYS_TYPE_OBJECT);
 
@@ -78,19 +79,19 @@ static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
   FrSurface* p;
   FrContext* cr;
   FrColor color = {0.0, 0.0, 1.0, 1.0};
-  FrIDrawInterface *draw_iface = fr_draw_manager_get_iface();
+  FrIDrawInterface *g_draw_iface = fr_i_draw_get_g_iface();
 
   for (SysUInt i = 0; i < self->surfaces.len; i++) {
     p = self->surfaces.pdata[i];
 
-    draw_iface->resize_surface(p, self->device_surface, width, height);
+    g_draw_iface->resize_surface(p, self->device_surface, width, height);
 
     cr = fr_context_new_I(p);
 
-    draw_iface->set_color(cr, &color);
-    draw_iface->paint(cr);
+    g_draw_iface->set_color(cr, &color);
+    g_draw_iface->paint(cr);
 
-    draw_iface->set_color(cr, &color);
+    g_draw_iface->set_color(cr, &color);
     fr_context_show_text_p(cr, 10, 20, "中文");
 
     sys_clear_pointer(&cr, _sys_object_unref);
@@ -100,17 +101,17 @@ static void surface_update(FrDrawContext* self, SysInt width, SysInt height) {
 static void surface_clip(FrContext* cr, FrRegion* region) {
   int n_boxes, i;
   FrBound box = { 0 };
-  FrIDrawInterface *draw_iface = fr_draw_manager_get_iface();
+  FrIDrawInterface *g_draw_iface = fr_i_draw_get_g_iface();
 
   n_boxes = fr_region_num_rectangles(region);
   for (i = 0; i < n_boxes; i++) {
     fr_region_get_rectangle(region, i, &box);
-    draw_iface->rectangle(cr, box.x, box.y, box.width, box.height);
+    g_draw_iface->rectangle(cr, box.x, box.y, box.width, box.height);
   }
 
-  draw_iface->rectangle(cr, box.x, box.y, box.width, box.height);
-  draw_iface->clip(cr);
-  draw_iface->paint(cr);
+  g_draw_iface->rectangle(cr, box.x, box.y, box.width, box.height);
+  g_draw_iface->clip(cr);
+  g_draw_iface->paint(cr);
 }
 
 void fr_draw_context_frame_begin(FrDrawContext* self, FrRegion* region) {
@@ -133,7 +134,7 @@ static void surface_composite(FrDrawContext* self) {
   FrSurface* pb, * pn;
   FrContext* cr;
   SysHArray* paint_surfaces = &self->surfaces;
-  FrIDrawInterface *draw_iface = fr_draw_manager_get_iface();
+  FrIDrawInterface *g_draw_iface = fr_i_draw_get_g_iface();
 
   if (paint_surfaces->len < 1) { return; }
 
@@ -142,7 +143,7 @@ static void surface_composite(FrDrawContext* self) {
     pb = paint_surfaces->pdata[i - 1];
 
     cr = fr_context_new_I(pb);
-    draw_iface->overlay(cr, pn, 0, 0);
+    g_draw_iface->overlay(cr, pn, 0, 0);
     sys_clear_pointer(&cr, _sys_object_unref);
   }
 
@@ -150,17 +151,17 @@ static void surface_composite(FrDrawContext* self) {
   pb = self->device_surface;
 
   cr = fr_context_new_I(pb);
-  draw_iface->overlay(cr, pn, 0, 0);
+  g_draw_iface->overlay(cr, pn, 0, 0);
   sys_object_unref(cr);
 }
 
 void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
   sys_return_if_fail(self != NULL);
-  FrIDrawInterface* draw_iface = fr_draw_manager_get_iface();
+  FrIDrawInterface *g_draw_iface = fr_i_draw_get_g_iface();
 
   surface_composite(self);
 
-  draw_iface->surface_flush(self->device_surface);
+  g_draw_iface->surface_flush(self->device_surface);
   sys_clear_pointer(&self->device_surface, _sys_object_unref);
 
   self->is_painting = false;
@@ -174,6 +175,23 @@ void fr_draw_context_construct(FrDrawContext* self, FrDevice* device) {
   sys_return_if_fail(cls->construct);
 
   cls->construct(self, device);
+}
+
+void fr_draw_context_setup(FrDevice* device, const SysChar *name) {
+  fr_font_setup();
+
+  if (sys_str_equal(name, "cairo")) {
+    g_draw = fr_cairo_draw_context_new_I(device);
+    fr_i_draw_setup(FR_I_DRAW(g_draw));
+  }
+}
+
+void fr_draw_context_teardown(void) {
+  sys_assert(g_draw != NULL);
+  fr_i_draw_teardown();
+  fr_font_teardown();
+
+  sys_clear_pointer(&g_draw, _sys_object_unref);
 }
 
 /* object api */

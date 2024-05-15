@@ -14,7 +14,11 @@ SysInt fr_packet_get_serial(FrPacket *self) {
   return self->serial;
 }
 
+SysBool fr_packet_empty(FrPacket* self) {
+  sys_return_val_if_fail(self != NULL, false);
 
+  return self->serial == -1;
+}
 /* object api */
 FrPacket* fr_packet_new(void) {
   return sys_object_new(FR_TYPE_PACKET, NULL);
@@ -32,5 +36,5 @@ static void fr_packet_class_init(FrPacketClass* cls) {
 }
 
 void fr_packet_init(FrPacket* self) {
-  self->serial = 0;
+  self->serial = -1;
 }

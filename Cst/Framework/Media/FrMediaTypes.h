@@ -28,11 +28,14 @@ typedef enum _FR_MEIDA_PLAYER_STATE_ENUM {
   FR_MEDIA_PLAYER_RUNNING,
 } FR_MEIDA_PLAYER_STATE_ENUM;
 
-typedef enum _FR_DECODER_STATE_ENUM {
-  FR_DECODER_SEEK,
-  FR_DECODER_PAUSE,
-  FR_DECODER_READ
-} FR_DECODER_STATE_ENUM;
+typedef enum _FR_DECODER_CMD_ENUM {
+  FR_DECODER_CMD_NOOP,
+  FR_DECODER_CMD_INIT,
+  FR_DECODER_CMD_SEEK,
+  FR_DECODER_CMD_STOP,
+  FR_DECODER_CMD_PAUSE,
+  FR_DECODER_CMD_READ
+} FR_DECODER_CMD_ENUM;
 
 typedef struct _FrPacket FrPacket;
 typedef struct _FrPacketClass FrPacketClass;
@@ -49,6 +52,7 @@ typedef struct _FrIStreamInterface FrIStreamInterface;
 typedef struct _FrPipeline FrPipeline;
 typedef struct _FrPipelineClass FrPipelineClass;
 
+typedef struct _FrThreadWorker FrThreadWorker;
 typedef struct _FrDecoder FrDecoder;
 typedef struct _FrDecoderClass FrDecoderClass;
 

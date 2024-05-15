@@ -126,8 +126,8 @@ FrMediaPlayer *fr_media_player_new_I(FrMediaFile *file) {
 static void fr_media_player_dispose(SysObject* o) {
   FrMediaPlayer *self = FR_MEDIA_PLAYER(o);
 
-  sys_clear_pointer(&self->file, _sys_object_unref);
   sys_object_destroy(&self->pipeline);
+  sys_clear_pointer(&self->file, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_media_player_parent_class)->dispose(o);
 }

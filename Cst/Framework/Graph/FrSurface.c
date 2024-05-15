@@ -1,8 +1,8 @@
 #include <Framework/Graph/FrSurface.h>
+#include <Framework/Graph/FrIDraw.h>
 #include <Framework/Graph/FrContext.h>
 #include <Framework/Device/FrDevice.h>
 #include <Framework/Device/FrIDevice.h>
-#include <Framework/Graph/FrDrawManager.h>
 
 SYS_DEFINE_TYPE(FrSurface, fr_surface, SYS_TYPE_OBJECT);
 

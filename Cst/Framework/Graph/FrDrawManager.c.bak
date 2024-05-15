@@ -10,11 +10,11 @@ static FrIDrawInterface *g_draw_iface = NULL;
 
 SYS_DEFINE_TYPE(FrDrawManager, fr_draw_manager, SYS_TYPE_OBJECT);
 
-void fr_draw_manager_setup(FrDrawContext *draw) {
-  sys_assert(g_draw == NULL);
+void fr_draw_manager_setup(FrDevice *device) {
+  sys_assert(g_draw == NULL && "drawer cannot init twice");
   fr_font_setup();
 
-  g_draw = draw;
+  g_draw = fr_cairo_draw_context_new_I(device);
   g_draw_iface = FR_I_DRAW_GET_IFACE(g_draw);
 }
 
@@ -26,7 +26,8 @@ void fr_draw_manager_teardown(void) {
 }
 
 FrIDraw * fr_draw_manager_get_g_idraw(void) {
-  sys_assert(g_draw != NULL && "FrIDrawInterface must be inited before use.");
+  if (g_draw == NULL) {
+  }
 
   return FR_I_DRAW(g_draw);
 }

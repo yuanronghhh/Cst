@@ -36,52 +36,48 @@ void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
 }
 
 static SysInt decoder_process_task(FrDecoder *self) {
-
   sys_debug_N("decoder run task: %s", self->name);
   fr_media_task_run(self->task);
 
-  return (SysInt)fr_media_task_result(self->task);
+  return POINTER_TO_INT(fr_media_task_result(self->task));
 }
 
 static SysInt decoder_process_packet(FrDecoder* self) {
   SysInt err = fr_decoder_decode_it(self);
   if (err >= 0 || err == FR_MEDIA_STATE_EAGAIN) {
-    return true;
+    return 0;
   }
 
   sys_error_N("decoder stoped: %s", av_err2str(err));
+  return err;
 }
 
 static SysPointer decoder_thread(SysPointer user_data) {
   FrDecoder *self = user_data;
   SysInt err = 0;
 
+  sys_mutex_lock(&self->ctrl.mutex);
+
   while (self->running) {
-    sys_mutex_lock(&self->ctrl.mutex);
-
     if (self->task) {
-      err = decoder_process_task(self);
-    }
 
-    if (sys_queue_get_length(&self->ctrl.queue)) {
+      err = decoder_process_task(self);
+    } else if (sys_queue_get_length(&self->ctrl.queue)) {
+      
       err = decoder_process_packet(self);
     }
 
-    if (err == FR_MEDIA_STATE_EAGAIN) {
+    if (err >= 0) {
 
       fr_decoder_wait(self);
     }
-
-    sys_mutex_unlock(&self->ctrl.mutex);
   }
+  sys_mutex_unlock(&self->ctrl.mutex);
 
   return NULL;
 }
 
 void fr_decoder_wait (FrDecoder* self) {
-  sys_mutex_lock(&self->ctrl.mutex);
-
-  sys_cond_wait(&self->ctrl.cond, &self->ctrl.mutex);
 
   sys_mutex_unlock(&self->ctrl.mutex);
 }

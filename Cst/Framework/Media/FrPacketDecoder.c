@@ -26,7 +26,6 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
 
   switch (sindex) {
     case FR_MEDIA_VIDEO:
-      sys_debug_N("%d", self->serial);
       fr_decoder_push_packet(box->video_decoder, pkt);
 
       return FR_MEDIA_STATE_EOF;

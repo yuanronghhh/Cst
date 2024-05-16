@@ -52,7 +52,9 @@ typedef struct _FrIStreamInterface FrIStreamInterface;
 typedef struct _FrPipeline FrPipeline;
 typedef struct _FrPipelineClass FrPipelineClass;
 
-typedef struct _FrThreadWorker FrThreadWorker;
+typedef struct _FrMediaTask FrMediaTask;
+typedef struct _FrMediaTaskClass FrMediaTaskClass;
+
 typedef struct _FrDecoder FrDecoder;
 typedef struct _FrDecoderClass FrDecoderClass;
 
@@ -114,6 +116,8 @@ typedef struct _FrVideoFrameClass FrVideoFrameClass;
 
 typedef struct _FrVideoDecoder FrVideoDecoder;
 typedef struct _FrVideoDecoderClass FrVideoDecoderClass;
+
+typedef void (*FrMediaTaskFunc) (FrMediaTask *task);
 
 SYS_END_DECLS
 

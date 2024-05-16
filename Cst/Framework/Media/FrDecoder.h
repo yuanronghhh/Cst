@@ -10,22 +10,6 @@ SYS_BEGIN_DECLS
 #define FR_DECODER_CLASS(o) ((FrDecoderClass *)sys_class_cast_check(o, FR_TYPE_DECODER))
 #define FR_DECODER_GET_CLASS(o) sys_instance_get_class(o, FrDecoderClass)
 
-typedef SysInt (*FrThreadWorkerFunc) (FrThreadWorker* self,
-    SysInt cmd, 
-    SysPointer data,
-    SysPointer user_data);
-
-struct _FrThreadWorker {
-  SysInt cmd;
-  SysInt state;
-  SysBool wait;
-  SysPointer data;
-  SysMutex* mutex;
-  SysCond* cond;
-  SysThread* thread;
-  FrThreadWorkerFunc func;
-};
-
 struct _FrDecoderClass {
   SysObjectClass parent;
 
@@ -52,7 +36,6 @@ struct _FrDecoder {
   SysAsyncQueue queue;
   SysBool running;
   SysBool inited;
-  FrThreadWorker thread_woker;
 
   SysPointer user_data;
 };

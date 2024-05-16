@@ -119,6 +119,8 @@ set(SRC
   ./Media/FrIStream.h
   ./Media/FrMedia.c
   ./Media/FrMedia.h
+  ./Media/FrMediaTask.c
+  ./Media/FrMediaTask.h
   ./Media/FrMediaDecoder.c
   ./Media/FrMediaDecoder.h
   ./Media/FrMediaFile.c

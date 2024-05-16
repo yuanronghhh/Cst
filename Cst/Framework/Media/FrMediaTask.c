@@ -1,6 +1,57 @@
 #include <Framework/Media/FrMediaTask.h>
 
+static SysCond pool_cond;
+static SysMutex pool_mutex;
+
 SYS_DEFINE_TYPE(FrMediaTask, fr_media_task, SYS_TYPE_OBJECT);
+
+static SysBool fr_media_task_destroy_i(SysObject* o) {
+  FrMediaTask *self = FR_MEDIA_TASK(o);
+
+  return true;
+}
+
+void fr_media_task_wait(FrMediaTask* self) {
+  sys_mutex_lock(&pool_mutex);
+
+  sys_cond_wait(&pool_cond, &pool_mutex);
+
+  sys_mutex_unlock(&pool_mutex);
+}
+
+void fr_media_task_run(FrMediaTask *self) {
+  sys_return_if_fail(self != NULL);
+  sys_mutex_lock(&pool_mutex);
+
+  if(self->handler) {
+
+    self->result = self->handler(self, self->data);
+  }
+
+  if(self->callback) {
+
+    self->callback(self, self->data);
+  }
+
+  sys_cond_signal(&pool_cond);
+  sys_mutex_unlock(&pool_mutex);
+}
+
+void fr_media_task_setup(void) {
+  sys_cond_init(&pool_cond);
+  sys_mutex_init(&pool_mutex);
+}
+
+void fr_media_task_teardown(void) {
+  sys_cond_clear(&pool_cond);
+  sys_mutex_clear(&pool_mutex);
+}
+
+SysPointer fr_media_task_result(FrMediaTask *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->result;
+}
 
 /* object api */
 static void fr_media_task_construct_i(FrMediaTask *self) {
@@ -31,6 +82,7 @@ static void fr_media_task_class_init(FrMediaTaskClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_media_task_dispose;
+  ocls->destroy = fr_media_task_destroy_i;
 }
 
 void fr_media_task_init(FrMediaTask* self) {

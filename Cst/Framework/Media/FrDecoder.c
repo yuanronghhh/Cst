@@ -10,6 +10,8 @@ const SysChar* fr_decoder_get_name(FrDecoder* self) {
 }
 
 static SysInt fr_decoder_decode_it_i(FrDecoder *self, SysPointer user_data) {
+  sys_return_val_if_fail(self != NULL, -1);
+
   FrPacket *pkt = NULL;
 
   if(fr_decoder_pop_packet(self, &pkt)) {
@@ -19,29 +21,86 @@ static SysInt fr_decoder_decode_it_i(FrDecoder *self, SysPointer user_data) {
   return FR_MEDIA_STATE_EAGAIN;
 }
 
-void fr_decoder_lock(FrDecoder* self) {
-  sys_async_queue_lock(&self->queue);
+void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(task != NULL);
+
+  sys_mutex_lock(&self->ctrl.mutex);
+  self->task = task;
+  sys_mutex_unlock(&self->ctrl.mutex);
+
+  sys_cond_signal(&self->ctrl.cond);
+  fr_media_task_wait(task);
+
+  sys_assert(self->inited == true);
 }
 
-void fr_decoder_unlock(FrDecoder* self) {
-  sys_async_queue_unlock(&self->queue);
+static SysInt decoder_process_task(FrDecoder *self) {
+
+  sys_debug_N("decoder run task: %s", self->name);
+  fr_media_task_run(self->task);
+
+  return (SysInt)fr_media_task_result(self->task);
+}
+
+static SysInt decoder_process_packet(FrDecoder* self) {
+  SysInt err = fr_decoder_decode_it(self);
+  if (err >= 0 || err == FR_MEDIA_STATE_EAGAIN) {
+    return true;
+  }
+
+  sys_error_N("decoder stoped: %s", av_err2str(err));
 }
 
 static SysPointer decoder_thread(SysPointer user_data) {
   FrDecoder *self = user_data;
-  SysInt err;
+  SysInt err = 0;
 
-  while(self->running) {
-    err = fr_decoder_decode_it(self);
-    if(err >= 0 || err == FR_MEDIA_STATE_EAGAIN || err == FR_MEDIA_STATE_EOF) {
-      continue;
+  while (self->running) {
+    sys_mutex_lock(&self->ctrl.mutex);
+
+    if (self->task) {
+      err = decoder_process_task(self);
     }
 
-    sys_error_N("decoder stoped: %s", av_err2str(err));
-    break;
+    if (sys_queue_get_length(&self->ctrl.queue)) {
+      err = decoder_process_packet(self);
+    }
+
+    if (err == FR_MEDIA_STATE_EAGAIN) {
+
+      fr_decoder_wait(self);
+    }
+
+    sys_mutex_unlock(&self->ctrl.mutex);
   }
 
   return NULL;
+}
+
+void fr_decoder_wait (FrDecoder* self) {
+  sys_mutex_lock(&self->ctrl.mutex);
+
+  sys_cond_wait(&self->ctrl.cond, &self->ctrl.mutex);
+
+  sys_mutex_unlock(&self->ctrl.mutex);
+}
+
+static SysPointer init_it(FrMediaTask* task, SysPointer user_data) {
+  FrDecoder* self = user_data;
+  sys_assert(self->inited == false);
+
+  sys_debug_N("init %s", self->name);
+  self->inited = true;
+  return NULL;
+}
+
+void decoder_wait_init(FrDecoder* self) {
+  FrMediaTask task = { 0 };
+  task.handler = init_it;
+  task.data = self;
+
+  fr_decoder_set_task(self, &task);
 }
 
 SysInt fr_decoder_start(FrDecoder* self) {
@@ -53,11 +112,28 @@ SysInt fr_decoder_start(FrDecoder* self) {
     sys_error_N("decoder start failed: \"%s\"", name);
     return -1;
   }
+  decoder_wait_init(self);
 
   return 0;
 }
 
+static SysPointer stop_it(FrMediaTask *task, SysPointer user_data) {
+  FrDecoder *self = user_data;
+
+  sys_debug_N("stop it: %s", self->name);
+  self->running = false;
+  return NULL;
+}
+
 void fr_decoder_stop(FrDecoder* self) {
+  sys_return_if_fail(self != NULL);
+
+  FrMediaTask task = {0};
+  task.handler = stop_it;
+  task.data = self;
+
+  fr_decoder_set_task(self, &task);
+  sys_assert(self->running == false);
 }
 
 void fr_decoder_set_running(FrDecoder *self, SysBool running) {
@@ -90,9 +166,19 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
   sys_return_val_if_fail(*pkt == NULL, -1);
   FrPacket *npkt;
 
-  sys_async_queue_lock(&self->queue);
+  sys_mutex_lock(&self->ctrl.mutex);
 
-  npkt = sys_async_queue_pop_unlocked(&self->queue);
+  while(!sys_queue_peek_tail_link(&self->ctrl.queue)) {
+    
+    if (!decoder_process_task(self)) {
+      sys_mutex_unlock(&self->ctrl.mutex);
+      return false;
+    }
+
+    sys_cond_wait(&self->ctrl.cond, &self->ctrl.mutex);
+  }
+
+  npkt = sys_queue_pop_tail(&self->ctrl.queue);
   if(fr_packet_empty(npkt)) {
     sys_object_unref(npkt);
 
@@ -101,7 +187,7 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
   self->serial = fr_packet_get_serial(npkt);
   *pkt = npkt;
 
-  sys_async_queue_unlock(&self->queue);
+  sys_mutex_unlock(&self->ctrl.mutex);
 
   return true;
 }
@@ -109,14 +195,23 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
 SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket *pkt) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(pkt != NULL, false);
+  SysBool r;
 
-  sys_async_queue_lock(&self->queue);
+  sys_mutex_lock(&self->ctrl.mutex);
 
-  sys_async_queue_push_unlocked(&self->queue, pkt);
+  if(sys_queue_get_length(&self->ctrl.queue) < self->limit) {
 
-  sys_async_queue_unlock(&self->queue);
+    sys_queue_push_head (&self->ctrl.queue, pkt);
+    r = true;
 
-  return true;
+  } else {
+
+    r = false;
+  }
+
+  sys_mutex_unlock(&self->ctrl.mutex);
+
+  return r;
 }
 
 SysInt fr_decoder_open(FrDecoder* self) {
@@ -178,7 +273,7 @@ FrDecoder* fr_decoder_new(void) {
 static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
 
-  sys_async_queue_clear(&self->queue);
+  sys_queue_clear(&self->ctrl.queue);
   sys_free_N(self->name);
 
   SYS_OBJECT_CLASS(fr_decoder_parent_class)->dispose(o);
@@ -199,6 +294,8 @@ void fr_decoder_init(FrDecoder* self) {
   self->start_pts = -1;
   self->serial = -1;
   self->running = true;
+  self->limit = 20;
+  self->task = NULL;
 
-  sys_async_queue_init_full(&self->queue, (SysDestroyFunc)_sys_object_unref);
+  sys_queue_init(&self->ctrl.queue);
 }

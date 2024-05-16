@@ -18,15 +18,22 @@ struct _FrMediaTask {
   SysObject parent;
 
   /* <private> */
-  SysInt task_type;
   SysPointer data;
-  FrMediaTaskFunc func;
+  SysPointer result;
+  FrMediaTaskFunc handler;
+  FrMediaTaskFunc callback;
 };
 
 SYS_API SysType fr_media_task_get_type(void);
 SYS_API FrMediaTask *fr_media_task_new(void);
+SYS_API void fr_media_task_setup(void);
+SYS_API void fr_media_task_teardown(void);
 
 SYS_API FrMediaTask *fr_media_task_new_I(void);
+void fr_media_task_run(FrMediaTask *self);
+void fr_media_task_wait(FrMediaTask* self);
+SysPointer fr_media_task_result(FrMediaTask *self);
+#define fr_media_task_create(o) sys_object_create(o, FR_TYPE_MEDIA_TASK);
 
 SYS_END_DECLS
 

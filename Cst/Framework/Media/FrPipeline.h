@@ -1,7 +1,7 @@
 #ifndef __FR_PIPELINE_H__
 #define __FR_PIPELINE_H__
 
-#include <Framework/Media/FrMediaCommon.h>
+#include <Framework/Media/FrMediaTask.h>
 
 SYS_BEGIN_DECLS
 
@@ -24,6 +24,7 @@ struct _FrPipeline {
 
   SysAsyncQueue image_queue;
   SysAsyncQueue sample_queue;
+  FrMediaTask task;
 };
 
 SYS_API SysType fr_pipeline_get_type(void);

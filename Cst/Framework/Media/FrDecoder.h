@@ -1,7 +1,7 @@
 #ifndef __FR_DECODER_H__
 #define __FR_DECODER_H__
 
-#include <Framework/Media/FrMediaCommon.h>
+#include <Framework/Media/FrMediaTask.h>
 
 SYS_BEGIN_DECLS
 
@@ -32,8 +32,15 @@ struct _FrDecoder {
   /* current codec */
   SysInt64 start_pts;
   SysInt serial;
+  SysUInt limit;
 
-  SysAsyncQueue queue;
+  struct {
+    SysQueue queue;
+    SysCond cond;
+    SysMutex mutex;
+  } ctrl;
+
+  FrMediaTask *task;
   SysBool running;
   SysBool inited;
 
@@ -48,8 +55,6 @@ SYS_API const SysChar * fr_decoder_get_name(FrDecoder *self);
 SYS_API SysInt fr_decoder_decode_it(FrDecoder* self);
 SYS_API SysInt fr_decoder_open(FrDecoder* self);
 SYS_API SysInt fr_decoder_close(FrDecoder* self);
-SYS_API void fr_decoder_unlock(FrDecoder* self);
-SYS_API void fr_decoder_lock(FrDecoder* self);
 
 SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket *pkt);
 SysBool fr_decoder_pop_packet(FrDecoder* self,
@@ -57,6 +62,8 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
 
 SysInt fr_decoder_start(FrDecoder* self);
 void fr_decoder_stop(FrDecoder* self);
+void fr_decoder_wait (FrDecoder* self);
+void fr_decoder_set_task(FrDecoder *self, FrMediaTask *task);
 
 void fr_decoder_set_running(FrDecoder *self, SysBool running);
 SysBool fr_decoder_get_running(FrDecoder *self);

@@ -6,10 +6,10 @@ void fr_core_setup(void) {
   if (inited) { return; }
 
   sys_setup();
+  fr_media_task_setup();
   fr_ffmpeg_setup();
   fr_main_setup();
   fr_window_setup();
-
   fr_events_setup();
 
 #if defined(MONO_CORLIB_VERSION)
@@ -31,6 +31,7 @@ void fr_core_teardown(void) {
   fr_main_teardown();
 
   fr_ffmpeg_teardown();
+  fr_media_task_teardown();
   sys_teardown();
 
   inited = false;

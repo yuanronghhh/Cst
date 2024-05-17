@@ -43,6 +43,7 @@ struct _FrDecoder {
   FrMediaTask *task;
   SysBool running;
   SysBool inited;
+  SysThread* thread;
 
   SysPointer user_data;
 };

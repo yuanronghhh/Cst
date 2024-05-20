@@ -30,7 +30,6 @@ struct _FrDrawContext {
 SYS_API SysType fr_draw_context_get_type(void);
 SYS_API FrDrawContext *fr_draw_context_new(void);
 
-SYS_API FrDrawContext *fr_draw_context_new_I(FrDevice* device);
 SYS_API SysBool fr_draw_context_frame_need_draw(FrDrawContext *self);
 SYS_API void fr_draw_context_frame_begin(FrDrawContext *self, FrRegion *region);
 SYS_API void fr_draw_context_frame_end(FrDrawContext *self, FrRegion *region);
@@ -50,8 +49,8 @@ SYS_API FrSurface* fr_draw_context_get_default_surface(FrDrawContext* self);
 void fr_draw_context_set_is_painting(FrDrawContext *self, SysBool is_painting);
 SysBool fr_draw_context_get_is_painting(FrDrawContext *self);
 
-void fr_draw_context_setup(FrDevice* device, const SysChar* name);
-void fr_draw_context_teardown(void);
+void fr_draw_context_g_set(FrDrawContext* ctx);
+void fr_draw_context_g_unset(void);
 
 SYS_END_DECLS
 

@@ -29,6 +29,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   fr_pipeline_run(&self->pipeline, self->file);
   return 0;
 
+#if 0
   while(self->running) {
     if (player_should_pause(self)) {
       if(fr_media_file_pause(self->file) < 0) {
@@ -49,6 +50,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
         self->seek_position = -1;
     }
   }
+#endif
 
   return 0;
 }

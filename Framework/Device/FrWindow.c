@@ -279,8 +279,11 @@ SysPointer fr_window_get_data(FrWindow * self) {
 void fr_window_set_data(FrWindow *self, SysPointer data) {
   sys_return_if_fail(self != NULL);
 
-
   self->user_data = data;
+}
+
+void fr_wait_events_timeout(SysDouble sec) {
+  glfwWaitEventsTimeout(sec);
 }
 
 void fr_wait_events(void) {

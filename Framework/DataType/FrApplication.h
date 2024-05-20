@@ -20,6 +20,10 @@ struct _FrApplication {
 
   /* <private> */
   SysPointer app_data;
+  struct {
+    SysBool running;
+    SysDouble wait;
+  } media;
 };
 
 SYS_API SysType fr_application_get_type(void);

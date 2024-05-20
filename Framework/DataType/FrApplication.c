@@ -5,13 +5,23 @@
 
 SYS_DEFINE_TYPE(FrApplication, fr_application, FR_TYPE_SOURCE);
 
+static void application_wait(FrApplication* self) {
+  if (!self->media.running) {
+
+    fr_wait_events();
+  } else {
+
+    fr_wait_events_timeout(self->media.wait);
+  }
+}
 
 SysBool fr_application_check_i(FrSource *o) {
+  FrApplication* self = FR_APPLICATION(o);
 
   if (fr_events_check()) {
     return true;
   }
-  fr_wait_events();
+  application_wait(self);
 
   return true;
 }

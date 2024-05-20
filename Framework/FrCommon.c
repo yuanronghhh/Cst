@@ -1,6 +1,5 @@
 #include <Framework/FrCommon.h>
 
-
 SysInt fr_get_type_by_name(const SysChar *names[], SysInt len, const SysChar *name) {
   sys_return_val_if_fail(name != NULL, -1);
   sys_return_val_if_fail(names != NULL, -1);

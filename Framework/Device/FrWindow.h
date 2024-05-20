@@ -45,6 +45,7 @@ SYS_API FRMonitor* fr_get_primary_monitor (void);
 SYS_API void fr_window_get_framebuffer_size (FrWindow* window, SysInt* width, SysInt* height);
 SYS_API void fr_window_swap_buffers (FrWindow* window);
 SYS_API void fr_wait_events (void);
+SYS_API void fr_wait_events_timeout(SysDouble sec);
 SYS_API void fr_post_empty_events (void);
 SYS_API void fr_poll_events (void);
 SYS_API GLFWwindow* fr_window_real_window (FrWindow* window);

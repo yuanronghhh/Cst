@@ -51,20 +51,22 @@ void test_fr_draw_context(void) {
   window = fr_window_top_new(display);
   device = FR_DEVICE(window);
 
+  draw_context = fr_cairo_draw_context_new_I(device);
+  fr_draw_context_g_set(draw_context);
+
   surfaces = sys_harray_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
 
-  draw_context = fr_draw_context_new_I(device);
   fr_draw_context_add_surface(draw_context, paint_surface);
 
   render_render(draw_context, device);
 
-  sys_clear_pointer(&draw_context, _sys_object_unref);
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
   sys_harray_free(surfaces, true);
+  fr_draw_context_g_unset();
 }
 
 void test_video_player(void) {
@@ -82,7 +84,7 @@ void test_video_player(void) {
   device = FR_DEVICE(window);
 
   draw_context = fr_cairo_draw_context_new_I(device);
-  fr_i_draw_setup(FR_I_DRAW(draw_context));
+  fr_draw_context_g_set(draw_context);
 
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
@@ -103,7 +105,7 @@ void test_video_player(void) {
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
 
-  fr_i_draw_teardown();
+  fr_draw_context_g_unset();
 }
 
 

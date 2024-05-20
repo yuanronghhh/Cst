@@ -177,16 +177,15 @@ void fr_draw_context_construct(FrDrawContext* self, FrDevice* device) {
   cls->construct(self, device);
 }
 
-void fr_draw_context_setup(FrDevice* device, const SysChar *name) {
+void fr_draw_context_g_set(FrDrawContext *ctx) {
+  sys_assert(g_draw == NULL && "can not set draw context twice");
   fr_font_setup();
 
-  if (sys_str_equal(name, "cairo")) {
-    g_draw = fr_cairo_draw_context_new_I(device);
-    fr_i_draw_setup(FR_I_DRAW(g_draw));
-  }
+  g_draw = sys_object_ref(ctx);
+  fr_i_draw_setup(FR_I_DRAW(g_draw));
 }
 
-void fr_draw_context_teardown(void) {
+void fr_draw_context_g_unset(void) {
   sys_assert(g_draw != NULL);
   fr_i_draw_teardown();
   fr_font_teardown();
@@ -202,14 +201,6 @@ static void fr_draw_context_construct_i(FrDrawContext *self, FrDevice *device) {
 
 FrDrawContext* fr_draw_context_new(void) {
   return sys_object_new(FR_TYPE_DRAW_CONTEXT, NULL);
-}
-
-FrDrawContext *fr_draw_context_new_I(FrDevice* device) {
-  FrDrawContext *o = fr_draw_context_new();
-
-  fr_draw_context_construct(o, device);
-
-  return o;
 }
 
 static void fr_draw_context_dispose(SysObject* o) {

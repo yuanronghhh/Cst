@@ -5,7 +5,7 @@ set(search_dirs
 )
 
 FIND_PATH(SDL2_INCLUDE_DIR
-  NAMES SDL2/SDL_hidapi.h
+  NAMES SDL2/SDL.h
   HINTS ${search_dirs}
   PATH_SUFFIXES sdl2/include
 )

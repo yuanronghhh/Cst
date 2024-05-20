@@ -16,7 +16,16 @@ else()
   project(Cst LANGUAGES C)
 endif()
 
-add_subdirectory(Cst)
+# add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/Cst/System" ${CMAKE_BINARY_DIR}/CstDemo/Cst/System)
+add_subdirectory(Framework)
+add_subdirectory(FrameworkTest)
+add_subdirectory(CstCore)
+add_subdirectory(CstCli)
+add_subdirectory(CstCoreTest)
+if(USE_MONO)
+  add_subdirectory(CstMono)
+endif()
+add_subdirectory(Mini)
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/compile_flags.txt.in
                ${CMAKE_CURRENT_LIST_DIR}/compile_flags.txt

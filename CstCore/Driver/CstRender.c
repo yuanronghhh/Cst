@@ -128,7 +128,7 @@ void cst_render_create_window(CstRender *self) {
   window = fr_window_top_new(display);
   device = FR_DEVICE(window);
 
-  self->draw_context = fr_draw_context_new_I(device);
+  self->draw_context = fr_cairo_draw_context_new_I(device);
   self->display = display;
   self->device = device;
 

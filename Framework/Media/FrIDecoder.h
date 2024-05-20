@@ -9,14 +9,13 @@ SYS_BEGIN_DECLS
 #define FR_I_DECODER(o) ((FrIDecoder* )sys_object_cast_check(o, FR_TYPE_I_DECODER))
 #define FR_I_DECODER_GET_IFACE(o) ((FrIDecoderInterface *)SYS_TYPE_GET_INTERFACE(o, FR_TYPE_I_DECODER))
 
-// typedef struct _FrIDecoder FrIDecoder;
-// typedef struct _FrIDecoderInterface FrIDecoderInterface;
-
 struct _FrIDecoderInterface {
   SysTypeInterface unowned;
 
   /* <private> */
   FrPacket *(*get_packet_ptr)(FrIDecoder *self);
+  SysInt (*process_task) (FrDecoder* self);
+  SysInt (*process_packet) (FrDecoder* self);
 };
 
 SysType fr_i_decoder_get_type(void);

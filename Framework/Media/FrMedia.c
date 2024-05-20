@@ -6,20 +6,6 @@ const SysChar* fr_media_error_string(SysInt err) {
   return sys_quark_string(qmsg);
 }
 
-SysBool fr_media_check_error(SysInt err, const SysChar* msg) {
-  if (err == FR_MEDIA_STATE_EAGAIN 
-    || err == FR_MEDIA_STATE_EOF
-    || err >= 0) {
-
-    return true;
-  }
-
-  sys_warning_N("errror in thread: %s, %s",
-    msg, av_err2str(err));
-
-  return false;
-}
-
 static SysInt fr_media_convert_frame(struct SwsContext* sws_ctx,
   AVFrame* src, AVFrame* dst) {
   sys_return_val_if_fail(sws_ctx != NULL, -1);
@@ -303,7 +289,7 @@ SysInt fr_media_avcodec_try_receive_frame (
     // sys_warning_N("%s", av_err2str(err));
   } while (err != AVERROR(EAGAIN));
 
-  return err;
+  return FR_MEDIA_STATE_AGAIN;
 }
 
 SysInt fr_media_avcodec_try_send_packet(

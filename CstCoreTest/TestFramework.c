@@ -56,7 +56,7 @@ void test_fr_draw_context(void) {
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
 
-  draw_context = fr_draw_context_new_I(device);
+  draw_context = fr_cairo_draw_context_new_I(device);
   fr_draw_context_add_surface(draw_context, paint_surface);
 
   render_render(draw_context, device);
@@ -83,7 +83,7 @@ void test_video_player(void) {
 
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
-  draw_context = fr_draw_context_new_I(device);
+  draw_context = fr_cairo_draw_context_new_I(device);
   fr_draw_context_add_surface(draw_context, paint_surface);
 
   imrender = FR_I_MEDIA_RENDER(draw_context);

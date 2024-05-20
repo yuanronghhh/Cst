@@ -57,9 +57,13 @@ SYS_API SysInt fr_decoder_decode_it(FrDecoder* self);
 SYS_API SysInt fr_decoder_open(FrDecoder* self);
 SYS_API SysInt fr_decoder_close(FrDecoder* self);
 
-SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket *pkt);
-SysBool fr_decoder_pop_packet(FrDecoder* self,
+SysBool fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket *pkt);
+SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
     FrPacket **pkt);
+
+SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt);
+SysBool fr_decoder_pop_packet(FrDecoder* self,
+    FrPacket** pkt);
 
 SysInt fr_decoder_start(FrDecoder* self);
 void fr_decoder_stop(FrDecoder* self);

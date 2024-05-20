@@ -169,7 +169,7 @@ else()
 endif()
 
 add_custom_target(CstCliGen
-  COMMAND bison -o ./Cst/CstCore/Parser/CstCli.yy.c -d ./Cst/CstCore/Parser/CstCli.y && flex -o ./Cst/CstCore/Parser/lex.yy.c ./Cst/CstCore/Parser/CstCli.l
+  COMMAND bison -o ./CstCore/Parser/CstCli.yy.c -d ./CstCore/Parser/CstCli.y && flex -o ./CstCore/Parser/lex.yy.c ./CstCore/Parser/CstCli.l
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 )
 set_property(TARGET CstCliGen PROPERTY FOLDER CstProject)

@@ -169,7 +169,7 @@ static SysInt fr_media_decoder_decode_it_i(FrDecoder* o, SysPointer user_data) {
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
   sys_return_val_if_fail(cls->decode_frame, -1);
 
-  if (!fr_decoder_pop_packet(o, (FrPacket**)&mpkt)) {
+  if (!fr_decoder_pop_packet_unlock(o, (FrPacket**)&mpkt)) {
     return 0;
   }
 
@@ -178,7 +178,7 @@ static SysInt fr_media_decoder_decode_it_i(FrDecoder* o, SysPointer user_data) {
 
   do {
     err = fr_media_decoder_receive_frame(self, &nframe);
-    if (err == FR_MEDIA_STATE_EAGAIN) {
+    if (err == FR_MEDIA_STATE_AGAIN) {
       break;
     }
 

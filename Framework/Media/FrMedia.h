@@ -6,7 +6,6 @@
 SYS_BEGIN_DECLS
 
 const SysChar* fr_media_error_string(SysInt err);
-SysBool fr_media_check_error(SysInt err, const SysChar* msg);
 
 void fr_media_frame_get_frame_rate (
     AVFormatContext *ctx,

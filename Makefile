@@ -19,10 +19,10 @@ endif
 cst-cli-gen:
 	@#gen ${PROJ}.yy.c ${PROJ}.yy.h
 	@#bison --debug -v -d ${PROJ}.y -o ${PROJ}.yy.c
-	@bison -o ./Cst/CstCore/Parser/CstCli.yy.c -d ./Cst/CstCore/Parser/CstCli.y
+	@bison -o './CstCore/Parser/CstCli.yy.c' -d './CstCore/Parser/CstCli.y'
 	@#gen lex.yy.c
-	@flex -o ./Cst/CstCore/Parser/lex.yy.c ./Cst/CstCore/Parser/CstCli.l
-	@/usr/bin/sed -i '1i#include <CstCore/Parser/CstParserCommon.h>' './Cst/CstCore/Parser/lex.yy.c'
+	@flex -o ./CstCore/Parser/lex.yy.c ./CstCore/Parser/CstCli.l
+	@sed -i '1i#include <CstCore/Parser/CstParserCommon.h>' './CstCore/Parser/lex.yy.c'
 
 ${project}:
-	@make -C ./build -j8 $@
+	@make -C ./build -j4 $@

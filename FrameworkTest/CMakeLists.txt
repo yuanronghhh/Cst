@@ -22,8 +22,8 @@ set(INNER_LIBS
 set(INC
   ../
   ./tests/
-  ${INIT_HOME}/../Cst/
-  ${CMAKE_SOURCE_DIR}/../CstDemo/Cst/
+  ${INIT_HOME}/../
+  ${CMAKE_SOURCE_DIR}/../CstDemo/
 )
 
 set(SRC

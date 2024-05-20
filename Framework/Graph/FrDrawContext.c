@@ -187,10 +187,10 @@ void fr_draw_context_g_set(FrDrawContext *ctx) {
 
 void fr_draw_context_g_unset(void) {
   sys_assert(g_draw != NULL);
-  fr_i_draw_teardown();
   fr_font_teardown();
 
   sys_clear_pointer(&g_draw, _sys_object_unref);
+  fr_i_draw_teardown();
 }
 
 /* object api */

@@ -41,7 +41,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
       return -1;
   }
 
-  return 0;
+  return FR_MEDIA_STATE_AGAIN;
 }
 
 /* object api */

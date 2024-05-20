@@ -6,6 +6,7 @@
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrIMediaRender.h>
 #include <Framework/Media/FrVideoDecoder.h>
+#include <Framework/Device/FrWindow.h>
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, SYS_TYPE_OBJECT);
 
@@ -27,28 +28,29 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   }
 
   fr_pipeline_run(&self->pipeline, self->file);
-  return 0;
 
-#if 0
+#if 1
   while(self->running) {
-    if (player_should_pause(self)) {
-      if(fr_media_file_pause(self->file) < 0) {
-        break;
-      }
+      fr_wait_events();
 
-      self->paused = -1;
-    } else {
+	  if (player_should_pause(self)) {
+		  if (fr_media_file_pause(self->file) < 0) {
+			  break;
+		  }
 
-      fr_media_player_play(self);
-    }
+		  self->paused = -1;
+	  } else {
 
-    if (player_should_seek(self)) {
-        if(fr_media_file_seek(self->file, self->seek_position) < 0) {
-          break;
-        }
+		  fr_media_player_play(self);
+	  }
 
-        self->seek_position = -1;
-    }
+	  if (player_should_seek(self)) {
+		  if (fr_media_file_seek(self->file, self->seek_position) < 0) {
+			  break;
+		  }
+
+		  self->seek_position = -1;
+	  }
   }
 #endif
 

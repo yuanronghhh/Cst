@@ -15,6 +15,7 @@ set(EXTERNAL_LIBS
   "glad"
   "glfw3"
   "pangofc"
+  "fontconfig"
   "tinyexpr"
   "ffmpeg"
   "png"

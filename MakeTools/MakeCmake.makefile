@@ -47,9 +47,6 @@ re-config:
 	/usr/bin/rm -rf build/CMakeCache.txt
 	@make config
 
-clean:
-	@cd ./build/ && make clean
-
 debug:
 	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug c ${BIN_FILE}<cr>'
 

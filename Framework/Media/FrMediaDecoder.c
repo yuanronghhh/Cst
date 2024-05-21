@@ -5,7 +5,6 @@
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrVideoDecoder.h>
-#include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrMediaPacket.h>
 
 static const SysChar* DECODER_NAMES[] = {

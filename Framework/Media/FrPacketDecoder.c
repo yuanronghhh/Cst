@@ -26,22 +26,26 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
 
   switch (sindex) {
     case FR_MEDIA_VIDEO:
-      if(!fr_decoder_push_packet(box->video_decoder, pkt)) {
-        return FR_MEDIA_STATE_EOF;
+      if (!fr_decoder_push_packet(box->video_decoder, pkt)) {
+        return FR_MEDIA_STATE_PAUSE;
       }
       break;
     case FR_MEDIA_AUDIO:
-      fr_decoder_push_packet(box->audio_decoder, pkt);
+      if (!fr_decoder_push_packet(box->audio_decoder, pkt)) {
+        return FR_MEDIA_STATE_PAUSE;
+      }
       break;
     case FR_MEDIA_SUBTITLE:
-      fr_decoder_push_packet(box->subtitle_decoder, pkt);
+      if (!fr_decoder_push_packet(box->subtitle_decoder, pkt)) {
+        return FR_MEDIA_STATE_PAUSE;
+      }
       break;
     default:
       sys_warning_N("Not found media packet type: %s", sindex);
       return -1;
   }
 
-  return FR_MEDIA_STATE_AGAIN;
+  return FR_MEDIA_STATE_SUCCESS;
 }
 
 /* object api */

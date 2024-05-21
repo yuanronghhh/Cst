@@ -1,7 +1,7 @@
 #ifndef __FR_MEDIA_H__
 #define __FR_MEDIA_H__
 
-#include <Framework/Media/FrMediaCommon.h>
+#include <Framework/FrCommon.h>
 
 SYS_BEGIN_DECLS
 

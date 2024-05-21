@@ -1,5 +1,4 @@
 #include <Framework/Media/FrMediaStream.h>
-#include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrPacket.h>
 
 SYS_DEFINE_TYPE(FrMediaStream, fr_media_stream, FR_TYPE_STREAM);

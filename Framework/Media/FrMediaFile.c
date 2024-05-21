@@ -1,6 +1,5 @@
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrIStream.h>
-#include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrPacket.h>
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrMediaPacket.h>

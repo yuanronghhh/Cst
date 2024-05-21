@@ -1,9 +1,44 @@
 #include <Framework/Media/FrMedia.h>
 
 const SysChar* fr_media_error_string(SysInt err) {
-  const SysChar* qmsg;
-  qmsg = av_err2str(err);
-  return sys_quark_string(qmsg);
+  const SysChar* qmsg = NULL;
+  switch (err) {
+  case FR_MEDIA_STATE_SUCCESS:
+    qmsg = "success";
+    break;
+  case FR_MEDIA_STATE_AGAIN:
+    qmsg = "again";
+    break;
+  case FR_MEDIA_STATE_EINVAL:
+    qmsg = "einval";
+    break;
+  case FR_MEDIA_STATE_EOF:
+    qmsg = "eof";
+    break;
+  case FR_MEDIA_STATE_UNKNOWN:
+    qmsg = "unknown";
+    break;
+  default:
+    qmsg = av_err2str(err);
+  }
+
+  return qmsg;
+}
+
+FR_MEDIA_STATE_ENUM fr_media_error_map(SysInt err) {
+  switch (err) {
+  case 0:
+    return FR_MEDIA_STATE_SUCCESS;
+  case AVERROR(EAGAIN):
+    return FR_MEDIA_STATE_AGAIN;
+  case AVERROR_EOF:
+    return FR_MEDIA_STATE_EOF;
+  case AVERROR(EINVAL):
+    return FR_MEDIA_STATE_EINVAL;
+  default:
+    sys_warning_N("decoder err not handle: %d", av_err2str(err));
+    return FR_MEDIA_UNKNOWN;
+  }
 }
 
 static SysInt fr_media_convert_frame(struct SwsContext* sws_ctx,
@@ -164,11 +199,7 @@ SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {
   if(err < 0) {
     av_packet_unref(p);
 
-    if(err == AVERROR_EOF) {
-      return err;
-    }
-
-    sys_warning_N("error reading packet: %s", av_err2str(err));
+    sys_warning_N("error reading packet: %s", fr_media_error_string(err));
   }
 
   return err;
@@ -303,14 +334,10 @@ SysInt fr_media_avcodec_try_send_packet(
       return err;
     }
 
-    if (err == AVERROR_EOF) {
-      return err;
-    }
-
-    sys_warning_N("%s", av_err2str(err));
+    sys_warning_N("error %s", av_err2str(err));
   } while (err != AVERROR(EAGAIN));
 
-  return err;
+  return fr_media_error_map(err);
 }
 
 SysInt fr_media_avcodec_receive_frame (
@@ -320,6 +347,7 @@ SysInt fr_media_avcodec_receive_frame (
 
   SysInt err;
   err = avcodec_receive_frame(codec, frame);
+  err = fr_media_error_map(err);
   frame->pts = pts;
 
   return err;

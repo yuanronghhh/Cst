@@ -31,26 +31,26 @@ static SysInt media_player_do(FrMediaPlayer *self) {
 
 #if 1
   while(self->running) {
-      fr_wait_events();
+    fr_wait_events();
 
-	  if (player_should_pause(self)) {
-		  if (fr_media_file_pause(self->file) < 0) {
-			  break;
-		  }
+    //if (player_should_pause(self)) {
+    //  if (fr_media_file_pause(self->file) < 0) {
+    //    break;
+    //  }
 
-		  self->paused = -1;
-	  } else {
+    //  self->paused = -1;
+    //} else {
 
-		  fr_media_player_play(self);
-	  }
+    //  fr_media_player_play(self);
+    //}
 
-	  if (player_should_seek(self)) {
-		  if (fr_media_file_seek(self->file, self->seek_position) < 0) {
-			  break;
-		  }
+    //if (player_should_seek(self)) {
+    //  if (fr_media_file_seek(self->file, self->seek_position) < 0) {
+    //    break;
+    //  }
 
-		  self->seek_position = -1;
-	  }
+    //  self->seek_position = -1;
+    //}
   }
 #endif
 

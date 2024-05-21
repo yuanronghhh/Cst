@@ -33,17 +33,16 @@ void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
   sys_mutex_unlock(&self->ctrl.mutex);
 
 }
-
-static SysInt decoder_process_task(FrDecoder *self) {
-  SysInt result;
-
+static SysInt decoder_process_task(FrDecoder* self) {
+  SysInt result = 0;
   sys_mutex_lock(&self->ctrl.mutex);
+  if (self->task) {
 
-  fr_media_task_run(self->task);
+    fr_media_task_run(self->task);
+    result = POINTER_TO_INT(fr_media_task_result(self->task));
 
-  result = POINTER_TO_INT(fr_media_task_result(self->task));
-  self->task = NULL;
-
+    self->task = NULL;
+  }
   sys_mutex_unlock(&self->ctrl.mutex);
 
   return result;
@@ -54,32 +53,67 @@ static SysInt decoder_process_packet(FrDecoder* self) {
 
   sys_mutex_lock(&self->ctrl.mutex);
   err = fr_decoder_decode_it(self);
+
+  if (err == FR_MEDIA_STATE_SUCCESS) {
+    err = FR_MEDIA_STATE_AGAIN;
+  }
+
   sys_mutex_unlock(&self->ctrl.mutex);
+
+  return err;
+}
+
+static SysInt error_to_state(SysInt err) {
+  switch (err) {
+  case FR_MEDIA_STATE_AGAIN:
+    return FR_MEDIA_STATE_RUNNING;
+    break;
+  case FR_MEDIA_STATE_EOF:
+    return FR_MEDIA_STATE_PAUSE;
+    break;
+  default:
+    return FR_MEDIA_STATE_PAUSE;
+  }
+}
+
+static SysInt decoder_process(FrDecoder* self) {
+  SysInt err = 0;
+  SysInt state;
+
+  err = decoder_process_task(self);
+  if (err < 0) { goto done; }
+
+  err = decoder_process_packet(self);
+  if (err < 0) { goto done; }
+
+done:
+  state = error_to_state(err);
+  if (state < 0) {
+
+    sys_warning_N("process packet failed: %s,%s", 
+      self->name, 
+      fr_media_error_string(err));
+  }
 
   return err;
 }
 
 static SysPointer decoder_thread(SysPointer user_data) {
   FrDecoder *self = user_data;
-  SysInt err = 0;
+  SysInt state = 0;
 
   while (self->running) {
-    if(self->task && decoder_process_task(self) < 0) {
-      goto fail;
-    }
+    state = decoder_process(self);
 
-    if(decoder_process_packet(self) < 0) {
-      goto fail;
-    }
-
-    if(err == 0) {
+    if (state == FR_MEDIA_STATE_SUCCESS
+      || state == FR_MEDIA_STATE_EOF
+      || state == FR_MEDIA_STATE_PAUSE) {
 
       fr_decoder_wait(self);
     }
+
   }
 
-fail:
-  sys_abort("decoder error: %s,%s", self->name, fr_media_error_string(err));
   return NULL;
 }
 

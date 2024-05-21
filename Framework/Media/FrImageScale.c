@@ -1,6 +1,6 @@
 #include <Framework/Media/FrImageScale.h>
-#include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrVideoFrame.h>
+#include <Framework/Media/FrMedia.h>
 
 SYS_DEFINE_TYPE(FrImageScale, fr_image_scale, SYS_TYPE_OBJECT);
 

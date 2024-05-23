@@ -24,28 +24,17 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
 
 build-all: build-${PLATFORM}
 
-config:
-	@${CMAKE_CONFIG}
-	@sed -i 's/;/\n-I/g' compile_flags.txt
-	@sed -i '/^-I[[:space:]]*$$/d' compile_flags.txt
-	@cat compile_flags.txt|sort |uniq > compile_flags2.txt
-	@mv compile_flags2.txt compile_flags.txt
-
-build-linux: config
+build-linux:
 	@${MAKE} -C "$(BUILD_DIR)" -s -j8
 
-build-win32: config
+build-win32:
 	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE}
 
-build-win32-prj: config
+build-win32-prj:
 	@cmake --build "${BUILD_DIR}" --config ${BUILD_TYPE} --target ${PROJ_NAME}
 
-build-linux-prj: config
+build-linux-prj:
 	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
-
-re-config:
-	/usr/bin/rm -rf build/CMakeCache.txt
-	@make config
 
 debug:
 	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug c ${BIN_FILE}<cr>'

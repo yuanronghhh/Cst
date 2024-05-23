@@ -2,8 +2,6 @@ if(NOT EXISTS "${LIBDIR}/")
   message(FATAL_ERROR "Windows requires pre-compiled libs at: '${LIBDIR}'")
 endif()
 
-set(CLANG_HOME "D:/GreyHound/PRIVATE/DOWNLOADS/clang+llvm-18.1.4-x86_64-pc-windows-msvc.tar/clang+llvm-18.1.4-x86_64-pc-windows-msvc")
-
 find_package(openssl REQUIRED)
 find_package(unity REQUIRED)
 # find_package(harfbuzz REQUIRED)
@@ -65,7 +63,11 @@ add_definitions("/MP")
 add_definitions("/W3")
 add_definitions("/WX")
 
-if(NOT ${CMAKE_GENERATOR_TOOLSET})
+if(USE_LLVM)
+  add_definitions("-Wno-unused-function")
+  add_definitions("-Wno-unused-variable")
+
+else()
   add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
   add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
   add_definitions("/wd\"4100\" /wd\"4206\" /wd\"4201\" /wd\"4996\" /wd\"0219\"")
@@ -89,10 +91,6 @@ if(NOT ${CMAKE_GENERATOR_TOOLSET})
     ucrt.lib
     ucrtd.lib
     libucrtd.lib)
-else()
-  add_definitions("-Wno-unused-function")
-  add_definitions("-Wno-unused-variable")
-
 endif()
 SET(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
 

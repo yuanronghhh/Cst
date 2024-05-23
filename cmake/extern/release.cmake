@@ -1,4 +1,4 @@
-include(${CMAKE_CURRENT_LIST_DIR}/options.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/env.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/../macros/logger.cmake)
 
 function(release_copy_files

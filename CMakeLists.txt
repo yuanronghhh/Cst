@@ -6,6 +6,8 @@ else()
     set(FIRST_RUN FALSE)
 endif()
 
+SET(INIT_HOME "${CMAKE_CURRENT_LIST_DIR}/cmake")
+SET(CMAKE_TOOLCHAIN_FILE ${INIT_HOME}/toolchain/ClangWindows.cmake)
 include(cmake/init.cmake)
 include(cmake/config/build_option.cmake)
 
@@ -30,3 +32,4 @@ add_subdirectory(Mini)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/compile_flags.txt.in
                ${CMAKE_CURRENT_LIST_DIR}/compile_flags.txt
 )
+

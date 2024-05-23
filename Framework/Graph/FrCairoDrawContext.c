@@ -71,8 +71,7 @@ static void cairo_rectangle_red_i(cairo_t* cr, SysInt x, SysInt y) {
   cairo_stroke(cr);
 }
 
-static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame) {
-  FrDrawContext *draw_context = FR_DRAW_CONTEXT(o);
+static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame) {
 
   SysUInt8 **data;
   SysInt *linesize;
@@ -120,6 +119,16 @@ static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame) {
   cairo_surface_flush(draw_context->device_surface->ctx);
 
   sys_clear_pointer(&paint_surface, cairo_surface_destroy);
+}
+
+static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegion *region) {
+  FrDrawContext *draw_context = FR_DRAW_CONTEXT(o);
+
+  fr_draw_context_frame_begin(draw_context, region);
+
+  render_video_frame(draw_context, frame);
+
+  fr_draw_context_frame_end(draw_context, region);
 }
 
 static void i_media_render_audio(FrIMediaRender *o, FrAudioFrame *frame) {
@@ -336,12 +345,8 @@ static void fr_context_overlay(FrContext *self, FrSurface *surface, SysInt x, Sy
   cairo_overlay_i(self->ctx, surface->ctx, 0, 0);
 }
 
-static FrContext *fr_context_create(FrSurface *surface) {
-  FrContext *o = fr_context_new_I(surface);
-
-  o->ctx = cairo_create(surface->ctx);
-
-  return o;
+static void fr_context_create(FrContext *self, FrSurface *surface) {
+  self->ctx = cairo_create(surface->ctx);
 }
 
 static void fr_context_destroy(FrContext *self) {
@@ -369,6 +374,8 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->save = fr_context_save;
   iface->restore = fr_context_restore;
   iface->show_text = fr_context_show_text;
+  iface->resize_surface = fr_surface_resize_surface;
+  iface->move_to = fr_context_move_to;
 }
 
 static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {

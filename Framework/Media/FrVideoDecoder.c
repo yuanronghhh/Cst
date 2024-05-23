@@ -52,6 +52,13 @@ void fr_video_decoder_resize(FrVideoDecoder *self, SysInt width, SysInt height) 
   fr_image_scale_resize_proportion(&self->scale, width, height, true);
 }
 
+void fr_video_decoder_get_size(FrVideoDecoder *self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
+
+  *width = self->scale.out_width;
+  *height = self->scale.out_height;
+}
+
 FrMediaFrame* fr_video_decoder_get_frame_i (FrMediaDecoder* o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
 

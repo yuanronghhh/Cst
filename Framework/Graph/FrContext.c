@@ -75,6 +75,8 @@ void fr_context_show_text_p (FrContext* self,
 /* object api */
 static void fr_context_construct(FrContext *self, FrSurface *surface) {
   self->surface = sys_object_ref(surface);
+
+  fr_i_draw_create(self, surface);
 }
 
 FrContext* fr_context_new(void) {

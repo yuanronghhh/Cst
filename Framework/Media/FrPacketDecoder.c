@@ -24,20 +24,25 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   sindex = fr_media_packet_get_stream_index(mpkt);
   fr_packet_set_serial(pkt, self->serial);
 
+  if (self->serial > 20) {
+
+    return FR_MEDIA_ERROR_EOF;
+  }
+
   switch (sindex) {
     case FR_MEDIA_VIDEO:
       if (!fr_decoder_push_packet(box->video_decoder, pkt)) {
-        return FR_MEDIA_STATE_PAUSE;
+        return FR_MEDIA_ERROR_EOF;
       }
       break;
     case FR_MEDIA_AUDIO:
       if (!fr_decoder_push_packet(box->audio_decoder, pkt)) {
-        return FR_MEDIA_STATE_PAUSE;
+        return FR_MEDIA_ERROR_EOF;
       }
       break;
     case FR_MEDIA_SUBTITLE:
       if (!fr_decoder_push_packet(box->subtitle_decoder, pkt)) {
-        return FR_MEDIA_STATE_PAUSE;
+        return FR_MEDIA_ERROR_EOF;
       }
       break;
     default:
@@ -45,7 +50,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
       return -1;
   }
 
-  return FR_MEDIA_STATE_SUCCESS;
+  return FR_MEDIA_ERROR_AGAIN;
 }
 
 /* object api */

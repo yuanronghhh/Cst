@@ -25,18 +25,19 @@ struct _FrMediaPlayer {
   SysInt64 paused;
   SysInt64 seek_position;
   SysBool running;
+  FrIMediaRender *render;
 };
 
 SYS_API SysType fr_media_player_get_type(void);
 SYS_API FrMediaPlayer *fr_media_player_new(void);
 
 SYS_API FrMediaPlayer *fr_media_player_new_I(FrMediaFile *file);
+void fr_media_player_set_render(FrMediaPlayer* self, FrIMediaRender *render);
 SysInt fr_media_player_run(FrMediaPlayer* self);
 void fr_media_player_play(FrMediaPlayer* self);
 void fr_media_player_set_pause(FrMediaPlayer *self);
 SysInt64 fr_media_player_get_pause(FrMediaPlayer *self);
-FrDecoder* fr_player_get_decoder(FrMediaPlayer* self, FR_MEDIA_ENUM type);
-SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render);
+SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrRegion *region);
 
 void fr_media_player_set_running(FrMediaPlayer *self, SysBool running);
 SysBool fr_media_player_get_running(FrMediaPlayer *self);

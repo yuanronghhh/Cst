@@ -69,6 +69,10 @@ void test_fr_draw_context(void) {
   fr_draw_context_g_unset();
 }
 
+void render_callback(FrMediaPlayer *player) {
+
+}
+
 void test_video_player(void) {
   FrWindow *window;
   FrDisplay* display;
@@ -94,9 +98,9 @@ void test_video_player(void) {
   imrender = FR_I_MEDIA_RENDER(draw_context);
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
   mplayer = fr_media_player_new_I(mfile);
-  fr_media_player_run(mplayer);
 
-  fr_media_player_render(mplayer, imrender);
+  fr_media_player_set_render(mplayer, imrender);
+  fr_media_player_run(mplayer);
 
   sys_object_unref(mplayer);
   sys_object_unref(mfile);

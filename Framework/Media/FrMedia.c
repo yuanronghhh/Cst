@@ -3,41 +3,42 @@
 const SysChar* fr_media_error_string(SysInt err) {
   const SysChar* qmsg = NULL;
   switch (err) {
-  case FR_MEDIA_STATE_SUCCESS:
+  case FR_MEDIA_ERROR_SUCCESS:
     qmsg = "success";
     break;
-  case FR_MEDIA_STATE_AGAIN:
+  case FR_MEDIA_ERROR_AGAIN:
     qmsg = "again";
     break;
-  case FR_MEDIA_STATE_EINVAL:
+  case FR_MEDIA_ERROR_EINVAL:
     qmsg = "einval";
     break;
-  case FR_MEDIA_STATE_EOF:
+  case FR_MEDIA_ERROR_EOF:
     qmsg = "eof";
     break;
-  case FR_MEDIA_STATE_UNKNOWN:
+  case FR_MEDIA_ERROR_UNKNOWN:
     qmsg = "unknown";
     break;
   default:
     qmsg = av_err2str(err);
+    break;
   }
 
   return qmsg;
 }
 
-FR_MEDIA_STATE_ENUM fr_media_error_map(SysInt err) {
+FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   switch (err) {
   case 0:
-    return FR_MEDIA_STATE_SUCCESS;
+    return FR_MEDIA_ERROR_SUCCESS;
   case AVERROR(EAGAIN):
-    return FR_MEDIA_STATE_AGAIN;
+    return FR_MEDIA_ERROR_AGAIN;
   case AVERROR_EOF:
-    return FR_MEDIA_STATE_EOF;
+    return FR_MEDIA_ERROR_EOF;
   case AVERROR(EINVAL):
-    return FR_MEDIA_STATE_EINVAL;
+    return FR_MEDIA_ERROR_EINVAL;
   default:
     sys_warning_N("decoder err not handle: %d", av_err2str(err));
-    return FR_MEDIA_UNKNOWN;
+    return FR_MEDIA_ERROR_UNKNOWN;
   }
 }
 
@@ -101,7 +102,7 @@ SysBool fr_media_data_save_to_png(SysInt width,
  *
  * Returns: void
  */
-  FILE *fp = fopen(filename, "wb");
+  FILE *fp = sys_fopen(filename, "wb");
   if (!fp) { return false; }
 
   png_struct* png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
@@ -320,7 +321,7 @@ SysInt fr_media_avcodec_try_receive_frame (
     // sys_warning_N("%s", av_err2str(err));
   } while (err != AVERROR(EAGAIN));
 
-  return FR_MEDIA_STATE_AGAIN;
+  return FR_MEDIA_ERROR_AGAIN;
 }
 
 SysInt fr_media_avcodec_try_send_packet(
@@ -337,7 +338,7 @@ SysInt fr_media_avcodec_try_send_packet(
     sys_warning_N("error %s", av_err2str(err));
   } while (err != AVERROR(EAGAIN));
 
-  return fr_media_error_map(err);
+  return err;
 }
 
 SysInt fr_media_avcodec_receive_frame (
@@ -347,7 +348,6 @@ SysInt fr_media_avcodec_receive_frame (
 
   SysInt err;
   err = avcodec_receive_frame(codec, frame);
-  err = fr_media_error_map(err);
   frame->pts = pts;
 
   return err;

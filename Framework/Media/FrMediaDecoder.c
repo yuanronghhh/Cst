@@ -79,7 +79,7 @@ SysInt fr_media_decoder_receive_frame(FrMediaDecoder* self,
   FrMediaFrame* frame = self->frame;
 
   err = fr_media_avcodec_try_receive_frame(self->ctx, frame->ctx, self->auto_pts);
-  if(err == FR_MEDIA_STATE_EOF) {
+  if(err == FR_MEDIA_ERROR_EOF) {
     avcodec_flush_buffers(self->ctx);
     return err;
   }
@@ -177,7 +177,7 @@ static SysInt fr_media_decoder_decode_it_i(FrDecoder* o, SysPointer user_data) {
 
   do {
     err = fr_media_decoder_receive_frame(self, &nframe);
-    if (err == FR_MEDIA_STATE_AGAIN) {
+    if (err == FR_MEDIA_ERROR_AGAIN) {
       break;
     }
 

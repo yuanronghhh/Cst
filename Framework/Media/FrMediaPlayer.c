@@ -23,38 +23,50 @@ static SYS_INLINE SysBool player_should_seek(FrMediaPlayer *self) {
 }
 
 static SysInt media_player_do(FrMediaPlayer *self) {
+  FrBound bound = { .width = 800, .height = 600 };
+  FrVideoDecoder* video_decoder;
+  FrRegion* region;
+
   if(!self->running) {
     return -1;
   }
-
   fr_pipeline_run(&self->pipeline, self->file);
 
-#if 1
+  video_decoder = FR_VIDEO_DECODER(self->pipeline.video_decoder);
+  fr_video_decoder_get_size(video_decoder, &bound.width, &bound.height);
+  region = fr_region_create_rectangle(&bound);
+
   while(self->running) {
-    fr_wait_events();
 
-    //if (player_should_pause(self)) {
-    //  if (fr_media_file_pause(self->file) < 0) {
-    //    break;
-    //  }
+    if (player_should_pause(self)) {
+      if (fr_media_file_pause(self->file) < 0) {
+        break;
+      }
 
-    //  self->paused = -1;
-    //} else {
+      self->paused = -1;
+    } else {
 
-    //  fr_media_player_play(self);
-    //}
+      fr_media_player_play(self);
+    }
 
-    //if (player_should_seek(self)) {
-    //  if (fr_media_file_seek(self->file, self->seek_position) < 0) {
-    //    break;
-    //  }
+    if (player_should_seek(self)) {
+      if (fr_media_file_seek(self->file, self->seek_position) < 0) {
+        break;
+      }
 
-    //  self->seek_position = -1;
-    //}
+      self->seek_position = -1;
+    }
+
+    fr_media_player_render(self, self->render, region);
   }
-#endif
 
   return 0;
+}
+
+void fr_media_player_set_render(FrMediaPlayer* self, FrIMediaRender *render) {
+  sys_return_if_fail(self != NULL);
+
+  self->render = render;
 }
 
 SysInt fr_media_player_run(FrMediaPlayer* self) {
@@ -67,15 +79,16 @@ void fr_media_player_get_frame(FrMediaPlayer *self, FrVideoFrame **frame) {
   *frame = sys_async_queue_try_pop(&(self->pipeline.image_queue));
 }
 
-SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render) {
+SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrRegion *region) {
   sys_return_val_if_fail(self != NULL, -1);
   FrVideoFrame *frame = NULL;
   FrIMediaRenderInterface *iface = FR_I_MEDIA_RENDER_GET_IFACE(render);
 
   fr_media_player_get_frame(self, &frame);
-  if (frame == NULL) { return FR_MEDIA_STATE_EOF; }
+  if (frame == NULL) { return FR_MEDIA_ERROR_EOF; }
 
-  iface->render_video(render, frame);
+  sys_debug_N("%d", frame->parent.parent.serial);
+  iface->render_video(render, frame, region);
 
   return 0;
 }

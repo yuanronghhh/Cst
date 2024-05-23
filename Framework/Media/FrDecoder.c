@@ -17,7 +17,7 @@ static SysInt fr_decoder_decode_it_i(FrDecoder *self, SysPointer user_data) {
     return 0;
   }
 
-  return FR_MEDIA_STATE_AGAIN;
+  return FR_MEDIA_ERROR_AGAIN;
 }
 
 void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
@@ -31,8 +31,8 @@ void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
   sys_cond_signal(&self->ctrl.cond);
 
   sys_mutex_unlock(&self->ctrl.mutex);
-
 }
+
 static SysInt decoder_process_task(FrDecoder* self) {
   SysInt result = 0;
   sys_mutex_lock(&self->ctrl.mutex);
@@ -53,11 +53,6 @@ static SysInt decoder_process_packet(FrDecoder* self) {
 
   sys_mutex_lock(&self->ctrl.mutex);
   err = fr_decoder_decode_it(self);
-
-  if (err == FR_MEDIA_STATE_SUCCESS) {
-    err = FR_MEDIA_STATE_AGAIN;
-  }
-
   sys_mutex_unlock(&self->ctrl.mutex);
 
   return err;
@@ -65,10 +60,10 @@ static SysInt decoder_process_packet(FrDecoder* self) {
 
 static SysInt error_to_state(SysInt err) {
   switch (err) {
-  case FR_MEDIA_STATE_AGAIN:
+  case FR_MEDIA_ERROR_AGAIN:
     return FR_MEDIA_STATE_RUNNING;
     break;
-  case FR_MEDIA_STATE_EOF:
+  case FR_MEDIA_ERROR_EOF:
     return FR_MEDIA_STATE_PAUSE;
     break;
   default:
@@ -84,7 +79,6 @@ static SysInt decoder_process(FrDecoder* self) {
   if (err < 0) { goto done; }
 
   err = decoder_process_packet(self);
-  if (err < 0) { goto done; }
 
 done:
   state = error_to_state(err);
@@ -95,7 +89,7 @@ done:
       fr_media_error_string(err));
   }
 
-  return err;
+  return state;
 }
 
 static SysPointer decoder_thread(SysPointer user_data) {
@@ -105,13 +99,10 @@ static SysPointer decoder_thread(SysPointer user_data) {
   while (self->running) {
     state = decoder_process(self);
 
-    if (state == FR_MEDIA_STATE_SUCCESS
-      || state == FR_MEDIA_STATE_EOF
-      || state == FR_MEDIA_STATE_PAUSE) {
+    if (state == FR_MEDIA_STATE_PAUSE) {
 
       fr_decoder_wait(self);
     }
-
   }
 
   return NULL;

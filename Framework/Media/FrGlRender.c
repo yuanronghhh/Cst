@@ -41,7 +41,7 @@ static void clear_frame_buffer(FrGlRender *self) {
   glMatrixMode(GL_MODELVIEW);
 }
 
-static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame) {
+static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegion *region) {
   FrGlRender *self = FR_GL_RENDER(o);
   GLuint tex_id = self->tex_id;
 

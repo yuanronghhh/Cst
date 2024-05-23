@@ -20,7 +20,7 @@ struct _FrIDrawInterface {
   FrSurface* (*image_surface_create_from_png) (const char * filename);
   FrSurface* (*surface_create_for_rectangle) (FrSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
   FrSurface* (*surface_reference) (FrSurface* surface);
-  FrContext* (*create) (FrSurface* target);
+  void (*create) (FrContext *cr, FrSurface* surface);
   SysDouble (*get_line_width) (FrContext* cr);
   SysInt (*image_surface_get_height) (FrSurface* surface);
   SysInt (*image_surface_get_stride) (FrSurface* surface);
@@ -97,7 +97,7 @@ FrSurface* fr_i_draw_get_target (FrContext* cr);
 FrSurface* fr_i_draw_image_surface_create_from_png (const char * filename);
 FrSurface* fr_i_draw_surface_create_for_rectangle (FrSurface* target,SysDouble x,SysDouble y,SysDouble width,SysDouble height);
 FrSurface* fr_i_draw_surface_reference (FrSurface* surface);
-FrContext* fr_i_draw_create (FrSurface* target);
+void fr_i_draw_create(FrContext* cr, FrSurface* target);
 SysDouble fr_i_draw_get_line_width (FrContext* cr);
 SysInt fr_i_draw_image_surface_get_height (FrSurface* surface);
 SysInt fr_i_draw_image_surface_get_stride (FrSurface* surface);

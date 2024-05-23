@@ -80,6 +80,7 @@ void test_video_player(void) {
   display = fr_display_new_I();
   window = fr_window_top_new(display);
   device = FR_DEVICE(window);
+  
 
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
@@ -90,8 +91,6 @@ void test_video_player(void) {
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
   mplayer = fr_media_player_new_I(mfile);
   fr_media_player_run(mplayer);
-
-  fr_media_player_render(mplayer, imrender);
 
   sys_object_unref(imrender);
   sys_object_unref(mplayer);

@@ -16,17 +16,19 @@ typedef enum _FR_MEDIA_ENUM {
   FR_MEDIA_PACKET,
 } FR_MEDIA_ENUM;
 
-typedef enum _FR_MEDIA_STATE_ENUM {
-  FR_MEDIA_STATE_FILTER_NOT_FOUND = AVERROR_FILTER_NOT_FOUND,
-  FR_MEDIA_STATE_STREAM_NOT_FOUND = AVERROR_STREAM_NOT_FOUND,
-  FR_MEDIA_STATE_EINVAL = AVERROR(EINVAL),
-  FR_MEDIA_STATE_AGAIN = AVERROR(EAGAIN),
-  FR_MEDIA_STATE_EOF = AVERROR_EOF,
-  FR_MEDIA_STATE_UNKNOWN = -1,
-  FR_MEDIA_STATE_SUCCESS = 0,
+typedef enum _FR_MEDIA_ERROR_ENUM {
+  FR_MEDIA_ERROR_FILTER_NOT_FOUND = AVERROR_FILTER_NOT_FOUND,
+  FR_MEDIA_ERROR_STREAM_NOT_FOUND = AVERROR_STREAM_NOT_FOUND,
+  FR_MEDIA_ERROR_EINVAL = AVERROR(EINVAL),
+  FR_MEDIA_ERROR_AGAIN = AVERROR(EAGAIN),
+  FR_MEDIA_ERROR_EOF = AVERROR_EOF,
+  FR_MEDIA_ERROR_UNKNOWN = AVERROR_UNKNOWN,
+  FR_MEDIA_ERROR_SUCCESS = 0,
+} FR_MEDIA_ERROR_ENUM;
 
+typedef enum _FR_MEDIA_STATE_ENUM {
   FR_MEDIA_STATE_PAUSE = 1,
-  FR_MEDIA_STATE_RUNNING = 3,
+  FR_MEDIA_STATE_RUNNING = 2,
 } FR_MEDIA_STATE_ENUM;
 
 typedef enum _FR_DECODER_CMD_ENUM {
@@ -119,7 +121,8 @@ typedef struct _FrVideoFrameClass FrVideoFrameClass;
 typedef struct _FrVideoDecoder FrVideoDecoder;
 typedef struct _FrVideoDecoderClass FrVideoDecoderClass;
 
-typedef SysPointer (*FrMediaTaskFunc) (FrMediaTask *task, SysPointer user_data);
+typedef SysPointer (*FrMediaTaskFunc) (FrMediaTask* task, SysPointer user_data);
+typedef SysPointer (*FrMediaPlayerFunc) (FrMediaPlayer *player, SysPointer user_data);
 
 SYS_END_DECLS
 

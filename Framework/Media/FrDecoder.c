@@ -111,7 +111,7 @@ static SysPointer decoder_thread(SysPointer user_data) {
 void fr_decoder_wait (FrDecoder* self) {
   sys_mutex_lock(&self->ctrl.mutex);
   sys_cond_wait(&self->ctrl.cond, &self->ctrl.mutex);
-  sys_debug_N("wakeup %s", self->name);
+  // sys_debug_N("wakeup %s", self->name);
   sys_mutex_unlock(&self->ctrl.mutex);
 }
 
@@ -245,19 +245,10 @@ SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
 SysBool fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket *pkt) {
   sys_return_val_if_fail(self != NULL, false);
   sys_return_val_if_fail(pkt != NULL, false);
-  SysBool r;
 
-  if(sys_queue_get_length(&self->ctrl.queue) < self->limit) {
+  sys_queue_push_head (&self->ctrl.queue, pkt);
 
-    sys_queue_push_head (&self->ctrl.queue, pkt);
-    r = true;
-
-  } else {
-
-    r = false;
-  }
-
-  return r;
+  return true;
 }
 
 SysInt fr_decoder_open(FrDecoder* self) {

@@ -205,6 +205,8 @@ set(SRC
   ./FrCommon.c
   ./FrCore.c
   ./FrCore.h
+  ./FrConfig.h
+  ./FrConfig.h.in
 )
 
 if(USE_MONO)
@@ -226,4 +228,6 @@ add_deps_N(Framework
   ""
   "${EXTERNAL_LIBS}"
 )
+configure_file(${CMAKE_CURRENT_LIST_DIR}/FrConfig.h.in
+  ${CMAKE_CURRENT_LIST_DIR}/FrConfig.h)
 set_property(TARGET Framework PROPERTY FOLDER CstProject)

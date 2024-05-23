@@ -1,7 +1,7 @@
 #ifndef __TEST_COMMON_H__
 #define __TEST_COMMON_H__
 
-#include <FrameworkTest/FrConfig.h>
+#include <FrameworkTest/FrTestConfig.h>
 #include <Framework/FrCore.h>
 #include <unity.h>
 

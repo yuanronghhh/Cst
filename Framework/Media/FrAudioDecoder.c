@@ -7,7 +7,7 @@ static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame *f
   FrDecoder *d = FR_DECODER(o);
   FrPipeline *box = fr_decoder_get_user_data(d);
 
-  sys_async_queue_push(&box->sample_queue, frame);
+  // sys_async_queue_push(&box->sample_queue, frame);
 
   return 0;
 }

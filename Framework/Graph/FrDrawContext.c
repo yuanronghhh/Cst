@@ -124,7 +124,7 @@ void fr_draw_context_frame_begin(FrDrawContext* self, FrRegion* region) {
   FrSurfaceContext info = {.width = width, .height = height };
   self->device_surface = fr_device_create_surface(self->device, &info);
 
-  surface_update(self, width, height);
+  // surface_update(self, width, height);
 
   self->is_painting = true;
 }
@@ -159,7 +159,7 @@ void fr_draw_context_frame_end(FrDrawContext* self, FrRegion* region) {
   sys_return_if_fail(self != NULL);
   FrIDrawInterface *g_draw_iface = fr_i_draw_get_g_iface();
 
-  surface_composite(self);
+  // surface_composite(self);
 
   g_draw_iface->surface_flush(self->device_surface);
   sys_clear_pointer(&self->device_surface, _sys_object_unref);

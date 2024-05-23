@@ -14,6 +14,7 @@ if(WIN32)
 
   if(USE_LLVM)
     SET(CMAKE_TOOLCHAIN_FILE "${CMAKE_CURRENT_LIST_DIR}/../toolchain/ClangWindows.cmake")
+    set(CMAKE_GENERATOR_TOOLSET "ClangCL")
   endif()
 
   if(USE_MONO)

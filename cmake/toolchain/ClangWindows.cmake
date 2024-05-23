@@ -19,6 +19,4 @@ endif()
 set(CMAKE_C_COMPILER "${CLANG_HOME}/bin/clang.exe")
 set(CMAKE_CXX_COMPILER "${CLANG_HOME}/bin/clang++.exe")
 
-set(CMAKE_GENERATOR_TOOLSET "ClangCL")
-
 message(STATUS "USE ClangWindows ToolChain ${CMAKE_C_COMPILER}")

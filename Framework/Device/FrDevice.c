@@ -10,6 +10,7 @@ FrSurface* fr_device_create_surface_by_type (FrDevice* self,
   sys_return_val_if_fail(surface_type != 0, NULL);
   FrSurface *o;
 
+  info->device = self;
   o = sys_object_new(surface_type, NULL);
   fr_surface_construct(o, info);
 

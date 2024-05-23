@@ -200,7 +200,7 @@ SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {
   if(err < 0) {
     av_packet_unref(p);
 
-    sys_warning_N("error reading packet: %s", fr_media_error_string(err));
+    // sys_warning_N("error reading packet: %s", fr_media_error_string(err));
   }
 
   return err;

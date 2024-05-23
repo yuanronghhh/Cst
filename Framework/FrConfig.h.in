@@ -1,0 +1,6 @@
+#ifndef __FR_CONFIG_H__
+#define __FR_CONFIG_H__
+
+#define FR_PROJECT_DIR  "${CMAKE_SOURCE_DIR}"
+
+#endif

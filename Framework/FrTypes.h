@@ -1,6 +1,7 @@
 #ifndef __FR_TYPES_H__
 #define __FR_TYPES_H__
 
+#include <Framework/FrConfig.h>
 #include <System/SysCore.h>
 
 SYS_BEGIN_DECLS

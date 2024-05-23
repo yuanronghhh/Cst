@@ -23,11 +23,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   pkt = (FrPacket *)sys_object_dclone(mpkt);
   sindex = fr_media_packet_get_stream_index(mpkt);
   fr_packet_set_serial(pkt, self->serial);
-
-  if (self->serial > 20) {
-
-    return FR_MEDIA_ERROR_EOF;
-  }
+  sys_usleep(1e6 / 48.0);
 
   switch (sindex) {
     case FR_MEDIA_VIDEO:

@@ -37,25 +37,26 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   region = fr_region_create_rectangle(&bound);
 
   while(self->running) {
+      fr_wait_events_timeout(1.0 / 48.0);
 
-    if (player_should_pause(self)) {
-      if (fr_media_file_pause(self->file) < 0) {
-        break;
-      }
-
-      self->paused = -1;
-    } else {
-
-      fr_media_player_play(self);
-    }
-
-    if (player_should_seek(self)) {
-      if (fr_media_file_seek(self->file, self->seek_position) < 0) {
-        break;
-      }
-
-      self->seek_position = -1;
-    }
+     if (player_should_pause(self)) {
+       if (fr_media_file_pause(self->file) < 0) {
+         break;
+       }
+     
+       self->paused = -1;
+     } else {
+     
+       fr_media_player_play(self);
+     }
+     
+     if (player_should_seek(self)) {
+       if (fr_media_file_seek(self->file, self->seek_position) < 0) {
+         break;
+       }
+     
+       self->seek_position = -1;
+     }
 
     fr_media_player_render(self, self->render, region);
   }
@@ -87,8 +88,9 @@ SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrReg
   fr_media_player_get_frame(self, &frame);
   if (frame == NULL) { return FR_MEDIA_ERROR_EOF; }
 
-  sys_debug_N("%d", frame->parent.parent.serial);
+  // sys_debug_N("%d", frame->parent.parent.serial);
   iface->render_video(render, frame, region);
+  sys_object_unref(frame);
 
   return 0;
 }

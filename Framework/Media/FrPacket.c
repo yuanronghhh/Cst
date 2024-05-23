@@ -19,6 +19,19 @@ SysBool fr_packet_empty(FrPacket* self) {
 
   return self->serial == -1;
 }
+
+SysObject* fr_packet_dclone_i(SysObject* o) {
+	sys_return_val_if_fail(o != NULL, NULL);
+	SysObject* n = SYS_OBJECT_CLASS(fr_packet_parent_class)->dclone(o);
+
+	FrPacket* nself = FR_PACKET(n);
+	FrPacket* oself = FR_PACKET(o);
+
+	nself->serial = oself->serial;
+
+	return n;
+}
+
 /* object api */
 FrPacket* fr_packet_new(void) {
   return sys_object_new(FR_TYPE_PACKET, NULL);
@@ -32,6 +45,7 @@ static void fr_packet_dispose(SysObject* o) {
 static void fr_packet_class_init(FrPacketClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
+  ocls->dclone = fr_packet_dclone_i;
   ocls->dispose = fr_packet_dispose;
 }
 

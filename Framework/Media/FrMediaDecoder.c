@@ -161,25 +161,30 @@ static SysInt media_decoder_decode_frame_i (FrMediaDecoder* self, FrMediaFrame *
 
 static SysInt fr_media_decoder_decode_it_i(FrDecoder* o, SysPointer user_data) {
   FrMediaFrame *nframe = NULL;
-  FrMediaPacket *mpkt = NULL;
+  FrPacket *nframe_p = NULL;
+  FrPacket *mpkt = NULL;
   FrMediaDecoder *self = FR_MEDIA_DECODER(o);
   SysInt err;
+  SysInt m_serial;
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
   sys_return_val_if_fail(cls->decode_frame, -1);
 
-  if (!fr_decoder_pop_packet_unlock(o, (FrPacket**)&mpkt)) {
+  if (!fr_decoder_pop_packet_unlock(o, &mpkt)) {
     return 0;
   }
 
-  err = fr_media_decoder_send_packet(self, mpkt);
+  err = fr_media_decoder_send_packet(self, FR_MEDIA_PACKET(mpkt));
   if(err < 0) { return err; }
+  m_serial = fr_packet_get_serial(mpkt);
 
   do {
     err = fr_media_decoder_receive_frame(self, &nframe);
     if (err == FR_MEDIA_ERROR_AGAIN) {
       break;
     }
+    nframe_p = FR_PACKET(nframe);
+    fr_packet_set_serial(nframe_p, m_serial);
 
     sys_assert(nframe != NULL);
     err = cls->decode_frame(self, nframe);

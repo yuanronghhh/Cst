@@ -100,7 +100,7 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
   paint_cr = cairo_create(paint_surface);
 
 #if 0
-  SysChar* filename = PROJECT_DIR"/Assets/surface.png";
+  SysChar* filename = FR_PROJECT_DIR"/Assets/surface.png";
   cairo_status_t err;
 
   err = cairo_surface_write_to_png(paint_surface, filename);
@@ -109,16 +109,18 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
     return;
   }
 #endif
+  cairo_save(paint_cr);
   cairo_rectangle_red_i(paint_cr, 0, 10);
+  cairo_restore(paint_cr);
+
   sys_clear_pointer(&paint_cr, cairo_destroy);
 
   cairo_overlay_i(window_cr, paint_surface, 0, 0);
   cairo_paint(window_cr);
 
   sys_clear_pointer(&window_cr, cairo_destroy);
-  cairo_surface_flush(draw_context->device_surface->ctx);
-
   sys_clear_pointer(&paint_surface, cairo_surface_destroy);
+  fr_surface_flush(draw_context->device_surface);
 }
 
 static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegion *region) {
@@ -161,13 +163,49 @@ static void cairo_context_fill_bound_i(FrContext* self, const FrBound *bound) {
 }
 
 /* surface */
-static void fr_surface_create(FrSurface* o, FrSurfaceContext *info) {
-  cairo_surface_t *draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-      info->width, 
-      info->height);
-  if(draw_surface == NULL) { return; }
+static cairo_surface_t* create_cairo_surface(FrWindow* window, SysInt width, SysInt height) {
+    cairo_surface_t* surface;
 
-  o->ctx = draw_surface;
+#if SYS_OS_WIN32
+    HWND hwd = fr_window_get_win32_window(window);
+    HDC hdc = GetDC(hwd);
+    surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+
+#elif SYS_OS_UNIX
+    FrDisplay* display = fr_window_get_display(window);
+    Window xwindow = fr_window_get_x11_window(window);
+    Display* ndisplay = fr_display_get_x11_display(display);
+    int nscreen = DefaultScreen(ndisplay);
+    Visual* nvisual = DefaultVisual(ndisplay, nscreen);
+
+    surface = cairo_xlib_surface_create(ndisplay,
+        xwindow,
+        nvisual,
+        width, height);
+#endif
+
+    cairo_t* cr = cairo_create(surface);
+    cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
+    cairo_paint(cr);
+    cairo_destroy(cr);
+
+    return surface;
+}
+
+static void fr_surface_create(FrSurface* o, FrSurfaceContext *info) {
+	cairo_surface_t* draw_surface;
+
+	if (info->device) {
+		draw_surface = create_cairo_surface(FR_WINDOW(info->device), info->width, info->height);
+
+	} else {
+		draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+			info->width,
+			info->height);
+	}
+	if (draw_surface == NULL) { return; }
+
+	o->ctx = draw_surface;
 }
 
 static void surface_create_image_surface_from_surface_i(
@@ -178,35 +216,6 @@ static void surface_create_image_surface_from_surface_i(
 
   cairo_surface_t * ns = cairo_surface_create_similar_image(surface->ctx, CAIRO_FORMAT_ARGB32, width, height);
   o->ctx = ns;
-}
-
-static cairo_surface_t *create_cairo_surface(FrWindow *window, SysInt width, SysInt height) {
-  cairo_surface_t* surface;
-
-#if SYS_OS_WIN32
-  HWND hwd = fr_window_get_win32_window(window);
-  HDC hdc = GetDC(hwd);
-  surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
-
-#elif SYS_OS_UNIX
-  FrDisplay* display = fr_window_get_display(window);
-  Window xwindow = fr_window_get_x11_window(window);
-  Display* ndisplay = fr_display_get_x11_display(display);
-  int nscreen = DefaultScreen(ndisplay);
-  Visual* nvisual = DefaultVisual(ndisplay, nscreen);
-
-  surface = cairo_xlib_surface_create(ndisplay,
-    xwindow,
-    nvisual,
-    width, height);
-#endif
-
-  cairo_t* cr = cairo_create(surface);
-  cairo_set_operator(cr, CAIRO_OPERATOR_CLEAR);
-  cairo_paint(cr);
-  cairo_destroy(cr);
-
-  return surface;
 }
 
 static FrSurface* fr_surface_create_similar_image(FrSurface *surface, SysInt width, SysInt height) {

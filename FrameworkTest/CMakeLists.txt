@@ -33,6 +33,8 @@ set(SRC
   ./TestCore.c
   ./TestCore.h
   ./Common.h
+  ./FrTestConfig.h
+  ./FrTestConfig.h.in
 )
 
 add_executable(FrameworkTest "${SRC}")
@@ -44,5 +46,5 @@ add_deps_N(FrameworkTest
   "${EXTERNAL_LIBS}"
 )
 set_property(TARGET FrameworkTest PROPERTY FOLDER CstProject)
-configure_file(${CMAKE_CURRENT_LIST_DIR}/FrConfig.h.in
-  ${CMAKE_CURRENT_LIST_DIR}/FrConfig.h)
+configure_file(${CMAKE_CURRENT_LIST_DIR}/FrTestConfig.h.in
+  ${CMAKE_CURRENT_LIST_DIR}/FrTestConfig.h)

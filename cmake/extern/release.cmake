@@ -6,6 +6,10 @@ function(release_copy_files
     target_path
     target_bin)
 
+  if(NOT EXISTS "${LIBDIR}")
+    message(FATAL_ERROR "Windows requires pre-compiled libs at: '${LIBDIR}'")
+  endif()
+
   if(${CMAKE_BUILD_TYPE} STREQUAL "Release") 
     log("Copy file to: ${LIBDIR}/${target_name}/lib")
   else()

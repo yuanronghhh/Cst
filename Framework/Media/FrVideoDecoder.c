@@ -72,7 +72,9 @@ FrDecoder* fr_video_decoder_new(void) {
 
 static void fr_video_decoder_dispose(SysObject* o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
+  FrDecoder* decoder = FR_DECODER(o);
 
+  fr_decoder_stop(decoder);
   sys_object_destroy(&self->scale);
   sys_object_destroy(&self->frame);
 

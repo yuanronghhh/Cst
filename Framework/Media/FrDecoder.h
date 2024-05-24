@@ -69,6 +69,7 @@ SysInt fr_decoder_start(FrDecoder* self);
 void fr_decoder_stop(FrDecoder* self);
 void fr_decoder_wait (FrDecoder* self);
 void fr_decoder_set_task(FrDecoder *self, FrMediaTask *task);
+SysBool fr_decoder_need_wait(FrDecoder* self);
 
 void fr_decoder_set_running(FrDecoder *self, SysBool running);
 SysBool fr_decoder_get_running(FrDecoder *self);

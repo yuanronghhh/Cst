@@ -63,6 +63,10 @@ static SysInt error_to_state(SysInt err) {
   case FR_MEDIA_ERROR_AGAIN:
     return FR_MEDIA_STATE_RUNNING;
     break;
+
+  case FR_MEDIA_ERROR_EXIT:
+    return FR_MEDIA_STATE_STOPED;
+  case FR_MEDIA_ERROR_WAIT:
   case FR_MEDIA_ERROR_EOF:
     return FR_MEDIA_STATE_PAUSE;
     break;
@@ -99,12 +103,19 @@ static SysPointer decoder_thread(SysPointer user_data) {
   while (self->running) {
     state = decoder_process(self);
 
-    if (state == FR_MEDIA_STATE_PAUSE) {
-
-      fr_decoder_wait(self);
+    switch (state) {
+      case FR_MEDIA_STATE_PAUSE:
+        fr_decoder_wait(self);
+        break;
+      case FR_MEDIA_STATE_RUNNING:
+        break;
+      case FR_MEDIA_STATE_STOPED:
+        goto done;
     }
   }
 
+done:
+  sys_debug_N("decoder exit: %s", self->name);
   return NULL;
 }
 
@@ -113,6 +124,13 @@ void fr_decoder_wait (FrDecoder* self) {
   sys_cond_wait(&self->ctrl.cond, &self->ctrl.mutex);
   // sys_debug_N("wakeup %s", self->name);
   sys_mutex_unlock(&self->ctrl.mutex);
+}
+
+SysBool fr_decoder_need_wait(FrDecoder* self) {
+  sys_return_val_if_fail(self != NULL, false);
+  SysInt len = sys_queue_get_length(&self->ctrl.queue);
+
+  return len >= self->limit;
 }
 
 static SysPointer init_it(FrMediaTask* task, SysPointer user_data) {
@@ -151,13 +169,13 @@ SysInt fr_decoder_start(FrDecoder* self) {
 static SysPointer stop_it(FrMediaTask *task, SysPointer user_data) {
   FrDecoder *self = user_data;
 
-  sys_debug_N("stop it: %s", self->name);
   self->running = false;
-  return INT_TO_POINTER(-1);
+  return INT_TO_POINTER(FR_MEDIA_ERROR_EXIT);
 }
 
 void fr_decoder_stop(FrDecoder* self) {
   sys_return_if_fail(self != NULL);
+  if (!fr_decoder_get_running(self)) { return; }
 
   FrMediaTask task = {0};
   task.handler = stop_it;
@@ -165,6 +183,7 @@ void fr_decoder_stop(FrDecoder* self) {
 
   fr_decoder_set_task(self, &task);
   fr_media_task_wait(&task);
+  sys_thread_join(self->thread);
 }
 
 void fr_decoder_set_running(FrDecoder *self, SysBool running) {
@@ -235,8 +254,14 @@ SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
     SysBool r;
     sys_mutex_lock(&self->ctrl.mutex);
 
-    r = fr_decoder_push_packet_unlock(self, pkt);
-    sys_cond_signal(&self->ctrl.cond);
+    if(!fr_decoder_need_wait(self)) {
+      r = fr_decoder_push_packet_unlock(self, pkt);
+      sys_cond_signal(&self->ctrl.cond);
+
+    } else {
+
+      r = false;
+    }
 
     sys_mutex_unlock(&self->ctrl.mutex);
     return r;
@@ -311,8 +336,6 @@ static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
 
   fr_decoder_stop(self);
-  sys_thread_join(self->thread);
-  sys_thread_unref(self->thread);
 
   sys_queue_clear(&self->ctrl.queue);
   sys_free_N(self->name);
@@ -336,7 +359,7 @@ void fr_decoder_init(FrDecoder* self) {
   self->start_pts = -1;
   self->serial = -1;
   self->running = true;
-  self->limit = 20;
+  self->limit = 48;
   self->task = NULL;
 
   sys_queue_init(&self->ctrl.queue);

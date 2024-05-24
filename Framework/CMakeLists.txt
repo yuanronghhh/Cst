@@ -134,6 +134,8 @@ set(SRC
   ./Media/FrMediaPacket.h
   ./Media/FrMediaPlayer.c
   ./Media/FrMediaPlayer.h
+  ./Media/FrPlayer.c
+  ./Media/FrPlayer.h
   ./Media/FrMediaStream.c
   ./Media/FrMediaStream.h
   ./Media/FrPacket.c

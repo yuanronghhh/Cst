@@ -193,19 +193,19 @@ static cairo_surface_t* create_cairo_surface(FrWindow* window, SysInt width, Sys
 }
 
 static void fr_surface_create(FrSurface* o, FrSurfaceContext *info) {
-	cairo_surface_t* draw_surface;
+  cairo_surface_t* draw_surface;
 
-	if (info->device) {
-		draw_surface = create_cairo_surface(FR_WINDOW(info->device), info->width, info->height);
+  if (info->device) {
+    draw_surface = create_cairo_surface(FR_WINDOW(info->device), info->width, info->height);
 
-	} else {
-		draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
-			info->width,
-			info->height);
-	}
-	if (draw_surface == NULL) { return; }
+  } else {
+    draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
+        info->width,
+        info->height);
+  }
+  if (draw_surface == NULL) { return; }
 
-	o->ctx = draw_surface;
+  o->ctx = draw_surface;
 }
 
 static void surface_create_image_surface_from_surface_i(

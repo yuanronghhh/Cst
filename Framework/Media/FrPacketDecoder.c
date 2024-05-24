@@ -10,6 +10,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   FrPacket* pkt;
   SysInt sindex;
   SysInt err;
+  FrDecoder *dec;
 
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
   FrPipeline *box = user_data;
@@ -23,27 +24,25 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   pkt = (FrPacket *)sys_object_dclone(mpkt);
   sindex = fr_media_packet_get_stream_index(mpkt);
   fr_packet_set_serial(pkt, self->serial);
-  sys_usleep(1e6 / 48.0);
 
   switch (sindex) {
     case FR_MEDIA_VIDEO:
-      if (!fr_decoder_push_packet(box->video_decoder, pkt)) {
-        return FR_MEDIA_ERROR_EOF;
-      }
+      dec = box->video_decoder;
       break;
     case FR_MEDIA_AUDIO:
-      if (!fr_decoder_push_packet(box->audio_decoder, pkt)) {
-        return FR_MEDIA_ERROR_EOF;
-      }
+      dec = box->audio_decoder;
       break;
     case FR_MEDIA_SUBTITLE:
-      if (!fr_decoder_push_packet(box->subtitle_decoder, pkt)) {
-        return FR_MEDIA_ERROR_EOF;
-      }
+      dec = box->subtitle_decoder;
       break;
     default:
       sys_warning_N("Not found media packet type: %s", sindex);
       return -1;
+  }
+
+  if(!fr_decoder_push_packet(dec, pkt)) {
+
+    return FR_MEDIA_ERROR_WAIT;
   }
 
   return FR_MEDIA_ERROR_AGAIN;
@@ -79,7 +78,9 @@ FrDecoder *fr_packet_decoder_new_I(FrMediaFile *file) {
 
 static void fr_packet_decoder_dispose(SysObject* o) {
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
+  FrDecoder* decoder = FR_DECODER(o);
 
+  fr_decoder_stop(decoder);
   sys_clear_pointer(&self->file, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_packet_decoder_parent_class)->dispose(o);

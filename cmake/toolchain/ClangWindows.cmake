@@ -1,6 +1,9 @@
-if(NOT EXISTS "${CLANG_HOME}/")
-  message(FATAL_ERROR "Require CLANG_HOME for ClangWindows ToolChain")
+set(LLVM_HOME "$ENV{LLVM_BIN}/..")
+if(NOT EXISTS "${LLVM_HOME}")
+  message(FATAL_ERROR "Require LLVM_BIN for ClangWindows ToolChain")
 endif()
+STRING(REPLACE "\\" "/" LLVM_HOME ${LLVM_HOME})
+set(LLVM_VERSION "18.1.4")
 
 set(CMAKE_SYSTEM_NAME Windows)
 set(CMAKE_SYSTEM_VERSION 10.0)
@@ -16,7 +19,7 @@ if(WIN32)
   # endif()
 endif()
 
-set(CMAKE_C_COMPILER "${CLANG_HOME}/bin/clang.exe")
-set(CMAKE_CXX_COMPILER "${CLANG_HOME}/bin/clang++.exe")
+set(CMAKE_C_COMPILER "${LLVM_HOME}/bin/clang.exe")
+set(CMAKE_CXX_COMPILER "${LLVM_HOME}/bin/clang++.exe")
 
 message(STATUS "USE ClangWindows ToolChain ${CMAKE_C_COMPILER}")

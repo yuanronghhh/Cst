@@ -108,6 +108,6 @@ static void fr_pipeline_class_init(FrPipelineClass* cls) {
 }
 
 void fr_pipeline_init(FrPipeline* self) {
-  sys_async_queue_init(&self->image_queue);
-  sys_async_queue_init(&self->sample_queue);
+  sys_async_queue_init_full(&self->image_queue, (SysDestroyFunc)_sys_object_unref);
+  sys_async_queue_init_full(&self->sample_queue, (SysDestroyFunc)_sys_object_unref);
 }

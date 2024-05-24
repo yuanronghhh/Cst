@@ -22,6 +22,10 @@ static SYS_INLINE SysBool player_should_seek(FrMediaPlayer *self) {
   return self->seek_position != fr_media_file_get_seek_position(self->file);
 }
 
+void fr_media_player_wait(FrMediaPlayer *self) {
+  fr_wait_events();
+}
+
 static SysInt media_player_do(FrMediaPlayer *self) {
   FrBound bound = { .width = 800, .height = 600 };
   FrVideoDecoder* video_decoder;
@@ -37,28 +41,29 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   region = fr_region_create_rectangle(&bound);
 
   while(self->running) {
-      fr_wait_events_timeout(1.0 / 48.0);
+    fr_media_player_wait(self);
 
-     if (player_should_pause(self)) {
-       if (fr_media_file_pause(self->file) < 0) {
-         break;
-       }
-     
-       self->paused = -1;
-     } else {
-     
-       fr_media_player_play(self);
-     }
-     
-     if (player_should_seek(self)) {
-       if (fr_media_file_seek(self->file, self->seek_position) < 0) {
-         break;
-       }
-     
-       self->seek_position = -1;
-     }
+    if (player_should_pause(self)) {
+      if (fr_media_file_pause(self->file) < 0) {
+        break;
+      }
+
+      self->paused = -1;
+    } else {
+
+      fr_media_player_play(self);
+    }
+
+    if (player_should_seek(self)) {
+      if (fr_media_file_seek(self->file, self->seek_position) < 0) {
+        break;
+      }
+
+      self->seek_position = -1;
+    }
 
     fr_media_player_render(self, self->render, region);
+    break;
   }
 
   return 0;

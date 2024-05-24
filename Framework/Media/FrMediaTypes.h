@@ -22,13 +22,16 @@ typedef enum _FR_MEDIA_ERROR_ENUM {
   FR_MEDIA_ERROR_EINVAL = AVERROR(EINVAL),
   FR_MEDIA_ERROR_AGAIN = AVERROR(EAGAIN),
   FR_MEDIA_ERROR_EOF = AVERROR_EOF,
+  FR_MEDIA_ERROR_EXIT = AVERROR_EXIT,
   FR_MEDIA_ERROR_UNKNOWN = AVERROR_UNKNOWN,
+  FR_MEDIA_ERROR_WAIT = -2,
   FR_MEDIA_ERROR_SUCCESS = 0,
 } FR_MEDIA_ERROR_ENUM;
 
 typedef enum _FR_MEDIA_STATE_ENUM {
   FR_MEDIA_STATE_PAUSE = 1,
   FR_MEDIA_STATE_RUNNING = 2,
+  FR_MEDIA_STATE_STOPED = 3,
 } FR_MEDIA_STATE_ENUM;
 
 typedef enum _FR_DECODER_CMD_ENUM {
@@ -64,6 +67,9 @@ typedef struct _FrDecoderClass FrDecoderClass;
 
 typedef struct _FrStream FrStream;
 typedef struct _FrStreamClass FrStreamClass;
+
+typedef struct _FrPlayer FrPlayer;
+typedef struct _FrPlayerClass FrPlayerClass;
 
 typedef struct _FrIDecoder FrIDecoder;
 typedef struct _FrIDecoderInterface FrIDecoderInterface;

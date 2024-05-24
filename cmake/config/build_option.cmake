@@ -7,9 +7,6 @@ set(USE_DEBUGGER 1 CACHE BOOL "" FORCE)
 if(WIN32)
   set(OS_ARCHITECH "Win64")
   set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/${OS_ARCHITECH}_vc14)
-  set(CLANG_HOME "$ENV{LLVM_BIN}/../")
-  STRING(REPLACE "\\" "/" CLANG_HOME ${CLANG_HOME})
-  set(CLANG_VERSION "18.1.4")
   # set enviroment first
 
   if(USE_LLVM)

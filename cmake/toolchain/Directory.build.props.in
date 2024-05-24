@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup>
-    <LLVMInstallDir>${CLANG_HOME}</LLVMInstallDir>
-    <LLVMToolsVersion>${CLANG_VERSION}</LLVMToolsVersion>
+    <LLVMInstallDir>${LLVM_HOME}</LLVMInstallDir>
+    <LLVMToolsVersion>${LLVM_VERSION}</LLVMToolsVersion>
   </PropertyGroup>
 </Project>
 

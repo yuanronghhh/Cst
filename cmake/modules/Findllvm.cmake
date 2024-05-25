@@ -1,5 +1,13 @@
+set(LLVM_BIN "$ENV{LLVM_BIN}")
+if(NOT ${LLVM_BIN} STREQUAL "")
+  STRING(REPLACE "\\" "/" LLVM_BIN ${LLVM_BIN})
+endif()
+set(LLVM_HOME "${LLVM_BIN}/..")
+
+log("${LLVM_HOME}")
 set(search_dirs
   ${LIBDIR}
+  ${LLVM_HOME}
   /usr/local
   /usr
   /usr/lib/x86_64-linux-gnu
@@ -12,7 +20,7 @@ FIND_PATH(LLVM_INCLUDE_DIR
 )
 
 set(LLVM_COMPONENTS
-  LLVM-C
+  clangSupport
 )
 
 FOREACH(COMPONENT ${LLVM_COMPONENTS})

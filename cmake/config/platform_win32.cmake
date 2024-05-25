@@ -62,6 +62,7 @@ add_definitions("/MT")
 add_definitions("/MP")
 add_definitions("/W3")
 add_definitions("/WX")
+set(ASAN_DLL "G:/Download/vs2022IDE/VC/Tools/MSVC/14.39.33519/bin/Hostx64/x64/clang_rt.asan_dynamic-x86_64.dll")
 
 if(USE_LLVM)
   add_definitions("-Wno-unused-function")
@@ -70,7 +71,7 @@ if(USE_LLVM)
 else()
   add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
   add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-  add_definitions("/wd\"4100\" /wd\"4206\" /wd\"4201\" /wd\"4996\" /wd\"0219\"")
+  add_definitions("/wd\"4100\" /wd\"4206\" /wd\"4201\" /wd\"4996\"")
 
   set(ADDTIONAL_LIBRARIES
     kernel32.lib

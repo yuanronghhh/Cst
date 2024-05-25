@@ -11,12 +11,12 @@ set(CMAKE_SYSTEM_PROCESSOR AMD64)
 
 if(WIN32)
   set(LLVM_PROPS "${CMAKE_BINARY_DIR}/Directory.build.props")
-  # if (NOT EXISTS ${LLVM_PROPS})
-  #   configure_file(
-  #     "${CMAKE_CURRENT_LIST_DIR}/Directory.build.props.in"
-  #     "${LLVM_PROPS}"
-  #   )
-  # endif()
+  if (NOT EXISTS ${LLVM_PROPS})
+    configure_file(
+      "${CMAKE_CURRENT_LIST_DIR}/Directory.build.props.in"
+      "${LLVM_PROPS}"
+    )
+  endif()
 endif()
 
 set(CMAKE_C_COMPILER "${LLVM_HOME}/bin/clang.exe")

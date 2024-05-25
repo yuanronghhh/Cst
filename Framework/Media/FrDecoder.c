@@ -128,7 +128,7 @@ void fr_decoder_wait (FrDecoder* self) {
 
 SysBool fr_decoder_need_wait(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, false);
-  SysInt len = sys_queue_get_length(&self->ctrl.queue);
+  SysUInt len = sys_queue_get_length(&self->ctrl.queue);
 
   return len >= self->limit;
 }
@@ -198,11 +198,11 @@ void fr_decoder_set_running(FrDecoder *self, SysBool running) {
 SysBool fr_decoder_get_running(FrDecoder *self) {
   sys_return_val_if_fail(self != NULL, false);
   SysInt r;
-  
   sys_mutex_lock(&self->ctrl.mutex);
-  r = self->running;
-  sys_mutex_unlock(&self->ctrl.mutex);
 
+  r = self->running;
+
+  sys_mutex_unlock(&self->ctrl.mutex);
   return r;
 }
 

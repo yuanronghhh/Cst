@@ -71,7 +71,7 @@ FrSurface* fr_i_draw_surface_reference (FrSurface* surface) {
 void fr_i_draw_create (FrContext* cr, FrSurface* target) {
   sys_return_if_fail(self != NULL);
 
-  return self->create(cr, target);
+  self->create(cr, target);
 }
 
 SysDouble fr_i_draw_get_line_width (FrContext* cr) {

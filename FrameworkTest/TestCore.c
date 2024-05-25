@@ -1,7 +1,7 @@
 #include <FrameworkTest/TestCore.h>
 #include <FrameworkTest/tests/TestVideo.h>
 
-#define CHECK_TYPE FR_TYPE_MEDIA_FRAME
+#define CHECK_TYPE FR_TYPE_PACKET
 
 void setUp(void) {
 }
@@ -40,7 +40,7 @@ int main(int argc, SysChar* argv[]) {
   sys_set_debugger(true);
   sys_setup();
 
-#if 1
+#if 0
   sys_object_set_ref_hook(object_ref_debug);
   sys_object_set_unref_hook(object_unref_debug);
   sys_object_set_new_hook(object_new_debug);

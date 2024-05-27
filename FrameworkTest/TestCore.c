@@ -1,20 +1,21 @@
 #include <FrameworkTest/TestCore.h>
 #include <FrameworkTest/tests/TestVideo.h>
 
-#define CHECK_TYPE FR_TYPE_PACKET
+#define CHECK_TYPE FR_TYPE_MEDIA_PACKET
 
 void setUp(void) {
 }
 
 void tearDown(void) {
 }
+static SysInt i = 0;
 
 static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count) {
   if (!sys_object_is_a(o, CHECK_TYPE)) {
     return;
   }
 
-  sys_debug_N("%p\t%s\t%d", o, name, ref_count);
+  sys_debug_N("%d\t%p\t%s\t%d", ++i, o, name, ref_count);
   sys_assert(ref_count == 1);
 }
 
@@ -40,7 +41,7 @@ int main(int argc, SysChar* argv[]) {
   sys_set_debugger(true);
   sys_setup();
 
-#if 0
+#if 1
   sys_object_set_ref_hook(object_ref_debug);
   sys_object_set_unref_hook(object_unref_debug);
   sys_object_set_new_hook(object_new_debug);

@@ -179,7 +179,6 @@ void fr_draw_context_construct(FrDrawContext* self, FrDevice* device) {
 
 void fr_draw_context_g_set(FrDrawContext *ctx) {
   sys_assert(g_draw == NULL && "can not set draw context twice");
-  fr_font_setup();
 
   g_draw = sys_object_ref(ctx);
   fr_i_draw_setup(FR_I_DRAW(g_draw));
@@ -187,7 +186,6 @@ void fr_draw_context_g_set(FrDrawContext *ctx) {
 
 void fr_draw_context_g_unset(void) {
   sys_assert(g_draw != NULL);
-  fr_font_teardown();
 
   sys_clear_pointer(&g_draw, _sys_object_unref);
   fr_i_draw_teardown();

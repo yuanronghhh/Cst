@@ -35,7 +35,6 @@ SysObject* fr_media_frame_dclone_i(SysObject* o) {
   return n;
 }
 
-
 /* object api */
 FrMediaFrame* fr_media_frame_new(void) {
   return sys_object_new(FR_TYPE_MEDIA_FRAME, NULL);

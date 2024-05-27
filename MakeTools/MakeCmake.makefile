@@ -43,6 +43,9 @@ run:
 	#export LSAN_OPTIONS=verbosity=1:log_threads=1
 	@${BIN_FILE} ${ARGS}
 
+clean:
+	@make -C "${BUILD_DIR}" clean
+
 prof-linux:
 	@${BIN_FILE} ${ARGS}
 	@gprof ${BIN_FILE} ${ARGS} > perf.log

@@ -7,7 +7,7 @@ static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame *f
   FrDecoder *d = FR_DECODER(o);
   FrPipeline *box = fr_decoder_get_user_data(d);
 
-  // sys_async_queue_push(&box->sample_queue, frame);
+  sys_async_queue_push(&box->sample_queue, frame);
 
   return 0;
 }
@@ -24,6 +24,9 @@ FrDecoder* fr_audio_decoder_new(void) {
 }
 
 static void fr_audio_decoder_dispose(SysObject* o) {
+  FrAudioDecoder* self = FR_AUDIO_DECODER(o);
+
+  sys_object_destroy(&self->frame);
 
   SYS_OBJECT_CLASS(fr_audio_decoder_parent_class)->dispose(o);
 }

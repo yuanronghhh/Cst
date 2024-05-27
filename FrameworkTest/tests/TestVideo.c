@@ -112,6 +112,14 @@ void test_video_player(void) {
   fr_draw_context_g_unset();
 }
 
+static void test_avformat_leak(void) {
+  FrMediaFile *mfile;
+
+  mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
+
+  sys_clear_pointer(&mfile, _sys_object_unref);
+}
+
 
 void test_fr_window_leak(void) {
   GLFWwindow *gwindow;
@@ -125,6 +133,7 @@ void test_fr_window_leak(void) {
 void test_video_init(int argc, SysChar * argv[]) {
   UNITY_BEGIN();
   {
+    // RUN_TEST(test_avformat_leak);
     RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_draw_context);
     // RUN_TEST(test_fr_basic);

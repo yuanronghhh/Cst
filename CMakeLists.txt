@@ -10,7 +10,7 @@ include(cmake/config/build_option.cmake)
 include(cmake/init.cmake)
 
 project(Cst)
-enable_language(C CSharp)
+enable_language(C)
 
 # add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/Cst/System" ${CMAKE_BINARY_DIR}/CstDemo/Cst/System)
 add_subdirectory(Framework)

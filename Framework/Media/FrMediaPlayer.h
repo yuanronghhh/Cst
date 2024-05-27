@@ -22,9 +22,8 @@ struct _FrMediaPlayer {
   FrPipeline pipeline;
 
   SysBool use_hwaccel;
-  SysInt64 paused;
   SysInt64 seek_position;
-  SysBool running;
+  SysInt state;
   FrIMediaRender *render;
 };
 
@@ -35,12 +34,10 @@ SYS_API FrMediaPlayer *fr_media_player_new_I(FrMediaFile *file);
 void fr_media_player_set_render(FrMediaPlayer* self, FrIMediaRender *render);
 SysInt fr_media_player_run(FrMediaPlayer* self);
 void fr_media_player_play(FrMediaPlayer* self);
-void fr_media_player_set_pause(FrMediaPlayer *self);
-SysInt64 fr_media_player_get_pause(FrMediaPlayer *self);
 SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrRegion *region);
 
-void fr_media_player_set_running(FrMediaPlayer *self, SysBool running);
-SysBool fr_media_player_get_running(FrMediaPlayer *self);
+void fr_media_player_set_state(FrMediaPlayer *self, SysInt field, SysBool flag);
+SysBool fr_media_player_get_state(FrMediaPlayer *self, SysInt field);
 
 SYS_END_DECLS
 

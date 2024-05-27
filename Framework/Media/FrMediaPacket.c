@@ -19,6 +19,7 @@ SysInt fr_media_packet_get_stream_index(FrMediaPacket *self) {
 
 SysObject *fr_media_packet_dclone_i(SysObject *o) {
   sys_return_val_if_fail(o != NULL, NULL);
+
   SysObject* n = SYS_OBJECT_CLASS(fr_media_packet_parent_class)->dclone(o);
 
   FrMediaPacket* nself = FR_MEDIA_PACKET(n);

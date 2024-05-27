@@ -5,3 +5,10 @@
   fun:_FcConfigParse
   ...
 }
+{
+  pango_cairo_font_map_get_default
+  Memcheck:Leak
+  ...
+  fun:XML_ParseBuffer
+  ...
+}

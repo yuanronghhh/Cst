@@ -21,20 +21,17 @@ SysBool fr_packet_empty(FrPacket* self) {
 }
 
 SysObject* fr_packet_dclone_i(SysObject* o) {
-	sys_return_val_if_fail(o != NULL, NULL);
-	SysObject* n;
-	
-#if 0
-	n = SYS_OBJECT_CLASS(fr_packet_parent_class)->dclone(o);
+  sys_return_val_if_fail(o != NULL, NULL);
+  SysObject* n;
 
-	FrPacket* nself = FR_PACKET(n);
-	FrPacket* oself = FR_PACKET(o);
+  n = SYS_OBJECT_CLASS(fr_packet_parent_class)->dclone(o);
 
-	nself->serial = oself->serial;
-#endif
-	n = sys_object_ref(o);
+  FrPacket* nself = FR_PACKET(n);
+  FrPacket* oself = FR_PACKET(o);
 
-	return n;
+  nself->serial = oself->serial;
+
+  return n;
 }
 
 /* object api */

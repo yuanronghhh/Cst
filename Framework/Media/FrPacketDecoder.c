@@ -41,6 +41,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   }
 
   if(!fr_decoder_push_packet(dec, pkt)) {
+    sys_object_unref(pkt);
 
     return FR_MEDIA_ERROR_WAIT;
   }

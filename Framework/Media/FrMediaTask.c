@@ -8,6 +8,11 @@ SYS_DEFINE_TYPE(FrMediaTask, fr_media_task, SYS_TYPE_OBJECT);
 static SysBool fr_media_task_destroy_i(SysObject* o) {
   FrMediaTask *self = FR_MEDIA_TASK(o);
 
+  self->result = NULL;
+  self->data = NULL;
+  self->handler = NULL;
+  self->callback = NULL;
+
   return true;
 }
 

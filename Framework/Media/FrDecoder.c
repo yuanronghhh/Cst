@@ -36,15 +36,16 @@ void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
 static SysInt decoder_process_task(FrDecoder* self) {
   SysInt result = 0;
   sys_mutex_lock(&self->ctrl.mutex);
-  if (self->task) {
-
-    fr_media_task_run(self->task);
-    result = POINTER_TO_INT(fr_media_task_result(self->task));
-
-    self->task = NULL;
+  if(!self->task) {
+    goto done;
   }
-  sys_mutex_unlock(&self->ctrl.mutex);
 
+  fr_media_task_run(self->task);
+  result = POINTER_TO_INT(fr_media_task_result(self->task));
+  self->task = NULL;
+
+done:
+  sys_mutex_unlock(&self->ctrl.mutex);
   return result;
 }
 
@@ -65,7 +66,7 @@ static SysInt error_to_state(SysInt err) {
     break;
 
   case FR_MEDIA_ERROR_EXIT:
-    return FR_MEDIA_STATE_STOPED;
+    return FR_MEDIA_STATE_STOP;
   case FR_MEDIA_ERROR_WAIT:
   case FR_MEDIA_ERROR_EOF:
     return FR_MEDIA_STATE_PAUSE;
@@ -109,7 +110,7 @@ static SysPointer decoder_thread(SysPointer user_data) {
         break;
       case FR_MEDIA_STATE_RUNNING:
         break;
-      case FR_MEDIA_STATE_STOPED:
+      case FR_MEDIA_STATE_STOP:
         goto done;
     }
   }
@@ -252,17 +253,22 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
 
 SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
     SysBool r;
+
     sys_mutex_lock(&self->ctrl.mutex);
-
-    if(!fr_decoder_need_wait(self)) {
-      r = fr_decoder_push_packet_unlock(self, pkt);
-      sys_cond_signal(&self->ctrl.cond);
-
-    } else {
-
+    if(!self->running) {
       r = false;
+      goto done;
     }
 
+    if(!fr_decoder_need_wait(self)) {
+      r = false;
+      goto done;
+    }
+
+    r = fr_decoder_push_packet_unlock(self, pkt);
+    sys_cond_signal(&self->ctrl.cond);
+
+done:
     sys_mutex_unlock(&self->ctrl.mutex);
     return r;
 }
@@ -337,6 +343,8 @@ static void fr_decoder_dispose(SysObject* o) {
 
   fr_decoder_stop(self);
 
+  sys_cond_clear(&self->ctrl.cond);
+  sys_mutex_clear(&self->ctrl.mutex);
   sys_queue_clear(&self->ctrl.queue);
   sys_free_N(self->name);
 

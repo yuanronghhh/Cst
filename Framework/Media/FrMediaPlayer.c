@@ -10,28 +10,20 @@
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, SYS_TYPE_OBJECT);
 
-static SYS_INLINE SysBool player_should_pause(FrMediaPlayer *self) {
-  if(self->paused == -1) { return false; }
-
-  return self->paused == fr_media_file_get_seek_position(self->file);
-}
-
-static SYS_INLINE SysBool player_should_seek(FrMediaPlayer *self) {
-  if(self->seek_position == -1) { return false; }
-
-  return self->seek_position != fr_media_file_get_seek_position(self->file);
-}
-
 void fr_media_player_wait(FrMediaPlayer *self) {
   fr_wait_events();
+}
+
+static SysInt process_task() {
 }
 
 static SysInt media_player_do(FrMediaPlayer *self) {
   FrBound bound = { .width = 800, .height = 600 };
   FrVideoDecoder* video_decoder;
   FrRegion* region;
+  SysInt err = 0;
 
-  if(!self->running) {
+  if(!self->state & FR_MEDIA_STATE_RUNNING) {
     return -1;
   }
   fr_pipeline_run(&self->pipeline, self->file);
@@ -40,31 +32,19 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   fr_video_decoder_get_size(video_decoder, &bound.width, &bound.height);
   region = fr_region_create_rectangle(&bound);
 
-  while(self->running) {
+  while(self->state & FR_MEDIA_STATE_RUNNING) {
     fr_media_player_wait(self);
 
-    if (player_should_pause(self)) {
-      if (fr_media_file_pause(self->file) < 0) {
-        break;
-      }
+    err = process_task(self);
+    if (err < 0) { goto done; }
 
-      self->paused = -1;
-    } else {
-
-      fr_media_player_play(self);
-    }
-
-    if (player_should_seek(self)) {
-      if (fr_media_file_seek(self->file, self->seek_position) < 0) {
-        break;
-      }
-
-      self->seek_position = -1;
-    }
+    // err = process_packet(self);
 
     fr_media_player_render(self, self->render, region);
-    break;
   }
+
+done:
+  fr_region_destroy(region);
 
   return 0;
 }
@@ -106,28 +86,16 @@ void fr_media_player_play(FrMediaPlayer* self) {
   fr_media_file_play(self->file);
 }
 
-void fr_media_player_set_pause(FrMediaPlayer *self) {
+void fr_media_player_set_state(FrMediaPlayer *self, SysInt field, SysBool flag) {
   sys_return_if_fail(self != NULL);
 
-  self->paused = fr_media_file_get_seek_position(self->file);
+  (flag ? bit_true(self->state, field) : bit_false(self->state, field));
 }
 
-void fr_media_player_set_running(FrMediaPlayer *self, SysBool running) {
-  sys_return_if_fail(self != NULL);
-
-  sys_atomic_int_set(&self->running, running);
-}
-
-SysBool fr_media_player_get_running(FrMediaPlayer *self) {
+SysBool fr_media_player_get_state(FrMediaPlayer *self, SysInt field) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return self->running;
-}
-
-SysInt64 fr_media_player_get_pause(FrMediaPlayer *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->paused;
+  return self->state & field;
 }
 
 /* object api */
@@ -163,8 +131,7 @@ static void fr_media_player_class_init(FrMediaPlayerClass* cls) {
 }
 
 void fr_media_player_init(FrMediaPlayer* self) {
-  self->running = true;
-  self->paused = -1;
+  self->state = FR_MEDIA_STATE_RUNNING;
   self->seek_position = -1;
 
   fr_pipeline_create(&self->pipeline);

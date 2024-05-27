@@ -8,6 +8,7 @@ void fr_core_setup(void) {
   sys_setup();
   fr_media_task_setup();
   fr_ffmpeg_setup();
+  fr_font_setup();
   fr_main_setup();
   fr_window_setup();
   fr_events_setup();
@@ -32,6 +33,7 @@ void fr_core_teardown(void) {
 
   fr_ffmpeg_teardown();
   fr_media_task_teardown();
+  fr_font_teardown();
   sys_teardown();
 
   inited = false;

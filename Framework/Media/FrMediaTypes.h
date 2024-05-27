@@ -44,6 +44,8 @@ typedef enum _FR_DECODER_CMD_ENUM {
   FR_DECODER_CMD_READ
 } FR_DECODER_CMD_ENUM;
 
+typedef struct AVRational FrRational;
+
 typedef struct _FrPacket FrPacket;
 typedef struct _FrPacketClass FrPacketClass;
 
@@ -58,6 +60,9 @@ typedef struct _FrIStreamInterface FrIStreamInterface;
 
 typedef struct _FrPipeline FrPipeline;
 typedef struct _FrPipelineClass FrPipelineClass;
+
+typedef struct _FrMediaPipeline FrMediaPipeline;
+typedef struct _FrMediaPipelineClass FrMediaPipelineClass;
 
 typedef struct _FrMediaTask FrMediaTask;
 typedef struct _FrMediaTaskClass FrMediaTaskClass;

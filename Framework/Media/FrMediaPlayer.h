@@ -1,7 +1,7 @@
 #ifndef __FR_MEDIA_PLAYER_H__
 #define __FR_MEDIA_PLAYER_H__
 
-#include <Framework/Media/FrPipeline.h>
+#include <Framework/Media/FrMediaPipeline.h>
 
 SYS_BEGIN_DECLS
 
@@ -19,11 +19,12 @@ struct _FrMediaPlayer {
 
   /* <private>*/
   FrMediaFile *file;
-  FrPipeline pipeline;
+  FrMediaPipeline pipeline;
 
   SysBool use_hwaccel;
   SysInt64 seek_position;
   SysInt state;
+  SysDouble interval;
   FrIMediaRender *render;
 };
 

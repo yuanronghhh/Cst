@@ -260,7 +260,7 @@ SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
       goto done;
     }
 
-    if(!fr_decoder_need_wait(self)) {
+    if(fr_decoder_need_wait(self)) {
       r = false;
       goto done;
     }

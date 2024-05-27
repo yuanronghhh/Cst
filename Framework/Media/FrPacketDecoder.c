@@ -1,7 +1,7 @@
 #include <Framework/Media/FrPacketDecoder.h>
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrMediaStream.h>
-#include <Framework/Media/FrPipeline.h>
+#include <Framework/Media/FrMediaPipeline.h>
 
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
@@ -13,7 +13,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   FrDecoder *dec;
 
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
-  FrPipeline *box = user_data;
+  FrMediaPipeline *box = user_data;
 
   mpkt = NULL;
   err = fr_media_file_read_packet(self->file, &mpkt);
@@ -25,19 +25,10 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
   sindex = fr_media_packet_get_stream_index(mpkt);
   fr_packet_set_serial(pkt, self->serial);
 
-  switch (sindex) {
-    case FR_MEDIA_VIDEO:
-      dec = box->video_decoder;
-      break;
-    case FR_MEDIA_AUDIO:
-      dec = box->audio_decoder;
-      break;
-    case FR_MEDIA_SUBTITLE:
-      dec = box->subtitle_decoder;
-      break;
-    default:
-      sys_warning_N("Not found media packet type: %s", sindex);
-      return -1;
+  dec = fr_media_pipeline_get_decoder(box, sindex);
+  if(dec == NULL) {
+    sys_warning_N("Not found media packet type: %s", sindex);
+    return -1;
   }
 
   if(!fr_decoder_push_packet(dec, pkt)) {

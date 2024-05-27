@@ -1,13 +1,13 @@
 #include <Framework/Media/FrAudioDecoder.h>
-#include <Framework/Media/FrPipeline.h>
+#include <Framework/Media/FrMediaPipeline.h>
 
 SYS_DEFINE_TYPE(FrAudioDecoder, fr_audio_decoder, FR_TYPE_MEDIA_DECODER);
 
 static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame *frame) {
   FrDecoder *d = FR_DECODER(o);
-  FrPipeline *box = fr_decoder_get_user_data(d);
+  FrMediaPipeline *box = fr_decoder_get_user_data(d);
 
-  sys_async_queue_push(&box->sample_queue, frame);
+  fr_media_pipeline_push_sample_frame(box, frame);
 
   return 0;
 }

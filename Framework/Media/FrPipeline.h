@@ -16,21 +16,10 @@ struct _FrPipelineClass {
 
 struct _FrPipeline {
   SysObject parent;
-
-  FrDecoder* video_decoder;
-  FrDecoder* audio_decoder;
-  FrDecoder* subtitle_decoder;
-  FrDecoder* packet_decoder;
-
-  SysAsyncQueue image_queue;
-  SysAsyncQueue sample_queue;
-  FrMediaTask task;
 };
 
 SYS_API SysType fr_pipeline_get_type(void);
 SYS_API FrPipeline *fr_pipeline_new(void);
-#define fr_pipeline_create(o) sys_object_create(o, FR_TYPE_PIPELINE)
-void fr_pipeline_run(FrPipeline *self, FrMediaFile *file);
 
 SYS_END_DECLS
 

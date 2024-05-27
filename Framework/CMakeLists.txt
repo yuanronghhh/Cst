@@ -144,6 +144,8 @@ set(SRC
   ./Media/FrPacketDecoder.h
   ./Media/FrPipeline.c
   ./Media/FrPipeline.h
+  ./Media/FrMediaPipeline.c
+  ./Media/FrMediaPipeline.h
   ./Media/FrStream.c
   ./Media/FrStream.h
   ./Media/FrVideoDecoder.c

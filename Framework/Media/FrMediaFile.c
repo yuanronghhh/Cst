@@ -90,9 +90,6 @@ SysInt fr_media_file_seek(FrMediaFile *self, SysInt64 seek_target) {
   return err;
 }
 
-void stream_pause(FrMediaFile *self) {
-}
-
 SysInt fr_media_file_pause(FrMediaFile* self) {
   sys_return_val_if_fail(self != NULL, -1);
 

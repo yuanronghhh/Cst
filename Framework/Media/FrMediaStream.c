@@ -3,6 +3,14 @@
 
 SYS_DEFINE_TYPE(FrMediaStream, fr_media_stream, FR_TYPE_STREAM);
 
+SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(rt != NULL, false);
+
+  *rt = self->ctx->r_frame_rate;
+  return true;
+}
+
 SysBool fr_media_stream_is_media(FrMediaStream *self, FR_MEDIA_ENUM media_type) {
   return self->media_type == media_type;
 }

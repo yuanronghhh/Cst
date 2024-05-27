@@ -12,7 +12,6 @@ SYS_BEGIN_DECLS
 
 typedef struct _FrADoubleClick FrADoubleClick;
 typedef struct _FrADoubleClickClass FrADoubleClickClass;
-typedef struct _FrADoubleClickPrivate FrADoubleClickPrivate;
 
 struct _FrADoubleClickClass {
   FrActionClass parent;
@@ -20,8 +19,6 @@ struct _FrADoubleClickClass {
 
 struct _FrADoubleClick {
   FrAction parent;
-
-  FrADoubleClickPrivate *priv;
 };
 
 SYS_API SysType fr_adouble_click_get_type(void);

@@ -1,5 +1,4 @@
 #include <Framework/Media/FrMediaDecoder.h>
-#include <Framework/Media/FrPipeline.h>
 #include <Framework/Media/FrMediaFrame.h>
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrMediaFile.h>
@@ -173,8 +172,6 @@ static SysInt fr_media_decoder_decode_it_i(FrDecoder* o, SysPointer user_data) {
   if (!fr_decoder_pop_packet_unlock(o, &mpkt)) {
     return 0;
   }
-  sys_object_unref(mpkt);
-  return FR_MEDIA_ERROR_WAIT;
 
   err = fr_media_decoder_send_packet(self, FR_MEDIA_PACKET(mpkt));
   if(err < 0) { return err; }

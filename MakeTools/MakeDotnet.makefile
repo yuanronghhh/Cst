@@ -1,13 +1,12 @@
 PROJECT_DIR:=$(shell pwd -P)
 OS:=$(shell uname -s)
 OS_NCASE:=$(shell uname -s | /usr/bin/tr '[A-Z]' '[a-z]')
-CC=dotnet
+CC:=dotnet
 PROJ_NAME:=
 PLATFORM=
-ARGS=
-VIM_SESSION=GVIM
-BUILD_DIR:=${PROJ_NAME}/bin/Debug/net8.0
-BIN_FILE=${PROJ_NAME}/bin/Debug/net8.0/${PROJ_NAME}.dll
+VIM_SESSION:=GVIM
+BIN_FILE:=
+ARGS:=
 
 build:
 	@${CC} build ./${PROJ_NAME}
@@ -16,7 +15,7 @@ run:
 	@${CC} run --project ${PROJ_NAME}
 
 debug:
-	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug csharp ${BIN_FILE} ${ARGS}<cr>'
+	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug csharp ${ARGS}<cr>'
 
 clean:
 	@${CC} clean

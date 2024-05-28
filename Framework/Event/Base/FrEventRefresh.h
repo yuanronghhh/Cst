@@ -16,10 +16,14 @@ struct _FrEventRefreshClass {
 
 struct _FrEventRefresh {
   FrEvent parent;
+
+  /* <private> */
+  FrBound *bound;
 };
 
 SYS_API SysType fr_event_refresh_get_type(void);
 SYS_API FrEvent *fr_event_refresh_new_I(FrWindow *window);
+SYS_API FrEvent *fr_event_refresh_new_bound(FrWindow *window, FrBound *bound);
 
 
 SYS_END_DECLS

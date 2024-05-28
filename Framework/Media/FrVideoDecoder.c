@@ -1,5 +1,5 @@
 #include <Framework/Media/FrVideoDecoder.h>
-#include <Framework/Media/FrPipeline.h>
+#include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrImageScale.h>
 
@@ -29,7 +29,7 @@ static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
 
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
   FrDecoder *d = FR_DECODER(o);
-  FrPipeline *box = fr_decoder_get_user_data(d);
+  FrMediaPipeline *box = fr_decoder_get_user_data(d);
 
 #if 0
   const SysChar* filename = PROJECT_DIR"/Assets/surface.png";
@@ -39,7 +39,7 @@ static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
   vframe = (FrVideoFrame*)sys_object_dclone(mframe);
   fr_image_scale_video_frame(&self->scale, vframe);
 
-  sys_async_queue_push(&box->image_queue, vframe);
+  fr_media_pipeline_push_image_frame(box, FR_MEDIA_FRAME(vframe));
 
   return 0;
 }

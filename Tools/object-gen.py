@@ -661,12 +661,12 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = "D:/GreyHound/PRIVATE/Git/Cst/Cst/Framework/Graph"
-    header_path = "Framework/Graph"
-    common_path = "Framework/FrCommon.h"
+    dst = Path("./Framework/Media").as_posix()
+    header_path = "Framework/Media"
+    common_path = "Framework/Media/FrMediaCommon.h"
 
     template_struct = """
-struct _FrRenderManager {
+struct _FrPlayer {
   SysObject parent;
 
   /* <private> */
@@ -674,9 +674,9 @@ struct _FrRenderManager {
 """
     info = TemplateInfo(template_struct)
     gen = TemplateGenerator(dst, header_path, common_path)
-
-    result = gen.gen_c_interface_result(info)
-    print(result)
+    gen.generate_file(info)
+    # result = gen.gen_c_interface_result(info)
+    # print(result)
 
 def main():
     gen_struct_result()

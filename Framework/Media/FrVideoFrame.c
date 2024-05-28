@@ -2,6 +2,7 @@
 
 SYS_DEFINE_TYPE(FrVideoFrame, fr_video_frame, FR_TYPE_MEDIA_FRAME);
 
+
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {
   sys_return_if_fail(self);
 

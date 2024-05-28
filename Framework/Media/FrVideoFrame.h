@@ -20,6 +20,8 @@ struct _FrVideoFrame  {
   /* <private> */
   SysInt width;
   SysInt height;
+  FrWindow *window;
+  FrBound *bound;
 };
 
 SYS_API SysType fr_video_frame_get_type(void);

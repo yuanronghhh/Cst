@@ -6,39 +6,47 @@
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrIMediaRender.h>
 #include <Framework/Media/FrVideoDecoder.h>
+#include <Framework/Media/FrMediaPipeline.h>
+#include <Framework/Media/FrMediaStream.h>
 #include <Framework/Device/FrWindow.h>
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, SYS_TYPE_OBJECT);
 
 void fr_media_player_wait(FrMediaPlayer *self) {
-  fr_wait_events();
+  fr_wait_events_timeout(self->interval);
 }
 
-static SysInt process_task() {
+static SysInt process(FrMediaPlayer* self) {
+
+  return FR_MEDIA_STATE_RUNNING;
 }
 
 static SysInt media_player_do(FrMediaPlayer *self) {
-  FrBound bound = { .width = 800, .height = 600 };
-  FrVideoDecoder* video_decoder;
   FrRegion* region;
-  SysInt err = 0;
+  SysInt state;
+  FrMediaStream* vs;
+  FrRational rt = { .num = 2997, .den = 100 };
+  FrBound bound = { .width = 800, .height = 600 };
 
-  if(!self->state & FR_MEDIA_STATE_RUNNING) {
+  if(!(self->state & FR_MEDIA_STATE_RUNNING)) {
     return -1;
   }
-  fr_pipeline_run(&self->pipeline, self->file);
 
-  video_decoder = FR_VIDEO_DECODER(self->pipeline.video_decoder);
-  fr_video_decoder_get_size(video_decoder, &bound.width, &bound.height);
+  // get interval
+  vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
+  fr_media_stream_get_rational(vs, &rt);
+  self->interval = (1 / (SysDouble)rt.num / rt.den);
+
+  fr_media_pipeline_run(&self->pipeline, self->file);
+  fr_media_pipeline_get_video_size(&self->pipeline, &bound.width, &bound.height);
+
   region = fr_region_create_rectangle(&bound);
 
   while(self->state & FR_MEDIA_STATE_RUNNING) {
     fr_media_player_wait(self);
 
-    err = process_task(self);
-    if (err < 0) { goto done; }
-
-    // err = process_packet(self);
+    state = process(self);
+    if (state & FR_MEDIA_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
   }
@@ -61,20 +69,18 @@ SysInt fr_media_player_run(FrMediaPlayer* self) {
   return media_player_do(self);
 }
 
-void fr_media_player_get_frame(FrMediaPlayer *self, FrVideoFrame **frame) {
-  *frame = sys_async_queue_try_pop(&(self->pipeline.image_queue));
-}
-
 SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrRegion *region) {
   sys_return_val_if_fail(self != NULL, -1);
-  FrVideoFrame *frame = NULL;
+  FrMediaFrame *frame = NULL;
+  FrVideoFrame *vframe;
   FrIMediaRenderInterface *iface = FR_I_MEDIA_RENDER_GET_IFACE(render);
 
-  fr_media_player_get_frame(self, &frame);
+  frame = fr_media_pipeline_get_image_frame(&self->pipeline);
   if (frame == NULL) { return FR_MEDIA_ERROR_EOF; }
+  vframe = FR_VIDEO_FRAME(frame);
 
-  // sys_debug_N("%d", frame->parent.parent.serial);
-  iface->render_video(render, frame, region);
+  // sys_debug_N("%d", frame->parent.serial);
+  iface->render_video(render, vframe, region);
   sys_object_unref(frame);
 
   return 0;
@@ -134,5 +140,5 @@ void fr_media_player_init(FrMediaPlayer* self) {
   self->state = FR_MEDIA_STATE_RUNNING;
   self->seek_position = -1;
 
-  fr_pipeline_create(&self->pipeline);
+  fr_media_pipeline_create(&self->pipeline);
 }

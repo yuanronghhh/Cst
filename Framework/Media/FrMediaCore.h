@@ -10,6 +10,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrMediaPlayer.h>
 #include <Framework/Media/FrPlayer.h>
 #include <Framework/Media/FrPipeline.h>
+#include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrPacket.h>
 #include <Framework/Media/FrPacketDecoder.h>
 #include <Framework/Media/FrMedia.h>

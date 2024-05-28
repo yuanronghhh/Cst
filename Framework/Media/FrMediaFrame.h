@@ -19,6 +19,7 @@ struct _FrMediaFrame {
 
   /* <private> */
   AVFrame *ctx;
+  SysPointer user_data;
 };
 
 SYS_API SysType fr_media_frame_get_type(void);

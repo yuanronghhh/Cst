@@ -37,7 +37,7 @@ build-linux-prj:
 	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
 
 debug:
-	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug c ${BIN_FILE}<cr>'
+	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug gdb-mi2 ${ARGS}<cr>'
 
 run:
 	#export LSAN_OPTIONS=verbosity=1:log_threads=1

@@ -14,9 +14,6 @@ build:
 run:
 	@${CC} run --project ${PROJ_NAME}
 
-debug:
-	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug csharp ${ARGS}<cr>'
-
 clean:
 	@${CC} clean
 
@@ -26,7 +23,4 @@ clean:
 %-run: %
 	@make PROJ_NAME=$< run
 
-%-debug: %
-	@make PROJ_NAME=$< debug
-
-.PHONY: build debug run clean
+.PHONY: build run clean

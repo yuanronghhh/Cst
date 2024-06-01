@@ -14,6 +14,7 @@ ifeq ($(OS), Linux)
 else
 	BIN_FILE=${BUILD_DIR}/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${BIN_SURFIX} ${ARGS}
 endif
+ARGS:=${BIN_FILE}
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:

@@ -14,6 +14,11 @@ build:
 run:
 	@${CC} run --project ${PROJ_NAME}
 
+debug:
+	@gvim &
+	@sleep 1
+	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug netcoredbg-lsp ${ARGS}<cr>'
+
 clean:
 	@${CC} clean
 
@@ -23,4 +28,7 @@ clean:
 %-run: %
 	@make PROJ_NAME=$< run
 
-.PHONY: build run clean
+%-debug: %
+	@make PROJ_NAME=$< debug
+
+.PHONY: build debug run clean

@@ -78,7 +78,7 @@ check-linux:
 		--show-reachable=no \
 		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
 		--suppressions=cst.supp  \
-		${BIN_FILE} ${ARGS}
+		${ARGS}
 
 %-debug: %
 	@make  PROJ_NAME=$< debug

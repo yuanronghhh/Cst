@@ -35,12 +35,7 @@ static SysBool fr_image_scale_destroy_i(SysObject* o) {
 }
 
 static void setup_scale(FrImageScale *self) {
-  if (self->ctx) { 
-
-    sys_clear_pointer(&self->ctx, sws_freeContext);
-  }
-
-  self->ctx = sws_getContext(
+  self->ctx = sws_getCachedContext(self->ctx,
     self->in_width, self->in_height, self->in_pix_fmt,
     self->out_width, self->out_height, self->out_pix_fmt,
     SWS_BILINEAR, NULL, NULL, NULL);

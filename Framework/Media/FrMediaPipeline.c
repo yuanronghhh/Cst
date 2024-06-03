@@ -139,6 +139,7 @@ static void fr_media_pipeline_class_init(FrMediaPipelineClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_media_pipeline_dispose;
+  ocls->destroy = fr_media_pipeline_destroy_i;
 }
 
 void fr_media_pipeline_init(FrMediaPipeline* self) {

@@ -1,7 +1,7 @@
 include ./MakeTools/MakeCmake.makefile
 BUILD_TYPE:=Debug
-VIM_SESSION:=GVIM3
-DEBUGGER:=lldb
+VIM_SESSION:=GVIM
+DEBUGGER:=gdb
 project:=Framework \
 				 FrameworkTest \
 				 CstCoreTest \

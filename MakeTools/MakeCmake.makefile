@@ -1,19 +1,20 @@
 PROJECT_DIR:=$(shell pwd -P)
 BUILD_DIR:=${PROJECT_DIR}/build
 OS:=$(shell uname -s)
-PLATFORM=
+PLATFORM:=
 OS_NCASE:=$(shell uname -s | /usr/bin/tr '[A-Z]' '[a-z]')
 BUILD_TYPE:=Debug
 BIN_SURFIX:=
-ARGS+=
+ARGS:=
 BIN_FILE:=
+DEBUGGER:=gdb
 
 ifeq ($(OS), Linux)
-	PLATFORM=linux
+	PLATFORM:=linux
 	BIN_SURFIX=
 else
-	PLATFORM=win32
-	BIN_SURFIX=.exe
+	PLATFORM:=win32
+	BIN_SURFIX:=.exe
 endif
 
 BUILD_CMAKE_ARGS:=$(BUILD_CMAKE_ARGS)
@@ -37,7 +38,8 @@ build-linux-prj:
 	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
 
 debug:
-	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug gdb-mi2 ${ARGS}<cr>'
+	@echo ${ARGS}
+	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug ${DEBUGGER} ${ARGS}<cr>'
 
 run:
 	#export LSAN_OPTIONS=verbosity=1:log_threads=1

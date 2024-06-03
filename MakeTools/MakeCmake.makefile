@@ -41,6 +41,10 @@ debug:
 	@echo ${ARGS}
 	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug ${DEBUGGER} ${ARGS}<cr>'
 
+debugcli:
+	@echo ${ARGS}
+	@${DEBUGGER} ${ARGS}
+
 run:
 	#export LSAN_OPTIONS=verbosity=1:log_threads=1
 	@${BIN_FILE} ${ARGS}
@@ -78,6 +82,9 @@ check-linux:
 
 %-debug: %
 	@make  PROJ_NAME=$< debug
+
+%-debugcli: %
+	@make  PROJ_NAME=$< debugcli
 
 %-run: %
 	@make PROJ_NAME=$< run

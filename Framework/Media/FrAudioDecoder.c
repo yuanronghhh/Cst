@@ -7,7 +7,8 @@ static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame *f
   FrDecoder *d = FR_DECODER(o);
   FrMediaPipeline *box = fr_decoder_get_user_data(d);
 
-  fr_media_pipeline_push_sample_frame(box, frame);
+  FrMediaFrame *nframe = (FrMediaFrame *)sys_object_dclone(frame);
+  fr_media_pipeline_push_sample_frame(box, nframe);
 
   return 0;
 }

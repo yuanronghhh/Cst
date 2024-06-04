@@ -26,18 +26,6 @@ cst-cli-gen:
 	@flex -o ./CstCore/Parser/lex.yy.c ./CstCore/Parser/CstCli.l
 	@sed -i '1i#include <CstCore/Parser/CstParserCommon.h>' './CstCore/Parser/lex.yy.c'
 
-config:
-	@${CMAKE_CONFIG}
-	@sed -i 's/;/\n-I/g' compile_flags.txt
-	@sed -i '/^-I[[:space:]]*$$/d' compile_flags.txt
-	@cat compile_flags.txt|sort |uniq > compile_flags2.txt
-	@mv compile_flags2.txt compile_flags.txt
-
-re-config:
-	@rm -rf build/CMakeCache.txt
-	@make config
-
-
 ${project}:
 	@make PROJ_NAME=$@ build-${PLATFORM}-prj
 

@@ -23,6 +23,17 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -B"$(BUILD_DIR)" \
                       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 
+config:
+	@${CMAKE_CONFIG}
+	@sed -i 's/;/\n-I/g' compile_flags.txt
+	@sed -i '/^-I[[:space:]]*$$/d' compile_flags.txt
+	@cat compile_flags.txt|sort|uniq > compile_flags2.txt
+	@mv compile_flags2.txt compile_flags.txt
+
+re-config:
+	@rm -rf build/CMakeCache.txt
+	@make config
+
 build-all: build-${PLATFORM}
 
 build-linux:
@@ -38,7 +49,6 @@ build-linux-prj:
 	@${MAKE} -C "$(BUILD_DIR)" -s -j8 ${PROJ_NAME}
 
 debug:
-	@echo ${ARGS}
 	@gvim --servername ${VIM_SESSION} --remote-send ':DbgDebug ${DEBUGGER} ${ARGS}<cr>'
 
 debugcli:
@@ -92,4 +102,4 @@ check-linux:
 %-check: %
 	@make PROJ_NAME=$< check-${PLATFORM}
 
-.PHONY: config clean build-all build-tags
+.PHONY: re-config config clean build-all build-tags

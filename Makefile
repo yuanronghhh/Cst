@@ -2,6 +2,7 @@ include ./MakeTools/MakeCmake.makefile
 BUILD_TYPE:=Debug
 VIM_SESSION:=GVIM
 DEBUGGER:=gdb
+PROJ_NAME=Cst
 project:=Framework \
 				 FrameworkTest \
 				 CstCoreTest \

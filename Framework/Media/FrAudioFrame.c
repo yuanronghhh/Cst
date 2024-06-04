@@ -31,7 +31,6 @@ static void fr_audio_frame_class_init(FrAudioFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_audio_frame_dispose;
-  ocls->dclone = fr_audio_frame_dclone;
 }
 
 void fr_audio_frame_init(FrAudioFrame* self) {

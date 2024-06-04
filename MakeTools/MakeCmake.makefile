@@ -23,6 +23,8 @@ CMAKE_CONFIG = cmake $(BUILD_CMAKE_ARGS) \
                       -B"$(BUILD_DIR)" \
                       -DCMAKE_BUILD_TYPE=${BUILD_TYPE}
 
+build-all: build-${PLATFORM}
+
 config:
 	@${CMAKE_CONFIG}
 	@sed -i 's/;/\n-I/g' compile_flags.txt
@@ -33,8 +35,6 @@ config:
 re-config:
 	@rm -rf build/CMakeCache.txt
 	@make config
-
-build-all: build-${PLATFORM}
 
 build-linux:
 	@${MAKE} -C "$(BUILD_DIR)" -s -j8

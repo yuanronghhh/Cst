@@ -12,7 +12,7 @@ include(cmake/init.cmake)
 project(Cst)
 enable_language(C)
 
-# add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/Cst/System" ${CMAKE_BINARY_DIR}/CstDemo/Cst/System)
+# add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/System" ${CMAKE_BINARY_DIR}/CstDemo/System)
 add_subdirectory(Framework)
 add_subdirectory(FrameworkTest)
 add_subdirectory(CstCore)

@@ -4,8 +4,8 @@ SYS_DEFINE_TYPE(FrMediaFrame, fr_media_frame, FR_TYPE_PACKET);
 
 SysBool fr_media_frame_destroy_i(SysObject *o) {
   FrMediaFrame* self = FR_MEDIA_FRAME(o);
-  if(self->ctx == NULL) { return false; }
 
+  sys_assert(self->ctx != NULL);
   av_frame_free(&self->ctx);
 
   return SYS_OBJECT_CLASS(fr_media_frame_parent_class)->destroy(o);
@@ -43,6 +43,7 @@ FrMediaFrame* fr_media_frame_new(void) {
 static void fr_media_frame_dispose(SysObject* o) {
   FrMediaFrame* self = FR_MEDIA_FRAME(o);
 
+  sys_assert(self->ctx != NULL);
   av_frame_free(&self->ctx);
 
   SYS_OBJECT_CLASS(fr_media_frame_parent_class)->dispose(o);

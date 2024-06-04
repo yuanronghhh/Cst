@@ -153,13 +153,16 @@ void fr_media_yuv_save_to_png(AVFrame *src, const SysChar *filename) {
   struct SwsContext *sws_ctx;
   AVFrame* rgba_frame;
 
-  sws_ctx = sws_getContext(
-      src->width, src->height, src->format,
+  sws_ctx = sws_getContext(src->width, src->height, src->format,
       src->width, src->height, AV_PIX_FMT_RGBA,
       SWS_BILINEAR, NULL, NULL, NULL);
 
   rgba_frame = fr_media_new_agba_frame(sws_ctx, src);
-  if (rgba_frame == NULL) { return; }
+  if (rgba_frame == NULL) {
+
+    sys_clear_pointer(&sws_ctx, sws_freeContext);
+    return;
+  }
 
   fr_media_rgba_save_to_png(rgba_frame, filename);
   av_frame_free(&rgba_frame);

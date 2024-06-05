@@ -90,6 +90,15 @@ check-linux:
 		--suppressions=cst.supp  \
 		${ARGS}
 
+check-linux-thread:
+	@export G_DEBUG=gc-friendly
+	@export G_SLICE=always-malloc
+	valgrind --tool=helgrind \
+		--log-file=./check.log \
+		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
+		--suppressions=cst.supp  \
+		${ARGS}
+
 %-debug: %
 	@make  PROJ_NAME=$< debug
 

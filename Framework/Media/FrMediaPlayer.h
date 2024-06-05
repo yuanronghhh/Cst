@@ -1,6 +1,7 @@
 #ifndef __FR_MEDIA_PLAYER_H__
 #define __FR_MEDIA_PLAYER_H__
 
+#include <Framework/Media/FrPlayer.h>
 #include <Framework/Media/FrMediaPipeline.h>
 
 SYS_BEGIN_DECLS
@@ -11,11 +12,11 @@ SYS_BEGIN_DECLS
 #define FR_MEDIA_PLAYER_GET_CLASS(o) sys_instance_get_class(o, FrMediaPlayerClass)
 
 struct _FrMediaPlayerClass {
-  SysObjectClass parent;
+  FrPlayerClass parent;
 };
 
 struct _FrMediaPlayer {
-  SysObject parent;
+  FrPlayer parent;
 
   /* <private>*/
   FrMediaFile *file;

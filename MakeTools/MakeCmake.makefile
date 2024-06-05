@@ -27,6 +27,8 @@ build-all: build-${PLATFORM}
 
 config:
 	@${CMAKE_CONFIG}
+
+editor-config:
 	@sed -i 's/;/\n-I/g' compile_flags.txt
 	@sed -i '/^-I[[:space:]]*$$/d' compile_flags.txt
 	@cat compile_flags.txt|sort|uniq > compile_flags2.txt
@@ -56,8 +58,8 @@ debugcli:
 	@${DEBUGGER} ${ARGS}
 
 run:
-	#export LSAN_OPTIONS=verbosity=1:log_threads=1
-	@${BIN_FILE} ${ARGS}
+	@echo ${ARGS}
+	@${ARGS}
 
 clean:
 	@make -C "${BUILD_DIR}" clean
@@ -111,4 +113,4 @@ check-linux-thread:
 %-check: %
 	@make PROJ_NAME=$< check-${PLATFORM}
 
-.PHONY: re-config config clean build-all build-tags
+.PHONY: editor-config re-config config clean build-all build-tags

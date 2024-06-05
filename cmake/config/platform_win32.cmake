@@ -69,6 +69,7 @@ if(USE_LLVM)
   add_definitions("-Wno-unused-function")
   add_definitions("-Wno-unused-variable")
 
+  set(ADDTIONAL_LIBRARIES "")
 else()
   add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
   add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
@@ -98,6 +99,12 @@ SET(CMAKE_CONFIGURATION_TYPES "Debug;Release;RelWithDebInfo")
 
 if(USE_SANITIZER)
   add_definitions("/fsanitize=address")
+
+  LIST(APPEND ADDTIONAL_LIBRARIES
+    "-fsanitize=address"
+    "clang_rt.asan_dynamic-x86_64"
+    "clang_rt.asan_dynamic_runtime_thunk-x86_64"
+  )
 endif()
 
 # set(GLUT_INCLUDE_DIRS ${LIBDIR}/opengl/include)

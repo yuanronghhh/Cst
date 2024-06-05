@@ -10,7 +10,7 @@
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Device/FrWindow.h>
 
-SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, SYS_TYPE_OBJECT);
+SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, FR_TYPE_PLAYER);
 
 void fr_media_player_wait(FrMediaPlayer *self) {
   fr_wait_events_timeout(self->interval);

@@ -29,6 +29,7 @@ function(add_deps_N
     INNER_LIBS
     EXTERNAL_INCS
     EXTERNAL_LIBS
+    EXTERNAL_OPTIONS
   )
   set(_INCS "")
   set(_LIBS "")
@@ -53,6 +54,7 @@ function(add_deps_N
     list(APPEND _LIBS "${_LIB}")
   endforeach()
 
+  LIST(APPEND _LIBS ${EXTERNAL_OPTIONS})
   list(REMOVE_DUPLICATES _INCS)
   list(REMOVE_DUPLICATES _LIBS)
   list(REMOVE_DUPLICATES _FILES)

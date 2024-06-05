@@ -38,12 +38,14 @@ set(SRC
 )
 
 add_executable(FrameworkTest "${SRC}")
+LIST(APPEND EXTERNAL_LIBS "${ADDTIONAL_LIBRARIES}")
 
 add_deps_N(FrameworkTest
   "${INC}"
   "${INNER_LIBS}"
   ""
   "${EXTERNAL_LIBS}"
+  "${ADDTIONAL_LIBRARIES}"
 )
 set_property(TARGET FrameworkTest PROPERTY FOLDER CstProject)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/FrTestConfig.h.in

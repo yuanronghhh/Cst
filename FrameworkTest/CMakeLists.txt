@@ -40,7 +40,7 @@ set(SRC
 add_executable(FrameworkTest "${SRC}")
 LIST(APPEND EXTERNAL_LIBS "${ADDTIONAL_LIBRARIES}")
 
-add_deps_N(FrameworkTest
+add_deps_options_N(FrameworkTest
   "${INC}"
   "${INNER_LIBS}"
   ""

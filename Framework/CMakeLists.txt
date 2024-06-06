@@ -231,7 +231,6 @@ add_deps_N(Framework
   "${INNER_LIBS}"
   ""
   "${EXTERNAL_LIBS}"
-  ""
 )
 configure_file(${CMAKE_CURRENT_LIST_DIR}/FrConfig.h.in
   ${CMAKE_CURRENT_LIST_DIR}/FrConfig.h)

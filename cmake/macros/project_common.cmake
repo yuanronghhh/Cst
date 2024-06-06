@@ -23,7 +23,7 @@ macro(add_dep_for_libray_N name
   endforeach()
 endmacro()
 
-function(add_deps_N
+function(add_deps_options_N
     app_name
     INNER_INCS
     INNER_LIBS
@@ -65,6 +65,22 @@ function(add_deps_N
   endif()
   target_link_libraries(${app_name} ${_LIBS})
   target_copy_files(${app_name} ${_FILES})
+endfunction()
+
+function(add_deps_N
+    app_name
+    INNER_INCS
+    INNER_LIBS
+    EXTERNAL_INCS
+    EXTERNAL_LIBS)
+
+  add_deps_options_N(
+    "${app_name}"
+    "${INC}"
+    "${INNER_LIBS}"
+    "${EXTERNAL_INCS}"
+    "${EXTERNAL_LIBS}"
+    "")
 endfunction()
 
 function(include_dep_dirs

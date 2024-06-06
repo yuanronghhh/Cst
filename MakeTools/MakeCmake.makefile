@@ -27,6 +27,7 @@ build-all: build-${PLATFORM}
 
 config:
 	@${CMAKE_CONFIG}
+	@make editor-config
 
 editor-config:
 	@sed -i 's/;/\n-I/g' compile_flags.txt

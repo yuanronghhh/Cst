@@ -213,7 +213,6 @@ function(target_copy_release_files
     -DLIBDIR=${LIBDIR}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     -P ${CMAKE_MODULE_PATH}/../extern/release.cmake
-    COMMENT "Running Release .."
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
   )
 endfunction()

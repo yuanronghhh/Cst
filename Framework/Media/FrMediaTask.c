@@ -19,7 +19,10 @@ static SysBool fr_media_task_destroy_i(SysObject* o) {
 void fr_media_task_wait(FrMediaTask* self) {
   sys_mutex_lock(&pool_mutex);
 
-  sys_cond_wait(&pool_cond, &pool_mutex);
+  while(!self->done) {
+
+    sys_cond_wait(&pool_cond, &pool_mutex);
+  }
 
   sys_mutex_unlock(&pool_mutex);
 }
@@ -28,6 +31,7 @@ void fr_media_task_run(FrMediaTask *self) {
   sys_return_if_fail(self != NULL);
   sys_mutex_lock(&pool_mutex);
 
+  self->done = false;
   if(self->handler) {
 
     self->result = self->handler(self, self->data);
@@ -37,6 +41,7 @@ void fr_media_task_run(FrMediaTask *self) {
 
     self->callback(self, self->data);
   }
+  self->done = true;
 
   sys_cond_signal(&pool_cond);
   sys_mutex_unlock(&pool_mutex);

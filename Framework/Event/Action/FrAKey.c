@@ -1,6 +1,6 @@
 #include <Framework/Event/Action/FrAKey.h>
 #include <Framework/Event/Base/FrEventKey.h>
-
+#include <Framework/Event/FrEvents.h>
 
 SYS_DEFINE_TYPE(FrAKey, fr_akey, FR_TYPE_ACTION);
 
@@ -59,11 +59,15 @@ void fr_akey_init(FrAKey *self) {
 FrAction* fr_akey_get_static(void) {
   static FrAction *node = NULL;
 
-  if(node != NULL) {
-    return node;
-  }
+  fr_events_lock();
 
+  if(node != NULL) {
+    goto done;
+  }
   node = fr_akey_new_I();
+
+done:
+  fr_events_unlock();
 
   return node;
 }

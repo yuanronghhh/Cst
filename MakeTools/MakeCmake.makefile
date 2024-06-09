@@ -81,7 +81,7 @@ build-tags:
 		| grep -v 'tcc' | grep -v '.bak' > file.log
 	@ctags${BIN_SURFIX} -a -L file.log
 
-check-linux:
+check-leak:
 	@export G_DEBUG=gc-friendly
 	@export G_SLICE=always-malloc
 	valgrind --leak-check=full \
@@ -93,7 +93,7 @@ check-linux:
 		--suppressions=cst.supp  \
 		${ARGS}
 
-check-linux-thread:
+check-thread:
 	@export G_DEBUG=gc-friendly
 	@export G_SLICE=always-malloc
 	valgrind --tool=helgrind \
@@ -101,17 +101,5 @@ check-linux-thread:
 		--suppressions=/usr/share/glib-2.0/valgrind/glib.supp  \
 		--suppressions=cst.supp  \
 		${ARGS}
-
-%-debug: %
-	@make  PROJ_NAME=$< debug
-
-%-debugcli: %
-	@make  PROJ_NAME=$< debugcli
-
-%-run: %
-	@make PROJ_NAME=$< run
-
-%-check: %
-	@make PROJ_NAME=$< check-${PLATFORM}
 
 .PHONY: editor-config re-config config clean build-all build-tags

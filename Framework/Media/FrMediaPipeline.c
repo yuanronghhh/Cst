@@ -73,6 +73,14 @@ void fr_media_pipeline_push_sample_frame(FrMediaPipeline* self,
   sys_async_queue_push(&self->sample_queue, frame);
 }
 
+void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
+    FrMediaFrame* frame) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(frame != NULL);
+
+  sys_async_queue_push(&self->image_queue, frame);
+}
+
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -86,14 +94,6 @@ void fr_media_pipeline_get_video_size(FrMediaPipeline *self, SysInt *width, SysI
   if(video_decoder == NULL) { return; }
 
   fr_video_decoder_get_size(video_decoder, width, height);
-}
-
-void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(frame != NULL);
-
-  sys_async_queue_push(&self->image_queue, frame);
 }
 
 SysBool fr_media_pipeline_destroy_i(SysObject *o) {

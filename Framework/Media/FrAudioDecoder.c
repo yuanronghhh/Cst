@@ -26,7 +26,9 @@ FrDecoder* fr_audio_decoder_new(void) {
 
 static void fr_audio_decoder_dispose(SysObject* o) {
   FrAudioDecoder* self = FR_AUDIO_DECODER(o);
+  FrDecoder* decoder = FR_DECODER(o);
 
+  fr_decoder_stop(decoder);
   sys_object_destroy(&self->frame);
 
   SYS_OBJECT_CLASS(fr_audio_decoder_parent_class)->dispose(o);
@@ -44,5 +46,6 @@ static void fr_audio_decoder_class_init(FrAudioDecoderClass* cls) {
 
 void fr_audio_decoder_init(FrAudioDecoder* self) {
 
+  fr_decoder_set_state(FR_DECODER(self), FR_MEDIA_STATE_STOP);
   fr_audio_frame_create(&self->frame);
 }

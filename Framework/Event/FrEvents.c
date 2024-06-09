@@ -4,6 +4,17 @@
 
 static SysQueue *g_events = NULL;
 static SysList *g_event_actions = NULL;
+static SysMutex g_event_lock;
+
+void fr_events_lock(void) {
+
+  sys_mutex_lock(&g_event_lock);
+}
+
+void fr_events_unlock(void) {
+
+  sys_mutex_unlock(&g_event_lock);
+}
 
 void fr_events_push_head(FrEvent *e) {
   sys_return_if_fail(e != NULL);
@@ -51,6 +62,8 @@ void fr_events_setup(void) {
   g_events = sys_queue_new();
   g_event_actions = NULL;
 
+  sys_mutex_init(&g_event_lock);
+
   events_add_action(FR_AKEY_STATIC);
   events_add_action(FR_AMOUSE_KEY_STATIC);
   events_add_action(FR_ACURSOR_MOVE_STATIC);
@@ -62,5 +75,6 @@ void fr_events_teardown(void) {
 
   sys_queue_free_full(g_events, (SysDestroyFunc)_sys_object_unref);
   sys_list_free_full(g_event_actions, (SysDestroyFunc)_sys_object_unref);
+  sys_mutex_clear(&g_event_lock);
 }
 

@@ -13,6 +13,8 @@ SYS_API void fr_events_dispatch(FrEvent *e);
 
 SYS_API void fr_events_setup(void);
 SYS_API void fr_events_teardown(void);
+SYS_API void fr_events_unlock(void);
+SYS_API void fr_events_lock(void);
 
 SYS_END_DECLS
 

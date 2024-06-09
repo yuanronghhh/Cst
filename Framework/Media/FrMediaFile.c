@@ -152,7 +152,7 @@ static void fr_media_file_construct(FrMediaFile *self, const SysChar *filename) 
   self->is_realtime = format_context_is_realtime(ctx);
 
   self->n_streams = ctx->nb_streams;
-  self->streams = sys_new0_N(FrMediaStream *, self->n_streams);
+  self->streams = (FrMediaStream **)sgc_type_new(SYS_TYPE_POINTER, self->n_streams);
 
   stream = parse_stream_by_type(ctx, FR_MEDIA_VIDEO);
   if(stream) { self->streams[FR_MEDIA_VIDEO] = stream; }

@@ -2,7 +2,7 @@ include ./MakeTools/MakeCmake.makefile
 BUILD_TYPE:=Debug
 VIM_SESSION:=GVIM
 DEBUGGER:=gdb
-PROJ_NAME=Cst
+PROJ_NAME=FrameworkTest
 project:=Framework \
 				 FrameworkTest \
 				 CstCoreTest \
@@ -17,6 +17,9 @@ else
 	BIN_FILE=${BUILD_DIR}/${PROJ_NAME}/${BUILD_TYPE}/${PROJ_NAME}${BIN_SURFIX} ${ARGS}
 endif
 ARGS:=${BIN_FILE}
+
+echomsg:
+	@echo ${ARGS}
 
 # -------------------- CstCli start --------------------
 cst-cli-gen:

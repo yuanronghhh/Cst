@@ -41,8 +41,7 @@ struct _FrDecoder {
   } ctrl;
 
   FrMediaTask *task;
-  SysBool running;
-  SysBool inited;
+  FR_MEDIA_STATE_ENUM state;
   SysThread* thread;
 
   SysPointer user_data;
@@ -67,12 +66,13 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
 
 SysInt fr_decoder_start(FrDecoder* self);
 void fr_decoder_stop(FrDecoder* self);
+void fr_decoder_wakeup_unlock(FrDecoder* self);
 void fr_decoder_wait (FrDecoder* self);
 void fr_decoder_set_task(FrDecoder *self, FrMediaTask *task);
 SysBool fr_decoder_need_wait(FrDecoder* self);
 
-void fr_decoder_set_running(FrDecoder *self, SysBool running);
-SysBool fr_decoder_get_running(FrDecoder *self);
+void fr_decoder_set_state(FrDecoder *self, FR_MEDIA_STATE_ENUM state);
+FR_MEDIA_STATE_ENUM fr_decoder_get_state(FrDecoder *self);
 
 void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data);
 SysPointer fr_decoder_get_user_data(FrDecoder *self);

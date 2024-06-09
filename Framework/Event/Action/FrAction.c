@@ -1,5 +1,6 @@
 #include <Framework/Event/Action/FrAction.h>
 #include <Framework/Event/Action/FrAWatch.h>
+#include <Framework/Event/FrEvents.h>
 
 
 SYS_DEFINE_TYPE(FrAction, fr_action, SYS_TYPE_OBJECT);
@@ -111,11 +112,13 @@ void fr_action_init(FrAction *self) {
 FrAction* fr_action_get_static(void) {
   static FrAction *node = NULL;
 
+  fr_events_lock();
   if(node != NULL) {
-    return node;
+    goto done;
   }
-
   node = fr_action_new_I();
 
+done:
+  fr_events_unlock();
   return node;
 }

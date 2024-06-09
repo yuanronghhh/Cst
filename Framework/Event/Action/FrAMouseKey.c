@@ -1,5 +1,6 @@
 #include <Framework/Event/Action/FrAMouseKey.h>
 #include <Framework/Event/Base/FrEventMouseKey.h>
+#include <Framework/Event/FrEvents.h>
 
 
 SYS_DEFINE_TYPE(FrAMouseKey, fr_amouse_key, FR_TYPE_ACTION);
@@ -53,11 +54,16 @@ static void fr_amouse_key_init(FrAMouseKey *self) {
 FrAction* fr_amouse_key_get_static(void) {
   static FrAction *node = NULL;
 
+  fr_events_lock();
+
   if(node != NULL) {
-    return node;
+    goto done;
   }
 
   node = fr_amouse_key_new_I();
+
+done:
+  fr_events_unlock();
 
   return node;
 }

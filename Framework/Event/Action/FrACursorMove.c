@@ -1,5 +1,6 @@
 #include <Framework/Event/Action/FrACursorMove.h>
 #include <Framework/Event/Base/FrEventCursorMove.h>
+#include <Framework/Event/FrEvents.h>
 
 
 SYS_DEFINE_TYPE(FrACursorMove, fr_acursor_move, FR_TYPE_ACTION);
@@ -76,11 +77,14 @@ static void fr_acursor_move_init(FrACursorMove *self) {
 FrAction *fr_acursor_move_get_static(void) {
   static FrAction *node = NULL;
 
+  fr_events_lock();
   if(node != NULL) {
-    return node;
+    goto done;
   }
 
   node = fr_acursor_move_new_I();
 
+done:
+  fr_events_unlock();
   return node;
 }

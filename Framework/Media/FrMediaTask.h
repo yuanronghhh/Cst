@@ -19,6 +19,7 @@ struct _FrMediaTask {
 
   /* <private> */
   SysPointer data;
+  SysBool done;
   SysPointer result;
   FrMediaTaskFunc handler;
   FrMediaTaskFunc callback;

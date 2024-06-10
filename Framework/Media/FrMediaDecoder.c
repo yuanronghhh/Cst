@@ -144,7 +144,9 @@ FrDecoder* fr_media_decoder_create_by_media_type(FrMediaFile* file,
  *
  * Returns: error occur when return negative
  */
-SysInt fr_media_decoder_decode_frame(FrMediaDecoder *self, FrMediaFrame *nframe) {
+SysInt fr_media_decoder_decode_frame(
+    FrMediaDecoder *self,
+    FrMediaFrame *nframe) {
   sys_return_val_if_fail(self != NULL, -1);
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
@@ -154,11 +156,16 @@ SysInt fr_media_decoder_decode_frame(FrMediaDecoder *self, FrMediaFrame *nframe)
   return cls->decode_frame(self, nframe);
 }
 
-static SysInt media_decoder_decode_frame_i (FrMediaDecoder* self, FrMediaFrame *nframe) {
+static SysInt media_decoder_decode_frame_i (
+    FrMediaDecoder* self,
+    FrMediaFrame *nframe) {
   return 0;
 }
 
-static SysInt fr_media_decoder_decode_it_i(FrDecoder* o, SysPointer user_data) {
+static SysInt fr_media_decoder_decode_it_i(
+    FrDecoder* o, 
+    SysPointer user_data) {
+
   FrMediaFrame *nframe = NULL;
   FrPacket *nframe_p = NULL;
   FrPacket *mpkt = NULL;

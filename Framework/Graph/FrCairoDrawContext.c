@@ -115,6 +115,8 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
   }
 #endif
   cairo_save(paint_cr);
+
+  // rectangle for test
   cairo_rectangle_red_i(paint_cr, 0, 10);
   cairo_restore(paint_cr);
 

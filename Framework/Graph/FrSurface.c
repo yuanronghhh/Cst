@@ -17,6 +17,11 @@ FrSurface* fr_surface_create_device_surface(FrIDevice* idevice) {
   return fr_device_create_surface(device, &info);
 }
 
+SysUInt8* fr_surface_get_data(FrSurface *self) {
+
+  return fr_i_draw_surface_get_data(self);
+}
+
 void fr_surface_construct(FrSurface* self, FrSurfaceContext *info) {
   sys_return_if_fail(self != NULL);
 

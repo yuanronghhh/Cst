@@ -50,9 +50,13 @@ SYS_API FrImageScale *fr_image_scale_new_I(FrImageScaleContext *info);
 SYS_API void fr_image_scale_construct(FrImageScale* o, FrImageScaleContext* info);
 
 SYS_API void fr_image_scale_resize_proportion(FrImageScale *self,
-    SysInt width, 
+    SysInt width,
     SysInt height,
     SysBool prop_width);
+
+void fr_image_scale_convert(FrImageScale *self,
+    FrImage *src,
+    FrImage *dst);
 
 SYS_API void fr_image_scale_video_frame(FrImageScale *self, FrVideoFrame *frame);
 #define fr_image_scale_create(o) sys_object_create(o, FR_TYPE_IMAGE_SCALE)

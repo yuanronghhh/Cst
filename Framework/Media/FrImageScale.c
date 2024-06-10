@@ -1,5 +1,6 @@
 #include <Framework/Media/FrImageScale.h>
 #include <Framework/Media/FrVideoFrame.h>
+#include <Framework/Graph/FrImage.h>
 #include <Framework/Media/FrMedia.h>
 
 SYS_DEFINE_TYPE(FrImageScale, fr_image_scale, SYS_TYPE_OBJECT);
@@ -35,6 +36,11 @@ static SysBool fr_image_scale_destroy_i(SysObject* o) {
 }
 
 static void setup_scale(FrImageScale *self) {
+  if (self->ctx) {
+
+    sys_clear_pointer(&self->ctx, sws_freeContext);
+  }
+
   self->ctx = sws_getCachedContext(self->ctx,
     self->in_width, self->in_height, self->in_pix_fmt,
     self->out_width, self->out_height, self->out_pix_fmt,
@@ -76,6 +82,20 @@ void fr_image_scale_video_frame(FrImageScale *self, FrVideoFrame *frame) {
   fr_media_to_frame(self->ctx, &frame->parent.ctx);
   fr_video_frame_set_out_size(frame, self->out_width, self->out_height);
 }
+
+void fr_image_scale_convert(FrImageScale *self,
+    FrImage *src,
+    FrImage *dst) {
+
+  sws_scale(self->ctx,
+    (const uint8_t* const*)src->data,
+    src->stride,
+    0,
+    src->height,
+    dst->data,
+    dst->stride);
+}
+
 /* object api */
 void fr_image_scale_construct(FrImageScale *self, FrImageScaleContext *info) {
   self->in_width = info->in_width;
@@ -104,7 +124,7 @@ FrImageScale* fr_image_scale_new_I(FrImageScaleContext *info) {
 static void fr_image_scale_dispose(SysObject* o) {
   FrImageScale *self = FR_IMAGE_SCALE(o);
 
-  if (self->ctx) { 
+  if (self->ctx) {
 
     sys_clear_pointer(&self->ctx, sws_freeContext);
   }

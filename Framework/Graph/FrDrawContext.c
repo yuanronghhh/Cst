@@ -193,7 +193,8 @@ void fr_draw_context_g_unset(void) {
 
 /* object api */
 static void fr_draw_context_construct_i(FrDrawContext *self, FrDevice *device) {
-  self->device = sys_object_ref(device);
+
+  self->device = device ? sys_object_ref(device) : NULL;
   self->device_surface = NULL;
 }
 
@@ -204,7 +205,10 @@ FrDrawContext* fr_draw_context_new(void) {
 static void fr_draw_context_dispose(SysObject* o) {
   FrDrawContext *self = FR_DRAW_CONTEXT(o);
 
-  sys_clear_pointer(&self->device, _sys_object_unref);
+  if(self->device) {
+
+    sys_clear_pointer(&self->device, _sys_object_unref);
+  }
   sys_harray_destroy(&self->surfaces);
 
   SYS_OBJECT_CLASS(fr_draw_context_parent_class)->dispose(o);

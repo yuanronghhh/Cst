@@ -71,6 +71,11 @@ static void cairo_rectangle_red_i(cairo_t* cr, SysInt x, SysInt y) {
   cairo_stroke(cr);
 }
 
+static SysUInt8 * fr_surface_get_data (FrSurface *surface) {
+
+  return cairo_image_surface_get_data(surface->ctx);
+}
+
 static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame) {
 
   SysUInt8 **data;
@@ -385,6 +390,7 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->show_text = fr_context_show_text;
   iface->resize_surface = fr_surface_resize_surface;
   iface->move_to = fr_context_move_to;
+  iface->surface_get_data = fr_surface_get_data;
 }
 
 static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {

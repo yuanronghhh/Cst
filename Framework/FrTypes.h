@@ -79,6 +79,7 @@ typedef struct _FrSurfaceContext FrSurfaceContext;
 typedef struct _FrSurface FrSurface;
 typedef struct _FrSurfaceClass FrSurfaceClass;
 
+typedef struct _FrImageContext FrImageContext;
 typedef struct _FrImage FrImage;
 typedef struct _FrImageClass FrImageClass;
 

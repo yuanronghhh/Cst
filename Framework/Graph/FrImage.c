@@ -3,18 +3,22 @@
 SYS_DEFINE_TYPE(FrImage, fr_image, SYS_TYPE_OBJECT);
 
 /* object api */
-static void fr_image_construct_i(FrImage *self) {
-
+static void fr_image_construct_i(FrImage *self, FrImageContext *info) {
+  *self->data = *info->data;
+  *self->stride = *info->stride;
+  self->height = info->height;
+  self->width = info->width;
+  self->format = info->format;
 }
 
 FrImage* fr_image_new(void) {
   return sys_object_new(FR_TYPE_IMAGE, NULL);
 }
 
-FrImage *fr_image_new_I(void) {
+FrImage *fr_image_new_I(FrImageContext *info) {
   FrImage *o = fr_image_new();
 
-  fr_image_construct_i(o);
+  fr_image_construct_i(o, info);
 
   return o;
 }

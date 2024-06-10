@@ -80,6 +80,7 @@ struct _FrIDrawInterface {
   void (*surface_set_fallback_resolution) (FrSurface* surface,SysDouble x_pixels_per_inch,SysDouble y_pixels_per_inch);
   void (*surface_show_page) (FrSurface* surface);
   void (*surface_unmap_image) (FrSurface* surface,FrSurface* image);
+  SysUInt8 * (*surface_get_data) (FrSurface *surface);
   void (*update_layout) (FrContext* cr, PangoLayout* layout);
   void (*overlay) (FrContext* cr, FrSurface *surface, SysInt x, SysInt y);
   void (*show_layout) (FrContext* cr, PangoLayout* layout);
@@ -156,6 +157,7 @@ void fr_i_draw_surface_set_device_scale (FrSurface* surface,SysDouble x_scale,Sy
 void fr_i_draw_surface_set_fallback_resolution (FrSurface* surface,SysDouble x_pixels_per_inch,SysDouble y_pixels_per_inch);
 void fr_i_draw_surface_show_page (FrSurface* surface);
 void fr_i_draw_surface_unmap_image (FrSurface* surface,FrSurface* image);
+SysUInt8* fr_i_draw_surface_get_data (FrSurface* surface);
 void fr_i_draw_update_layout(FrContext* cr, PangoLayout* layout);
 void fr_i_draw_show_layout(FrContext* cr, PangoLayout* layout);
 SysInt fr_i_draw_rounded_rectangle(FrContext* cr, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius);

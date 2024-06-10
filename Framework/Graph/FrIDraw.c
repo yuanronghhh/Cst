@@ -499,6 +499,12 @@ void fr_i_draw_surface_unmap_image (FrSurface* surface,FrSurface* image) {
   self->surface_unmap_image(surface, image);
 }
 
+SysUInt8* fr_i_draw_surface_get_data (FrSurface* surface) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->surface_get_data(surface);
+}
+
 void fr_i_draw_update_layout(FrContext *cr, PangoLayout *layout) {
   sys_return_if_fail(self != NULL);
 

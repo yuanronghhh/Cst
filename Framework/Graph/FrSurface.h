@@ -24,9 +24,9 @@ struct _FrSurface {
 };
 
 struct _FrSurfaceContext {
-	FrDevice* device;
-	SysInt width;
-	SysInt height;
+  FrDevice* device;
+  SysInt width;
+  SysInt height;
 };
 
 SYS_API SysType fr_surface_get_type(void);

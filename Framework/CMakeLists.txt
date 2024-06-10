@@ -1,9 +1,9 @@
 set(INC
   ../
+  ../../CstDemo
 )
 
 set(EXTERNAL_LIBS
-  "System"
   "unity"
   "pthread"
   "openssl"
@@ -19,6 +19,10 @@ set(EXTERNAL_LIBS
   "tinyexpr"
   "ffmpeg"
   "png"
+)
+
+set(INNER_LIBS
+  "System"
 )
 
 set(UNIX_SRC

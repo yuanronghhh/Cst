@@ -120,6 +120,47 @@ static void test_avformat_leak(void) {
   sys_clear_pointer(&mfile, _sys_object_unref);
 }
 
+static void test_scale_image(void) {
+  FrImageScaleContext scale_info = {
+    .in_width = 800,
+    .in_height = 600,
+    .out_width = 800,
+    .in_pix_fmt = AV_PIX_FMT_BGRA,
+    .out_pix_fmt = AV_PIX_FMT_BGRA
+  };
+
+  FrSurface *sur;
+  SysUInt8 *data;
+  FrImage *src;
+  FrImage *dst;
+
+  FrDrawContext *draw;
+  FrImageScale *scale;
+  FrSurfaceContext sur_args = { .width = 800, .height = 600 };
+
+  draw = fr_cairo_draw_context_new_I(NULL);
+  fr_i_draw_setup(FR_I_DRAW(draw));
+
+  sur = fr_surface_new_I(&sur_args);
+  scale = fr_image_scale_new_I(&scale_info);
+  data = fr_i_draw_surface_get_data(sur);
+
+  FrImageContext image_info = {
+    .data = {data},
+    .width = 800,
+    .height = 600,
+    .stride = {1920, 720},
+  }; 
+
+  src = fr_image_new_I(&image_info);
+  dst = fr_image_new_I(&image_info);
+
+  fr_image_scale_convert(scale, src, dst);
+
+  sys_object_unref(scale);
+  fr_i_draw_teardown();
+}
+
 
 void test_fr_window_leak(void) {
   GLFWwindow *gwindow;
@@ -133,8 +174,9 @@ void test_fr_window_leak(void) {
 void test_video_init(int argc, SysChar * argv[]) {
   UNITY_BEGIN();
   {
+    RUN_TEST(test_scale_image);
     // RUN_TEST(test_avformat_leak);
-    RUN_TEST(test_video_player);
+    // RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_draw_context);
     // RUN_TEST(test_fr_basic);
     // RUN_TEST(test_fr_window_leak);

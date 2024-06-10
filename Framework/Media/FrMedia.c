@@ -1,4 +1,7 @@
 #include <Framework/Media/FrMedia.h>
+#include <Framework/Media/FrImageScale.h>
+#include <Framework/Media/FrImageSaver.h>
+#include <Framework/Graph/FrImage.h>
 
 const SysChar* fr_media_error_string(SysInt err) {
   const SysChar* qmsg = NULL;
@@ -42,28 +45,16 @@ FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   }
 }
 
-static SysInt fr_media_convert_frame(struct SwsContext* sws_ctx,
-  AVFrame* src, AVFrame* dst) {
-  sys_return_val_if_fail(sws_ctx != NULL, -1);
-  sys_return_val_if_fail(src != NULL, -1);
-
-  return sws_scale(sws_ctx,
-    (const uint8_t* const*)src->data,
-    src->linesize,
-    0,
-    src->height,
-    dst->data,
-    dst->linesize);
-}
-
-static AVFrame* fr_media_new_agba_frame(struct SwsContext* sws_ctx, AVFrame* frame) {
+AVFrame* fr_media_new_agba_frame(
+    SysInt width,
+    SysInt height) {
   SysInt err;
   AVFrame* rgba_frame;
 
   rgba_frame = av_frame_alloc();
   rgba_frame->format = AV_PIX_FMT_ARGB;
-  rgba_frame->width = frame->width;
-  rgba_frame->height = frame->height;
+  rgba_frame->width = width;
+  rgba_frame->height = height;
 
   err = av_frame_get_buffer(rgba_frame, 0);
   if (err < 0) {
@@ -71,101 +62,47 @@ static AVFrame* fr_media_new_agba_frame(struct SwsContext* sws_ctx, AVFrame* fra
     return NULL;
   }
 
-  fr_media_convert_frame(sws_ctx, frame, rgba_frame);
   return rgba_frame;
 }
 
-SysBool fr_media_to_frame(struct SwsContext* sws_ctx, AVFrame** frame) {
-  sys_return_val_if_fail(sws_ctx != NULL, false);
-  sys_return_val_if_fail(frame != NULL, false);
-  sys_return_val_if_fail(*frame != NULL, false);
-
-  AVFrame* rgba_frame;
-
-  rgba_frame = fr_media_new_agba_frame(sws_ctx, *frame);
-  if (rgba_frame == NULL) { return false; }
-  av_frame_free(frame);
-  *frame = rgba_frame;
-
-  return true;
-}
-
-SysBool fr_media_data_save_to_png(SysInt width,
-  SysInt height,
-  SysUInt8* data,
-  SysInt linesize,
-  const SysChar *filename) {
-/**
- * save_avframe_png: visual studio should set /MD for libpng
- * @frame: frame
- * @filename:
- *
- * Returns: void
- */
-  FILE *fp = sys_fopen(filename, "wb");
-  if (!fp) { return false; }
-
-  png_struct* png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if(!png_ptr) { 
-    fclose(fp);
-    return false;
-  }
-
-  png_info* info_ptr = png_create_info_struct(png_ptr);
-  if(!info_ptr) {
-    png_destroy_write_struct(&png_ptr, NULL);
-    fclose(fp);
-    return false;
-  }
-
-  png_init_io(png_ptr, fp);
-  png_set_IHDR(png_ptr,
-      info_ptr,
-      width,
-      height,
-      8, 
-      PNG_COLOR_TYPE_RGB_ALPHA,
-      PNG_INTERLACE_NONE,
-      PNG_COMPRESSION_TYPE_DEFAULT,
-      PNG_FILTER_TYPE_DEFAULT);
-
-  png_byte** bptr = (png_byte **)sys_malloc_N(sizeof(png_byte *) * height);
-  for(int i = 0; i < height; i++) {
-    bptr[i] = (png_byte *)(data + i * linesize);
-  }
-
-  png_set_rows(png_ptr, info_ptr, bptr);
-  png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-  sys_free_N(bptr);
-
-  png_destroy_write_struct(&png_ptr, &info_ptr);
-  fclose(fp);
-  return true;
-}
-
 void fr_media_rgba_save_to_png(AVFrame* frame, const SysChar* filename) {
+  FrImageSaver *saver;
+  FrImage *src;
 
-  fr_media_data_save_to_png(frame->width, frame->height, frame->data[0], frame->linesize[0], filename);
+  saver = fr_image_saver_new_I();
+  src = fr_image_new_from_avframe(frame);
+
+  fr_image_saver_save_png(saver, src, filename);
+
+  sys_object_unref(saver);
+  sys_object_unref(src);
 }
 
 
-void fr_media_yuv_save_to_png(AVFrame *src, const SysChar *filename) {
-  struct SwsContext *sws_ctx;
-  AVFrame* rgba_frame;
+void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
+  FrImageScaleContext scale_info = {
+    .in_width = frame->width,
+    .in_height = frame->height,
+    .in_pix_fmt = frame->format,
+    .out_width = frame->width,
+    .out_height = frame->height,
+    .out_pix_fmt = AV_PIX_FMT_RGBA
+  };
 
-  sws_ctx = sws_getContext(src->width, src->height, src->format,
-      src->width, src->height, AV_PIX_FMT_RGBA,
-      SWS_BILINEAR, NULL, NULL, NULL);
+  FrImageSaver *saver;
+  FrImageScale *scale;
+  FrImage *src;
 
-  rgba_frame = fr_media_new_agba_frame(sws_ctx, src);
-  if (rgba_frame == NULL) {
+  saver = fr_image_saver_new_I();
+  src = fr_image_new_from_avframe(frame);
+  scale = fr_image_scale_new_I(&scale_info);
 
-    sys_clear_pointer(&sws_ctx, sws_freeContext);
-    return;
-  }
+  fr_image_scale_convert_image(scale, src, src);
+  fr_image_saver_save_png(saver, src, filename);
 
-  fr_media_rgba_save_to_png(rgba_frame, filename);
-  av_frame_free(&rgba_frame);
+  sys_object_unref(saver);
+  sys_object_unref(scale);
+  sys_object_unref(src);
 }
 
 void fr_media_frame_get_frame_rate (
@@ -180,18 +117,17 @@ void fr_media_frame_get_frame_rate (
   *den = rational.den;
 }
 
-SysInt fr_media_scale_frame(struct SwsContext *sws_ctx,
-    AVFrame *frame,
-    SysUInt8 * const pixels[],
-    const SysInt pixels_size[]) {
+SysInt fr_media_avframe_convert(
+    FrImageScale *scale,
+    AVFrame *frame, AVFrame *dst) {
 
-  return sws_scale(sws_ctx,
+  return fr_image_scale_convert(scale,
       (const uint8_t *const *)frame->data,
       frame->linesize,
       0,
       frame->height,
-      pixels,
-      pixels_size);
+      dst->data,
+      dst->linesize);
 }
 
 SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {
@@ -263,7 +199,6 @@ AVPacket* fr_media_packet_new_from_avpacket(AVPacket* op) {
 
   return np;
 }
-
 
 const AVCodec *fr_media_find_decoder(AVStream *stream) {
   sys_return_val_if_fail(stream != NULL, NULL);

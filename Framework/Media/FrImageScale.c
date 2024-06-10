@@ -1,9 +1,25 @@
 #include <Framework/Media/FrImageScale.h>
-#include <Framework/Media/FrVideoFrame.h>
 #include <Framework/Graph/FrImage.h>
-#include <Framework/Media/FrMedia.h>
 
 SYS_DEFINE_TYPE(FrImageScale, fr_image_scale, SYS_TYPE_OBJECT);
+
+SysBool image_scale_check(
+    FrImageScale *self,
+    SysInt src_format,
+    SysInt dst_format) {
+
+  if(src_format != self->in_pix_fmt) {
+    sys_warning_N("input format should be: %d", self->in_pix_fmt);
+    return false;
+  }
+
+  if(dst_format != self->out_pix_fmt) {
+    sys_warning_N("output format should be: %d", self->out_pix_fmt);
+    return false;
+  }
+
+  return true;
+}
 
 void fr_image_scale_set_proportion(FrImageScale* self, FrProportion* prop) {
   sys_return_if_fail(self != NULL);
@@ -27,7 +43,7 @@ static void calc_proportion(
 static SysBool fr_image_scale_destroy_i(SysObject* o) {
   FrImageScale *self = FR_IMAGE_SCALE(o);
 
-  if (self->ctx) { 
+  if (self->ctx) {
 
     sys_clear_pointer(&self->ctx, sws_freeContext);
   }
@@ -36,11 +52,6 @@ static SysBool fr_image_scale_destroy_i(SysObject* o) {
 }
 
 static void setup_scale(FrImageScale *self) {
-  if (self->ctx) {
-
-    sys_clear_pointer(&self->ctx, sws_freeContext);
-  }
-
   self->ctx = sws_getCachedContext(self->ctx,
     self->in_width, self->in_height, self->in_pix_fmt,
     self->out_width, self->out_height, self->out_pix_fmt,
@@ -77,33 +88,50 @@ void fr_image_scale_resize_proportion(FrImageScale *self,
   fr_image_scale_resize_output(self, nwidth, nheight);
 }
 
-void fr_image_scale_video_frame(FrImageScale *self, FrVideoFrame *frame) {
+SysInt fr_image_scale_convert(
+    FrImageScale *self,
+    const SysUInt8 *const src_data[],
+    const SysInt src_stride[],
+    SysInt src_width,
+    SysInt src_height,
+    SysUInt8 *const dst_data[],
+    const SysInt dst_stride[]) {
 
-  fr_media_to_frame(self->ctx, &frame->parent.ctx);
-  fr_video_frame_set_out_size(frame, self->out_width, self->out_height);
+  return sws_scale(self->ctx,
+    src_data,
+    src_stride,
+    0,
+    src_height,
+    dst_data,
+    dst_stride);
 }
 
-void fr_image_scale_convert(FrImageScale *self,
+SysInt fr_image_scale_convert_image(
+    FrImageScale *self,
     FrImage *src,
     FrImage *dst) {
 
-  sws_scale(self->ctx,
-    (const uint8_t* const*)src->data,
-    src->stride,
-    0,
-    src->height,
-    dst->data,
-    dst->stride);
+  if(!image_scale_check(self, src->format, dst->format)) {
+    return -1;
+  }
+
+  return fr_image_scale_convert(self,
+      (const SysUInt8 *const *)src->data,
+      src->stride,
+      0,
+      src->height,
+      (SysUInt8 *const *)dst->data,
+      dst->stride);
 }
 
 /* object api */
 void fr_image_scale_construct(FrImageScale *self, FrImageScaleContext *info) {
   self->in_width = info->in_width;
   self->in_height = info->in_height;
-  self->out_width = info->out_width;
-  self->out_height = info->out_height;
-  self->in_pix_fmt = info->in_pix_fmt;
-  self->out_pix_fmt = info->out_pix_fmt;
+  self->out_width = info->out_width == 0 ? info->in_width : info->out_width;
+  self->out_height = info->out_height == 0 ? info->in_height : info->out_height;
+  self->in_pix_fmt = info->in_pix_fmt ? info->in_pix_fmt : 0;
+  self->out_pix_fmt = info->out_pix_fmt ? info->out_pix_fmt : info->in_pix_fmt;
 
   calc_proportion(self->out_width, self->out_height, &self->proportion);
   setup_scale(self);

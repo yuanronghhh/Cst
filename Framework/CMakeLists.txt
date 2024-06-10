@@ -4,6 +4,7 @@ set(INC
 )
 
 set(EXTERNAL_LIBS
+  "System"
   "unity"
   "pthread"
   "openssl"
@@ -22,7 +23,6 @@ set(EXTERNAL_LIBS
 )
 
 set(INNER_LIBS
-  "System"
 )
 
 set(UNIX_SRC
@@ -116,6 +116,8 @@ set(SRC
   ./Media/FrIDecoder.h
   ./Media/FrImageScale.c
   ./Media/FrImageScale.h
+  ./Media/FrImageSaver.c
+  ./Media/FrImageSaver.h
   ./Media/FrIMedia.c
   ./Media/FrIMedia.h
   ./Media/FrIMediaRender.c

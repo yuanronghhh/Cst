@@ -54,11 +54,20 @@ SYS_API void fr_image_scale_resize_proportion(FrImageScale *self,
     SysInt height,
     SysBool prop_width);
 
-void fr_image_scale_convert(FrImageScale *self,
+SysInt fr_image_scale_convert(
+    FrImageScale *self,
+    const SysUInt8 *const src_data[],
+    const SysInt src_stride[],
+    SysInt src_width,
+    SysInt src_height,
+    SysUInt8 *const dst_data[],
+    const SysInt dst_stride[]);
+
+SysInt fr_image_scale_convert_image(
+    FrImageScale *self,
     FrImage *src,
     FrImage *dst);
 
-SYS_API void fr_image_scale_video_frame(FrImageScale *self, FrVideoFrame *frame);
 #define fr_image_scale_create(o) sys_object_create(o, FR_TYPE_IMAGE_SCALE)
 
 SYS_END_DECLS

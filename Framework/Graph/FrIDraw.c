@@ -505,6 +505,12 @@ SysUInt8* fr_i_draw_surface_get_data (FrSurface* surface) {
   return self->surface_get_data(surface);
 }
 
+SysBool fr_i_draw_surface_save_to_png (FrSurface* surface, const SysChar *filename) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->surface_save_to_png(surface, filename);
+}
+
 void fr_i_draw_update_layout(FrContext *cr, PangoLayout *layout) {
   sys_return_if_fail(self != NULL);
 

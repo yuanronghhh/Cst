@@ -48,7 +48,15 @@ AVStream* fr_media_parse_stream_by_type(
 
 SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p);
 
-SysBool fr_media_to_frame(struct SwsContext* sws_ctx, AVFrame** frame);
+AVFrame* fr_media_new_agba_frame(
+    SysInt width,
+    SysInt height);
+
+SysInt fr_media_avframe_convert(
+    FrImageScale *scale,
+    AVFrame *frame,
+    AVFrame *dst);
+
 void fr_media_yuv_save_to_png(AVFrame * frame, const SysChar *filename);
 void fr_media_rgba_save_to_png(AVFrame* frame, const SysChar* filename);
 

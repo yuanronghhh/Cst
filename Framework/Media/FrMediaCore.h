@@ -24,6 +24,8 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrMediaFrame.h>
 #include <Framework/Media/FrMediaPacket.h>
 #include <Framework/Media/FrMediaDecoder.h>
+#include <Framework/Media/FrImageSaver.h>
+#include <Framework/Media/FrImageScale.h>
 #include <Framework/Media/FrGlRender.h>
 #include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Media/FrFrameDecoder.h>

@@ -37,7 +37,9 @@ static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
 #endif
 
   vframe = (FrVideoFrame*)sys_object_dclone(mframe);
-  fr_image_scale_video_frame(&self->scale, vframe);
+  if(!fr_video_frame_scale(vframe, &self->scale)) {
+    return -1;
+  }
 
   fr_media_pipeline_push_image_frame(box, FR_MEDIA_FRAME(vframe));
 

@@ -1,7 +1,25 @@
 #include <Framework/Media/FrVideoFrame.h>
+#include <Framework/Media/FrImageScale.h>
 
 SYS_DEFINE_TYPE(FrVideoFrame, fr_video_frame, FR_TYPE_MEDIA_FRAME);
 
+SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  AVFrame* rgba_frame = fr_media_new_agba_frame(self->width, self->height);
+  if (rgba_frame == NULL) { return false; }
+
+  if (fr_media_avframe_convert(scale, self->parent.ctx, rgba_frame) < 0) {
+    av_frame_free(&rgba_frame);
+    goto done;
+  }
+  self->parent.ctx = rgba_frame;
+
+  fr_video_frame_set_out_size(self, self->width, self->height);
+
+done:
+  return self;
+}
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {
   sys_return_if_fail(self);

@@ -71,9 +71,31 @@ static void cairo_rectangle_red_i(cairo_t* cr, SysInt x, SysInt y) {
   cairo_stroke(cr);
 }
 
+static SysInt fr_image_surface_get_stride(FrSurface *surface) {
+
+  return cairo_image_surface_get_stride(surface->ctx);
+}
+
 static SysUInt8 * fr_surface_get_data (FrSurface *surface) {
 
   return cairo_image_surface_get_data(surface->ctx);
+}
+
+static SysBool cairo_save_to_png(cairo_surface_t* surface, const SysChar *filename) {
+  cairo_status_t err;
+  err = cairo_surface_write_to_png(surface, filename);
+  if (err != CAIRO_STATUS_SUCCESS) {
+    sys_warning_N("%s: %s", filename, cairo_status_to_string(err));
+    return false;
+  }
+
+  return true;
+}
+
+static SysBool fr_surface_save_to_png(FrSurface* self, const SysChar *filename) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return cairo_save_to_png(self->ctx, filename);
 }
 
 static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame) {
@@ -106,13 +128,8 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
 
 #if 0
   SysChar* filename = FR_PROJECT_DIR"/Assets/surface.png";
-  cairo_status_t err;
 
-  err = cairo_surface_write_to_png(paint_surface, filename);
-  if (err != CAIRO_STATUS_SUCCESS) {
-    sys_warning_N("%s: %s", filename, cairo_status_to_string(err));
-    return;
-  }
+  cairo_save_to_png(paint_surface, filename);
 #endif
   cairo_save(paint_cr);
 
@@ -393,6 +410,8 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->resize_surface = fr_surface_resize_surface;
   iface->move_to = fr_context_move_to;
   iface->surface_get_data = fr_surface_get_data;
+  iface->image_surface_get_stride = fr_image_surface_get_stride;
+  iface->surface_save_to_png = fr_surface_save_to_png;
 }
 
 static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {

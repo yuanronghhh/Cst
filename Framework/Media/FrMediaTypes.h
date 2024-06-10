@@ -97,8 +97,12 @@ typedef struct _FrIMediaInterface FrIMediaInterface;
 typedef struct _FrMediaDecoder FrMediaDecoder;
 typedef struct _FrMediaDecoderClass FrMediaDecoderClass;
 
+typedef struct _FrImageSaver FrImageSaver;
+typedef struct _FrImageSaverClass FrImageSaverClass;
+
 typedef struct _FrImageScale FrImageScale;
 typedef struct _FrImageScaleClass FrImageScaleClass;
+
 typedef struct _FrProportion FrProportion;
 typedef struct _FrImageScaleContext FrImageScaleContext;
 

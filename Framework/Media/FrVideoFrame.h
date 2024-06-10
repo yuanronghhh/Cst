@@ -37,6 +37,8 @@ void fr_video_frame_get_frame_data(FrVideoFrame *self,
   SysUInt8 **frame_data[], 
   SysInt *linesize[]);
 
+SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale);
+
 SYS_END_DECLS
 
 #endif

@@ -58,7 +58,6 @@ SysInt fr_media_avframe_convert(
     AVFrame *dst);
 
 void fr_media_yuv_save_to_png(AVFrame * frame, const SysChar *filename);
-void fr_media_rgba_save_to_png(AVFrame* frame, const SysChar* filename);
 
 SYS_END_DECLS
 

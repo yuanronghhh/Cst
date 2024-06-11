@@ -10,6 +10,7 @@ SysBool fr_image_is_empty(FrImage* self) {
 }
 
 FrImage* fr_image_new_from_avframe(AVFrame *frame) {
+  SysInt err = 0;
   FrImageContext info = {
     .width = frame->width,
     .height = frame->height,
@@ -18,9 +19,9 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
   *info.stride = *frame->linesize;
 
   info.data_size = fr_image_context_get_size(&info);
-  info.data = sgc_type_new(SYS_TYPE_CHAR, info.data_size);
+  info.data = sys_malloc0(info.data_size);
 
-  av_image_copy_to_buffer(
+  err = av_image_copy_to_buffer(
       info.data,
       info.data_size,
       (const uint8_t * const*)frame->data,
@@ -29,6 +30,12 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
       info.width,
       info.height,
       1);
+
+  if(err < 0) {
+
+    sys_free_N(info.data);
+    return NULL;
+  }
 
   return fr_image_new_from_buffer(&info);
 }
@@ -77,7 +84,7 @@ SysInt fr_image_context_get_size(FrImageContext *info) {
       info->format,
       info->width,
       info->height,
-      info->stride[0]);
+      1);
 }
 
 FrImage* fr_image_new_with_buffer(FrImageContext *info) {

@@ -8,6 +8,7 @@ SysBool data_save_to_png(
     SysInt height,
     const SysUInt8* data,
     SysInt linesize,
+    SysInt format,
     const SysChar *filename) {
 
   FILE *fp = sys_fopen(filename, "wb");
@@ -32,7 +33,7 @@ SysBool data_save_to_png(
       width,
       height,
       8, 
-      PNG_COLOR_TYPE_RGB_ALPHA,
+      format, // PNG_COLOR_TYPE_RGB_ALPHA
       PNG_INTERLACE_NONE,
       PNG_COMPRESSION_TYPE_DEFAULT,
       PNG_FILTER_TYPE_DEFAULT);
@@ -61,7 +62,7 @@ SysBool fr_image_saver_save_png(
 
   if (image->format != AV_PIX_FMT_RGBA) {
 
-    sys_warning_N("image format should be bgra: %s", filename);
+    sys_warning_N("image format should be argb: %s", filename);
     return -1;
   }
 
@@ -70,6 +71,29 @@ SysBool fr_image_saver_save_png(
       image->height,
       image->data,
       image->stride[0],
+      PNG_COLOR_TYPE_RGB_ALPHA,
+      filename);
+}
+
+SysBool fr_image_saver_save_avframe(
+    FrImageSaver *saver,
+    AVFrame *frame,
+    const SysChar *filename) {
+  sys_return_val_if_fail(saver != NULL, false);
+  sys_return_val_if_fail(frame != NULL, false);
+
+  if (frame->format != AV_PIX_FMT_RGBA) {
+
+    sys_warning_N("frame format should be argb: %s", filename);
+    return -1;
+  }
+
+  return data_save_to_png(
+      frame->width,
+      frame->height,
+      frame->data[0],
+      frame->linesize[0],
+      PNG_COLOR_TYPE_RGB_ALPHA,
       filename);
 }
 

@@ -1,6 +1,6 @@
 include ./MakeTools/MakeCmake.makefile
 BUILD_TYPE:=Debug
-VIM_SESSION:=GVIM
+VIM_SESSION:=GVIM1
 DEBUGGER:=gdb
 PROJ_NAME=FrameworkTest
 project:=Framework \

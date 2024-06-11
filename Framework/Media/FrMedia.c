@@ -92,24 +92,18 @@ void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
 
   FrImageSaver *saver;
   FrImageScale *scale;
-  FrImage *src;
-  FrImage *dst;
-
-  saver = fr_image_saver_new_I();
-  src = fr_image_new_from_avframe(frame);
-  sys_object_unref(src);
-  dst = fr_image_new_from_avframe(frame);
-  dst->format = scale_info.out_pix_fmt;
+  FrImage *image;
 
   scale = fr_image_scale_new_I(&scale_info);
-  fr_image_scale_convert_image(scale, src, dst);
-  sys_object_unref(src);
+  saver = fr_image_saver_new_I();
+  image = fr_image_new_from_avframe(frame);
 
-  fr_image_saver_save_png(saver, dst, filename);
+  fr_image_scale_convert_format(scale, image, scale_info.out_pix_fmt);
+  fr_image_saver_save_png(saver, image, filename);
 
   sys_object_unref(saver);
   sys_object_unref(scale);
-  sys_object_unref(src);
+  sys_object_unref(image);
 }
 
 void fr_media_frame_get_frame_rate (

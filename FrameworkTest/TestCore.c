@@ -48,7 +48,7 @@ int main(int argc, SysChar* argv[]) {
 #endif
   fr_core_setup();
 
-  test_video_init(argc, argv);
+  // test_video_init(argc, argv);
 
   fr_core_teardown();
   sys_teardown();

@@ -33,7 +33,7 @@ static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
 
   fr_video_frame_init_out_size(FR_VIDEO_FRAME(mframe));
 
-#if 1
+#if 0
   const SysChar* filename = FR_PROJECT_DIR"/Assets/surface.png";
   fr_media_yuv_save_to_png(mframe->ctx, filename);
 #endif

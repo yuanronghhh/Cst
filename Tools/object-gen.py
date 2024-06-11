@@ -661,15 +661,16 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = Path("./Framework/Event").as_posix()
-    header_path = "Framework/Event"
-    common_path = "Framework/Event/FrMediaCommon.h"
+    dst = Path("./Framework/Media").as_posix()
+    header_path = "Framework/Media"
+    common_path = "Framework/Media/FrMediaCommon.h"
 
     template_struct = """
-struct _FrEventVideoRefresh {
-  FrEvent parent;
+struct _FrImageSaver {
+  SysObject parent;
 
   /* <private> */
+  FrImageScale scale;
 };
 """
     info = TemplateInfo(template_struct)

@@ -72,6 +72,11 @@ SysInt fr_image_scale_convert_avframe(
     FrImageScale *self,
     AVFrame *frame, AVFrame *dst);
 
+SysBool fr_image_scale_convert_format(
+    FrImageScale *self,
+    FrImage *src,
+    SysInt nformat);
+
 #define fr_image_scale_create(o) sys_object_create(o, FR_TYPE_IMAGE_SCALE)
 
 SYS_END_DECLS

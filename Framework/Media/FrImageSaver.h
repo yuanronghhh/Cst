@@ -29,6 +29,11 @@ SYS_API SysBool fr_image_saver_save_png(
     FrImage *image,
     const SysChar *filename);
 
+SYS_API SysBool fr_image_saver_save_avframe(
+    FrImageSaver *saver,
+    AVFrame *frame,
+    const SysChar *filename);
+
 SYS_END_DECLS
 
 #endif

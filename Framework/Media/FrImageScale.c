@@ -106,6 +106,48 @@ SysInt fr_image_scale_convert(
     dst_stride);
 }
 
+SysBool fr_image_scale_convert_format(
+    FrImageScale *self,
+    FrImage *src,
+    SysInt nformat) {
+
+  SysUInt8 *nbuf;
+  SysSize nsize;
+  if(self->out_pix_fmt == src->format) {
+    return false;
+  }
+
+  nsize = av_image_get_buffer_size(
+      nformat,
+      src->width,
+      src->height,
+      1);
+  nbuf = sys_malloc0(nsize);
+
+  if(fr_image_scale_convert(self,
+      (const SysUInt8 *const *)src->data,
+      src->stride,
+      0,
+      src->height,
+      (SysUInt8 *const *)nbuf,
+      src->stride) < 0) {
+
+    sys_free_N(nbuf);
+    sys_warning_N("convert image failed: %d,%d",
+        src->width, 
+        src->height);
+    return false;
+  }
+
+  sys_free_N(src->data);
+
+  src->data = nbuf;
+  src->data_size = nsize;
+  src->format = nformat;
+
+  return true;
+}
+
 SysInt fr_image_scale_convert_image(
     FrImageScale *self,
     FrImage *src,
@@ -126,7 +168,8 @@ SysInt fr_image_scale_convert_image(
 
 SysInt fr_image_scale_convert_avframe(
     FrImageScale *self,
-    AVFrame *src, AVFrame *dst) {
+    AVFrame *src, 
+    AVFrame *dst) {
   sys_return_val_if_fail(src != NULL, -1);
   sys_return_val_if_fail(dst != NULL, -1);
 

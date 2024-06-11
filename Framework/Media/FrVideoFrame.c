@@ -6,19 +6,28 @@ SYS_DEFINE_TYPE(FrVideoFrame, fr_video_frame, FR_TYPE_MEDIA_FRAME);
 SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   sys_return_val_if_fail(self != NULL, false);
 
-  AVFrame* rgba_frame = fr_media_new_agba_frame(self->width, self->height);
+  AVFrame* rgba_frame = fr_media_new_rgba_frame(self->width, self->height);
   if (rgba_frame == NULL) { return false; }
 
-  if (fr_media_avframe_convert(scale, self->parent.ctx, rgba_frame) < 0) {
+  if (fr_image_scale_convert_avframe(scale, self->parent.ctx, rgba_frame) < 0) {
+    sys_warning_N("convert avframe failed: %p", self);
     av_frame_free(&rgba_frame);
     goto done;
   }
+  av_frame_free(&self->parent.ctx);
   self->parent.ctx = rgba_frame;
 
   fr_video_frame_set_out_size(self, self->width, self->height);
 
 done:
   return self;
+}
+
+void fr_video_frame_init_out_size(FrVideoFrame* self) {
+  sys_return_if_fail(self);
+
+  self->width = self->parent.ctx->width;
+  self->height = self->parent.ctx->height;
 }
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {
@@ -42,6 +51,21 @@ void fr_video_frame_get_frame_data(FrVideoFrame *self,
 
   *frame_data = self->parent.ctx->data;
   *linesize = self->parent.ctx->linesize;
+}
+
+SysObject* fr_video_frame_dclone_i(SysObject* o) {
+  sys_return_val_if_fail(o != NULL, NULL);
+  SysObject* n;
+
+  n = SYS_OBJECT_CLASS(fr_video_frame_parent_class)->dclone(o);
+
+  FrVideoFrame* nself = FR_VIDEO_FRAME(n);
+  FrVideoFrame* oself = FR_VIDEO_FRAME(o);
+
+  nself->width = oself->width;
+  nself->height = oself->height;
+
+  return n;
 }
 
 /* object api */
@@ -69,6 +93,7 @@ static void fr_video_frame_class_init(FrVideoFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_video_frame_dispose;
+  ocls->dclone = fr_video_frame_dclone_i;
 }
 
 void fr_video_frame_init(FrVideoFrame* self) {

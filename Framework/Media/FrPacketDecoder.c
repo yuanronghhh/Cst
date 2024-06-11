@@ -37,11 +37,6 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
     return FR_MEDIA_ERROR_WAIT;
   }
 
-  if (self->serial > 2) {
-
-    return FR_MEDIA_ERROR_EOF;
-  }
-
   return FR_MEDIA_ERROR_AGAIN;
 }
 
@@ -75,9 +70,7 @@ FrDecoder *fr_packet_decoder_new_I(FrMediaFile *file) {
 
 static void fr_packet_decoder_dispose(SysObject* o) {
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
-  FrDecoder* decoder = FR_DECODER(o);
 
-  fr_decoder_stop(decoder);
   sys_clear_pointer(&self->file, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_packet_decoder_parent_class)->dispose(o);

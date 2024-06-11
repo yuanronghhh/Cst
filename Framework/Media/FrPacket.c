@@ -40,6 +40,7 @@ FrPacket* fr_packet_new(void) {
 }
 
 static void fr_packet_dispose(SysObject* o) {
+  // FrPacket* self = FR_PACKET(o);
 
   SYS_OBJECT_CLASS(fr_packet_parent_class)->dispose(o);
 }

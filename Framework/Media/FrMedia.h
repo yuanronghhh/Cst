@@ -48,7 +48,7 @@ AVStream* fr_media_parse_stream_by_type(
 
 SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p);
 
-AVFrame* fr_media_new_agba_frame(
+AVFrame* fr_media_new_rgba_frame(
     SysInt width,
     SysInt height);
 

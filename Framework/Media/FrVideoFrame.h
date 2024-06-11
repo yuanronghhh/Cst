@@ -30,6 +30,7 @@ SYS_API FrVideoFrame *fr_video_frame_new(void);
 
 SYS_API FrVideoFrame *fr_video_frame_new_I(void);
 
+void fr_video_frame_init_out_size(FrVideoFrame* self);
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height);
 void fr_video_frame_get_out_size(FrVideoFrame* self, SysInt* width, SysInt* height);
 

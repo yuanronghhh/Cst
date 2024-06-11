@@ -70,6 +70,10 @@ void fr_media_pipeline_push_sample_frame(FrMediaPipeline* self,
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(frame != NULL);
 
+  /**
+   * NOTE: ignore leak, vld cannot detect malloc this thread,
+   * and free on other thread.
+   */
   sys_async_queue_push(&self->sample_queue, frame);
 }
 
@@ -78,6 +82,10 @@ void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(frame != NULL);
 
+  /**
+   * NOTE: ignore leak, vld cannot detect malloc this thread,
+   * and free on other thread.
+   */
   sys_async_queue_push(&self->image_queue, frame);
 }
 
@@ -99,12 +107,17 @@ void fr_media_pipeline_get_video_size(FrMediaPipeline *self, SysInt *width, SysI
 SysBool fr_media_pipeline_destroy_i(SysObject *o) {
   FrMediaPipeline *self = FR_MEDIA_PIPELINE(o);
 
+  fr_decoder_stop(self->packet_decoder);
   sys_clear_pointer(&self->packet_decoder, _sys_object_unref);
+
+  fr_decoder_stop(self->video_decoder);
   sys_clear_pointer(&self->video_decoder, _sys_object_unref);
+
+  fr_decoder_stop(self->audio_decoder);
   sys_clear_pointer(&self->audio_decoder, _sys_object_unref);
 
-  sys_async_queue_clear(&self->image_queue);
-  sys_async_queue_clear(&self->sample_queue);
+  sys_async_queue_clear_full(&self->image_queue);
+  sys_async_queue_clear_full(&self->sample_queue);
 
   return true;
 }
@@ -127,10 +140,7 @@ FrMediaPipeline *fr_media_pipeline_new_I(void) {
 }
 
 static void fr_media_pipeline_dispose(SysObject* o) {
-  FrMediaPipeline *self = FR_MEDIA_PIPELINE(o);
-
-  sys_clear_pointer(&self->image_queue, sys_async_queue_clear);
-  sys_clear_pointer(&self->sample_queue, sys_async_queue_clear);
+  fr_media_pipeline_destroy_i(o);
 
   SYS_OBJECT_CLASS(fr_media_pipeline_parent_class)->dispose(o);
 }

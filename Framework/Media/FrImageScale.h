@@ -58,8 +58,8 @@ SysInt fr_image_scale_convert(
     FrImageScale *self,
     const SysUInt8 *const src_data[],
     const SysInt src_stride[],
-    SysInt src_width,
-    SysInt src_height,
+    SysInt src_y,
+    SysInt src_h,
     SysUInt8 *const dst_data[],
     const SysInt dst_stride[]);
 
@@ -67,6 +67,10 @@ SysInt fr_image_scale_convert_image(
     FrImageScale *self,
     FrImage *src,
     FrImage *dst);
+
+SysInt fr_image_scale_convert_avframe(
+    FrImageScale *self,
+    AVFrame *frame, AVFrame *dst);
 
 #define fr_image_scale_create(o) sys_object_create(o, FR_TYPE_IMAGE_SCALE)
 

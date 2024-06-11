@@ -45,19 +45,20 @@ FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   }
 }
 
-AVFrame* fr_media_new_agba_frame(
+AVFrame* fr_media_new_rgba_frame(
     SysInt width,
     SysInt height) {
   SysInt err;
   AVFrame* rgba_frame;
 
   rgba_frame = av_frame_alloc();
-  rgba_frame->format = AV_PIX_FMT_ARGB;
+  rgba_frame->format = AV_PIX_FMT_RGBA;
   rgba_frame->width = width;
   rgba_frame->height = height;
 
   err = av_frame_get_buffer(rgba_frame, 0);
   if (err < 0) {
+    sys_warning_N("new rgba frame failed, check width: %d,%d", width, height);
     av_frame_free(&rgba_frame);
     return NULL;
   }
@@ -115,19 +116,6 @@ void fr_media_frame_get_frame_rate (
   AVRational rational = av_guess_frame_rate(ctx, stream, frame);
   *num = rational.num;
   *den = rational.den;
-}
-
-SysInt fr_media_avframe_convert(
-    FrImageScale *scale,
-    AVFrame *frame, AVFrame *dst) {
-
-  return fr_image_scale_convert(scale,
-      (const uint8_t *const *)frame->data,
-      frame->linesize,
-      0,
-      frame->height,
-      dst->data,
-      dst->linesize);
 }
 
 SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {

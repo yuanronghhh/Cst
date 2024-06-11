@@ -17,7 +17,7 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   info.out_width = self->parent.ctx->width;
   info.out_height = self->parent.ctx->height;
   info.in_pix_fmt = self->parent.ctx->pix_fmt;
-  info.out_pix_fmt = AV_PIX_FMT_BGRA;
+  info.out_pix_fmt = AV_PIX_FMT_RGBA;
   fr_image_scale_construct(&self->scale, &info);
 
   return err;
@@ -30,6 +30,8 @@ static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
   FrDecoder *d = FR_DECODER(o);
   FrMediaPipeline *box = fr_decoder_get_user_data(d);
+
+  fr_video_frame_init_out_size(FR_VIDEO_FRAME(mframe));
 
 #if 0
   const SysChar* filename = PROJECT_DIR"/Assets/surface.png";
@@ -74,9 +76,7 @@ FrDecoder* fr_video_decoder_new(void) {
 
 static void fr_video_decoder_dispose(SysObject* o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
-  FrDecoder* decoder = FR_DECODER(o);
 
-  fr_decoder_stop(decoder);
   sys_object_destroy(&self->scale);
   sys_object_destroy(&self->frame);
 

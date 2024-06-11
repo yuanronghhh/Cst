@@ -113,7 +113,6 @@ static SysPointer decoder_thread(SysPointer user_data) {
   }
 
 exit:
-  DECODER_UNLOCK;
   return NULL;
 }
 
@@ -175,7 +174,6 @@ SysInt fr_decoder_start(FrDecoder* self) {
 static SysPointer stop_it(FrMediaTask *task, SysPointer user_data) {
   FrDecoder *self = user_data;
 
-  sys_debug_N("stop it: %s", self->name);
   self->state = FR_MEDIA_STATE_STOP;
 
   return INT_TO_POINTER(FR_MEDIA_ERROR_EXIT);

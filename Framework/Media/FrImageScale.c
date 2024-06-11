@@ -92,8 +92,8 @@ SysInt fr_image_scale_convert(
     FrImageScale *self,
     const SysUInt8 *const src_data[],
     const SysInt src_stride[],
-    SysInt src_width,
-    SysInt src_height,
+    SysInt src_y,
+    SysInt src_h,
     SysUInt8 *const dst_data[],
     const SysInt dst_stride[]) {
 
@@ -101,7 +101,7 @@ SysInt fr_image_scale_convert(
     src_data,
     src_stride,
     0,
-    src_height,
+    src_h,
     dst_data,
     dst_stride);
 }
@@ -123,6 +123,26 @@ SysInt fr_image_scale_convert_image(
       (SysUInt8 *const *)dst->data,
       dst->stride);
 }
+
+SysInt fr_image_scale_convert_avframe(
+    FrImageScale *self,
+    AVFrame *src, AVFrame *dst) {
+  sys_return_val_if_fail(src != NULL, -1);
+  sys_return_val_if_fail(dst != NULL, -1);
+
+  if(!image_scale_check(self, src->format, dst->format)) {
+    return -1;
+  }
+
+  return fr_image_scale_convert(self,
+      (const uint8_t *const *)src->data,
+      src->linesize,
+      0,
+      src->height,
+      dst->data,
+      dst->linesize);
+}
+
 
 /* object api */
 void fr_image_scale_construct(FrImageScale *self, FrImageScaleContext *info) {

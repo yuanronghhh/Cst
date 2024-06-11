@@ -9,12 +9,12 @@ SysBool image_scale_check(
     SysInt dst_format) {
 
   if(src_format != self->in_pix_fmt) {
-    sys_warning_N("input format should be: %d", self->in_pix_fmt);
+    sys_warning_N("input format check failed: %d -> %d", src_format, self->in_pix_fmt);
     return false;
   }
 
   if(dst_format != self->out_pix_fmt) {
-    sys_warning_N("output format should be: %d", self->out_pix_fmt);
+    sys_warning_N("output format check failed: %d -> %d", dst_format, self->out_pix_fmt);
     return false;
   }
 

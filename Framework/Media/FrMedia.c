@@ -93,13 +93,19 @@ void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
   FrImageSaver *saver;
   FrImageScale *scale;
   FrImage *src;
+  FrImage *dst;
 
   saver = fr_image_saver_new_I();
   src = fr_image_new_from_avframe(frame);
-  scale = fr_image_scale_new_I(&scale_info);
+  sys_object_unref(src);
+  dst = fr_image_new_from_avframe(frame);
+  dst->format = scale_info.out_pix_fmt;
 
-  fr_image_scale_convert_image(scale, src, src);
-  fr_image_saver_save_png(saver, src, filename);
+  scale = fr_image_scale_new_I(&scale_info);
+  fr_image_scale_convert_image(scale, src, dst);
+  sys_object_unref(src);
+
+  fr_image_saver_save_png(saver, dst, filename);
 
   sys_object_unref(saver);
   sys_object_unref(scale);
@@ -231,7 +237,6 @@ SysInt fr_media_avcodec_try_receive_frame (
 
   do {
     err = avcodec_receive_frame(codec, frame);
-
     if(err >= 0) {
       frame->pts = auto_pts == -1
         ? fr_media_frame_get_pts(frame, codec)

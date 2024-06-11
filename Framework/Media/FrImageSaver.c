@@ -68,7 +68,7 @@ SysBool fr_image_saver_save_png(
   return data_save_to_png(
       image->width,
       image->height,
-      image->data[0],
+      image->data,
       image->stride[0],
       filename);
 }

@@ -11,7 +11,7 @@ SYS_BEGIN_DECLS
 #define FR_IMAGE_GET_CLASS(o) sys_instance_get_class(o, FrImageClass)
 
 struct _FrImageContext {
-  SysUInt8 *data[AV_NUM_DATA_POINTERS];
+  SysUInt8 *data;
   SysInt stride[AV_NUM_DATA_POINTERS];
   SysInt height;
   SysInt width;
@@ -30,7 +30,7 @@ struct _FrImage {
 
   /* <private> */
   SysInt data_size;
-  SysUInt8 *data[AV_NUM_DATA_POINTERS];
+  SysUInt8 *data;
   SysInt stride[AV_NUM_DATA_POINTERS];
   SysInt height;
   SysInt width;

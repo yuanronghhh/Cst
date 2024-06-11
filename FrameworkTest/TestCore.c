@@ -1,7 +1,7 @@
 #include <FrameworkTest/TestCore.h>
 #include <FrameworkTest/tests/TestVideo.h>
 
-#define CHECK_TYPE FR_TYPE_CONTEXT
+#define CHECK_TYPE FR_TYPE_MEDIA_FRAME
 
 void setUp(void) {
 }

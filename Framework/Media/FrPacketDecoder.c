@@ -37,6 +37,11 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
     return FR_MEDIA_ERROR_WAIT;
   }
 
+  if (self->serial > 2) {
+
+    return FR_MEDIA_ERROR_EOF;
+  }
+
   return FR_MEDIA_ERROR_AGAIN;
 }
 

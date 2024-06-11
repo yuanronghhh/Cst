@@ -120,70 +120,6 @@ static void test_avformat_leak(void) {
   sys_clear_pointer(&mfile, _sys_object_unref);
 }
 
-static void test_scale_image(void) {
-  FrImageScaleContext scale_info = {
-    .in_width = 800,
-    .in_height = 600,
-    .out_width = 800,
-    .out_height = 600,
-    .in_pix_fmt = AV_PIX_FMT_BGRA,
-    .out_pix_fmt = AV_PIX_FMT_RGBA
-  };
-
-  FrSurface *sur;
-  FrImage *src;
-  FrImage *dst;
-
-  FrDrawContext *draw;
-  FrImageScale *scale;
-  FrImageSaver *saver;
-  FrContext *cr;
-  SysInt *stride;
-
-  FrSurfaceContext sur_args = { .width = 800, .height = 600 };
-  SysChar* filename = FR_PROJECT_DIR"/Assets/surface.png";
-
-  draw = fr_cairo_draw_context_new_I(NULL);
-  fr_i_draw_setup(FR_I_DRAW(draw));
-
-  sur = fr_surface_new_I(&sur_args);
-  cr = fr_context_new_I(sur);
-  fr_context_stoke_debug(cr, 0);
-  fr_i_draw_surface_flush(sur);
-  sys_object_unref(cr);
-
-  scale = fr_image_scale_new_I(&scale_info);
-  saver = fr_image_saver_new_I();
-
-  fr_i_draw_surface_save_to_png(sur, filename);
-
-  src = fr_image_new_from_surface(sur);
-  stride = fr_image_get_stride(src);
-
-  FrImageContext image_info = {
-    .width = 800,
-    .height = 300,
-    .format = scale_info.out_pix_fmt,
-  };
-  image_info.stride[0] = stride[0];
-
-  dst = fr_image_new_with_buffer(&image_info);
-
-  for (int i = 0 ; i < 3; i++) {
-
-    fr_image_scale_convert_image(scale, src, dst);
-    fr_image_saver_save_png(saver, dst, filename);
-  }
-
-  sys_object_unref(sur);
-  sys_object_unref(scale);
-  sys_object_unref(src);
-  sys_object_unref(dst);
-  sys_object_unref(saver);
-  fr_i_draw_teardown();
-  sys_object_unref(draw);
-}
-
 
 void test_fr_window_leak(void) {
   GLFWwindow *gwindow;
@@ -197,8 +133,7 @@ void test_fr_window_leak(void) {
 void test_video_init(int argc, SysChar * argv[]) {
   UNITY_BEGIN();
   {
-    RUN_TEST(test_scale_image);
-    // RUN_TEST(test_avformat_leak);
+    RUN_TEST(test_avformat_leak);
     // RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_draw_context);
     // RUN_TEST(test_fr_basic);

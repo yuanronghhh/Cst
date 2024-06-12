@@ -33,6 +33,8 @@ struct _FrDecoder {
   /* current codec */
   SysInt64 start_pts;
   SysInt serial;
+  SysInt64 max_pkt;
+  SysInt64 min_pkt;
 
   struct {
     SysQueue queue;
@@ -72,6 +74,10 @@ SYS_API void fr_decoder_stop(FrDecoder* self);
 SYS_API void fr_decoder_wakeup_unlock(FrDecoder* self);
 SYS_API void fr_decoder_wait (FrDecoder* self);
 SYS_API void fr_decoder_set_task(FrDecoder *self, FrMediaTask *task);
+SYS_API SysBool fr_decoder_enough_unlock(FrDecoder* self);
+SYS_API SysBool fr_decoder_not_enough_unlock(FrDecoder* self);
+void fr_decoder_lock(FrDecoder* self);
+void fr_decoder_unlock(FrDecoder* self);
 
 SYS_API void fr_decoder_set_state(FrDecoder *self, FR_MEDIA_STATE_ENUM state);
 SYS_API FR_MEDIA_STATE_ENUM fr_decoder_get_state(FrDecoder *self);

@@ -7,10 +7,38 @@ SYS_DEFINE_TYPE(FrDecoder, fr_decoder, SYS_TYPE_OBJECT);
 #define DECODER_LOCK sys_mutex_lock(&self->ctrl.mutex)
 #define DECODER_UNLOCK sys_mutex_unlock(&self->ctrl.mutex)
 
+void fr_decoder_lock(FrDecoder* self) {
+  DECODER_LOCK;
+}
+
+void fr_decoder_unlock(FrDecoder* self) {
+  DECODER_UNLOCK;
+}
+
 const SysChar* fr_decoder_get_name(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->name;
+}
+
+SysBool fr_decoder_enough_unlock(FrDecoder* self) {
+  sys_return_val_if_fail(self != NULL, false);
+  SysInt r;
+  SysUInt len;
+  FrDecoder *o = FR_DECODER(self);
+
+  len = fr_decoder_get_length(o);
+  r = len >= self->max_pkt;
+
+  return r;
+}
+
+SysBool fr_decoder_not_enough_unlock(FrDecoder* self) {
+  sys_return_val_if_fail(self != NULL, false);
+  FrDecoder *o = FR_DECODER(self);
+  SysUInt len = fr_decoder_get_length(o);
+
+  return len <= self->min_pkt;
 }
 
 SysBool fr_decoder_get_length(FrDecoder *self) {
@@ -21,7 +49,7 @@ SysBool fr_decoder_get_length(FrDecoder *self) {
 static SysInt fr_decoder_decode_it_i(FrDecoder *self, FrPacket *pkt) {
   sys_return_val_if_fail(self != NULL, -1);
 
-  return FR_MEDIA_ERROR_AGAIN;
+  return FR_MEDIA_ERROR_WAIT;
 }
 
 void fr_decoder_set_task(FrDecoder* self, FrMediaTask* task) {
@@ -54,11 +82,6 @@ static SysInt decoder_process_packet(FrDecoder* self) {
   FrPacket *npkt = NULL;
 
   err = fr_decoder_decode_check(self);
-  if(err < 0) {
-
-    return err;
-  }
-
   if(!fr_decoder_pop_packet_unlock(self, &npkt)) {
 
     return FR_MEDIA_ERROR_WAIT;
@@ -279,6 +302,7 @@ SysBool fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket *pkt) {
   sys_return_val_if_fail(pkt != NULL, false);
 
   sys_queue_push_head (&self->ctrl.queue, pkt);
+  fr_decoder_wakeup_unlock(self);
 
   return true;
 }
@@ -299,6 +323,11 @@ SysInt fr_decoder_decode_check(FrDecoder* self) {
   sys_return_val_if_fail(cls->decode_check, -1);
 
   return cls->decode_check(self);
+}
+
+SysInt fr_decoder_decode_check_i(FrDecoder* self) {
+
+  return FR_MEDIA_ERROR_WAIT;
 }
 
 SysInt fr_decoder_decode_it(FrDecoder* self, FrPacket *npkt) {
@@ -369,6 +398,7 @@ static void fr_decoder_class_init(FrDecoderClass* cls) {
   cls->open = fr_decoder_open_i;
   cls->close = fr_decoder_close_i;
   cls->decode_it = fr_decoder_decode_it_i;
+  cls->decode_check = fr_decoder_decode_check_i;
 
   ocls->dispose = fr_decoder_dispose;
 }
@@ -378,6 +408,8 @@ void fr_decoder_init(FrDecoder* self) {
   self->serial = -1;
   self->state = FR_MEDIA_STATE_RUNNING;
   self->task = NULL;
+  self->min_pkt = 24;
+  self->max_pkt = 96;
 
   sys_queue_init(&self->ctrl.queue);
 }

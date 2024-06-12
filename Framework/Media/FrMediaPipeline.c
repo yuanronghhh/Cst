@@ -92,15 +92,12 @@ void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
 void fr_media_pipeline_wakeup_packet(FrMediaPipeline *self, FrDecoder *dec) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(dec != NULL);
-  fr_decoder_lock(dec);
 
-  if(!fr_decoder_not_enough_unlock(dec)) {
-    return;
+  if(fr_decoder_not_enough_unlock(dec)) {
+
+    fr_decoder_wakeup_unlock(self->packet_decoder);
   }
 
-  fr_decoder_wakeup_unlock(self->packet_decoder);
-
-  fr_decoder_unlock(dec);
 }
 
 SysInt fr_media_pipeline_push_packet(FrMediaPipeline *self,
@@ -115,7 +112,6 @@ SysInt fr_media_pipeline_push_packet(FrMediaPipeline *self,
 
   err = fr_decoder_enough_unlock(dec) ? FR_MEDIA_ERROR_WAIT : FR_MEDIA_ERROR_AGAIN;
   fr_decoder_push_packet_unlock(dec, pkt);
-  fr_decoder_wakeup_unlock(dec);
 
   fr_decoder_unlock(dec);
 

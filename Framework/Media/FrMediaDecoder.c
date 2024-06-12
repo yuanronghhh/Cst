@@ -42,26 +42,6 @@ static const SysChar* fr_media_decoder_type_to_name(SysType tp) {
   return NULL;
 }
 
-SysBool fr_media_decoder_enough_unlock(FrMediaDecoder* self) {
-  sys_return_val_if_fail(self != NULL, false);
-  SysInt r;
-  SysUInt len;
-  FrDecoder *o = FR_DECODER(self);
-
-  len = fr_decoder_get_length(o);
-  r = len >= self->max_pkt;
-
-  return r;
-}
-
-SysBool fr_media_decoder_not_enough_unlock(FrMediaDecoder* self) {
-  sys_return_val_if_fail(self != NULL, false);
-  FrDecoder *o = FR_DECODER(self);
-  SysUInt len = fr_decoder_get_length(o);
-
-  return len <= self->min_pkt;
-}
-
 void fr_media_decoder_flush(FrMediaDecoder* self) {
   sys_return_if_fail(self != NULL);
 
@@ -261,6 +241,4 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
 }
 
 void fr_media_decoder_init(FrMediaDecoder* self) {
-  self->min_pkt = 24;
-  self->max_pkt = 96;
 }

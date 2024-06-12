@@ -8,14 +8,22 @@ SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
 
 static void cached_packet(FrPacketDecoder *self) {
-  FrMediaPacket* mpkt;
+  FrMediaPacket* mpkt = NULL;
+  FrPacket *pkt;
   SysInt err;
-  SysInt i = self->max_pkt;
+  SysInt i = 0;
+  FrDecoder *dec = FR_DECODER(self);
 
   do {
     err = fr_media_file_read_packet(self->file, &mpkt);
-    i++;
-  } while (i < 10 && err == FR_MEDIA_ERROR_AGAIN);
+    if (err >= 0) {
+      pkt = FR_PACKET(mpkt);
+
+      fr_decoder_push_packet_unlock(dec, pkt);
+      mpkt = NULL;
+      i++;
+    }
+  } while (i < self->max_pkt && err != FR_MEDIA_ERROR_AGAIN);
 }
 
 SysInt fr_packet_decoder_decode_check_i(FrDecoder *o) {
@@ -25,9 +33,10 @@ SysInt fr_packet_decoder_decode_check_i(FrDecoder *o) {
   if(len < self->min_pkt) {
 
     cached_packet(self);
+    return FR_MEDIA_ERROR_WAIT;
   }
 
-  return 0;
+  return FR_MEDIA_ERROR_AGAIN;
 }
 
 SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {

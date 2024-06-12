@@ -6,27 +6,39 @@
 /* media packet decoder */
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
-SysInt fr_packet_decoder_decode_check(FrDecoder *o) {
-  SysUInt len = fr_decoder_get_length(o);
 
-  if(len < 10) {
+static void cached_packet(FrPacketDecoder *self) {
+  FrMediaPacket* mpkt;
+  SysInt err;
+  SysInt i = self->max_pkt;
+
+  do {
+    err = fr_media_file_read_packet(self->file, &mpkt);
+    i++;
+  } while (i < 10 && err == FR_MEDIA_ERROR_AGAIN);
+}
+
+SysInt fr_packet_decoder_decode_check_i(FrDecoder *o) {
+  SysUInt len = fr_decoder_get_length(o);
+  FrPacketDecoder *self = FR_PACKET_DECODER(o);
+
+  if(len < self->min_pkt) {
+
+    cached_packet(self);
   }
+
+  return 0;
 }
 
 SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
-  FrMediaPacket* mpkt;
   SysInt sindex;
   SysInt err;
   FrDecoder *dec;
+  FrMediaPacket *mpkt;
 
-  FrPacketDecoder *self = FR_PACKET_DECODER(o);
   FrMediaPipeline *box = fr_decoder_get_user_data(o);
 
-  mpkt = NULL;
-  err = fr_media_file_read_packet(self->file, &mpkt);
-  if(err < 0) { return err; }
-
-  pkt = (FrPacket *)sys_object_dclone(mpkt);
+  mpkt = (FrMediaPacket *)sys_object_dclone(pkt);
   sindex = fr_media_packet_get_stream_index(mpkt);
 
   dec = fr_media_pipeline_get_decoder(box, sindex);
@@ -36,7 +48,7 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
   }
   err = fr_media_pipeline_push_packet(box, dec, pkt);
 
-  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, npkt);
+  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, pkt);
 
   return err;
 }
@@ -89,4 +101,6 @@ static void fr_packet_decoder_class_init(FrPacketDecoderClass* cls) {
 }
 
 void fr_packet_decoder_init(FrPacketDecoder* self) {
+  self->min_pkt = 10;
+  self->max_pkt = 100;
 }

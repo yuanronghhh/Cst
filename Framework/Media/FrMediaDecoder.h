@@ -33,6 +33,9 @@ struct _FrMediaDecoder {
   // pkt_timebase{ num = 100 den = 2997 }	AVRational
   FrMediaFrame *frame;
   SysInt auto_pts;
+  FrDecoder *source_dec;
+  SysInt64 max_pkt;
+  SysInt64 min_pkt;
 };
 
 SYS_API SysType fr_media_decoder_get_type(void);

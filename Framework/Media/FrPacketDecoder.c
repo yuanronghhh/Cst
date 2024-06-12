@@ -3,41 +3,42 @@
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrMediaPipeline.h>
 
+/* media packet decoder */
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
-SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, SysPointer user_data) {
+SysInt fr_packet_decoder_decode_check(FrDecoder *o) {
+  SysUInt len = fr_decoder_get_length(o);
+
+  if(len < 10) {
+  }
+}
+
+SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
   FrMediaPacket* mpkt;
-  FrPacket* pkt;
   SysInt sindex;
   SysInt err;
   FrDecoder *dec;
 
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
-  FrMediaPipeline *box = user_data;
+  FrMediaPipeline *box = fr_decoder_get_user_data(o);
 
   mpkt = NULL;
   err = fr_media_file_read_packet(self->file, &mpkt);
   if(err < 0) { return err; }
-  self->serial++;
-  mpkt->parent.serial = self->serial;
 
   pkt = (FrPacket *)sys_object_dclone(mpkt);
   sindex = fr_media_packet_get_stream_index(mpkt);
-  fr_packet_set_serial(pkt, self->serial);
 
   dec = fr_media_pipeline_get_decoder(box, sindex);
   if(dec == NULL) {
     sys_warning_N("Not found media packet type: %s", sindex);
     return -1;
   }
+  err = fr_media_pipeline_push_packet(box, dec, pkt);
 
-  if(!fr_decoder_push_packet(dec, pkt)) {
-    sys_object_unref(pkt);
+  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, npkt);
 
-    return FR_MEDIA_ERROR_WAIT;
-  }
-
-  return FR_MEDIA_ERROR_AGAIN;
+  return err;
 }
 
 /* object api */
@@ -80,6 +81,7 @@ static void fr_packet_decoder_class_init(FrPacketDecoderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FrDecoderClass *dcls = FR_DECODER_CLASS(cls);
 
+  dcls->decode_check = fr_packet_decoder_decode_check_i;
   dcls->decode_it = fr_packet_decoder_decode_it_i;
   dcls->construct = fr_packet_decoder_construct_i;
 

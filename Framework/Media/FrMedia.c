@@ -47,12 +47,13 @@ FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
 
 AVFrame* fr_media_new_rgba_frame(
     SysInt width,
-    SysInt height) {
+    SysInt height,
+    SysInt format) {
   SysInt err;
   AVFrame* rgba_frame;
 
   rgba_frame = av_frame_alloc();
-  rgba_frame->format = AV_PIX_FMT_RGBA;
+  rgba_frame->format = format;
   rgba_frame->width = width;
   rgba_frame->height = height;
 

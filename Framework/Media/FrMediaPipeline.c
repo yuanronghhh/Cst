@@ -89,6 +89,39 @@ void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
   sys_async_queue_push(&self->image_queue, frame);
 }
 
+void fr_media_pipeline_wakeup_packet(FrMediaPipeline *self, FrDecoder *dec) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(dec != NULL);
+  fr_decoder_lock(dec);
+
+  if(!fr_decoder_not_enough_unlock(dec)) {
+    return;
+  }
+
+  fr_decoder_wakeup_unlock(self->packet_decoder);
+
+  fr_decoder_unlock(dec);
+}
+
+SysInt fr_media_pipeline_push_packet(FrMediaPipeline *self,
+    FrDecoder *dec,
+    FrPacket *pkt) {
+  sys_return_val_if_fail(dec != NULL, -1);
+  sys_return_val_if_fail(self != NULL, -1);
+
+  SysInt err;
+
+  fr_decoder_lock(dec);
+
+  err = fr_decoder_enough_unlock(dec) ? FR_MEDIA_ERROR_WAIT : FR_MEDIA_ERROR_AGAIN;
+  fr_decoder_push_packet_unlock(dec, pkt);
+  fr_decoder_wakeup_unlock(dec);
+
+  fr_decoder_unlock(dec);
+
+  return err;
+}
+
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 

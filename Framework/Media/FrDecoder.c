@@ -13,12 +13,13 @@ const SysChar* fr_decoder_get_name(FrDecoder* self) {
   return self->name;
 }
 
-static SysInt fr_decoder_decode_it_i(FrDecoder *self, SysPointer user_data) {
-  sys_return_val_if_fail(self != NULL, -1);
+SysBool fr_decoder_get_length(FrDecoder *self) {
 
-  if (!sys_queue_get_length(&self->ctrl.queue)) {
-    return 0;
-  }
+  return sys_queue_get_length(&self->ctrl.queue);
+}
+
+static SysInt fr_decoder_decode_it_i(FrDecoder *self, FrPacket *pkt) {
+  sys_return_val_if_fail(self != NULL, -1);
 
   return FR_MEDIA_ERROR_AGAIN;
 }
@@ -49,8 +50,22 @@ static SysInt decoder_process_task(FrDecoder* self) {
 }
 
 static SysInt decoder_process_packet(FrDecoder* self) {
+  SysInt err;
+  FrPacket *npkt = NULL;
 
-  return fr_decoder_decode_it(self);
+  err = fr_decoder_decode_check(self);
+  if(err < 0) {
+
+    return err;
+  }
+
+  if(!fr_decoder_pop_packet_unlock(self, &npkt)) {
+
+    return FR_MEDIA_ERROR_WAIT;
+  }
+  err = fr_decoder_decode_it(self, npkt);
+
+  return err;
 }
 
 static SysInt error_to_state(SysInt err) {
@@ -116,7 +131,6 @@ exit:
   return NULL;
 }
 
-
 void fr_decoder_wakeup_unlock(FrDecoder* self) {
   sys_return_if_fail(self != NULL);
 
@@ -131,13 +145,6 @@ void fr_decoder_wait (FrDecoder* self) {
     sys_cond_wait(&self->ctrl.cond, &self->ctrl.mutex);
   }
   DECODER_UNLOCK;
-}
-
-SysBool fr_decoder_need_wait(FrDecoder* self) {
-  sys_return_val_if_fail(self != NULL, false);
-  SysUInt len = sys_queue_get_length(&self->ctrl.queue);
-
-  return len >= self->limit;
 }
 
 static SysPointer init_it(FrMediaTask* task, SysPointer user_data) {
@@ -239,7 +246,7 @@ SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
 
     return false;
   }
-  self->serial = fr_packet_get_serial(npkt);
+  self->serial++;;
   *pkt = npkt;
 
   return true;
@@ -257,20 +264,14 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
 }
 
 SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
-    SysBool r;
+  SysBool r;
 
-    DECODER_LOCK;
-    if(fr_decoder_need_wait(self)) {
-      r = false;
-      goto done;
-    }
+  DECODER_LOCK;
+  r = fr_decoder_push_packet_unlock(self, pkt);
+  fr_decoder_wakeup_unlock(self);
+  DECODER_UNLOCK;
 
-    r = fr_decoder_push_packet_unlock(self, pkt);
-    fr_decoder_wakeup_unlock(self);
-
-done:
-    DECODER_UNLOCK;
-    return r;
+  return r;
 }
 
 SysBool fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket *pkt) {
@@ -291,13 +292,22 @@ SysInt fr_decoder_open(FrDecoder* self) {
   return cls->open(self);
 }
 
-SysInt fr_decoder_decode_it(FrDecoder* self) {
+SysInt fr_decoder_decode_check(FrDecoder* self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  FrDecoderClass* cls = FR_DECODER_GET_CLASS(self);
+  sys_return_val_if_fail(cls->decode_check, -1);
+
+  return cls->decode_check(self);
+}
+
+SysInt fr_decoder_decode_it(FrDecoder* self, FrPacket *npkt) {
   sys_return_val_if_fail(self != NULL, -1);
 
   FrDecoderClass* cls = FR_DECODER_GET_CLASS(self);
   sys_return_val_if_fail(cls->decode_it, -1);
 
-  return cls->decode_it(self, self->user_data);
+  return cls->decode_it(self, npkt);
 }
 
 SysInt fr_decoder_close(FrDecoder* self) {
@@ -367,7 +377,6 @@ void fr_decoder_init(FrDecoder* self) {
   self->start_pts = -1;
   self->serial = -1;
   self->state = FR_MEDIA_STATE_RUNNING;
-  self->limit = 48;
   self->task = NULL;
 
   sys_queue_init(&self->ctrl.queue);

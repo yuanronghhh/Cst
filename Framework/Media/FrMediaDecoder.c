@@ -5,6 +5,7 @@
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Media/FrMediaPacket.h>
+#include <Framework/Media/FrMediaPipeline.h>
 
 static const SysChar* DECODER_NAMES[] = {
   "video_decoder",
@@ -39,6 +40,26 @@ static const SysChar* fr_media_decoder_type_to_name(SysType tp) {
   }
 
   return NULL;
+}
+
+SysBool fr_media_decoder_enough_unlock(FrMediaDecoder* self) {
+  sys_return_val_if_fail(self != NULL, false);
+  SysInt r;
+  SysUInt len;
+  FrDecoder *o = FR_DECODER(self);
+
+  len = fr_decoder_get_length(o);
+  r = len >= self->max_pkt;
+
+  return r;
+}
+
+SysBool fr_media_decoder_not_enough_unlock(FrMediaDecoder* self) {
+  sys_return_val_if_fail(self != NULL, false);
+  FrDecoder *o = FR_DECODER(self);
+  SysUInt len = fr_decoder_get_length(o);
+
+  return len <= self->min_pkt;
 }
 
 void fr_media_decoder_flush(FrMediaDecoder* self) {
@@ -83,6 +104,7 @@ SysInt fr_media_decoder_receive_frame(FrMediaDecoder* self,
     return err;
   }
   if (err < 0) { return err; }
+  frame->ts = frame->ctx->pts;
   *nframe = frame;
 
   return err;
@@ -156,48 +178,41 @@ SysInt fr_media_decoder_decode_frame(
   return cls->decode_frame(self, nframe);
 }
 
-static SysInt media_decoder_decode_frame_i (
-    FrMediaDecoder* self,
-    FrMediaFrame *nframe) {
+static SysInt media_decoder_decode_frame_i(FrMediaDecoder *self, FrMediaFrame *nframe) {
   return 0;
 }
 
-static SysInt fr_media_decoder_decode_it_i(
-    FrDecoder* o, 
-    SysPointer user_data) {
+static SysInt media_decoder_decode_frame(FrMediaDecoder *self) {
+  SysInt err;
 
   FrMediaFrame *nframe = NULL;
-  FrPacket *nframe_p = NULL;
-  FrPacket *mpkt = NULL;
-  FrMediaDecoder *self = FR_MEDIA_DECODER(o);
-  SysInt err;
-  SysInt m_serial;
-
-  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
-  sys_return_val_if_fail(cls->decode_frame, -1);
-
-  if (!fr_decoder_pop_packet_unlock(o, &mpkt)) {
-    return 0;
-  }
-
-  err = fr_media_decoder_send_packet(self, FR_MEDIA_PACKET(mpkt));
-  if(err < 0) { return err; }
-  m_serial = fr_packet_get_serial(mpkt);
 
   do {
     err = fr_media_decoder_receive_frame(self, &nframe);
     if (err == FR_MEDIA_ERROR_AGAIN) {
       break;
     }
-    nframe_p = FR_PACKET(nframe);
-    fr_packet_set_serial(nframe_p, m_serial);
 
-    sys_assert(nframe != NULL);
-    err = cls->decode_frame(self, nframe);
+    err = fr_media_decoder_decode_frame(self, nframe);
     nframe = NULL;
 
   } while(err >= 0);
-  sys_object_unref(mpkt);
+
+  return err;
+}
+
+static SysInt fr_media_decoder_decode_it_i(
+    FrDecoder* o, 
+    FrPacket *pkt) {
+  SysInt err;
+  FrMediaDecoder *self = FR_MEDIA_DECODER(o);
+  FrMediaPipeline *box = fr_decoder_get_user_data(o);
+
+  err = fr_media_decoder_send_packet(self, FR_MEDIA_PACKET(pkt));
+  if(err < 0) { return err; }
+
+  media_decoder_decode_frame(self);
+  fr_media_pipeline_wakeup_packet(box, o);
 
   return err;
 }
@@ -246,4 +261,6 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
 }
 
 void fr_media_decoder_init(FrMediaDecoder* self) {
+  self->min_pkt = 24;
+  self->max_pkt = 96;
 }

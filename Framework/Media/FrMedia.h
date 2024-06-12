@@ -50,7 +50,8 @@ SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p);
 
 AVFrame* fr_media_new_rgba_frame(
     SysInt width,
-    SysInt height);
+    SysInt height,
+    SysInt format);
 
 SysInt fr_media_avframe_convert(
     FrImageScale *scale,

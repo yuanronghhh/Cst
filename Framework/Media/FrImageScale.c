@@ -168,7 +168,7 @@ SysInt fr_image_scale_convert_image(
 
 SysInt fr_image_scale_convert_avframe(
     FrImageScale *self,
-    AVFrame *src, 
+    AVFrame *src,
     AVFrame *dst) {
   sys_return_val_if_fail(src != NULL, -1);
   sys_return_val_if_fail(dst != NULL, -1);

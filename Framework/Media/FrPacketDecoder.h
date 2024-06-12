@@ -19,7 +19,6 @@ struct _FrPacketDecoder {
 
   /* <private> */
   FrMediaFile *file;
-  SysInt serial;
 };
 
 SysType fr_packet_decoder_get_type(void);

@@ -1,5 +1,6 @@
 #include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrPacketDecoder.h>
+#include <Framework/Media/FrMediaPlayer.h>
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Event/FrEvents.h>
@@ -149,6 +150,11 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
   sys_async_queue_clear_full(&self->sample_queue);
 
   return true;
+}
+
+void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
+
+  fr_media_player_set_state(self->player, FR_MEDIA_STATE_STOP);
 }
 
 /* object api */

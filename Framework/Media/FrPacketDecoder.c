@@ -11,12 +11,15 @@ static void cached_packet(FrPacketDecoder *self) {
   FrPacket *npkt;
   SysInt i = 0;
   FrDecoder *o = FR_DECODER(self);
+  FrMediaPipeline *box = fr_decoder_get_user_data(o);
 
   sys_debug_N("%s", "cached it");
   do {
     mpkt = NULL;
     fr_media_file_read_packet(self->file, &mpkt);
     if(mpkt == NULL) {
+
+      fr_media_pipeline_stop_player(box);
       break;
     }
 

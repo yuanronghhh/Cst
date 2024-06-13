@@ -22,6 +22,7 @@ struct _FrMediaPipeline {
   FrDecoder* audio_decoder;
   FrDecoder* subtitle_decoder;
   FrDecoder* packet_decoder;
+  FrMediaPlayer* player;
 
   SysAsyncQueue image_queue;
   SysAsyncQueue sample_queue;
@@ -46,6 +47,7 @@ SYS_API FrMediaFrame* fr_media_pipeline_get_image_frame(FrMediaPipeline* self);
 SYS_API void fr_media_pipeline_push_sample_frame(FrMediaPipeline* self,
     FrMediaFrame* frame);
 SYS_API void fr_media_pipeline_wakeup_packet(FrMediaPipeline *self, FrDecoder *dec);
+SYS_API void fr_media_pipeline_stop_player(FrMediaPipeline *self);
 
 SYS_API void fr_media_pipeline_run(FrMediaPipeline* self,
     FrMediaFile* file);

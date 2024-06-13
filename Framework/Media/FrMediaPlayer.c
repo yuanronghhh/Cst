@@ -145,4 +145,5 @@ void fr_media_player_init(FrMediaPlayer* self) {
   self->seek_position = -1;
 
   fr_media_pipeline_create(&self->pipeline);
+  self->pipeline.player = self;
 }

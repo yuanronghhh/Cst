@@ -109,13 +109,17 @@ SysInt media_file_read_packet_i(FrIStream *o, FrPacket **pkt) {
 
   SysInt err;
   AVPacket *p;
+  FrPacket *npkt;
 
+  npkt = FR_PACKET(&self->pkt);
   p = self->pkt.ctx;
 
   sys_assert(self->ctx != NULL);
   err = fr_media_read_packet(self->ctx, p);
   if(err < 0) { return err; }
-  *pkt = FR_PACKET(&(self->pkt));
+  self->serial++;
+  fr_packet_set_serial(npkt, self->serial);
+  *pkt = npkt;
 
   return err;
 }
@@ -210,5 +214,6 @@ static void fr_media_file_class_init(FrMediaFileClass* cls) {
 
 void fr_media_file_init(FrMediaFile* self) {
   self->show_mode = SHOW_MODE_VIDEO;
+  self->serial = -1;
   fr_media_packet_create(&self->pkt);
 }

@@ -6,37 +6,36 @@
 /* media packet decoder */
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
-
 static void cached_packet(FrPacketDecoder *self) {
-  FrMediaPacket* mpkt = NULL;
-  FrPacket *pkt;
-  SysInt err;
+  FrMediaPacket* mpkt;
+  FrPacket *npkt;
   SysInt i = 0;
-  FrDecoder *dec = FR_DECODER(self);
+  FrDecoder *o = FR_DECODER(self);
 
+  sys_debug_N("%s", "cached it");
   do {
-    err = fr_media_file_read_packet(self->file, &mpkt);
-    if (err >= 0) {
-      pkt = FR_PACKET(mpkt);
-
-      fr_decoder_push_packet_unlock(dec, pkt);
-      mpkt = NULL;
-      i++;
+    mpkt = NULL;
+    fr_media_file_read_packet(self->file, &mpkt);
+    if(mpkt == NULL) {
+      break;
     }
-  } while (i < self->max_pkt && err != FR_MEDIA_ERROR_AGAIN);
+
+    npkt = (FrPacket *)sys_object_dclone(mpkt);
+    fr_decoder_push_packet_unlock(o, npkt);
+    i++;
+  } while (i < self->max_pkt);
 }
 
 SysInt fr_packet_decoder_decode_check_i(FrDecoder *o) {
   SysUInt len = fr_decoder_get_length(o);
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
 
-  if(len < self->min_pkt) {
+  if(len <= self->min_pkt) {
 
     cached_packet(self);
-    return FR_MEDIA_ERROR_WAIT;
   }
 
-  return FR_MEDIA_ERROR_AGAIN;
+  return 0;
 }
 
 SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
@@ -46,8 +45,8 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
   FrMediaPacket *mpkt;
 
   FrMediaPipeline *box = fr_decoder_get_user_data(o);
+  mpkt = FR_MEDIA_PACKET(pkt);
 
-  mpkt = (FrMediaPacket *)sys_object_dclone(pkt);
   sindex = fr_media_packet_get_stream_index(mpkt);
 
   dec = fr_media_pipeline_get_decoder(box, sindex);
@@ -55,9 +54,10 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
     sys_warning_N("Not found media packet type: %s", sindex);
     return -1;
   }
+  // sys_debug_N("read packet %s", dec->name);
   err = fr_media_pipeline_push_packet(box, dec, pkt);
 
-  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, pkt);
+  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, FR_PACKET(mpkt));
 
   return err;
 }
@@ -111,5 +111,5 @@ static void fr_packet_decoder_class_init(FrPacketDecoderClass* cls) {
 
 void fr_packet_decoder_init(FrPacketDecoder* self) {
   self->min_pkt = 10;
-  self->max_pkt = 100;
+  self->max_pkt = 48;
 }

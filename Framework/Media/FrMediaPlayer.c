@@ -13,6 +13,7 @@
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, FR_TYPE_PLAYER);
 
 void fr_media_player_wait(FrMediaPlayer *self) {
+
   fr_wait_events_timeout(self->interval);
 }
 
@@ -81,6 +82,7 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   if (frame == NULL) { return FR_MEDIA_ERROR_EOF; }
   vframe = FR_VIDEO_FRAME(frame);
 
+  self->remain_secs = vframe->remain_sec;
   // sys_debug_N("%d", frame->parent.serial);
   iface->render_video(render, vframe, region);
   sys_object_unref(frame);

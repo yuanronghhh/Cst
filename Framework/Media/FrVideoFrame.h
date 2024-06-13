@@ -21,6 +21,7 @@ struct _FrVideoFrame  {
   SysInt width;
   SysInt height;
   SysInt format;
+  SysDouble remain_sec;
   FrWindow *window;
   FrBound *bound;
 };

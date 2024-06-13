@@ -41,7 +41,7 @@ SysBool fr_decoder_not_enough_unlock(FrDecoder* self) {
   return len <= self->min_pkt;
 }
 
-SysBool fr_decoder_get_length(FrDecoder *self) {
+SysUInt fr_decoder_get_length(FrDecoder *self) {
 
   return sys_queue_get_length(&self->ctrl.queue);
 }
@@ -327,7 +327,7 @@ SysInt fr_decoder_decode_check(FrDecoder* self) {
 
 SysInt fr_decoder_decode_check_i(FrDecoder* self) {
 
-  return FR_MEDIA_ERROR_WAIT;
+  return FR_MEDIA_ERROR_SUCCESS;
 }
 
 SysInt fr_decoder_decode_it(FrDecoder* self, FrPacket *npkt) {

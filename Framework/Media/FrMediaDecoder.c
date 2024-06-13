@@ -80,7 +80,9 @@ SysInt fr_media_decoder_receive_frame(FrMediaDecoder* self,
 
   err = fr_media_avcodec_try_receive_frame(self->ctx, frame->ctx, self->auto_pts);
   if(err == FR_MEDIA_ERROR_EOF) {
+    sys_debug_N("eof: %s", self->parent.name);
     avcodec_flush_buffers(self->ctx);
+
     return err;
   }
   if (err < 0) { return err; }
@@ -188,13 +190,14 @@ static SysInt fr_media_decoder_decode_it_i(
   FrMediaDecoder *self = FR_MEDIA_DECODER(o);
   FrMediaPipeline *box = fr_decoder_get_user_data(o);
 
+  // sys_debug_N("send packet %s", o->name);
   err = fr_media_decoder_send_packet(self, FR_MEDIA_PACKET(pkt));
   if(err < 0) { return err; }
 
   media_decoder_decode_frame(self);
   fr_media_pipeline_wakeup_packet(box, o);
 
-  return err;
+  return FR_DECODER_CLASS(fr_media_decoder_parent_class)->decode_it(o, pkt);
 }
 
 /* object api */

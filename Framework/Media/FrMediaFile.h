@@ -33,6 +33,7 @@ struct _FrMediaFile {
   } seek;
 
   FrMediaPacket pkt;
+  SysInt serial;
 };
 
 SYS_API SysType fr_media_file_get_type(void);

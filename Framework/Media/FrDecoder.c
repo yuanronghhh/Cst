@@ -82,6 +82,8 @@ static SysInt decoder_process_packet(FrDecoder* self) {
   FrPacket *npkt = NULL;
 
   err = fr_decoder_decode_check(self);
+  if(err < 0) { return err; }
+
   if(!fr_decoder_pop_packet_unlock(self, &npkt)) {
 
     return FR_MEDIA_ERROR_WAIT;
@@ -379,8 +381,7 @@ FrDecoder* fr_decoder_new(void) {
 
 static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
-
-  fr_decoder_stop(self);
+  sys_return_if_fail(self->state == FR_MEDIA_STATE_STOP);
 
   sys_cond_clear(&self->ctrl.cond);
   sys_mutex_clear(&self->ctrl.mutex);

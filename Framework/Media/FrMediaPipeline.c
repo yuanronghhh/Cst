@@ -154,7 +154,7 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
 
 void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
 
-  fr_media_player_set_state(self->player, FR_MEDIA_STATE_STOP);
+  fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
 }
 
 /* object api */

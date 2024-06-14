@@ -1,7 +1,7 @@
 #ifndef __FR_PIPELINE_H__
 #define __FR_PIPELINE_H__
 
-#include <Framework/Media/FrMediaTask.h>
+#include <Framework/DataType/FrJobTask.h>
 
 SYS_BEGIN_DECLS
 

@@ -15,6 +15,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Graph/FrCairoDrawContext.h>
 #include <Framework/Graph/FrImage.h>
 
+#include <Framework/DataType/FrJob.h>
 #include <Framework/DataType/FrMain.h>
 #include <Framework/DataType/FrSource.h>
 #include <Framework/DataType/FrApplication.h>

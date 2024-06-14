@@ -6,7 +6,7 @@ void fr_core_setup(void) {
   if (inited) { return; }
 
   sys_setup();
-  fr_media_task_setup();
+  fr_job_task_setup();
   fr_ffmpeg_setup();
   // fr_font_setup();
   fr_main_setup();
@@ -32,7 +32,7 @@ void fr_core_teardown(void) {
   fr_main_teardown();
 
   fr_ffmpeg_teardown();
-  fr_media_task_teardown();
+  fr_job_task_teardown();
   // fr_font_teardown();
   sys_teardown();
 

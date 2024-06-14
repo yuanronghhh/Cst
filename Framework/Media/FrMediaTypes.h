@@ -28,17 +28,13 @@ typedef enum _FR_MEDIA_ERROR_ENUM {
   FR_MEDIA_ERROR_SUCCESS = 0,
 } FR_MEDIA_ERROR_ENUM;
 
-typedef enum _FR_MEDIA_STATE_ENUM {
-  FR_MEDIA_STATE_PAUSE = 1,
-  FR_MEDIA_STATE_RUNNING = 2,
-  FR_MEDIA_STATE_STOP = 3,
-} FR_MEDIA_STATE_ENUM;
-
 typedef enum _FR_JOB_STATE_ENUM {
   FR_JOB_STATE_PAUSE = 1,
   FR_JOB_STATE_RUNNING = 2,
   FR_JOB_STATE_STOP = 3,
 } FR_JOB_STATE_ENUM;
+
+typedef FR_JOB_STATE_ENUM FR_JOB_STATE_ENUM;
 
 typedef enum _FR_DECODER_CMD_ENUM {
   FR_DECODER_CMD_NOOP,
@@ -69,9 +65,6 @@ typedef struct _FrPipelineClass FrPipelineClass;
 
 typedef struct _FrMediaPipeline FrMediaPipeline;
 typedef struct _FrMediaPipelineClass FrMediaPipelineClass;
-
-typedef struct _FrMediaTask FrMediaTask;
-typedef struct _FrMediaTaskClass FrMediaTaskClass;
 
 typedef struct _FrDecoder FrDecoder;
 typedef struct _FrDecoderClass FrDecoderClass;
@@ -142,7 +135,6 @@ typedef struct _FrVideoFrameClass FrVideoFrameClass;
 typedef struct _FrVideoDecoder FrVideoDecoder;
 typedef struct _FrVideoDecoderClass FrVideoDecoderClass;
 
-typedef SysPointer (*FrMediaTaskFunc) (FrMediaTask* task, SysPointer user_data);
 typedef SysPointer (*FrMediaPlayerFunc) (FrMediaPlayer *player, SysPointer user_data);
 
 SYS_END_DECLS

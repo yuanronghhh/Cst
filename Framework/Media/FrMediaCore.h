@@ -14,7 +14,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrPacket.h>
 #include <Framework/Media/FrPacketDecoder.h>
 #include <Framework/Media/FrMedia.h>
-#include <Framework/Media/FrMediaTask.h>
+#include <Framework/Media/FrJobTask.h>
 #include <Framework/Media/FrDecoder.h>
 #include <Framework/Media/FrStream.h>
 #include <Framework/Media/FrVideoDecoder.h>

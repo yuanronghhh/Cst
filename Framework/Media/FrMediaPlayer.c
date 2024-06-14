@@ -19,17 +19,17 @@ void fr_media_player_wait(FrMediaPlayer *self) {
 
 static SysInt process(FrMediaPlayer* self) {
 
-  return FR_MEDIA_STATE_RUNNING;
+  return FR_JOB_STATE_RUNNING;
 }
 
 static SysInt media_player_do(FrMediaPlayer *self) {
   FrRegion* region;
-  FR_MEDIA_STATE_ENUM state;
+  FR_JOB_STATE_ENUM state;
   FrMediaStream* vs;
   FrRational rt = { .num = 2997, .den = 100 };
   FrBound bound = { .width = 800, .height = 600 };
 
-  if(self->state != FR_MEDIA_STATE_RUNNING) {
+  if(self->state != FR_JOB_STATE_RUNNING) {
     return -1;
   }
 
@@ -43,11 +43,11 @@ static SysInt media_player_do(FrMediaPlayer *self) {
 
   region = fr_region_create_rectangle(&bound);
 
-  while(self->state == FR_MEDIA_STATE_RUNNING) {
+  while(self->state == FR_JOB_STATE_RUNNING) {
     fr_media_player_wait(self);
 
     state = process(self);
-    if (state == FR_MEDIA_STATE_STOP) { goto done; }
+    if (state == FR_JOB_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
   }
@@ -96,13 +96,13 @@ void fr_media_player_play(FrMediaPlayer* self) {
   fr_media_file_play(self->file);
 }
 
-void fr_media_player_set_state(FrMediaPlayer *self, FR_MEDIA_STATE_ENUM value) {
+void fr_media_player_set_state(FrMediaPlayer *self, FR_JOB_STATE_ENUM value) {
   sys_return_if_fail(self != NULL);
 
   self->state = value;
 }
 
-FR_MEDIA_STATE_ENUM fr_media_player_get_state(FrMediaPlayer *self) {
+FR_JOB_STATE_ENUM fr_media_player_get_state(FrMediaPlayer *self) {
   sys_return_val_if_fail(self != NULL, false);
 
   return self->state;
@@ -141,7 +141,7 @@ static void fr_media_player_class_init(FrMediaPlayerClass* cls) {
 }
 
 void fr_media_player_init(FrMediaPlayer* self) {
-  self->state = FR_MEDIA_STATE_RUNNING;
+  self->state = FR_JOB_STATE_RUNNING;
   self->seek_position = -1;
 
   fr_media_pipeline_create(&self->pipeline);

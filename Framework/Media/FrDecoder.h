@@ -1,7 +1,7 @@
 #ifndef __FR_DECODER_H__
 #define __FR_DECODER_H__
 
-#include <Framework/Media/FrMediaTask.h>
+#include <Framework/DataType/FrJob.h>
 
 SYS_BEGIN_DECLS
 
@@ -26,25 +26,18 @@ struct _FrDecoderClass {
 struct _FrDecoder {
   SysObject parent;
 
+  FrJob job;
+
   /* <private> */
   SysChar* name;
   FR_MEDIA_ENUM decoder_type;
+  SysQueue queue;
 
   /* current codec */
   SysInt64 start_pts;
   SysInt serial;
   SysInt64 max_pkt;
   SysInt64 min_pkt;
-
-  struct {
-    SysQueue queue;
-    SysCond cond;
-    SysMutex mutex;
-  } ctrl;
-
-  FrMediaTask *task;
-  FR_MEDIA_STATE_ENUM state;
-  SysThread* thread;
 
   SysPointer user_data;
 };
@@ -72,15 +65,13 @@ SYS_API SysUInt fr_decoder_get_length(FrDecoder *self);
 SYS_API SysInt fr_decoder_start(FrDecoder* self);
 SYS_API void fr_decoder_stop(FrDecoder* self);
 SYS_API void fr_decoder_wakeup_unlock(FrDecoder* self);
-SYS_API void fr_decoder_wait (FrDecoder* self);
-SYS_API void fr_decoder_set_task(FrDecoder *self, FrMediaTask *task);
 SYS_API SysBool fr_decoder_enough_unlock(FrDecoder* self);
 SYS_API SysBool fr_decoder_not_enough_unlock(FrDecoder* self);
 void fr_decoder_lock(FrDecoder* self);
 void fr_decoder_unlock(FrDecoder* self);
 
-SYS_API void fr_decoder_set_state(FrDecoder *self, FR_MEDIA_STATE_ENUM state);
-SYS_API FR_MEDIA_STATE_ENUM fr_decoder_get_state(FrDecoder *self);
+SYS_API void fr_decoder_set_state(FrDecoder *self, FR_JOB_STATE_ENUM state);
+SYS_API FR_JOB_STATE_ENUM fr_decoder_get_state(FrDecoder *self);
 
 SYS_API void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data);
 SYS_API SysPointer fr_decoder_get_user_data(FrDecoder *self);

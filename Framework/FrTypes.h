@@ -156,6 +156,9 @@ typedef  struct  _FrNodeClass      FrNodeClass;
 typedef  struct  _FrMain           FrMain;
 typedef  struct  _FrMainClass      FrMainClass;
 
+typedef struct _FrJobTask FrJobTask;
+typedef struct _FrJobTaskClass FrJobTaskClass;
+
 typedef struct _FrJob FrJob;
 typedef struct _FrJobClass FrJobClass;
 
@@ -170,6 +173,8 @@ typedef  struct  _FrWorkerClass      FrWorkerClass;
 
 typedef  struct  _FrMonoContext   FrMonoContext;
 
+typedef SysPointer (*FrJobFunc) (FrJob* job, SysPointer user_data);
+typedef SysPointer (*FrJobTaskFunc) (FrJobTask* task, SysPointer user_data);
 typedef SysBool (*FrEventCheckFunc) (FrEvent *e, SysPointer user_data);
 typedef SysInt (*FrEventFunc) (FrEvent *e, SysPointer user_data);
 typedef const FrBound* (*FrGetBoundFunc) (SysPointer user_data);

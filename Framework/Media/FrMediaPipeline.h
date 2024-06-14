@@ -26,7 +26,7 @@ struct _FrMediaPipeline {
 
   SysAsyncQueue image_queue;
   SysAsyncQueue sample_queue;
-  FrMediaTask task;
+  FrJobTask task;
 };
 
 #define fr_media_pipeline_create(o) sys_object_create(o, FR_TYPE_MEDIA_PIPELINE)

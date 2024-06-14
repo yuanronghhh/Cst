@@ -24,7 +24,7 @@ struct _FrMediaPlayer {
 
   SysBool use_hwaccel;
   SysInt64 seek_position;
-  FR_MEDIA_STATE_ENUM state;
+  FR_JOB_STATE_ENUM state;
   SysDouble interval;
   SysDouble remain_secs;
   FrIMediaRender *render;
@@ -39,8 +39,8 @@ SysInt fr_media_player_run(FrMediaPlayer* self);
 void fr_media_player_play(FrMediaPlayer* self);
 SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrRegion *region);
 
-void fr_media_player_set_state(FrMediaPlayer *self, FR_MEDIA_STATE_ENUM value);
-FR_MEDIA_STATE_ENUM fr_media_player_get_state(FrMediaPlayer *self);
+void fr_media_player_set_state(FrMediaPlayer *self, FR_JOB_STATE_ENUM value);
+FR_JOB_STATE_ENUM fr_media_player_get_state(FrMediaPlayer *self);
 
 SYS_END_DECLS
 

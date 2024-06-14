@@ -156,6 +156,9 @@ typedef  struct  _FrNodeClass      FrNodeClass;
 typedef  struct  _FrMain           FrMain;
 typedef  struct  _FrMainClass      FrMainClass;
 
+typedef struct _FrJob FrJob;
+typedef struct _FrJobClass FrJobClass;
+
 typedef  struct  _FrSource           FrSource;
 typedef  struct  _FrSourceClass      FrSourceClass;
 

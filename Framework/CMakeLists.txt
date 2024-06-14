@@ -175,6 +175,8 @@ set(SRC
   ./Device/FrWindow.c
   ./Device/FrWindow.h
 
+  ./DataType/FrJob.c
+  ./DataType/FrJob.h
   ./DataType/FrFunc.c
   ./DataType/FrFunc.h
   ./DataType/FrMain.c

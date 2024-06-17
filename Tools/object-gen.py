@@ -96,7 +96,7 @@ ${struct_str}
 SYS_API SysType ${type_name}_get_type(void);
 SYS_API ${SelfTypeName} *${type_name}_new(void);
 
-SYS_API ${SelfTypeName} *${type_name}_new_I(void);
+SYS_API ${SelfTypeName} *${type_name}_new_I(${TypeName}Context *info);
 
 SYS_END_DECLS
 
@@ -110,18 +110,17 @@ c_template = """\
 SYS_DEFINE_TYPE(${TypeName}, ${type_name}, ${TYPE_PARENT});
 
 /* object api */
-static void ${type_name}_construct_i(${SelfTypeName} *self) {
-
+static void ${type_name}_construct_i(${SelfTypeName} *self, ${TypeName}Context *info) {
 }
 
 ${SelfTypeName}* ${type_name}_new(void) {
   return sys_object_new(${FN_TYPE_NAME}, NULL);
 }
 
-${SelfTypeName} *${type_name}_new_I(void) {
+${SelfTypeName} *${type_name}_new_I(${TypeName}Context *info) {
   ${SelfTypeName} *o = ${type_name}_new();
 
-  ${type_name}_construct_i(o);
+  ${type_name}_construct_i(o, info);
 
   return o;
 }
@@ -661,16 +660,21 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = Path("./Framework/Media").as_posix()
-    header_path = "Framework/Media"
-    common_path = "Framework/Media/FrMediaCommon.h"
+    dst = Path("./Framework/DataType").as_posix()
+    header_path = "Framework/DataType"
+    common_path = "Framework//FrCommon.h"
 
     template_struct = """
-struct _FrImageSaver {
+struct _FrJob {
   SysObject parent;
 
   /* <private> */
-  FrImageScale scale;
+  SysThread* thread;
+  SysQueue queue;
+  SysCond cond;
+  SysMutex mutex;
+  FrMediaTask *task;
+  FR_JOB_STATE_ENUM state;
 };
 """
     info = TemplateInfo(template_struct)

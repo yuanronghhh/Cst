@@ -21,7 +21,7 @@ FrDecoder *fr_media_pipeline_get_decoder(FrMediaPipeline *self, FR_MEDIA_ENUM ty
   }
 }
 
-static FrDecoder* run_media_decoder(FrMediaFile* file,
+static FrDecoder* create_media_decoder(FrMediaFile* file,
     FR_MEDIA_ENUM mediaType,
     FrMediaPipeline *self) {
 
@@ -37,32 +37,34 @@ static FrDecoder* run_media_decoder(FrMediaFile* file,
     sys_clear_pointer(&decoder, _sys_object_unref);
     return NULL;
   }
-  fr_decoder_start(decoder);
 
   return decoder;
 }
 
 void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
-  FrDecoder *dec;
-  FrVideoDecoder *vdec;
+  FrDecoder *vdec;
+  FrDecoder *adec;
+  FrDecoder *pdec;
+  FrVideoDecoder *video_dec;
 
-  dec = run_media_decoder(file,
+  pdec = fr_packet_decoder_new_I(file);
+  fr_decoder_set_user_data(pdec, self);
+  self->packet_decoder = pdec;
+
+  vdec = create_media_decoder(file,
       FR_MEDIA_VIDEO,
       self);
-  vdec = FR_VIDEO_DECODER(dec);
-  fr_video_decoder_resize(vdec, 800, 600);
+  video_dec = FR_VIDEO_DECODER(vdec);
+  fr_video_decoder_resize(video_dec, 800, 600);
+  self->video_decoder = vdec;
 
-  self->video_decoder = dec;
-
-  dec = run_media_decoder(file,
+  adec = create_media_decoder(file,
       FR_MEDIA_AUDIO,
       self);
-  self->audio_decoder = dec;
+  self->audio_decoder = adec;
 
-  dec = fr_packet_decoder_new_I(file);
-  fr_decoder_set_user_data(dec, self);
-  self->packet_decoder = dec;
-
+  fr_decoder_start(self->video_decoder);
+  fr_decoder_start(self->audio_decoder);
   fr_decoder_start(self->packet_decoder);
 }
 
@@ -88,35 +90,6 @@ void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
    * and free on other thread.
    */
   sys_async_queue_push(&self->image_queue, frame);
-}
-
-void fr_media_pipeline_wakeup_packet(FrMediaPipeline *self, FrDecoder *dec) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(dec != NULL);
-
-  if(fr_decoder_not_enough_unlock(dec)) {
-
-    fr_decoder_wakeup_unlock(self->packet_decoder);
-  }
-
-}
-
-SysInt fr_media_pipeline_push_packet(FrMediaPipeline *self,
-    FrDecoder *dec,
-    FrPacket *pkt) {
-  sys_return_val_if_fail(dec != NULL, -1);
-  sys_return_val_if_fail(self != NULL, -1);
-
-  SysInt err;
-
-  fr_decoder_lock(dec);
-
-  err = fr_decoder_enough_unlock(dec) ? FR_MEDIA_ERROR_WAIT : FR_MEDIA_ERROR_AGAIN;
-  fr_decoder_push_packet_unlock(dec, pkt);
-
-  fr_decoder_unlock(dec);
-
-  return err;
 }
 
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
@@ -155,6 +128,11 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
 void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
 
   fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
+}
+
+void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
+
+  fr_decoder_wakeup(self->packet_decoder);
 }
 
 /* object api */

@@ -7,21 +7,13 @@ SYS_DEFINE_TYPE(FrDecoder, fr_decoder, SYS_TYPE_OBJECT);
 #define DECODER_LOCK fr_job_lock(&self->job)
 #define DECODER_UNLOCK fr_job_unlock(&self->job)
 
-void fr_decoder_lock(FrDecoder* self) {
-  DECODER_LOCK;
-}
-
-void fr_decoder_unlock(FrDecoder* self) {
-  DECODER_UNLOCK;
-}
-
 const SysChar* fr_decoder_get_name(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->name;
 }
 
-SysBool fr_decoder_enough_unlock(FrDecoder* self) {
+SysBool fr_decoder_enough(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, false);
   SysInt r;
   SysUInt len;
@@ -33,7 +25,7 @@ SysBool fr_decoder_enough_unlock(FrDecoder* self) {
   return r;
 }
 
-SysBool fr_decoder_not_enough_unlock(FrDecoder* self) {
+SysBool fr_decoder_not_enough(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, false);
   FrDecoder *o = FR_DECODER(self);
   SysUInt len = fr_decoder_get_length(o);
@@ -42,15 +34,9 @@ SysBool fr_decoder_not_enough_unlock(FrDecoder* self) {
 }
 
 SysUInt fr_decoder_get_length(FrDecoder *self) {
-  SysUInt len;
+  sys_return_val_if_fail(self != NULL, -1);
 
-  DECODER_LOCK;
-
-  len = sys_queue_get_length(&self->queue);
-
-  DECODER_UNLOCK;
-
-  return len;
+  return sys_queue_get_length(&self->queue);
 }
 
 static SysInt fr_decoder_decode_it_i(FrDecoder *self, FrPacket *pkt) {
@@ -63,129 +49,13 @@ void fr_decoder_set_task(FrDecoder* self, FrJobTask* task) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(task != NULL);
 
-  fr_job_run_task(&self->job, self->task);
+  fr_job_send_task(&self->job, task);
 }
 
-static SysInt decoder_process_task(FrDecoder* self) {
-  SysInt result = 0;
-  if(!self->task) { return result; }
-
-  fr_job_task_run(self->task);
-  result = POINTER_TO_INT(fr_job_task_result(self->task));
-  self->task = NULL;
-
-  return result;
-}
-
-static SysInt decoder_process_packet(FrDecoder* self) {
-  SysInt err;
-  FrPacket *npkt = NULL;
-
-  err = fr_decoder_decode_check(self);
-  if(err < 0) { return err; }
-
-  if(!fr_decoder_pop_packet_unlock(self, &npkt)) {
-
-    return FR_MEDIA_ERROR_WAIT;
-  }
-  err = fr_decoder_decode_it(self, npkt);
-
-  return err;
-}
-
-static SysInt error_to_state(SysInt err) {
-  switch (err) {
-  case FR_MEDIA_ERROR_AGAIN:
-    return FR_JOB_STATE_RUNNING;
-    break;
-
-  case FR_MEDIA_ERROR_EXIT:
-    return FR_JOB_STATE_STOP;
-  case FR_MEDIA_ERROR_WAIT:
-  case FR_MEDIA_ERROR_EOF:
-    return FR_JOB_STATE_PAUSE;
-    break;
-  default:
-    return FR_JOB_STATE_PAUSE;
-  }
-}
-
-static FR_JOB_STATE_ENUM decoder_process(FrDecoder* self) {
-  SysInt err = 0;
-  FR_JOB_STATE_ENUM state;
-
-  err = decoder_process_packet(self);
-
-  state = error_to_state(err);
-
-  if (state < 0) {
-    sys_warning_N("process packet failed: %s,%s", 
-      self->name,
-      fr_media_error_string(err));
-  }
-
-  return state;
-}
-
-static SysPointer decoder_thread(SysPointer user_data) {
-  FrDecoder *self = user_data;
-
-  decoder_process(self);
-
-  return NULL;
-}
-
-void fr_decoder_wakeup_unlock(FrDecoder* self) {
+void fr_decoder_wakeup(FrDecoder *self) {
   sys_return_if_fail(self != NULL);
 
-  self->state = FR_JOB_STATE_RUNNING;
-  sys_cond_signal(&self->ctrl.cond);
-}
-
-static SysPointer init_it(FrJobTask* task, SysPointer user_data) {
-  FrDecoder *self = user_data;
-
-  sys_debug_N("init it: %s", self->name);
-  return NULL;
-}
-
-void decoder_wait_init(FrDecoder* self) {
-  FrJobTask task = { 0 };
-  task.handler = init_it;
-  task.user_data = self;
-
-  fr_job_run_task_wait(&self->job, &task);
-}
-
-SysInt fr_decoder_start(FrDecoder* self) {
-  const SysChar *name = self->name;
-
-  fr_job_start(&self->job, name, decoder_thread);
-  decoder_wait_init(self);
-
-  return 0;
-}
-
-void decoder_done(FrJobTask task) {
-}
-
-void fr_decoder_stop(FrDecoder* self) {
-  sys_return_if_fail(self != NULL);
-  if (fr_decoder_get_state(self) == FR_JOB_STATE_STOP) { return; }
-
-  fr_job_stop(&self->job);
-}
-
-void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data) {
-  sys_return_if_fail(self != NULL);
-
-  self->user_data = user_data;
-}
-
-SysPointer fr_decoder_get_user_data(FrDecoder *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->user_data;
+  fr_job_wakeup(&self->job);
 }
 
 SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
@@ -212,34 +82,117 @@ SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
 
 SysBool fr_decoder_pop_packet(FrDecoder* self,
     FrPacket** pkt) {
-    SysBool r;
-
-    DECODER_LOCK;
-    r = fr_decoder_pop_packet_unlock(self, pkt);
-    DECODER_UNLOCK;
-
-    return r;
-}
-
-SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
   SysBool r;
 
-  DECODER_LOCK;
-  r = fr_decoder_push_packet_unlock(self, pkt);
-  fr_decoder_wakeup_unlock(self);
-  DECODER_UNLOCK;
+  r = fr_decoder_pop_packet_unlock(self, pkt);
 
   return r;
 }
 
-SysBool fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket *pkt) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(pkt != NULL, false);
-
+void fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket* pkt) {
   sys_queue_push_head (&self->queue, pkt);
-  fr_decoder_wakeup_unlock(self);
+  sys_cond_signal(&self->job.cond);
+}
 
-  return true;
+void fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
+  DECODER_LOCK;
+  fr_decoder_push_packet_unlock(self, pkt);
+  DECODER_UNLOCK;
+}
+
+static SysInt decoder_process_packet(FrDecoder* self) {
+  SysInt err;
+  FrPacket *npkt = NULL;
+
+  err = fr_decoder_decode_check(self);
+  if(err < 0) { return err; }
+
+  if(!fr_decoder_pop_packet_unlock(self, &npkt)) {
+
+    err = FR_MEDIA_ERROR_WAIT;
+    goto done;
+  }
+  err = fr_decoder_decode_it(self, npkt);
+
+  if(fr_decoder_get_length(self) > 0) {
+
+    fr_decoder_wakeup(self);
+  }
+
+done:
+  return err;
+}
+
+#if 0
+static SysInt error_to_state(SysInt err) {
+  switch (err) {
+  case FR_MEDIA_ERROR_AGAIN:
+    return FR_JOB_STATE_RUNNING;
+    break;
+
+  case FR_MEDIA_ERROR_EXIT:
+    return FR_JOB_STATE_STOP;
+  case FR_MEDIA_ERROR_WAIT:
+  case FR_MEDIA_ERROR_EOF:
+    return FR_JOB_STATE_PAUSE;
+    break;
+  default:
+    return FR_JOB_STATE_PAUSE;
+  }
+}
+#endif
+
+static SysPointer job_callback(FrJob* job, SysPointer user_data) {
+  FrDecoder *self = user_data;
+
+  decoder_process_packet(self);
+
+  return NULL;
+}
+
+static SysPointer init_it(FrJobTask* task, SysPointer user_data) {
+  FrDecoder *self = user_data;
+
+  sys_debug_N("init it: %s", self->name);
+
+  return NULL;
+}
+
+void decoder_wait_init(FrDecoder* self) {
+  FrJobTask task = { 0 };
+  task.handler = init_it;
+  task.user_data = self;
+
+  fr_job_send_task_wait(&self->job, &task);
+}
+
+SysInt fr_decoder_start(FrDecoder* self) {
+
+  fr_job_start(&self->job);
+  decoder_wait_init(self);
+
+  return 0;
+}
+
+void decoder_done(FrJobTask task) {
+}
+
+void fr_decoder_stop(FrDecoder* self) {
+  sys_return_if_fail(self != NULL);
+
+  fr_job_stop(&self->job);
+}
+
+void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data) {
+  sys_return_if_fail(self != NULL);
+
+  self->user_data = user_data;
+}
+
+SysPointer fr_decoder_get_user_data(FrDecoder *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->user_data;
 }
 
 SysInt fr_decoder_open(FrDecoder* self) {
@@ -306,6 +259,12 @@ SysInt fr_decoder_close_i(FrDecoder* o) {
 static void fr_decoder_construct_i(FrDecoder *self,
     const SysChar *name) {
   self->name = sys_strdup(name);
+
+  FrJobContext info = {0};
+  info.name = self->name;
+  info.callback = job_callback;
+  info.user_data = self;
+  fr_job_construct(&self->job, &info);
 }
 
 FrDecoder* fr_decoder_new(void) {
@@ -338,8 +297,8 @@ static void fr_decoder_class_init(FrDecoderClass* cls) {
 void fr_decoder_init(FrDecoder* self) {
   self->start_pts = -1;
   self->serial = -1;
-  self->min_pkt = 24;
-  self->max_pkt = 96;
+  self->min_pkt = 1;
+  self->max_pkt = 10;
 
   sys_queue_init(&self->queue);
   fr_job_create(&self->job);

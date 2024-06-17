@@ -5,7 +5,7 @@
 
 SYS_BEGIN_DECLS
 
-void test_video_init(int argc, SysChar* argv[]);
+void test_video_init(int argc, const SysChar* argv[]);
 
 SYS_END_DECLS
 

@@ -1,7 +1,5 @@
 #include <Framework/DataType/FrJobTask.h>
 
-static SysCond pool_cond;
-static SysMutex pool_mutex;
 
 SYS_DEFINE_TYPE(FrJobTask, fr_job_task, SYS_TYPE_OBJECT);
 
@@ -16,22 +14,16 @@ static SysBool fr_job_task_destroy_i(SysObject* o) {
   return true;
 }
 
-void fr_job_task_wait(FrJobTask* self, SysMutex *mutex) {
-  sys_mutex_lock(mutex);
-
-  while(!self->done) {
-
-    sys_cond_wait(&pool_cond, mutex);
-  }
-
-  sys_mutex_unlock(mutex);
-}
-
 void fr_job_task_run(FrJobTask *self) {
   sys_return_if_fail(self != NULL);
-  sys_mutex_lock(&pool_mutex);
 
-  self->done = false;
+  sys_mutex_lock(&self->mutex);
+  if(self->done) {
+
+    sys_warning_N("task execute done: %d,%p", self->user_data, self);
+    return;
+  }
+
   if(self->handler) {
 
     self->result = self->handler(self, self->user_data);
@@ -41,19 +33,17 @@ void fr_job_task_run(FrJobTask *self) {
 
     self->callback(self, self->user_data);
   }
+
+  sys_cond_signal(&self->cond);
+  sys_mutex_unlock(&self->mutex);
+
   self->done = true;
-  sys_cond_signal(&pool_cond);
-  sys_mutex_unlock(&pool_mutex);
 }
 
 void fr_job_task_setup(void) {
-  sys_cond_init(&pool_cond);
-  sys_mutex_init(&pool_mutex);
 }
 
 void fr_job_task_teardown(void) {
-  sys_cond_clear(&pool_cond);
-  sys_mutex_clear(&pool_mutex);
 }
 
 SysPointer fr_job_task_result(FrJobTask *self) {
@@ -62,19 +52,50 @@ SysPointer fr_job_task_result(FrJobTask *self) {
   return self->result;
 }
 
-/* object api */
-static void fr_job_task_construct_i(FrJobTask *self) {
+void fr_job_task_construct(FrJobTask *self, FrJobTaskContext *info) {
+  sys_return_if_fail(self != NULL);
 
+  FrJobTaskClass* cls = FR_JOB_TASK_GET_CLASS(self);
+  sys_return_if_fail(cls->construct != NULL);
+
+  return cls->construct(self, info);
+}
+
+void fr_job_task_wait(FrJobTask *self) {
+  sys_mutex_lock(&self->mutex);
+
+  while(!self->done) {
+
+    sys_cond_wait(&self->cond, &self->mutex);
+  }
+
+  sys_mutex_unlock(&self->mutex);
+}
+
+/* object api */
+static void fr_job_task_construct_i(FrJobTask *self, FrJobTaskContext *info) {
+  self->user_data = info->user_data;
+  self->handler = info->handler;
+  self->callback = info->callback;
+  self->done = false;
 }
 
 FrJobTask* fr_job_task_new(void) {
   return sys_object_new(FR_TYPE_JOB_TASK, NULL);
 }
 
-FrJobTask *fr_job_task_new_I(void) {
+FrJobTask *fr_job_task_new_callback(FrJobTaskFunc handler, SysPointer user_data) {
+  FrJobTaskContext info = {0};
+  info.handler = handler;
+  info.user_data = user_data;
+
+  return fr_job_task_new_I(&info);
+}
+
+FrJobTask *fr_job_task_new_I(FrJobTaskContext *info) {
   FrJobTask *o = fr_job_task_new();
 
-  fr_job_task_construct_i(o);
+  fr_job_task_construct_i(o, info);
 
   return o;
 }
@@ -82,7 +103,8 @@ FrJobTask *fr_job_task_new_I(void) {
 static void fr_job_task_dispose(SysObject* o) {
   FrJobTask *self = FR_JOB_TASK(o);
 
-  UNUSED(self);
+  sys_cond_clear(&self->cond);
+  sys_mutex_clear(&self->mutex);
 
   SYS_OBJECT_CLASS(fr_job_task_parent_class)->dispose(o);
 }
@@ -92,7 +114,12 @@ static void fr_job_task_class_init(FrJobTaskClass* cls) {
 
   ocls->dispose = fr_job_task_dispose;
   ocls->destroy = fr_job_task_destroy_i;
+  cls->construct = fr_job_task_construct_i;
 }
 
 void fr_job_task_init(FrJobTask* self) {
+  self->done = false;
+
+  sys_cond_init(&self->cond);
+  sys_mutex_init(&self->mutex);
 }

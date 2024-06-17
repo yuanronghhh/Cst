@@ -156,9 +156,11 @@ typedef  struct  _FrNodeClass      FrNodeClass;
 typedef  struct  _FrMain           FrMain;
 typedef  struct  _FrMainClass      FrMainClass;
 
+typedef struct _FrJobTaskContext FrJobTaskContext;
 typedef struct _FrJobTask FrJobTask;
 typedef struct _FrJobTaskClass FrJobTaskClass;
 
+typedef struct _FrJobContext FrJobContext;
 typedef struct _FrJob FrJob;
 typedef struct _FrJobClass FrJobClass;
 

@@ -44,6 +44,5 @@ static void fr_audio_decoder_class_init(FrAudioDecoderClass* cls) {
 
 void fr_audio_decoder_init(FrAudioDecoder* self) {
 
-  fr_decoder_set_state(FR_DECODER(self), FR_JOB_STATE_STOP);
   fr_audio_frame_create(&self->frame);
 }

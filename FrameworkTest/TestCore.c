@@ -1,7 +1,8 @@
 #include <FrameworkTest/TestCore.h>
 #include <FrameworkTest/tests/TestVideo.h>
+#include <FrameworkTest/tests/TestJob.h>
 
-#define CHECK_TYPE FR_TYPE_MEDIA_FRAME
+#define CHECK_TYPE SYS_TYPE_FUNDAMENTAL_NODE
 
 void setUp(void) {
 }
@@ -37,7 +38,7 @@ static void object_unref_debug(SysObject *o, const SysChar *name, SysInt ref_cou
   sys_assert(ref_count > 0);
 }
 
-int main(int argc, SysChar* argv[]) {
+int main(int argc, const SysChar* argv[]) {
   sys_set_debugger(true);
   sys_setup();
 
@@ -48,7 +49,7 @@ int main(int argc, SysChar* argv[]) {
 #endif
   fr_core_setup();
 
-  // test_video_init(argc, argv);
+  test_video_init(argc, argv);
 
   fr_core_teardown();
   sys_teardown();

@@ -43,7 +43,6 @@ SysInt fr_packet_decoder_decode_check_i(FrDecoder *o) {
 
 SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
   SysInt sindex;
-  SysInt err;
   FrDecoder *dec;
   FrMediaPacket *mpkt;
 
@@ -57,12 +56,9 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
     sys_warning_N("Not found media packet type: %s", sindex);
     return -1;
   }
-  // sys_debug_N("read packet %s", dec->name);
-  err = fr_media_pipeline_push_packet(box, dec, pkt);
+  fr_decoder_push_packet(dec, pkt);
 
-  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, FR_PACKET(mpkt));
-
-  return err;
+  return FR_DECODER_CLASS(fr_packet_decoder_parent_class)->decode_it(o, FR_PACKET(mpkt));
 }
 
 /* object api */
@@ -76,7 +72,8 @@ static void fr_packet_decoder_construct_i(
 static void packet_decoder_construct (FrPacketDecoder *self, 
     FrMediaFile *file) {
   FrDecoder *o = FR_DECODER(self);
-  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->construct(o, "packet_decoder");
+
+  fr_packet_decoder_construct_i(o, "packet_decoder");
 
   self->file = sys_object_ref(file);
 }
@@ -115,4 +112,5 @@ static void fr_packet_decoder_class_init(FrPacketDecoderClass* cls) {
 void fr_packet_decoder_init(FrPacketDecoder* self) {
   self->min_pkt = 10;
   self->max_pkt = 48;
+
 }

@@ -195,7 +195,10 @@ static SysInt fr_media_decoder_decode_it_i(
   if(err < 0) { return err; }
 
   media_decoder_decode_frame(self);
-  fr_media_pipeline_wakeup_packet(box, o);
+  if(!fr_decoder_enough(o)) {
+
+    fr_media_pipeline_wakeup_source(box);
+  }
 
   return FR_DECODER_CLASS(fr_media_decoder_parent_class)->decode_it(o, pkt);
 }

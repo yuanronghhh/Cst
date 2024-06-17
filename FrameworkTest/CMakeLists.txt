@@ -28,6 +28,8 @@ set(INC
 set(SRC
   ./tests/TestVideo.c
   ./tests/TestVideo.h
+  ./tests/TestJob.c
+  ./tests/TestJob.h
 
   ./TestCore.c
   ./TestCore.h

@@ -25,7 +25,6 @@ struct _FrDecoderClass {
 
 struct _FrDecoder {
   SysObject parent;
-
   FrJob job;
 
   /* <private> */
@@ -52,26 +51,20 @@ SYS_API SysInt fr_decoder_open(FrDecoder* self);
 SYS_API SysInt fr_decoder_close(FrDecoder* self);
 SYS_API SysInt fr_decoder_decode_check(FrDecoder* self);
 
-SYS_API SysBool fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket *pkt);
 SYS_API SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
     FrPacket **pkt);
-
-SYS_API SysBool fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt);
+SYS_API void fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket* pkt);
+SYS_API void fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt);
 SYS_API SysBool fr_decoder_pop_packet(FrDecoder* self,
-    FrPacket** pkt);
+    FrPacket **pkt);
 
 SYS_API SysUInt fr_decoder_get_length(FrDecoder *self);
 
+SYS_API void fr_decoder_wakeup(FrDecoder *self);
 SYS_API SysInt fr_decoder_start(FrDecoder* self);
 SYS_API void fr_decoder_stop(FrDecoder* self);
-SYS_API void fr_decoder_wakeup_unlock(FrDecoder* self);
-SYS_API SysBool fr_decoder_enough_unlock(FrDecoder* self);
-SYS_API SysBool fr_decoder_not_enough_unlock(FrDecoder* self);
-void fr_decoder_lock(FrDecoder* self);
-void fr_decoder_unlock(FrDecoder* self);
-
-SYS_API void fr_decoder_set_state(FrDecoder *self, FR_JOB_STATE_ENUM state);
-SYS_API FR_JOB_STATE_ENUM fr_decoder_get_state(FrDecoder *self);
+SYS_API SysBool fr_decoder_not_enough(FrDecoder* self);
+SYS_API SysBool fr_decoder_enough(FrDecoder* self);
 
 SYS_API void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data);
 SYS_API SysPointer fr_decoder_get_user_data(FrDecoder *self);

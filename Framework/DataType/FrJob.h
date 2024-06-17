@@ -23,6 +23,9 @@ struct _FrJobClass {
   SysObjectClass parent;
 
   void (*construct) (FrJob *self, FrJobContext *info);
+  void (*init) (FrJob *self, SysPointer user_data);
+  void (*process) (FrJob *self, SysPointer user_data);
+  void (*stop) (FrJob *self, SysPointer user_data);
 };
 
 struct _FrJob {
@@ -34,7 +37,6 @@ struct _FrJob {
   SysCond cond;
   SysMutex mutex;
   SysQueue task_queue;
-  FrJobTask *task;
   SysPointer user_data;
   FR_JOB_STATE_ENUM state;
   FrJobFunc callback;

@@ -33,7 +33,7 @@ void fr_job_send_task_unlock(FrJob *self, FrJobTask *task) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(task != NULL);
 
-  self->task = task;
+  sys_queue_push_head(&self->task_queue, task);
   sys_cond_signal(&self->cond);
 }
 
@@ -47,22 +47,22 @@ void fr_job_send_task(FrJob *self, FrJobTask *task) {
 
 void fr_job_send_task_wait(FrJob *self, FrJobTask *task) {
   fr_job_send_task(self, task);
-
   fr_job_task_wait(task);
 }
 
 static SysPointer job_thread(SysPointer user_data) {
   FrJob *self = user_data;
+  FrJobTask *task;
 
   while (self->state == FR_JOB_STATE_RUNNING) {
     JOB_LOCK;
 
     if(sys_queue_get_length(&self->task_queue) > 0) {
+      task = sys_queue_pop_tail(&self->task_queue);
 
-      return;
+      fr_job_task_run(task);
     }
 
-    fr_job_task_run(self->task);
     JOB_UNLOCK;
   }
   sys_debug_N("exit %s", self->name);
@@ -81,7 +81,7 @@ void fr_job_stop(FrJob* self) {
   if (self->state == FR_JOB_STATE_STOP) { return; }
   FrJobTask *task;
 
-  task = fr_job_task_new_callback(stop_it, self);
+  task = fr_job_task_new_handler(stop_it, self);
   fr_job_send_task_wait(self, task);
   sys_object_unref(task);
 }

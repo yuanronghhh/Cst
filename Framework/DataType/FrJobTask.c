@@ -84,7 +84,9 @@ FrJobTask* fr_job_task_new(void) {
   return sys_object_new(FR_TYPE_JOB_TASK, NULL);
 }
 
-FrJobTask *fr_job_task_new_callback(FrJobTaskFunc handler, SysPointer user_data) {
+FrJobTask *fr_job_task_new_handler(FrJobTaskFunc handler, 
+    SysPointer user_data) {
+
   FrJobTaskContext info = {0};
   info.handler = handler;
   info.user_data = user_data;

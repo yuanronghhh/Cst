@@ -24,7 +24,7 @@ static void cached_packet(FrPacketDecoder *self) {
     }
 
     npkt = (FrPacket *)sys_object_dclone(mpkt);
-    fr_decoder_push_packet_unlock(o, npkt);
+    fr_decoder_push_packet(o, npkt);
     i++;
   } while (i < self->max_pkt);
 }

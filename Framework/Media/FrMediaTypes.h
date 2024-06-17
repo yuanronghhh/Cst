@@ -66,6 +66,7 @@ typedef struct _FrPipelineClass FrPipelineClass;
 typedef struct _FrMediaPipeline FrMediaPipeline;
 typedef struct _FrMediaPipelineClass FrMediaPipelineClass;
 
+typedef struct _FrDecoderContext FrDecoderContext;
 typedef struct _FrDecoder FrDecoder;
 typedef struct _FrDecoderClass FrDecoderClass;
 

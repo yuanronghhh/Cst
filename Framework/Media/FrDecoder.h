@@ -10,12 +10,12 @@ SYS_BEGIN_DECLS
 #define FR_DECODER_CLASS(o) ((FrDecoderClass *)sys_class_cast_check(o, FR_TYPE_DECODER))
 #define FR_DECODER_GET_CLASS(o) sys_instance_get_class(o, FrDecoderClass)
 
-struct _FrDecoderClass {
-  SysObjectClass parent;
+struct _FrDecoderContext {
+  SysChar *name;
+};
 
-  void (*construct) (
-    FrDecoder* o,
-    const SysChar *name);
+struct _FrDecoderClass {
+  FrJobClass parent;
 
   SysInt (*decode_check) (FrDecoder* o);
   SysInt (*decode_it) (FrDecoder* o, FrPacket *npkt);
@@ -24,13 +24,11 @@ struct _FrDecoderClass {
 };
 
 struct _FrDecoder {
-  SysObject parent;
-  FrJob job;
+  FrJob parent;
 
   /* <private> */
   SysChar* name;
   FR_MEDIA_ENUM decoder_type;
-  SysQueue queue;
 
   /* current codec */
   SysInt64 start_pts;

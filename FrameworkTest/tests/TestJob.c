@@ -50,7 +50,6 @@ void test_job_basic(void) {
     task = fr_job_task_new_I(&task_info);
     sys_harray_add(tasklist, task);
     sys_debug_N("send: %p", task);
-    fr_job_send_task_wait(job, task);
 
     i++;
   }

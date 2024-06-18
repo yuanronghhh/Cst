@@ -15,22 +15,26 @@ const SysChar* fr_decoder_get_name(FrDecoder* self) {
 
 SysBool fr_decoder_enough(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, false);
-  SysInt r;
-  SysUInt len;
-  FrDecoder *o = FR_DECODER(self);
+  // SysInt r;
+  // SysUInt len;
+  // FrDecoder *o = FR_DECODER(self);
 
-  len = fr_decoder_get_length(o);
-  r = len >= self->max_pkt;
+  // len = fr_decoder_get_length(o);
+  // r = len >= self->max_pkt;
 
-  return r;
+  // return r;
+  
+  return true;
 }
 
 SysBool fr_decoder_not_enough(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, false);
-  FrDecoder *o = FR_DECODER(self);
-  SysUInt len = fr_decoder_get_length(o);
+  // FrDecoder *o = FR_DECODER(self);
+  // SysUInt len = fr_decoder_get_length(o);
 
-  return len <= self->min_pkt;
+  // return len <= self->min_pkt;
+
+  return true;
 }
 
 static SysInt fr_decoder_decode_it_i(FrDecoder *self, FrPacket *pkt) {
@@ -51,6 +55,7 @@ SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
   sys_return_val_if_fail(*pkt == NULL, -1);
   FrPacket *npkt;
 
+#if 0
   if(!sys_queue_get_length(&self->queue)) {
     return false;
   }
@@ -63,6 +68,7 @@ SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
   }
   self->serial++;;
   *pkt = npkt;
+#endif
 
   return true;
 }
@@ -95,10 +101,10 @@ static void fr_decoder_process_packet(FrJob* o, SysPointer user_data) {
   }
   err = fr_decoder_decode_it(self, npkt);
 
-  if(fr_decoder_get_length(self) > 0) {
+  // if(fr_decoder_get_length(self) > 0) {
 
-    fr_decoder_wakeup(self);
-  }
+  //   fr_decoder_wakeup(self);
+  // }
 }
 
 #if 0

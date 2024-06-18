@@ -16,7 +16,7 @@ struct _FrMediaDecoderClass {
 
   void (*construct) (
     FrMediaDecoder *o,
-    const SysChar *name,
+    FrDecoderContext *info,
     FrMediaStream *ms);
 
    FrMediaFrame *(*get_frame) (FrMediaDecoder* o);
@@ -52,7 +52,7 @@ FrDecoder* fr_media_decoder_new_by_type(
     FrMediaStream *ms);
 
 void fr_media_decoder_construct(FrMediaDecoder *self,
-    const SysChar *name, 
+    FrDecoderContext *info, 
     FrMediaStream *ms);
 
 SysInt fr_media_decoder_decode_frame(FrMediaDecoder *self, FrMediaFrame *nframe);

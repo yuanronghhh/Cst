@@ -49,7 +49,7 @@ int main(int argc, const SysChar* argv[]) {
 #endif
   fr_core_setup();
 
-  test_video_init(argc, argv);
+  test_job_init(argc, argv);
 
   fr_core_teardown();
   sys_teardown();

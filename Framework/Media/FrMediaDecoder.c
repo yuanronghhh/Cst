@@ -101,14 +101,14 @@ static void media_decoder_create_context(FrMediaDecoder *self,
 }
 
 void fr_media_decoder_construct(FrMediaDecoder *self,
-    const SysChar *name, 
+    FrDecoderContext *info, 
     FrMediaStream *ms) {
   sys_return_if_fail(self != NULL);
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
   sys_return_if_fail(cls->construct);
 
-  cls->construct(self, name, ms);
+  cls->construct(self, info, ms);
 }
 
 FrDecoder* fr_media_decoder_new_by_type(
@@ -118,7 +118,8 @@ FrDecoder* fr_media_decoder_new_by_type(
   FrMediaDecoder *o;
 
   o = sys_object_new(tp, NULL);
-  fr_media_decoder_construct(o, name, ms);
+  FrDecoderContext info = { .name = (SysChar *)name };
+  fr_media_decoder_construct(o, &info, ms);
 
   return FR_DECODER(o);
 }
@@ -205,12 +206,12 @@ static SysInt fr_media_decoder_decode_it_i(
 
 /* object api */
 static void media_decoder_construct(FrMediaDecoder* self,
-  const SysChar* name,
+  FrDecoderContext *info,
   FrMediaStream* ms) {
   FrDecoder* o = FR_DECODER(self);
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
-  FR_DECODER_CLASS(fr_media_decoder_parent_class)->construct(o, name);
+  FR_DECODER_CLASS(fr_media_decoder_parent_class)->construct(o, info);
 
   media_decoder_create_context(self, ms);
   self->frame = cls->get_frame(self);

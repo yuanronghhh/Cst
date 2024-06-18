@@ -3,9 +3,9 @@
 SYS_DEFINE_TYPE(FrFrameDecoder, fr_frame_decoder, FR_TYPE_DECODER);
 
 /* object api */
-static void fr_frame_decoder_construct_i(FrDecoder * o, const SysChar *name) {
+static void fr_frame_decoder_construct_i(FrDecoder * o, FrDecoderContext *info) {
 
-  FR_DECODER_CLASS(fr_frame_decoder_parent_class)->construct(o, name);
+  FR_DECODER_CLASS(fr_frame_decoder_parent_class)->construct(o, info);
 }
 
 FrDecoder* fr_frame_decoder_new(void) {
@@ -15,7 +15,8 @@ FrDecoder* fr_frame_decoder_new(void) {
 FrDecoder *fr_frame_decoder_new_I(void) {
   FrDecoder *o = fr_frame_decoder_new();
 
-  fr_frame_decoder_construct_i(o, "frame_decoder");
+  FrDecoderContext info = {.name = "frame_decoder"};
+  fr_frame_decoder_construct_i(o, &info);
 
   return o;
 }

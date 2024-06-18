@@ -56,8 +56,6 @@ SYS_API void fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt);
 SYS_API SysBool fr_decoder_pop_packet(FrDecoder* self,
     FrPacket **pkt);
 
-SYS_API SysUInt fr_decoder_get_length(FrDecoder *self);
-
 SYS_API void fr_decoder_wakeup(FrDecoder *self);
 SYS_API SysInt fr_decoder_start(FrDecoder* self);
 SYS_API void fr_decoder_stop(FrDecoder* self);

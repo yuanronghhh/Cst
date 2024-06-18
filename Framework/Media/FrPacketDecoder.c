@@ -30,13 +30,12 @@ static void cached_packet(FrPacketDecoder *self) {
 }
 
 SysInt fr_packet_decoder_decode_check_i(FrDecoder *o) {
-  SysUInt len = fr_decoder_get_length(o);
-  FrPacketDecoder *self = FR_PACKET_DECODER(o);
+  // FrPacketDecoder *self = FR_PACKET_DECODER(o);
 
-  if(len <= self->min_pkt) {
+  // if(len <= self->min_pkt) {
 
-    cached_packet(self);
-  }
+  //   cached_packet(self);
+  // }
 
   return 0;
 }
@@ -64,16 +63,16 @@ SysInt fr_packet_decoder_decode_it_i(FrDecoder *o, FrPacket *pkt) {
 /* object api */
 static void fr_packet_decoder_construct_i(
   FrDecoder* o,
-  const SysChar* name) {
+  FrDecoderContext *info) {
 
-  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->construct(o, name);
+  FR_DECODER_CLASS(fr_packet_decoder_parent_class)->construct(o, info);
 }
 
 static void packet_decoder_construct (FrPacketDecoder *self, 
     FrMediaFile *file) {
   FrDecoder *o = FR_DECODER(self);
-
-  fr_packet_decoder_construct_i(o, "packet_decoder");
+  FrDecoderContext info = { .name = "packet_decoder" };
+  fr_packet_decoder_construct_i(o, &info);
 
   self->file = sys_object_ref(file);
 }

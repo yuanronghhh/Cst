@@ -71,8 +71,7 @@ void fr_job_stop(FrJob* self) {
   FrJobTask *task;
 
   task = fr_job_task_new_handler(stop_it, self);
-  fr_job_run_task(self, task);
-  sys_object_unref(task);
+  fr_job_run_task_sync(self, task);
 }
 
 void fr_job_start(FrJob *self) {

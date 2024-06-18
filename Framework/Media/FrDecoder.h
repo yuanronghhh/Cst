@@ -17,6 +17,7 @@ struct _FrDecoderContext {
 struct _FrDecoderClass {
   FrJobClass parent;
 
+  void (*construct) (FrDecoder* o, FrDecoderContext *info);
   SysInt (*decode_check) (FrDecoder* o);
   SysInt (*decode_it) (FrDecoder* o, FrPacket *npkt);
   SysInt (*open) (FrDecoder* o);
@@ -28,6 +29,8 @@ struct _FrDecoder {
 
   /* <private> */
   SysChar* name;
+  FrJob job;
+  SysAsyncQueue queue;
   FR_MEDIA_ENUM decoder_type;
 
   /* current codec */
@@ -49,9 +52,6 @@ SYS_API SysInt fr_decoder_open(FrDecoder* self);
 SYS_API SysInt fr_decoder_close(FrDecoder* self);
 SYS_API SysInt fr_decoder_decode_check(FrDecoder* self);
 
-SYS_API SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
-    FrPacket **pkt);
-SYS_API void fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket* pkt);
 SYS_API void fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt);
 SYS_API SysBool fr_decoder_pop_packet(FrDecoder* self,
     FrPacket **pkt);

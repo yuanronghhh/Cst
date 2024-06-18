@@ -40,6 +40,15 @@ void fr_job_task_run(FrJobTask *self) {
   self->done = true;
 }
 
+void fr_job_task_run_sync(FrJobTask *self) {
+  fr_job_task_run(self);
+  fr_job_task_wait(self);
+}
+
+void fr_job_task_run_async(FrJobTask *self) {
+  fr_job_task_run(self);
+}
+
 void fr_job_task_setup(void) {
 }
 

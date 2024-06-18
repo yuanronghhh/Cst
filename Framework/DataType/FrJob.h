@@ -23,9 +23,7 @@ struct _FrJobClass {
   SysObjectClass parent;
 
   void (*construct) (FrJob *self, FrJobContext *info);
-  void (*init) (FrJob *self, SysPointer user_data);
   void (*process) (FrJob *self, SysPointer user_data);
-  void (*stop) (FrJob *self, SysPointer user_data);
 };
 
 struct _FrJob {
@@ -36,7 +34,7 @@ struct _FrJob {
   SysThread* thread;
   SysCond cond;
   SysMutex mutex;
-  SysQueue task_queue;
+  SysAsyncQueue queue;
   SysPointer user_data;
   FR_JOB_STATE_ENUM state;
   FrJobFunc callback;
@@ -49,8 +47,8 @@ SYS_API void fr_job_lock(FrJob *self);
 SYS_API void fr_job_unlock(FrJob *self);
 
 SYS_API FrJob *fr_job_new_I(FrJobContext *info);
-SYS_API void fr_job_send_task(FrJob *self, FrJobTask *task);
-SYS_API void fr_job_send_task_wait(FrJob *self, FrJobTask *task);
+SYS_API void fr_job_run_task_sync(FrJob *self, FrJobTask *task);
+SYS_API void fr_job_run_task_async(FrJob *self, FrJobTask *task);
 SYS_API void fr_job_stop(FrJob* self);
 SYS_API void fr_job_join(FrJob *self);
 SYS_API void fr_job_start(FrJob *self);

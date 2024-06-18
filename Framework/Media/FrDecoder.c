@@ -4,8 +4,8 @@
 
 SYS_DEFINE_TYPE(FrDecoder, fr_decoder, FR_TYPE_JOB);
 
-#define DECODER_LOCK fr_job_lock(FR_JOB(self))
-#define DECODER_UNLOCK fr_job_unlock(FR_JOB(self))
+#define DECODER_LOCK fr_job_lock(&self->job)
+#define DECODER_UNLOCK fr_job_unlock(&self->job)
 
 const SysChar* fr_decoder_get_name(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -39,17 +39,10 @@ static SysInt fr_decoder_decode_it_i(FrDecoder *self, FrPacket *pkt) {
   return FR_MEDIA_ERROR_WAIT;
 }
 
-void fr_decoder_set_task(FrDecoder* self, FrJobTask* task) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(task != NULL);
-
-  fr_job_send_task(FR_JOB(self), task);
-}
-
 void fr_decoder_wakeup(FrDecoder *self) {
   sys_return_if_fail(self != NULL);
 
-  fr_job_wakeup(FR_JOB(self));
+  fr_job_wakeup(&self->job);
 }
 
 SysBool fr_decoder_pop_packet_unlock(FrDecoder* self,
@@ -83,29 +76,22 @@ SysBool fr_decoder_pop_packet(FrDecoder* self,
   return r;
 }
 
-void fr_decoder_push_packet_unlock(FrDecoder* self, FrPacket* pkt) {
-  FrJobTask *task = fr_job_task_new_handler(NULL, pkt);
-
-  fr_job_send_task(FR_JOB(self), task);
-}
-
 void fr_decoder_push_packet(FrDecoder* self, FrPacket* pkt) {
-  DECODER_LOCK;
-  fr_decoder_push_packet_unlock(self, pkt);
-  DECODER_UNLOCK;
+
+  sys_async_queue_push(&self->queue, pkt);
 }
 
-static SysInt decoder_process_packet(FrDecoder* self) {
+static void fr_decoder_process_packet(FrJob* o, SysPointer user_data) {
   SysInt err;
   FrPacket *npkt = NULL;
+  FrDecoder *self = FR_DECODER(o);
 
   err = fr_decoder_decode_check(self);
-  if(err < 0) { return err; }
+  if(err < 0) { return; }
 
   if(!fr_decoder_pop_packet_unlock(self, &npkt)) {
 
     err = FR_MEDIA_ERROR_WAIT;
-    goto done;
   }
   err = fr_decoder_decode_it(self, npkt);
 
@@ -113,9 +99,6 @@ static SysInt decoder_process_packet(FrDecoder* self) {
 
     fr_decoder_wakeup(self);
   }
-
-done:
-  return err;
 }
 
 #if 0
@@ -137,45 +120,27 @@ static SysInt error_to_state(SysInt err) {
 }
 #endif
 
-static SysPointer job_callback(FrJob* job, SysPointer user_data) {
-  FrDecoder *self = user_data;
-
-  decoder_process_packet(self);
-
+static SysPointer decoder_init(FrJobTask* o, SysPointer user_data) {
+  FrDecoder *self = FR_DECODER(o);
+  sys_debug_N("decoder init: %s", self->name);
   return NULL;
-}
-
-static SysPointer init_it(FrJobTask* task, SysPointer user_data) {
-  FrDecoder *self = user_data;
-
-  sys_debug_N("init it: %s", self->name);
-
-  return NULL;
-}
-
-void decoder_wait_init(FrDecoder* self) {
-  FrJobTask task = { 0 };
-  task.handler = init_it;
-  task.user_data = self;
-
-  fr_job_send_task_wait(FR_JOB(self), &task);
 }
 
 SysInt fr_decoder_start(FrDecoder* self) {
+  FrJobTask *task;
 
-  fr_job_start(FR_JOB(self));
-  decoder_wait_init(self);
+  fr_job_start(&self->job);
+
+  task = fr_job_task_new_handler(decoder_init, self);
+  fr_job_run_task_sync(&self->job, task);
 
   return 0;
-}
-
-void decoder_done(FrJobTask task) {
 }
 
 void fr_decoder_stop(FrDecoder* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_job_stop(FR_JOB(self));
+  fr_job_stop(&self->job);
 }
 
 void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data) {
@@ -231,17 +196,6 @@ SysInt fr_decoder_close(FrDecoder* self) {
   return cls->close(self);
 }
 
-void fr_decoder_construct(FrDecoder* self,
-    const SysChar *name) {
-  sys_return_if_fail(self != NULL);
-
-  FrDecoderClass* cls = FR_DECODER_GET_CLASS(self);
-
-  sys_return_if_fail(cls->construct);
-
-  cls->construct(self, name);
-}
-
 SysInt fr_decoder_open_i(FrDecoder* o) {
   return 0;
 }
@@ -251,10 +205,17 @@ SysInt fr_decoder_close_i(FrDecoder* o) {
 }
 
 /* object api */
-static void fr_job_construct_i(FrJob *o,
-    FrJobContext *info) {
+static void fr_decoder_construct_i(FrDecoder *self,
+    FrDecoderContext *info) {
 
-  FR_JOB_CLASS(fr_decoder_parent_class)->construct(o, info);
+  self->name = sys_strdup(info->name);
+  fr_job_create(&self->job);
+
+  FrJobContext jinfo = {0};
+  jinfo.name = self->name;
+  jinfo.user_data = self;
+
+  fr_job_construct(&self->job, &jinfo);
 }
 
 FrDecoder* fr_decoder_new(void) {
@@ -264,7 +225,7 @@ FrDecoder* fr_decoder_new(void) {
 static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
 
-  fr_job_stop(FR_JOB(self));
+  fr_job_stop(&self->job);
   sys_free_N(self->name);
 
   SYS_OBJECT_CLASS(fr_decoder_parent_class)->dispose(o);
@@ -272,14 +233,12 @@ static void fr_decoder_dispose(SysObject* o) {
 
 static void fr_decoder_class_init(FrDecoderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  FrJobClass *jcls = FR_JOB_CLASS(cls);
 
   cls->open = fr_decoder_open_i;
   cls->close = fr_decoder_close_i;
   cls->decode_it = fr_decoder_decode_it_i;
   cls->decode_check = fr_decoder_decode_check_i;
-
-  jcls->construct = fr_job_construct_i;
+  cls->construct = fr_decoder_construct_i;
 
   ocls->dispose = fr_decoder_dispose;
 }

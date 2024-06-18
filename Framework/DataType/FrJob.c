@@ -29,41 +29,29 @@ void fr_job_wakeup(FrJob *self) {
   JOB_UNLOCK;
 }
 
-void fr_job_send_task_unlock(FrJob *self, FrJobTask *task) {
+void fr_job_run_task_async(FrJob *self, FrJobTask *task) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(task != NULL);
 
-  sys_queue_push_head(&self->task_queue, task);
-  sys_cond_signal(&self->cond);
+  sys_async_queue_push(&self->queue, task);
 }
 
-void fr_job_send_task(FrJob *self, FrJobTask *task) {
-  JOB_LOCK;
+void fr_job_run_task_sync(FrJob *self, FrJobTask *task) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(task != NULL);
 
-  fr_job_send_task_unlock(self, task);
-
-  JOB_UNLOCK;
-}
-
-void fr_job_send_task_wait(FrJob *self, FrJobTask *task) {
-  fr_job_send_task(self, task);
+  sys_async_queue_push(&self->queue, task);
   fr_job_task_wait(task);
+
+  sys_object_unref(task);
 }
 
 static SysPointer job_thread(SysPointer user_data) {
   FrJob *self = user_data;
-  FrJobTask *task;
 
   while (self->state == FR_JOB_STATE_RUNNING) {
-    JOB_LOCK;
-
-    if(sys_queue_get_length(&self->task_queue) > 0) {
-      task = sys_queue_pop_tail(&self->task_queue);
-
-      fr_job_task_run(task);
-    }
-
-    JOB_UNLOCK;
+    FrJobTask *task = sys_async_queue_pop(&self->queue);
+    fr_job_task_run(task);
   }
   sys_debug_N("exit %s", self->name);
 
@@ -79,10 +67,11 @@ static SysPointer stop_it(FrJobTask *task, SysPointer user_data) {
 void fr_job_stop(FrJob* self) {
   sys_return_if_fail(self != NULL);
   if (self->state == FR_JOB_STATE_STOP) { return; }
+
   FrJobTask *task;
 
   task = fr_job_task_new_handler(stop_it, self);
-  fr_job_send_task_wait(self, task);
+  fr_job_run_task(self, task);
   sys_object_unref(task);
 }
 
@@ -156,5 +145,4 @@ void fr_job_init(FrJob* self) {
 
   sys_cond_init(&self->cond);
   sys_mutex_init(&self->mutex);
-  sys_queue_init(&self->task_queue);
 }

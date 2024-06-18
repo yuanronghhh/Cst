@@ -43,8 +43,11 @@ SYS_API void fr_job_task_setup(void);
 SYS_API void fr_job_task_teardown(void);
 
 SYS_API FrJobTask *fr_job_task_new_I(FrJobTaskContext *info);
-SYS_API FrJobTask *fr_job_task_new_handler(FrJobTaskFunc handler, SysPointer user_data);
+SYS_API FrJobTask *fr_job_task_new_handler(FrJobTaskFunc handler,
+    SysPointer user_data);
+
 SYS_API void fr_job_task_run(FrJobTask *self);
+SYS_API void fr_job_task_run_async(FrJobTask *self);
 SYS_API SysPointer fr_job_task_result(FrJobTask *self);
 SYS_API void fr_job_task_wait(FrJobTask *self);
 #define fr_job_task_create(o) sys_object_create(o, FR_TYPE_JOB_TASK)

@@ -1,6 +1,7 @@
 #include <Framework/Media/FrDecoder.h>
 #include <Framework/Media/FrPacket.h>
 #include <Framework/Media/FrIDecoder.h>
+#include <Framework/DataType/FrMain.h>
 
 SYS_DEFINE_TYPE(FrDecoder, fr_decoder, FR_TYPE_JOB);
 
@@ -128,7 +129,10 @@ static SysInt error_to_state(SysInt err) {
 
 static SysPointer decoder_init(FrJobTask* o, SysPointer user_data) {
   FrDecoder *self = FR_DECODER(o);
-  sys_debug_N("decoder init: %s", self->name);
+
+  FrMain *loop = fr_main_new_I();
+  fr_main_run(loop);
+
   return NULL;
 }
 
@@ -138,7 +142,7 @@ SysInt fr_decoder_start(FrDecoder* self) {
   fr_job_start(&self->job);
 
   task = fr_job_task_new_handler(decoder_init, self);
-  fr_job_run_task_sync(&self->job, task);
+  fr_job_run_task_async(&self->job, task);
 
   return 0;
 }

@@ -40,9 +40,9 @@ void fr_job_run_task_sync(FrJob *self, FrJobTask *task) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(task != NULL);
 
+  task->is_sync = true;
   sys_async_queue_push(&self->queue, task);
   fr_job_task_wait(task);
-
   sys_object_unref(task);
 }
 
@@ -53,6 +53,8 @@ static SysPointer job_thread(SysPointer user_data) {
     FrJobTask *task = sys_async_queue_pop(&self->queue);
     fr_job_task_run(task);
   }
+
+  sys_async_queue_clear_full(&self->queue);
   sys_debug_N("exit %s", self->name);
 
   return NULL;

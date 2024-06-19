@@ -1,6 +1,5 @@
 #include <Framework/DataType/FrMain.h>
 
-
 struct _FrMainPrivate {
   SysBool is_running;
   SysList *sources;

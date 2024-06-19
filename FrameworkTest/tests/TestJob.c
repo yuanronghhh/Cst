@@ -1,8 +1,8 @@
 #include <FrameworkTest/tests/TestJob.h>
 
 static SysPointer task_exec(FrJobTask *task, SysPointer user_data) {
+  sys_usleep(1e6);
   sys_debug_N("%p, %d", task, user_data);
-  sys_usleep(3e6);
 
   return NULL;
 }
@@ -27,7 +27,6 @@ static SysPointer job_thread(FrJob *job, SysPointer user_data) {
 void test_job_basic(void) {
   FrJob *job;
   FrJobTask *task;
-  FrJobTaskContext task_info = {0};
   FrJobContext job_ctx = {0};
   SysInt i = 0;
 
@@ -38,18 +37,12 @@ void test_job_basic(void) {
   job_ctx.user_data = "abc";
   job = fr_job_new_I(&job_ctx);
 
-  task_info.handler = task_exec;
-  task_info.callback = task_done;
-
   fr_job_start(job);
 
   while(i < 2) {
-    task_info.user_data = INT_TO_POINTER(i);
-    task_info.handler = i == 0 ? task_exec : task_exec2;
-
-    task = fr_job_task_new_I(&task_info);
-    sys_harray_add(tasklist, task);
-    sys_debug_N("send: %p", task);
+    task = fr_job_task_new_handler(task_exec, INT_TO_POINTER(i));
+    sys_debug_N("push: %p", task);
+    fr_job_run_task_async(job, task);
 
     i++;
   }

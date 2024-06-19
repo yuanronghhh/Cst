@@ -17,13 +17,6 @@ static SysBool fr_job_task_destroy_i(SysObject* o) {
 void fr_job_task_run(FrJobTask *self) {
   sys_return_if_fail(self != NULL);
 
-  sys_mutex_lock(&self->mutex);
-  if(self->done) {
-
-    sys_warning_N("task execute done: %d,%p", self->user_data, self);
-    return;
-  }
-
   if(self->handler) {
 
     self->result = self->handler(self, self->user_data);
@@ -33,11 +26,21 @@ void fr_job_task_run(FrJobTask *self) {
 
     self->callback(self, self->user_data);
   }
+  sys_mutex_lock(&self->mutex);
 
-  sys_cond_signal(&self->cond);
-  sys_mutex_unlock(&self->mutex);
+  if(self->done) {
 
+    goto done;
+  }
   self->done = true;
+
+  if(self->is_sync) {
+
+    sys_cond_signal(&self->cond);
+  }
+
+done:
+  sys_mutex_unlock(&self->mutex);
 }
 
 void fr_job_task_run_sync(FrJobTask *self) {

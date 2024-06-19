@@ -30,6 +30,7 @@ struct _FrJobTask {
   SysPointer user_data;
   SysCond cond;
   SysMutex mutex;
+  SysBool is_sync;
 
   SysBool done;
   SysPointer result;

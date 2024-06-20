@@ -62,8 +62,7 @@ void fr_source_set_main(FrSource *source, FrMain *main) {
   sys_return_if_fail(source != NULL);
   sys_return_if_fail(main != NULL);
 
-  source->main = main;
-  sys_object_ref(main);
+  source->main = sys_object_ref(main);
 }
 
 /* object api */

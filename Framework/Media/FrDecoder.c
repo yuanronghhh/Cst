@@ -131,6 +131,9 @@ static SysPointer decoder_init(FrJobTask* o, SysPointer user_data) {
   FrDecoder *self = FR_DECODER(o);
 
   FrMain *loop = fr_main_new_I();
+  FrSource *source = fr_source_new_I(self);
+
+  fr_main_attach(loop, source);
   fr_main_run(loop);
 
   return NULL;

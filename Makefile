@@ -1,6 +1,7 @@
-include ./MakeTools/MakeCmake.makefile
+MAKE_TOOL_HOME:=../CstDemo/CstCmake
+include ${MAKE_TOOL_HOME}/MakeTools/MakeCmake.makefile
 BUILD_TYPE:=Debug
-VIM_SESSION:=GVIM1
+VIM_SESSION:=GVIM
 DEBUGGER:=gdb
 PROJ_NAME=FrameworkTest
 project:=Framework \

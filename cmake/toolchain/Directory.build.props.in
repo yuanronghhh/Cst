@@ -1,7 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <LLVMInstallDir>${LLVM_HOME}</LLVMInstallDir>
-    <LLVMToolsVersion>${LLVM_VERSION}</LLVMToolsVersion>
-  </PropertyGroup>
-</Project>
-

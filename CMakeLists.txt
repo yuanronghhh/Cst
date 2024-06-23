@@ -6,13 +6,14 @@ else()
     set(FIRST_RUN FALSE)
 endif()
 
-include(cmake/config/build_option.cmake)
-include(cmake/init.cmake)
+SET(INIT_HOME "${CMAKE_CURRENT_LIST_DIR}/../CstDemo/CstCmake/cmake")
+include(cmake/build_option.cmake)
+include(${INIT_HOME}/init.cmake)
 
 project(Cst)
 enable_language(C)
 
-add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/System" ${CMAKE_BINARY_DIR}/CstDemo/System)
+# add_subdirectory("${CMAKE_SOURCE_DIR}/../CstDemo/System" ${CMAKE_BINARY_DIR}/CstDemo/System)
 add_subdirectory(Framework)
 add_subdirectory(FrameworkTest)
 # add_subdirectory(CstCore)

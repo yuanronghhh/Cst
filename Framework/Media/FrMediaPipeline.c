@@ -1,14 +1,17 @@
 #include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrPacketDecoder.h>
 #include <Framework/Media/FrMediaPlayer.h>
+#include <Framework/Media/FrMediaPacket.h>
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Event/FrEvents.h>
 #include <Framework/Event/Base/FrEventRefresh.h>
 
-SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, FR_TYPE_PIPELINE);
+SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
 
-FrDecoder *fr_media_pipeline_get_decoder(FrMediaPipeline *self, FR_MEDIA_ENUM type) {
+
+static FrDecoder *pipeline_get_decoder(FrMediaPipeline *self,
+    FR_MEDIA_ENUM type) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   switch (type) {
@@ -19,6 +22,103 @@ FrDecoder *fr_media_pipeline_get_decoder(FrMediaPipeline *self, FR_MEDIA_ENUM ty
   default:
     return NULL;
   }
+}
+
+static void pipeline_push_sample_frame(FrMediaPipeline* self,
+    FrMediaFrame* frame) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(frame != NULL);
+
+  /**
+   * NOTE: ignore leak, vld cannot detect malloc this thread,
+   * and free on other thread.
+   */
+  sys_async_queue_push(&self->sample_queue, frame);
+}
+
+static void pipeline_push_image_frame(FrMediaPipeline* self,
+    FrMediaFrame* frame) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(frame != NULL);
+
+  /**
+   * NOTE: ignore leak, vld cannot detect malloc this thread,
+   * and free on other thread.
+   */
+  sys_async_queue_push(&self->image_queue, frame);
+}
+
+static SysPointer decode_frame(
+    FrTask* o,
+    SysPointer user_data) {
+
+  SysPointer *pass = user_data;
+
+  SysInt err;
+  FrMediaPipeline *self = pass[0];
+  FrMediaDecoder *mdec = pass[1];
+  FrMediaPacket *mpkt = pass[2];
+  FrMediaFrame *mframe;
+
+  err = fr_media_decoder_send_packet(mdec, mpkt);
+  if(err < 0) { return NULL; }
+
+  err = fr_media_decoder_try_decode_frame(mdec, &mframe);
+  if(err < 0) { return NULL; }
+
+  fr_media_decoder_push_frame(mdec, mframe);
+
+  sys_free_N(pass);
+
+  return NULL;
+}
+
+static SysInt pipeline_decode_frame(
+    FrMediaPipeline *self,
+    FrDecoder *dec,
+    FrPacket *pkt) {
+
+  SysPointer *pass = sgc_type_new(SYS_TYPE_POINTER, 2);
+
+  pass[0] = self;
+  pass[1] = dec;
+  pass[1] = pkt;
+
+  FrTask *task = fr_task_new_handler(decode_frame, pass);
+  fr_job_run_task_async(&dec->job, task);
+
+  return 0;
+}
+
+static SysPointer process_packet(
+    FrTask* o,
+    SysPointer user_data) {
+
+  SysInt err;
+  FrPacket *npkt = NULL;
+  FrMediaPipeline *self = user_data;
+  FrDecoder *dec = self->packet_decoder;
+  FrDecoder *todec;
+
+  FrMediaPacket *mpkt;
+  SysInt sindex;
+
+  err = fr_packet_decoder_decode(dec, &npkt);
+  if(err < 0) { return NULL; }
+
+  mpkt = FR_MEDIA_PACKET(npkt);
+  sindex = fr_media_packet_get_stream_index(mpkt);
+
+  todec = pipeline_get_decoder(self, sindex);
+  if(todec == NULL) {
+    sys_warning_N("Not found media packet type: %s", sindex);
+    return NULL;
+  }
+
+  err = pipeline_decode_frame(self, todec, npkt);
+  if(err < 0) { return NULL; }
+
+  return NULL;
 }
 
 static FrDecoder* create_media_decoder(FrMediaFile* file,
@@ -39,6 +139,13 @@ static FrDecoder* create_media_decoder(FrMediaFile* file,
   }
 
   return decoder;
+}
+
+static void packet_decoder_run(FrMediaPipeline *self) {
+  FrDecoder *dec = self->packet_decoder;
+
+  FrTask *task = fr_task_new_handler(process_packet, self);
+  fr_job_run_task_async(&dec->job, task);
 }
 
 void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
@@ -66,30 +173,8 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
   fr_decoder_start(self->video_decoder);
   fr_decoder_start(self->audio_decoder);
   fr_decoder_start(self->packet_decoder);
-}
 
-void fr_media_pipeline_push_sample_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(frame != NULL);
-
-  /**
-   * NOTE: ignore leak, vld cannot detect malloc this thread,
-   * and free on other thread.
-   */
-  sys_async_queue_push(&self->sample_queue, frame);
-}
-
-void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(frame != NULL);
-
-  /**
-   * NOTE: ignore leak, vld cannot detect malloc this thread,
-   * and free on other thread.
-   */
-  sys_async_queue_push(&self->image_queue, frame);
+  packet_decoder_run(self);
 }
 
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
@@ -130,9 +215,11 @@ void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
   fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
 }
 
-void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
+void fr_media_pipeline_wakeup_source(FrMediaPipeline *self,
+    FrDecoder *dec) {
 
-  fr_decoder_wakeup(self->packet_decoder);
+  if(!fr_decoder_enough(dec)) {
+  }
 }
 
 /* object api */

@@ -61,26 +61,28 @@ SysInt fr_media_decoder_open_i(FrDecoder* o) {
   return avcodec_open2(self->ctx, self->codec, NULL);
 }
 
-SysInt fr_media_decoder_send_packet(FrMediaDecoder* self, FrMediaPacket *pkt) {
+SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
+    FrMediaPacket *pkt) {
   sys_return_val_if_fail(self != NULL, -1);
 
   return fr_media_avcodec_try_send_packet(self->ctx, pkt->ctx);
 }
 
-void fr_media_decoder_seek (FrDecoder* o, SysInt seek_position) {
-}
-
-SysInt fr_media_decoder_receive_frame(FrMediaDecoder* self,
+SysInt fr_media_decoder_receive_frame(
+    FrMediaDecoder* self,
     FrMediaFrame **nframe) {
+
   sys_return_val_if_fail(self != NULL, -1);
   sys_return_val_if_fail(*nframe == NULL, -1);
 
   SysInt err;
   FrMediaFrame* frame = self->frame;
 
-  err = fr_media_avcodec_try_receive_frame(self->ctx, frame->ctx, self->auto_pts);
+  err = fr_media_avcodec_try_receive_frame(self->ctx,
+      frame->ctx, 
+      self->auto_pts);
+
   if(err == FR_MEDIA_ERROR_EOF) {
-    sys_debug_N("eof: %s", self->parent.name);
     avcodec_flush_buffers(self->ctx);
 
     return err;
@@ -142,30 +144,9 @@ FrDecoder* fr_media_decoder_create_by_media_type(FrMediaFile* file,
   return o;
 }
 
-/**
- * fr_media_decoder_decode_frame: middleware process nframe
- * @self:
- * @nframe: nframe has been received
- *
- * Returns: error occur when return negative
- */
-SysInt fr_media_decoder_decode_frame(
+SysInt fr_media_decoder_try_decode_frame(
     FrMediaDecoder *self,
-    FrMediaFrame *nframe) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
-
-  sys_return_val_if_fail(cls->decode_frame, -1);
-
-  return cls->decode_frame(self, nframe);
-}
-
-static SysInt media_decoder_decode_frame_i(FrMediaDecoder *self, FrMediaFrame *nframe) {
-  return 0;
-}
-
-static SysInt media_decoder_decode_frame(FrMediaDecoder *self) {
+    FrMediaFrame **frame) {
   SysInt err;
 
   FrMediaFrame *nframe = NULL;
@@ -175,33 +156,12 @@ static SysInt media_decoder_decode_frame(FrMediaDecoder *self) {
     if (err == FR_MEDIA_ERROR_AGAIN) {
       break;
     }
-
-    err = fr_media_decoder_decode_frame(self, nframe);
+    *frame = nframe;
     nframe = NULL;
 
   } while(err >= 0);
 
   return err;
-}
-
-static SysInt fr_media_decoder_decode_it_i(
-    FrDecoder* o, 
-    FrPacket *pkt) {
-  SysInt err;
-  FrMediaDecoder *self = FR_MEDIA_DECODER(o);
-  FrMediaPipeline *box = fr_decoder_get_user_data(o);
-
-  // sys_debug_N("send packet %s", o->name);
-  err = fr_media_decoder_send_packet(self, FR_MEDIA_PACKET(pkt));
-  if(err < 0) { return err; }
-
-  media_decoder_decode_frame(self);
-  if(!fr_decoder_enough(o)) {
-
-    fr_media_pipeline_wakeup_source(box);
-  }
-
-  return FR_DECODER_CLASS(fr_media_decoder_parent_class)->decode_it(o, pkt);
 }
 
 /* object api */

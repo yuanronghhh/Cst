@@ -11,11 +11,11 @@ SYS_BEGIN_DECLS
 #define FR_MEDIA_PIPELINE_GET_CLASS(o) sys_instance_get_class(o, FrMediaPipelineClass)
 
 struct _FrMediaPipelineClass {
-  FrPipelineClass parent;
+  SysObjectClass parent;
 };
 
 struct _FrMediaPipeline {
-  FrPipeline parent;
+  SysObject parent;
 
   /* <private> */
   FrDecoder* video_decoder;
@@ -26,14 +26,13 @@ struct _FrMediaPipeline {
 
   SysAsyncQueue image_queue;
   SysAsyncQueue sample_queue;
-  FrJobTask task;
+  FrTask task;
 };
 
 #define fr_media_pipeline_create(o) sys_object_create(o, FR_TYPE_MEDIA_PIPELINE)
 SYS_API SysType fr_media_pipeline_get_type(void);
 SYS_API FrMediaPipeline *fr_media_pipeline_new(void);
-SYS_API FrDecoder *fr_media_pipeline_get_decoder(FrMediaPipeline *self,
-    FR_MEDIA_ENUM type);
+
 SYS_API void fr_media_pipeline_get_video_size(FrMediaPipeline *self,
     SysInt *width,
     SysInt *height);
@@ -44,7 +43,7 @@ SYS_API FrMediaFrame* fr_media_pipeline_get_image_frame(FrMediaPipeline* self);
 SYS_API void fr_media_pipeline_push_sample_frame(FrMediaPipeline* self,
     FrMediaFrame* frame);
 SYS_API void fr_media_pipeline_stop_player(FrMediaPipeline *self);
-SYS_API void fr_media_pipeline_wakeup_source(FrMediaPipeline *self);
+SYS_API void fr_media_pipeline_wakeup_source(FrMediaPipeline *self, FrDecoder *dec);
 
 SYS_API void fr_media_pipeline_run(FrMediaPipeline* self,
     FrMediaFile* file);

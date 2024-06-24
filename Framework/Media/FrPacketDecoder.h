@@ -27,6 +27,7 @@ SysType fr_packet_decoder_get_type(void);
 FrDecoder *fr_packet_decoder_new(void);
 
 FrDecoder *fr_packet_decoder_new_I(FrMediaFile *file);
+SysInt fr_packet_decoder_decode(FrDecoder *o, FrPacket **pkt);
 
 SYS_END_DECLS
 

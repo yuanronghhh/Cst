@@ -22,14 +22,16 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   return err;
 }
 
-static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
-    FrMediaFrame *mframe) {
-  FrVideoFrame* vframe;
+static SysInt fr_video_decoder_decode_frame_i(
+    FrMediaDecoder *o,
+    FrMediaFrame **mframe) {
 
-  FrVideoDecoder* self = FR_VIDEO_DECODER(o);
-  FrDecoder *d = FR_DECODER(o);
-  FrMediaPipeline *box = fr_decoder_get_user_data(d);
+  FrVideoFrame* vframe = NULL;
+  FrVideoDecoder* self;
 
+  FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, mframe);
+
+  self = FR_VIDEO_DECODER(o);
   vframe = FR_VIDEO_FRAME(mframe);
   fr_video_frame_init_frame(vframe);
 
@@ -42,8 +44,6 @@ static SysInt fr_video_decoder_decode_frame_i(FrMediaDecoder *o,
   if(!fr_video_frame_scale(vframe, &self->scale)) {
     return -1;
   }
-
-  fr_media_pipeline_push_image_frame(box, FR_MEDIA_FRAME(vframe));
 
   return 0;
 }

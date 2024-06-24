@@ -1,7 +1,7 @@
 #ifndef __FR_PIPELINE_H__
 #define __FR_PIPELINE_H__
 
-#include <Framework/DataType/FrJobTask.h>
+#include <Framework/DataType/FrTask.h>
 
 SYS_BEGIN_DECLS
 

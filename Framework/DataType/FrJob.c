@@ -2,47 +2,21 @@
 
 SYS_DEFINE_TYPE(FrJob, fr_job, SYS_TYPE_OBJECT);
 
-#define JOB_LOCK sys_mutex_lock(&self->mutex)
-#define JOB_UNLOCK sys_mutex_unlock(&self->mutex)
-
-void fr_job_lock(FrJob *self) {
-
-  JOB_LOCK;
-}
-
-void fr_job_unlock(FrJob *self) {
-
-  JOB_UNLOCK;
-}
-
-void fr_job_wakeup_unlock(FrJob* self) {
-  sys_return_if_fail(self != NULL);
-
-  sys_cond_signal(&self->cond);
-}
-
-void fr_job_wakeup(FrJob *self) {
-  sys_return_if_fail(self != NULL);
-
-  JOB_LOCK;
-  sys_cond_signal(&self->cond);
-  JOB_UNLOCK;
-}
-
-void fr_job_run_task_async(FrJob *self, FrJobTask *task) {
+void fr_job_run_task_async(FrJob *self, FrTask *task) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(task != NULL);
 
   sys_async_queue_push(&self->queue, task);
 }
 
-void fr_job_run_task_sync(FrJob *self, FrJobTask *task) {
+void fr_job_run_task_sync(FrJob *self, FrTask *task) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(task != NULL);
 
   task->is_sync = true;
+  task = sys_object_ref(task);
   sys_async_queue_push(&self->queue, task);
-  fr_job_task_wait(task);
+  fr_task_wait(task);
   sys_object_unref(task);
 }
 
@@ -50,17 +24,17 @@ static SysPointer job_thread(SysPointer user_data) {
   FrJob *self = user_data;
 
   while (self->state == FR_JOB_STATE_RUNNING) {
-    FrJobTask *task = sys_async_queue_pop(&self->queue);
-    fr_job_task_run(task);
+    FrTask *task = sys_async_queue_pop(&self->queue);
+    fr_task_run(task);
+    sys_object_unref(task);
   }
 
-  sys_async_queue_clear_full(&self->queue);
   sys_debug_N("exit %s", self->name);
 
   return NULL;
 }
 
-static SysPointer stop_it(FrJobTask *task, SysPointer user_data) {
+static SysPointer stop_it(FrTask *task, SysPointer user_data) {
   FrJob *self = user_data;
   self->state = FR_JOB_STATE_STOP;
   return NULL;
@@ -70,9 +44,9 @@ void fr_job_stop(FrJob* self) {
   sys_return_if_fail(self != NULL);
   if (self->state == FR_JOB_STATE_STOP) { return; }
 
-  FrJobTask *task;
+  FrTask *task;
 
-  task = fr_job_task_new_handler(stop_it, self);
+  task = fr_task_new_handler(stop_it, self);
   fr_job_run_task_sync(self, task);
 }
 
@@ -124,8 +98,7 @@ static void fr_job_dispose(SysObject* o) {
   FrJob *self = FR_JOB(o);
   sys_return_if_fail(self->state == FR_JOB_STATE_STOP);
 
-  sys_cond_clear(&self->cond);
-  sys_mutex_clear(&self->mutex);
+  sys_async_queue_clear_full(&self->queue);
 
   self->user_data = NULL;
   self->thread = NULL;
@@ -143,7 +116,5 @@ static void fr_job_class_init(FrJobClass* cls) {
 
 void fr_job_init(FrJob* self) {
   self->state = FR_JOB_STATE_RUNNING;
-
-  sys_cond_init(&self->cond);
-  sys_mutex_init(&self->mutex);
+  sys_async_queue_init_full(&self->queue, (SysDestroyFunc)_sys_object_unref);
 }

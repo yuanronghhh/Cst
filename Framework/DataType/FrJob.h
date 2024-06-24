@@ -2,7 +2,7 @@
 #define __FR_JOB_H__
 
 #include <Framework/FrCommon.h>
-#include <Framework/DataType/FrJobTask.h>
+#include <Framework/DataType/FrTask.h>
 
 SYS_BEGIN_DECLS
 
@@ -32,8 +32,6 @@ struct _FrJob {
   /* <private> */
   SysChar *name;
   SysThread* thread;
-  SysCond cond;
-  SysMutex mutex;
   SysAsyncQueue queue;
   SysPointer user_data;
   FR_JOB_STATE_ENUM state;
@@ -43,16 +41,12 @@ struct _FrJob {
 SYS_API SysType fr_job_get_type(void);
 SYS_API FrJob *fr_job_new(void);
 
-SYS_API void fr_job_lock(FrJob *self);
-SYS_API void fr_job_unlock(FrJob *self);
-
 SYS_API FrJob *fr_job_new_I(FrJobContext *info);
-SYS_API void fr_job_run_task_sync(FrJob *self, FrJobTask *task);
-SYS_API void fr_job_run_task_async(FrJob *self, FrJobTask *task);
+SYS_API void fr_job_run_task_sync(FrJob *self, FrTask *task);
+SYS_API void fr_job_run_task_async(FrJob *self, FrTask *task);
 SYS_API void fr_job_stop(FrJob* self);
 SYS_API void fr_job_join(FrJob *self);
 SYS_API void fr_job_start(FrJob *self);
-SYS_API void fr_job_wakeup(FrJob* self);
 
 void fr_job_construct(FrJob *self, FrJobContext *info);
 #define fr_job_create(o) sys_object_create(o, FR_TYPE_JOB);

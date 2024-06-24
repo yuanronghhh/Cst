@@ -20,7 +20,7 @@ struct _FrMediaDecoderClass {
     FrMediaStream *ms);
 
    FrMediaFrame *(*get_frame) (FrMediaDecoder* o);
-   SysInt (*decode_frame) (FrMediaDecoder* o, FrMediaFrame *frame);
+   SysInt (*decode_frame) (FrMediaDecoder* o, FrMediaFrame **frame);
 };
 
 struct _FrMediaDecoder {
@@ -44,7 +44,8 @@ SYS_API FrDecoder *fr_media_decoder_create_by_media_type(FrMediaFile *file,
 SYS_API SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType);
 void fr_media_decoder_flush(FrMediaDecoder* self);
 
-SysInt fr_media_decoder_send_packet(FrMediaDecoder* self, FrMediaPacket *pkt);
+SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
+    FrMediaPacket *pkt);
 
 FrDecoder* fr_media_decoder_new_by_type(
     SysType tp,
@@ -55,7 +56,9 @@ void fr_media_decoder_construct(FrMediaDecoder *self,
     FrDecoderContext *info, 
     FrMediaStream *ms);
 
-SysInt fr_media_decoder_decode_frame(FrMediaDecoder *self, FrMediaFrame *nframe);
+SysInt fr_media_decoder_try_decode_frame(
+    FrMediaDecoder* self,
+    FrMediaFrame **nframe);
 
 SYS_END_DECLS
 

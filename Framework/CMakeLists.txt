@@ -173,8 +173,8 @@ set(SRC
   ./Device/FrWindow.c
   ./Device/FrWindow.h
 
-  ./DataType/FrJobTask.c
-  ./DataType/FrJobTask.h
+  ./DataType/FrTask.c
+  ./DataType/FrTask.h
   ./DataType/FrJob.c
   ./DataType/FrJob.h
   ./DataType/FrFunc.c

@@ -50,6 +50,10 @@ SYS_API SysInt fr_decoder_close(FrDecoder* self);
 SYS_API SysInt fr_decoder_start(FrDecoder* self);
 SYS_API void fr_decoder_stop(FrDecoder* self);
 
+SYS_API void fr_decoder_run_async(FrDecoder *self,
+    FrTaskFunc func, 
+    SysPointer user_data);
+
 SYS_API void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data);
 SYS_API SysPointer fr_decoder_get_user_data(FrDecoder *self);
 

@@ -3,12 +3,7 @@
 
 SYS_DEFINE_TYPE(FrAudioDecoder, fr_audio_decoder, FR_TYPE_MEDIA_DECODER);
 
-static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame *frame) {
-  FrDecoder *d = FR_DECODER(o);
-  FrMediaPipeline *box = fr_decoder_get_user_data(d);
-
-  FrMediaFrame *nframe = (FrMediaFrame *)sys_object_dclone(frame);
-  fr_media_pipeline_push_sample_frame(box, nframe);
+static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame **frame) {
 
   return 0;
 }

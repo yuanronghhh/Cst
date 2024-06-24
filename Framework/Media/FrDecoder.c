@@ -35,6 +35,13 @@ void fr_decoder_stop(FrDecoder* self) {
   fr_job_stop(&self->job);
 }
 
+void fr_decoder_run_async(FrDecoder *self,
+    FrTaskFunc func,
+    SysPointer user_data) {
+  FrTask *task = fr_task_new_handler(func, user_data);
+  fr_job_run_task_async(&self->job, task);
+}
+
 void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data) {
   sys_return_if_fail(self != NULL);
 

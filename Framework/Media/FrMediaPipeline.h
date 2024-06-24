@@ -37,11 +37,7 @@ SYS_API void fr_media_pipeline_get_video_size(FrMediaPipeline *self,
     SysInt *width,
     SysInt *height);
 
-SYS_API void fr_media_pipeline_push_image_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame);
 SYS_API FrMediaFrame* fr_media_pipeline_get_image_frame(FrMediaPipeline* self);
-SYS_API void fr_media_pipeline_push_sample_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame);
 SYS_API void fr_media_pipeline_stop_player(FrMediaPipeline *self);
 SYS_API void fr_media_pipeline_wakeup_source(FrMediaPipeline *self, FrDecoder *dec);
 

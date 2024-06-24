@@ -7,57 +7,54 @@
 #include <Framework/Event/FrEvents.h>
 #include <Framework/Event/Base/FrEventRefresh.h>
 
+typedef struct _PipePass PipePass;
+
+struct _PipePass {
+  FrDecoder* pdec;
+  FrDecoder* todec;
+  FrPacket* pkt;
+  SysAsyncQueue *queue;
+};
+
 SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
 
-
-static FrDecoder *pipeline_get_decoder(FrMediaPipeline *self,
-    FR_MEDIA_ENUM type) {
+static PipePass* pipe_pass_new_by_type(
+    FrMediaPipeline *self,
+    FR_MEDIA_ENUM type,
+    FrPacket *pkt) {
   sys_return_val_if_fail(self != NULL, NULL);
+  PipePass *pass = sgc_malloc0(sizeof(PipePass));
 
+  pass->pkt = pkt;
   switch (type) {
-  case FR_MEDIA_VIDEO:
-    return self->video_decoder;
-  case FR_MEDIA_AUDIO:
-    return self->audio_decoder;
-  default:
-    return NULL;
+    case FR_MEDIA_VIDEO:
+      pass->todec = self->video_decoder;
+      pass->queue = &self->image_queue;
+    case FR_MEDIA_AUDIO:
+      pass->todec = self->audio_decoder;
+      pass->queue = &self->sample_queue;
+    default:
+      return NULL;
   }
+
+  return pass;
 }
 
-static void pipeline_push_sample_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(frame != NULL);
+static void pipe_pass_free(PipePass *self) {
 
-  /**
-   * NOTE: ignore leak, vld cannot detect malloc this thread,
-   * and free on other thread.
-   */
-  sys_async_queue_push(&self->sample_queue, frame);
-}
-
-static void pipeline_push_image_frame(FrMediaPipeline* self,
-    FrMediaFrame* frame) {
-  sys_return_if_fail(self != NULL);
-  sys_return_if_fail(frame != NULL);
-
-  /**
-   * NOTE: ignore leak, vld cannot detect malloc this thread,
-   * and free on other thread.
-   */
-  sys_async_queue_push(&self->image_queue, frame);
+  sys_free_N(self);
 }
 
 static SysPointer decode_frame(
     FrTask* o,
     SysPointer user_data) {
 
-  SysPointer *pass = user_data;
+  PipePass *pass = user_data;
 
   SysInt err;
-  FrMediaPipeline *self = pass[0];
-  FrMediaDecoder *mdec = pass[1];
-  FrMediaPacket *mpkt = pass[2];
+  FrMediaDecoder *mdec = FR_MEDIA_DECODER(pass->todec);
+  FrMediaPacket *mpkt = FR_MEDIA_PACKET(pass->pkt);
+  SysAsyncQueue *queue = pass->queue;
   FrMediaFrame *mframe;
 
   err = fr_media_decoder_send_packet(mdec, mpkt);
@@ -66,28 +63,10 @@ static SysPointer decode_frame(
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
   if(err < 0) { return NULL; }
 
-  fr_media_decoder_push_frame(mdec, mframe);
-
-  sys_free_N(pass);
+  sys_async_queue_push(queue, mpkt);
+  pipe_pass_free(pass);
 
   return NULL;
-}
-
-static SysInt pipeline_decode_frame(
-    FrMediaPipeline *self,
-    FrDecoder *dec,
-    FrPacket *pkt) {
-
-  SysPointer *pass = sgc_type_new(SYS_TYPE_POINTER, 2);
-
-  pass[0] = self;
-  pass[1] = dec;
-  pass[1] = pkt;
-
-  FrTask *task = fr_task_new_handler(decode_frame, pass);
-  fr_job_run_task_async(&dec->job, task);
-
-  return 0;
 }
 
 static SysPointer process_packet(
@@ -95,28 +74,39 @@ static SysPointer process_packet(
     SysPointer user_data) {
 
   SysInt err;
-  FrPacket *npkt = NULL;
-  FrMediaPipeline *self = user_data;
-  FrDecoder *dec = self->packet_decoder;
-  FrDecoder *todec;
-
   FrMediaPacket *mpkt;
   SysInt sindex;
+  PipePass *pass = NULL;
 
-  err = fr_packet_decoder_decode(dec, &npkt);
+  FrPacket *npkt = NULL;
+  FrMediaPipeline *pipe = user_data;
+
+  err = fr_packet_decoder_decode(pipe->packet_decoder, &npkt);
   if(err < 0) { return NULL; }
 
   mpkt = FR_MEDIA_PACKET(npkt);
   sindex = fr_media_packet_get_stream_index(mpkt);
+  if(sindex < 0) { goto fail; }
 
-  todec = pipeline_get_decoder(self, sindex);
-  if(todec == NULL) {
+  pass = pipe_pass_new_by_type(pipe, sindex, npkt);
+  if(pass == NULL) {
+
     sys_warning_N("Not found media packet type: %s", sindex);
     return NULL;
   }
+  fr_decoder_run_async(pass->todec, decode_frame, pass);
 
-  err = pipeline_decode_frame(self, todec, npkt);
-  if(err < 0) { return NULL; }
+  return NULL;
+fail:
+  if(npkt != NULL) {
+
+    sys_clear_pointer(&npkt, _sys_object_unref);
+  }
+
+  if(pass != NULL) {
+
+    sys_clear_pointer(&pass, pipe_pass_free);
+  }
 
   return NULL;
 }
@@ -139,13 +129,6 @@ static FrDecoder* create_media_decoder(FrMediaFile* file,
   }
 
   return decoder;
-}
-
-static void packet_decoder_run(FrMediaPipeline *self) {
-  FrDecoder *dec = self->packet_decoder;
-
-  FrTask *task = fr_task_new_handler(process_packet, self);
-  fr_job_run_task_async(&dec->job, task);
 }
 
 void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
@@ -174,7 +157,7 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
   fr_decoder_start(self->audio_decoder);
   fr_decoder_start(self->packet_decoder);
 
-  packet_decoder_run(self);
+  fr_decoder_run_async(self->packet_decoder, process_packet, self);
 }
 
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
@@ -218,8 +201,6 @@ void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
 void fr_media_pipeline_wakeup_source(FrMediaPipeline *self,
     FrDecoder *dec) {
 
-  if(!fr_decoder_enough(dec)) {
-  }
 }
 
 /* object api */

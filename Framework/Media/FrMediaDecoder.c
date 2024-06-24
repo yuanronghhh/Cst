@@ -198,11 +198,9 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
   FrDecoderClass *dcls = FR_DECODER_CLASS(cls);
 
   cls->construct = media_decoder_construct;
-  cls->decode_frame = media_decoder_decode_frame_i;
 
   dcls->open = fr_media_decoder_open_i;
   dcls->close = fr_media_decoder_close_i;
-  dcls->decode_it = fr_media_decoder_decode_it_i;
 
   ocls->dispose = fr_media_decoder_dispose;
 }

@@ -30,9 +30,11 @@ static PipePass* pipe_pass_new_by_type(
     case FR_MEDIA_VIDEO:
       pass->todec = self->video_decoder;
       pass->queue = &self->image_queue;
+      break;
     case FR_MEDIA_AUDIO:
       pass->todec = self->audio_decoder;
       pass->queue = &self->sample_queue;
+      break;
     default:
       return NULL;
   }
@@ -55,13 +57,13 @@ static SysPointer decode_frame(
   FrMediaDecoder *mdec = FR_MEDIA_DECODER(pass->todec);
   FrMediaPacket *mpkt = FR_MEDIA_PACKET(pass->pkt);
   SysAsyncQueue *queue = pass->queue;
-  FrMediaFrame *mframe;
+  FrMediaFrame *mframe = NULL;
 
   err = fr_media_decoder_send_packet(mdec, mpkt);
   if(err < 0) { return NULL; }
 
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
-  if(err < 0) { return NULL; }
+  if(mframe == NULL) { return NULL; }
 
   sys_async_queue_push(queue, mpkt);
   pipe_pass_free(pass);

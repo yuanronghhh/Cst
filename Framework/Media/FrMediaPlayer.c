@@ -18,6 +18,7 @@ void fr_media_player_wait(FrMediaPlayer *self) {
 }
 
 static SysInt process(FrMediaPlayer* self) {
+  fr_media_pipeline_wakeup_source(&self->pipeline);
 
   return FR_JOB_STATE_RUNNING;
 }

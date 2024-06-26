@@ -158,8 +158,6 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
   fr_decoder_start(self->video_decoder);
   fr_decoder_start(self->audio_decoder);
   fr_decoder_start(self->packet_decoder);
-
-  fr_decoder_run_async(self->packet_decoder, process_packet, self);
 }
 
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
@@ -200,9 +198,18 @@ void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
   fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
 }
 
-void fr_media_pipeline_wakeup_source(FrMediaPipeline *self,
-    FrDecoder *dec) {
+void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
+  sys_return_if_fail(self != NULL);
 
+  if(sys_async_queue_length(&self->image_queue) >= 10) {
+    return;
+  }
+
+  if(sys_async_queue_length(&self->sample_queue) >= 10) {
+    return;
+  }
+
+  fr_decoder_run_async(self->packet_decoder, process_packet, self);
 }
 
 /* object api */

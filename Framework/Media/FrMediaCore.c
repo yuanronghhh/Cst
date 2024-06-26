@@ -12,7 +12,7 @@ static void ffp_log_callback_brief(void *ptr,
     const char *fmt,
     va_list vl) {
 
-  // sys_vfprintf(stdout, fmt, vl);
+  sys_vfprintf(stdout, fmt, vl);
 }
 
 void fr_ffmpeg_setup(void) {

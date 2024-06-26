@@ -6,10 +6,12 @@
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Event/FrEvents.h>
 #include <Framework/Event/Base/FrEventRefresh.h>
+#include <Framework/Media/FrImageSaver.h>
 
 typedef struct _PipePass PipePass;
 
 struct _PipePass {
+  FrMediaPipeline *pipe;
   FrDecoder* pdec;
   FrDecoder* todec;
   FrPacket* pkt;
@@ -19,21 +21,22 @@ struct _PipePass {
 SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
 
 static PipePass* pipe_pass_new_by_type(
-    FrMediaPipeline *self,
+    FrMediaPipeline *pipe,
     FR_MEDIA_ENUM type,
     FrPacket *pkt) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(pipe != NULL, NULL);
   PipePass *pass = sgc_malloc0(sizeof(PipePass));
 
   pass->pkt = pkt;
+  pass->pipe = pipe;
   switch (type) {
     case FR_MEDIA_VIDEO:
-      pass->todec = self->video_decoder;
-      pass->queue = &self->image_queue;
+      pass->todec = pipe->video_decoder;
+      pass->queue = &pipe->image_queue;
       break;
     case FR_MEDIA_AUDIO:
-      pass->todec = self->audio_decoder;
-      pass->queue = &self->sample_queue;
+      pass->todec = pipe->audio_decoder;
+      pass->queue = &pipe->sample_queue;
       break;
     default:
       return NULL;
@@ -44,6 +47,7 @@ static PipePass* pipe_pass_new_by_type(
 
 static void pipe_pass_free(PipePass *self) {
 
+  sys_object_unref(self->pkt);
   sys_free_N(self);
 }
 
@@ -54,18 +58,31 @@ static SysPointer decode_frame(
   PipePass *pass = user_data;
 
   SysInt err;
+  FrMediaPipeline *pipe = pass->pipe;
   FrMediaDecoder *mdec = FR_MEDIA_DECODER(pass->todec);
   FrMediaPacket *mpkt = FR_MEDIA_PACKET(pass->pkt);
   SysAsyncQueue *queue = pass->queue;
   FrMediaFrame *mframe = NULL;
+  FrMediaFrame *nframe = NULL;
 
   err = fr_media_decoder_send_packet(mdec, mpkt);
   if(err < 0) { return NULL; }
 
+  if(pass->todec == pipe->video_decoder) {
+    UNUSED(1);
+  }
+
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
   if(mframe == NULL) { return NULL; }
 
-  sys_async_queue_push(queue, mpkt);
+  nframe = (FrMediaFrame *)sys_object_dclone(mframe);
+  if(pass->todec == pipe->video_decoder) {
+
+    const char *fname = FR_PROJECT_DIR"/Assets/surface.png";
+    fr_media_yuv_save_to_png(nframe->ctx, fname);
+  }
+
+  sys_async_queue_push(queue, nframe);
   pipe_pass_free(pass);
 
   return NULL;
@@ -209,6 +226,7 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
     return;
   }
 
+  sys_debug_N("%s", "wakeup");
   fr_decoder_run_async(self->packet_decoder, process_packet, self);
 }
 

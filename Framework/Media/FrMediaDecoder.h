@@ -60,6 +60,10 @@ SysInt fr_media_decoder_try_decode_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);
 
+SysInt fr_media_decoder_receive_frame(
+    FrMediaDecoder* self,
+    FrMediaFrame **nframe);
+
 SYS_END_DECLS
 
 #endif

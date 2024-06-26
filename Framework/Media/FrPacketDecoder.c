@@ -6,10 +6,9 @@
 /* media packet decoder */
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
-SysInt fr_packet_decoder_decode(FrDecoder *o, FrPacket **pkt) {
+SysInt fr_packet_decoder_decode(FrDecoder *o, FrPacket **npkt) {
   FrMediaPacket* mpkt;
   FrPacketDecoder *self;
-  FrPacket *npkt;
 
   mpkt = NULL;
   self = FR_PACKET_DECODER(o);
@@ -19,9 +18,7 @@ SysInt fr_packet_decoder_decode(FrDecoder *o, FrPacket **pkt) {
 
     return -1;
   }
-
-  npkt = (FrPacket *)sys_object_dclone(mpkt);
-  *pkt = npkt;
+  *npkt = (FrPacket *)sys_object_dclone(mpkt);
 
   return FR_MEDIA_ERROR_SUCCESS;
 }

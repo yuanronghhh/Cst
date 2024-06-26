@@ -12,10 +12,10 @@ SYS_BEGIN_DECLS
 
 struct _FrImageContext {
   SysUInt8 *data;
-  SysInt stride[AV_NUM_DATA_POINTERS];
   SysInt height;
   SysInt width;
   SysInt format;
+  SysInt stride[AV_NUM_DATA_POINTERS];
 
   /* <private> */
   SysInt data_size;
@@ -47,9 +47,11 @@ SYS_API FrImage *fr_image_new_I(FrImageContext *info);
 SysBool fr_image_is_empty(FrImage* self);
 FrImage* fr_image_new_from_avframe(AVFrame *frame);
 FrImage *fr_image_new_from_surface(FrSurface *surface);
+#define fr_image_get_size(format, width, height) av_image_get_buffer_size(format, width, height, 1)
 
 SysInt* fr_image_get_stride(FrImage *self);
 SysInt fr_image_context_get_size(FrImageContext *info);
+#define fr_image_context_fill_stride(info) av_image_fill_linesizes((info)->stride, (info)->format, (info)->width)
 
 SYS_END_DECLS
 

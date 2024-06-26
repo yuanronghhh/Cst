@@ -153,13 +153,13 @@ SysInt fr_media_decoder_try_decode_frame(
 
   do {
     err = fr_media_decoder_receive_frame(self, &nframe);
-    if (err == FR_MEDIA_ERROR_AGAIN) {
+    if (err >= 0) {
+      *frame = nframe;
       break;
     }
-    *frame = nframe;
     nframe = NULL;
 
-  } while(err >= 0);
+  } while(err != FR_MEDIA_ERROR_AGAIN);
 
   return err;
 }

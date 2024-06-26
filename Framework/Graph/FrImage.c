@@ -6,7 +6,15 @@ SYS_DEFINE_TYPE(FrImage, fr_image, SYS_TYPE_OBJECT);
 
 SysBool fr_image_is_empty(FrImage* self) {
 
-  return self->data[0] == 0;
+  return self->data_size == 0;
+}
+
+static SysBool image_check(FrImageContext *info) {
+  sys_return_val_if_fail(info->format >= 0, false);
+  sys_return_val_if_fail(info->width >= 0, false);
+  sys_return_val_if_fail(info->height >= 0, false);
+
+  return true;
 }
 
 FrImage* fr_image_new_from_avframe(AVFrame *frame) {
@@ -16,7 +24,6 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
     .height = frame->height,
     .format = frame->format,
   };
-  *info.stride = *frame->linesize;
 
   info.data_size = fr_image_context_get_size(&info);
   info.data = sys_malloc0(info.data_size);
@@ -25,7 +32,7 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
       info.data,
       info.data_size,
       (const uint8_t * const*)frame->data,
-      info.stride,
+      frame->linesize,
       info.format,
       info.width,
       info.height,
@@ -42,13 +49,11 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
 
 FrImage *fr_image_new_from_surface(FrSurface *surface) {
   SysUInt8* data = fr_i_draw_surface_get_data(surface);
-  SysInt stride = fr_i_draw_image_surface_get_stride(surface);
 
   FrImageContext info = {0};
   info.data = data;
   info.width = 800;
   info.height = 600;
-  info.stride[0] = stride;
   info.format = AV_PIX_FMT_BGRA;
   info.data_size = fr_image_context_get_size(&info);
 
@@ -63,7 +68,8 @@ SysInt* fr_image_get_stride(FrImage *self) {
 
 /* object api */
 static void fr_image_construct_i(FrImage *self, FrImageContext *info) {
-  *self->stride = *info->stride;
+  av_image_fill_linesizes(self->stride, info->format, info->width);
+
   self->height = info->height;
   self->width = info->width;
   self->format = info->format;
@@ -78,13 +84,11 @@ SysInt fr_image_context_get_size(FrImageContext *info) {
   sys_return_val_if_fail(info != NULL, -1);
   sys_return_val_if_fail(info->width != 0, -1);
   sys_return_val_if_fail(info->height != 0, -1);
-  sys_return_val_if_fail(info->stride[0] != 0, -1);
 
-  return av_image_get_buffer_size(
+  return fr_image_get_size(
       info->format,
       info->width,
-      info->height,
-      1);
+      info->height);
 }
 
 FrImage* fr_image_new_with_buffer(FrImageContext *info) {
@@ -116,6 +120,8 @@ FrImage* fr_image_new(void) {
 
 FrImage *fr_image_new_I(FrImageContext *info) {
   FrImage *o = fr_image_new();
+
+  if(!image_check(info)){ return NULL; }
 
   fr_image_construct_i(o, info);
 

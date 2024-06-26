@@ -93,8 +93,9 @@ SysInt fr_image_context_get_size(FrImageContext *info) {
 
 FrImage* fr_image_new_with_buffer(FrImageContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
+  sys_return_val_if_fail(info->data_size > 0, NULL);
 
-  info->data = sgc_type_new(SYS_TYPE_CHAR, info->data_size);
+  info->data = sgc_malloc0(info->data_size);
   FrImage *o = fr_image_new_I(info);
 
   return o;

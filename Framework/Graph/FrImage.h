@@ -10,12 +10,14 @@ SYS_BEGIN_DECLS
 #define FR_IMAGE_CLASS(o) ((FrImageClass *)sys_class_cast_check(o, FR_TYPE_IMAGE))
 #define FR_IMAGE_GET_CLASS(o) sys_instance_get_class(o, FrImageClass)
 
+#define MAX_IMAGE_PLANE 4
+
 struct _FrImageContext {
   SysUInt8 *data;
   SysInt height;
   SysInt width;
   SysInt format;
-  SysInt stride[AV_NUM_DATA_POINTERS];
+  SysInt stride[MAX_IMAGE_PLANE];
 
   /* <private> */
   SysInt data_size;
@@ -31,7 +33,7 @@ struct _FrImage {
   /* <private> */
   SysInt data_size;
   SysUInt8 *data;
-  SysInt stride[AV_NUM_DATA_POINTERS];
+  SysInt stride[MAX_IMAGE_PLANE];
   SysInt height;
   SysInt width;
   SysInt format;

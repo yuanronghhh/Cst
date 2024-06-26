@@ -9,10 +9,14 @@ static void sigterm_handler(int sig) {
 
 static void ffp_log_callback_brief(void *ptr,
     int level,
-    const char *fmt,
+    const char *format,
     va_list vl) {
 
-  sys_vfprintf(stdout, fmt, vl);
+  if(level >= AV_LOG_WARNING) {
+    return;
+  }
+
+  sys_vlog(SYS_LOG_ARGS(ffp_log_callback_brief, format) stderr, SYS_LOG_WARNING, format, vl);
 }
 
 void fr_ffmpeg_setup(void) {
@@ -23,6 +27,7 @@ void fr_ffmpeg_setup(void) {
 #endif
 
   avformat_network_init();
+
   av_log_set_callback(ffp_log_callback_brief);
 
   signal(SIGINT , sigterm_handler); /* Interrupt (ANSI).    */

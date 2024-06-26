@@ -32,6 +32,7 @@ static void calc_proportion(
   SysInt width,
   SysInt height, 
   FrProportion *prop) {
+  if(height <= 0) { return; }
   SysInt gv;
 
   gv = (SysInt)av_gcd(width, height);
@@ -112,42 +113,17 @@ SysBool fr_image_scale_convert_format(
     SysInt nformat) {
 
   SysInt err;
-
-  if(self->out_pix_fmt == src->format) {
-    return false;
-  }
-
-  FrImageContext info = {
-    .format = nformat,
-    .width = src->width,
-    .height = src->height,
-  };
-  info.data_size = fr_image_context_get_size(&info);
-  info.data = sys_malloc0(info.data_size);
-  fr_image_context_fill_stride(&info);
-
-  err = fr_image_scale_convert(self,
-      (const SysUInt8 *const *)src->data,
+  AVFrame *dst = fr_media_new_rgba_frame(src->width, src->height, nformat);
+  err = fr_image_scale_convert(
+      self,
+      (const uint8_t *const *)src->data,
       src->stride,
       0,
       src->height,
-      (SysUInt8 *const *)info.data,
-      info.stride);
-  if(err < 0) {
+      dst->data,
+      dst->linesize);
 
-    sys_free_N(info.data);
-    sys_warning_N("convert image failed: %s",
-        av_err2str(err));
-    return false;
-  }
-
-  sys_free_N(src->data);
-
-  src->data = info.data;
-  src->data_size = info.data_size;
-  src->format = nformat;
-
-  return true;
+  return err == 0;
 }
 
 SysInt fr_image_scale_convert_image(

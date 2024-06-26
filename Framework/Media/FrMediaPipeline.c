@@ -226,7 +226,6 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
     return;
   }
 
-  sys_debug_N("%s", "wakeup");
   fr_decoder_run_async(self->packet_decoder, process_packet, self);
 }
 

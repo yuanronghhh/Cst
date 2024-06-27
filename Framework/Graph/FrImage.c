@@ -9,33 +9,26 @@ SysBool fr_image_is_empty(FrImage* self) {
   return self->data_size == 0;
 }
 
-static SysBool image_check(FrImageContext *info) {
-  sys_return_val_if_fail(info->format >= 0, false);
-  sys_return_val_if_fail(info->width >= 0, false);
-  sys_return_val_if_fail(info->height >= 0, false);
-
-  return true;
-}
-
 FrImage* fr_image_new_from_avframe(AVFrame *frame) {
   SysInt err = 0;
+
   FrImageContext info = {
     .width = frame->width,
     .height = frame->height,
     .format = frame->format,
   };
-
   info.data_size = fr_image_context_get_size(&info);
-  info.data = sys_malloc0(info.data_size);
+
+  fr_image_context_fill_buffer(&info);
 
   err = av_image_copy_to_buffer(
       info.data,
       info.data_size,
       (const uint8_t * const*)frame->data,
       frame->linesize,
-      info.format,
-      info.width,
-      info.height,
+      frame->format,
+      frame->width,
+      frame->height,
       1);
 
   if(err < 0) {
@@ -68,8 +61,6 @@ SysInt* fr_image_get_stride(FrImage *self) {
 
 /* object api */
 static void fr_image_construct_i(FrImage *self, FrImageContext *info) {
-  av_image_fill_linesizes(self->stride, info->format, info->width);
-
   self->height = info->height;
   self->width = info->width;
   self->format = info->format;
@@ -77,7 +68,32 @@ static void fr_image_construct_i(FrImage *self, FrImageContext *info) {
 
   if (info->data_size > 0) {
     self->data = info->data;
+
+    for(int i = 0 ; i < MAX_IMAGE_PLANE; i++) {
+        self->stride[i] = info->stride[i];
+        self->nbuf[i] = info->nbuf[i];
+    }
   }
+}
+
+void fr_image_context_fill_buffer(FrImageContext *info) {
+    sys_return_if_fail(info != NULL);
+    sys_return_if_fail(info->data_size > 0);
+    sys_return_if_fail(info->format >= 0);
+    sys_return_if_fail(info->width > 0);
+    sys_return_if_fail(info->height > 0);
+    SysInt err;
+
+    err = info->data_size = av_image_alloc(
+        info->nbuf,
+        info->stride,
+        info->width,
+        info->height,
+        info->format,
+        1);
+    info->data = info->nbuf[0];
+    av_freep(&pointers[0]);
+    sys_return_if_fail(err > 0);
 }
 
 SysInt fr_image_context_get_size(FrImageContext *info) {
@@ -95,7 +111,7 @@ FrImage* fr_image_new_with_buffer(FrImageContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
   sys_return_val_if_fail(info->data_size > 0, NULL);
 
-  info->data = sgc_malloc0(info->data_size);
+  fr_image_context_fill_buffer(info);
   FrImage *o = fr_image_new_I(info);
 
   return o;
@@ -121,8 +137,6 @@ FrImage* fr_image_new(void) {
 
 FrImage *fr_image_new_I(FrImageContext *info) {
   FrImage *o = fr_image_new();
-
-  if(!image_check(info)){ return NULL; }
 
   fr_image_construct_i(o, info);
 

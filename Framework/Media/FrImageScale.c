@@ -89,39 +89,38 @@ void fr_image_scale_resize_proportion(FrImageScale *self,
   fr_image_scale_resize_output(self, nwidth, nheight);
 }
 
-SysInt fr_image_scale_convert(
-    FrImageScale *self,
-    const SysUInt8 *const src_data[],
-    const SysInt src_stride[],
-    SysInt src_y,
-    SysInt src_h,
-    SysUInt8 *const dst_data[],
-    const SysInt dst_stride[]) {
-
-  return sws_scale(self->ctx,
-    src_data,
-    src_stride,
-    0,
-    src_h,
-    dst_data,
-    dst_stride);
-}
-
 SysBool fr_image_scale_convert_format(
     FrImageScale *self,
     FrImage *src,
     SysInt nformat) {
 
   SysInt err;
-  AVFrame *dst = fr_media_new_rgba_frame(src->width, src->height, nformat);
+
+  FrImageContext info = {0};
+  info.format = nformat;
+  info.width = src->width;
+  info.height = src->height;
+  info.data_size = fr_image_get_size(nformat, src->width, src->height);
+  fr_image_context_fill_buffer(&info);
+
   err = fr_image_scale_convert(
       self,
-      (const uint8_t *const *)src->data,
+      (const uint8_t * const*)src->nbuf,
       src->stride,
       0,
       src->height,
-      dst->data,
-      dst->linesize);
+      info.nbuf,
+      info.stride);
+  sys_assert(err > 0);
+
+  sys_free_N(src->data);
+
+  for(int i = 0; i < MAX_IMAGE_PLANE; i++) {
+    src->nbuf[i] = info.nbuf[i];
+    src->stride[i] = info.stride[i];
+  }
+  src->data = info.data;
+  src->data_size = info.data_size;
 
   return err == 0;
 }

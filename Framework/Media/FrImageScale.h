@@ -54,14 +54,8 @@ SYS_API void fr_image_scale_resize_proportion(FrImageScale *self,
     SysInt height,
     SysBool prop_width);
 
-SysInt fr_image_scale_convert(
-    FrImageScale *self,
-    const SysUInt8 *const src_data[],
-    const SysInt src_stride[],
-    SysInt src_y,
-    SysInt src_h,
-    SysUInt8 *const dst_data[],
-    const SysInt dst_stride[]);
+#define fr_image_scale_convert(self, src_data, src_stride, src_y, src_h, dst_data, dst_stride) \
+    sws_scale(self->ctx, src_data, src_stride, 0, src_h, dst_data, dst_stride)
 
 SysInt fr_image_scale_convert_image(
     FrImageScale *self,

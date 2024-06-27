@@ -92,7 +92,7 @@ void fr_image_context_fill_buffer(FrImageContext *info) {
         info->format,
         1);
     info->data = info->nbuf[0];
-    av_freep(&pointers[0]);
+
     sys_return_if_fail(err > 0);
 }
 

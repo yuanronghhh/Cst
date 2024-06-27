@@ -76,11 +76,6 @@ static SysPointer decode_frame(
   if(mframe == NULL) { return NULL; }
 
   nframe = (FrMediaFrame *)sys_object_dclone(mframe);
-  if(pass->todec == pipe->video_decoder) {
-
-    const char *fname = FR_PROJECT_DIR"/Assets/surface.png";
-    fr_media_yuv_save_to_png(nframe->ctx, fname);
-  }
 
   sys_async_queue_push(queue, nframe);
   pipe_pass_free(pass);

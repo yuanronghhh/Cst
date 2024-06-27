@@ -51,6 +51,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     if (state == FR_JOB_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
+    break;
   }
 
 done:
@@ -84,7 +85,6 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   vframe = FR_VIDEO_FRAME(frame);
 
   self->remain_secs = vframe->remain_sec;
-  // sys_debug_N("%d", frame->parent.serial);
   iface->render_video(render, vframe, region);
   sys_object_unref(frame);
 

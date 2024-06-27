@@ -35,11 +35,6 @@ static SysInt fr_video_decoder_decode_frame_i(
   vframe = FR_VIDEO_FRAME(mframe);
   fr_video_frame_init_frame(vframe);
 
-#if 0
-  const SysChar* filename = FR_PROJECT_DIR"/Assets/surface.png";
-  fr_media_yuv_save_to_png(mframe->ctx, filename);
-#endif
-
   vframe = (FrVideoFrame*)sys_object_dclone(mframe);
   if(!fr_video_frame_scale(vframe, &self->scale)) {
     return -1;

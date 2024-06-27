@@ -113,14 +113,15 @@ SysBool fr_image_scale_convert_format(
       info.stride);
   sys_assert(err > 0);
 
-  sys_free_N(src->data);
-
   for(int i = 0; i < MAX_IMAGE_PLANE; i++) {
     src->nbuf[i] = info.nbuf[i];
     src->stride[i] = info.stride[i];
   }
+
+  sys_clear_pointer(src->data, sys_free);
   src->data = info.data;
   src->data_size = info.data_size;
+  src->format = nformat;
 
   return err == 0;
 }

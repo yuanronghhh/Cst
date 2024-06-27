@@ -102,6 +102,8 @@ static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
 
   fr_job_stop(&self->job);
+  fr_job_join(&self->job);
+  sys_object_destroy(&self->job);
   sys_free_N(self->name);
 
   SYS_OBJECT_CLASS(fr_decoder_parent_class)->dispose(o);

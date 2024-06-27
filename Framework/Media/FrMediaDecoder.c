@@ -158,7 +158,6 @@ SysInt fr_media_decoder_try_decode_frame(
       break;
     }
     nframe = NULL;
-
   } while(err != FR_MEDIA_ERROR_AGAIN);
 
   return err;

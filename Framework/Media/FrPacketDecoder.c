@@ -69,7 +69,4 @@ static void fr_packet_decoder_class_init(FrPacketDecoderClass* cls) {
 }
 
 void fr_packet_decoder_init(FrPacketDecoder* self) {
-  self->min_pkt = 10;
-  self->max_pkt = 48;
-
 }

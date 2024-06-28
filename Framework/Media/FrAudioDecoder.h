@@ -19,7 +19,6 @@ struct _FrAudioDecoder {
   FrMediaDecoder parent;
 
   /* <private> */
-  FrAudioFrame frame;
 };
 
 SYS_API SysType fr_audio_decoder_get_type(void);

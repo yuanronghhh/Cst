@@ -19,7 +19,6 @@ struct _FrMediaDecoderClass {
     FrDecoderContext *info,
     FrMediaStream *ms);
 
-   FrMediaFrame *(*get_frame) (FrMediaDecoder* o);
    SysInt (*decode_frame) (FrMediaDecoder* o, FrMediaFrame **frame);
 };
 
@@ -30,8 +29,8 @@ struct _FrMediaDecoder {
   FrMediaStream *stream;
   const AVCodec *codec;
   AVCodecContext *ctx;
-  // pkt_timebase{ num = 100 den = 2997 }	AVRational
   FrMediaFrame *frame;
+  SysType frame_type;
   SysInt auto_pts;
 };
 
@@ -63,6 +62,8 @@ SysInt fr_media_decoder_try_decode_frame(
 SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);
+
+void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp);
 
 SYS_END_DECLS
 

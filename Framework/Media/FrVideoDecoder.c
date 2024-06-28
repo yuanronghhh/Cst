@@ -29,16 +29,16 @@ static SysInt fr_video_decoder_decode_frame_i(
   FrVideoFrame* vframe = NULL;
   FrVideoDecoder* self;
 
-  FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, mframe);
+  FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, (FrMediaFrame **)&vframe);
+  if(vframe == NULL) { return -1; }
 
   self = FR_VIDEO_DECODER(o);
-  vframe = FR_VIDEO_FRAME(mframe);
   fr_video_frame_init_frame(vframe);
 
-  vframe = (FrVideoFrame*)sys_object_dclone(mframe);
   if(!fr_video_frame_scale(vframe, &self->scale)) {
     return -1;
   }
+  *mframe = FR_MEDIA_FRAME(vframe);
 
   return 0;
 }
@@ -58,12 +58,6 @@ void fr_video_decoder_get_size(FrVideoDecoder *self, SysInt *width, SysInt *heig
   *height = self->scale.out_height;
 }
 
-FrMediaFrame* fr_video_decoder_get_frame_i (FrMediaDecoder* o) {
-  FrVideoDecoder* self = FR_VIDEO_DECODER(o);
-
-  return FR_MEDIA_FRAME(&self->frame);
-}
-
 /* object api */
 FrDecoder* fr_video_decoder_new(void) {
   return sys_object_new(FR_TYPE_VIDEO_DECODER, NULL);
@@ -73,7 +67,6 @@ static void fr_video_decoder_dispose(SysObject* o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
 
   sys_object_destroy(&self->scale);
-  sys_object_destroy(&self->frame);
 
   SYS_OBJECT_CLASS(fr_video_decoder_parent_class)->dispose(o);
 }
@@ -84,12 +77,13 @@ static void fr_video_decoder_class_init(FrVideoDecoderClass* cls) {
   FrMediaDecoderClass *mcls = FR_MEDIA_DECODER_CLASS(cls);
 
   dcls->open = fr_video_decoder_open_i;
-  mcls->get_frame = fr_video_decoder_get_frame_i;
   mcls->decode_frame = fr_video_decoder_decode_frame_i;
 
   ocls->dispose = fr_video_decoder_dispose;
 }
 
 void fr_video_decoder_init(FrVideoDecoder* self) {
-  fr_video_frame_create(&self->frame);
+  FrMediaDecoder *o = FR_MEDIA_DECODER(self);
+
+  fr_media_decoder_set_frame_type(o, FR_TYPE_VIDEO_FRAME);
 }

@@ -17,6 +17,11 @@ SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   av_frame_free(&self->parent.ctx);
   self->parent.ctx = nframe;
 
+#if 0
+  const SysChar *filename = FR_PROJECT_DIR"/Assets/surface.png";
+  fr_media_rgba_save_to_png(nframe, filename);
+#endif
+
   fr_video_frame_set_out_size(self, self->width, self->height);
 
 done:

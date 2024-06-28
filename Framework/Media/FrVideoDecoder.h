@@ -20,7 +20,6 @@ struct _FrVideoDecoder {
   FrMediaDecoder parent;
 
   /* <private> */
-  FrVideoFrame frame;
   FrImageScale scale;
 };
 

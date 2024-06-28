@@ -83,6 +83,7 @@ SysInt fr_media_decoder_receive_frame(
       self->auto_pts);
 
   if(err == FR_MEDIA_ERROR_EOF) {
+    fr_decoder_set_eof(FR_DECODER(self), true);
     avcodec_flush_buffers(self->ctx);
 
     return err;
@@ -92,6 +93,13 @@ SysInt fr_media_decoder_receive_frame(
   *nframe = frame;
 
   return err;
+}
+
+SysInt fr_media_decoder_decode_frame_i(
+    FrMediaDecoder* self,
+    FrMediaFrame **nframe) {
+
+  return fr_media_decoder_receive_frame(self, nframe);
 }
 
 static void media_decoder_create_context(FrMediaDecoder *self,
@@ -144,15 +152,35 @@ FrDecoder* fr_media_decoder_create_by_media_type(FrMediaFile* file,
   return o;
 }
 
+SysInt fr_media_decoder_decode_frame(
+    FrMediaDecoder *self,
+    FrMediaFrame **frame) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
+  sys_return_val_if_fail(cls->construct, -1);
+
+  return cls->decode_frame(self, frame);
+}
+
+/**
+ * fr_media_decoder_try_decode_frame:
+ *   decode and skip empty frame
+ * @self:
+ * @frame:
+ *
+ * Returns: SysInt
+ */
 SysInt fr_media_decoder_try_decode_frame(
     FrMediaDecoder *self,
     FrMediaFrame **frame) {
   SysInt err;
 
   FrMediaFrame *nframe = NULL;
+  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
 
   do {
-    err = fr_media_decoder_receive_frame(self, &nframe);
+    err = cls->decode_frame(self, &nframe);
     if (err >= 0) {
       *frame = nframe;
       break;
@@ -163,17 +191,23 @@ SysInt fr_media_decoder_try_decode_frame(
   return err;
 }
 
+void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp) {
+  sys_return_if_fail(tp > 0);
+  sys_return_if_fail(self != NULL);
+
+  self->frame_type = tp;
+}
+
 /* object api */
 static void media_decoder_construct(FrMediaDecoder* self,
   FrDecoderContext *info,
   FrMediaStream* ms) {
   FrDecoder* o = FR_DECODER(self);
 
-  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
   FR_DECODER_CLASS(fr_media_decoder_parent_class)->construct(o, info);
 
   media_decoder_create_context(self, ms);
-  self->frame = cls->get_frame(self);
+  self->frame = sys_object_new(self->frame_type, NULL);
 }
 
 FrDecoder* fr_media_decoder_new(void) {
@@ -197,6 +231,7 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
   FrDecoderClass *dcls = FR_DECODER_CLASS(cls);
 
   cls->construct = media_decoder_construct;
+  cls->decode_frame = fr_media_decoder_decode_frame_i;
 
   dcls->open = fr_media_decoder_open_i;
   dcls->close = fr_media_decoder_close_i;

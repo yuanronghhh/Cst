@@ -58,7 +58,6 @@ static SysPointer decode_frame(
   PipePass *pass = user_data;
 
   SysInt err;
-  FrMediaPipeline *pipe = pass->pipe;
   FrMediaDecoder *mdec = FR_MEDIA_DECODER(pass->todec);
   FrMediaPacket *mpkt = FR_MEDIA_PACKET(pass->pkt);
   SysAsyncQueue *queue = pass->queue;
@@ -68,15 +67,13 @@ static SysPointer decode_frame(
   err = fr_media_decoder_send_packet(mdec, mpkt);
   if(err < 0) { return NULL; }
 
-  if(pass->todec == pipe->video_decoder) {
-    UNUSED(1);
-  }
-
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
-  if(mframe == NULL) { return NULL; }
-
+  if(mframe == NULL) { sys_assert_not_reached(); return NULL; }
   nframe = (FrMediaFrame *)sys_object_dclone(mframe);
 
+  // sys_debug_N("decode frame: %s,%d", 
+  //     pass->todec->name,
+  //     mpkt->parent.serial);
   sys_async_queue_push(queue, nframe);
   pipe_pass_free(pass);
 
@@ -175,7 +172,7 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return sys_async_queue_try_pop(&self->image_queue);
+  return sys_async_queue_pop(&self->image_queue);
 }
 
 void fr_media_pipeline_get_video_size(FrMediaPipeline *self, SysInt *width, SysInt *height) {
@@ -213,15 +210,14 @@ void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
 void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
   sys_return_if_fail(self != NULL);
 
-  if(sys_async_queue_length(&self->image_queue) >= 10) {
+  if(fr_decoder_get_eof(self->packet_decoder)) {
     return;
   }
 
-  if(sys_async_queue_length(&self->sample_queue) >= 10) {
-    return;
-  }
+  for (SysInt i = 0; i < 48; i++) {
 
-  fr_decoder_run_async(self->packet_decoder, process_packet, self);
+    fr_decoder_run_async(self->packet_decoder, process_packet, self);
+  }
 }
 
 /* object api */

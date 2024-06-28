@@ -51,7 +51,6 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     if (state == FR_JOB_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
-    break;
   }
 
 done:

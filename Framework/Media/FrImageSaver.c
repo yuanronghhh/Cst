@@ -52,6 +52,22 @@ SysBool data_save_to_png(
   return true;
 }
 
+SysInt fr_image_scale_avformat_to_png(SysInt format) {
+  switch (format) {
+    case AV_PIX_FMT_RGBA:
+      return PNG_COLOR_TYPE_RGB_ALPHA;
+    case AV_PIX_FMT_RGB24:
+      return PNG_COLOR_TYPE_RGB;
+    case AV_PIX_FMT_GRAY8:
+      return PNG_COLOR_TYPE_GRAY_ALPHA;
+    default:
+      sys_warning_N("not support color type in png: %d", format);
+      return -1;
+  }
+
+  return -1;
+}
+
 SysBool fr_image_saver_save_png(
     FrImageSaver *saver,
     FrImage *image,
@@ -60,18 +76,15 @@ SysBool fr_image_saver_save_png(
   sys_return_val_if_fail(saver != NULL, false);
   sys_return_val_if_fail(image != NULL, false);
 
-  if (image->format != AV_PIX_FMT_RGBA) {
-
-    sys_warning_N("image format should be argb: %s", filename);
-    return -1;
-  }
+  SysInt format = fr_image_scale_avformat_to_png(image->format);
+  if (format == -1) { return false; }
 
   return data_save_to_png(
       image->width,
       image->height,
       image->data,
       image->stride[0],
-      PNG_COLOR_TYPE_RGB_ALPHA,
+      format,
       filename);
 }
 
@@ -82,18 +95,15 @@ SysBool fr_image_saver_save_avframe(
   sys_return_val_if_fail(saver != NULL, false);
   sys_return_val_if_fail(frame != NULL, false);
 
-  if (frame->format != AV_PIX_FMT_RGBA) {
-
-    sys_warning_N("frame format should be argb: %s", filename);
-    return -1;
-  }
+  SysInt format = fr_image_scale_avformat_to_png(frame->format);
+  if (format == -1) { return false; }
 
   return data_save_to_png(
       frame->width,
       frame->height,
       frame->data[0],
       frame->linesize[0],
-      PNG_COLOR_TYPE_RGB_ALPHA,
+      format,
       filename);
 }
 

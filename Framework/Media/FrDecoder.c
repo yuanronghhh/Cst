@@ -14,6 +14,18 @@ const SysChar* fr_decoder_get_name(FrDecoder* self) {
   return self->name;
 }
 
+void fr_decoder_set_eof(FrDecoder *self, SysBool eof) {
+  sys_return_if_fail(self != NULL);
+
+  self->eof = eof;
+}
+
+SysBool fr_decoder_get_eof(FrDecoder *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->eof;
+}
+
 static SysPointer decoder_init(FrTask* o, SysPointer user_data) {
   return NULL;
 }

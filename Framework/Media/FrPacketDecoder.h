@@ -19,8 +19,6 @@ struct _FrPacketDecoder {
 
   /* <private> */
   FrMediaFile *file;
-  SysUInt min_pkt;
-  SysUInt max_pkt;
 };
 
 SysType fr_packet_decoder_get_type(void);

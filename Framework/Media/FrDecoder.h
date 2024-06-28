@@ -35,7 +35,7 @@ struct _FrDecoder {
   SysInt serial;
   SysInt64 max_pkt;
   SysInt64 min_pkt;
-
+  SysBool eof;
   SysPointer user_data;
 };
 
@@ -54,8 +54,13 @@ SYS_API void fr_decoder_run_async(FrDecoder *self,
     FrTaskFunc func, 
     SysPointer user_data);
 
+void fr_decoder_set_eof(FrDecoder* self, SysBool eof);
+
 SYS_API void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data);
 SYS_API SysPointer fr_decoder_get_user_data(FrDecoder *self);
+
+void fr_decoder_set_eof(FrDecoder *self, SysBool eof);
+SysBool fr_decoder_get_eof(FrDecoder *self);
 
 SYS_END_DECLS
 

@@ -15,6 +15,7 @@ set(EXTERNAL_LIBS
   "glib"
   "glad"
   "glfw3"
+  "sdl2"
   "pangofc"
   "fontconfig"
   "tinyexpr"
@@ -56,6 +57,8 @@ set(SRC
   ./ThirdParty/FrExpr.c
   ./ThirdParty/FrLibav.c
   ./ThirdParty/FrLibav.h
+  ./ThirdParty/FrSDL2.c
+  ./ThirdParty/FrSDL2.h
 
   ./Event/FrEventCore.h
   ./Event/Base/FrEvent.c
@@ -172,6 +175,12 @@ set(SRC
   ./Device/FrImageDevice.h
   ./Device/FrWindow.c
   ./Device/FrWindow.h
+  ./Device/FrGlfwWindow.c
+  ./Device/FrGlfwWindow.h
+  ./Device/FrSdlWindow.c
+  ./Device/FrSdlWindow.h
+  ./Device/FrIWindow.c
+  ./Device/FrIWindow.h
 
   ./DataType/FrTask.c
   ./DataType/FrTask.h

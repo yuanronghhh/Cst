@@ -7,7 +7,7 @@ SYS_BEGIN_DECLS
 
 #define FR_TYPE_I_DRAW (fr_i_draw_get_type())
 #define FR_I_DRAW(o) ((FrIDraw* )sys_object_cast_check(o, FR_TYPE_I_DRAW))
-#define FR_I_DRAW_GET_IFACE(o) ((FrIDrawInterface *)SYS_TYPE_GET_INTERFACE(o, FR_TYPE_I_DRAW))
+#define FR_I_DRAW_GET_IFACE(o) (fr_i_draw_get_g_iface())
 
 struct _FrIDrawInterface {
   SysTypeInterface parent;
@@ -89,7 +89,7 @@ struct _FrIDrawInterface {
 };
 
 SysType fr_i_draw_get_type(void);
-void fr_i_draw_setup(FrIDraw *draw);
+void fr_i_draw_setup(void);
 void fr_i_draw_teardown(void);
 FrIDrawInterface* fr_i_draw_get_g_iface(void);
 

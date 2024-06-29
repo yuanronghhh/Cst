@@ -16,7 +16,7 @@
 
 SYS_BEGIN_DECLS
 
-typedef struct GLFWmonitor FRMonitor;
+typedef struct GLFWmonitor FrMonitor;
 
 SYS_END_DECLS
 

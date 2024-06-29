@@ -116,7 +116,7 @@ void cst_render_node_render_enter(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
   FrContext* cr = cst_surface_get_cr(self->surface);
 
-  fr_i_draw_save(cr);
+  fr_draw_save(cr);
   cst_render_node_prepare(self, layout);
 
   // sys_assert(self->v_css_list->len > 0 && "node must have one css node at least.");
@@ -129,7 +129,7 @@ void cst_render_node_render_leave(CstRenderNode *self, CstLayout *layout) {
   sys_return_if_fail(self != NULL);
   FrContext* cr = cst_surface_get_cr(self->surface);
 
-  fr_i_draw_restore(cr);
+  fr_draw_restore(cr);
 }
 
 void cst_render_node_set_surface(CstRenderNode *self, CstSurface * surface) {

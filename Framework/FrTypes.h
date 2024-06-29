@@ -92,11 +92,24 @@ typedef struct _FrFrontContextClass FrFontContextClass;
 typedef struct _FrDrawContext FrDrawContext;
 typedef struct _FrDrawContextClass FrDrawContextClass;
 
+typedef  struct  _FrWindowContext    FrWindowContext;
 typedef  struct  _FrWindow           FrWindow;
 typedef  struct  _FrWindowClass      FrWindowClass;
 
+typedef  struct  _FrGlfwWindow           FrGlfwWindow;
+typedef  struct  _FrGlfwWindowClass      FrGlfwWindowClass;
+
+typedef  struct  _FrSdlWindow           FrSdlWindow;
+typedef  struct  _FrSdlWindowClass      FrSdlWindowClass;
+
+typedef struct _FrIWindow FrIWindow;
+typedef struct _FrIWindowInterface FrIWindowInterface;
+
 typedef struct _FrIDevice FrIDevice;
 typedef struct _FrIDeviceInterface FrIDeviceInterface;
+
+typedef struct _FrImageDevice FrImageDevice;
+typedef struct _FrImageDeviceClass FrImageDeviceClass;
 
 typedef  struct  _FrAction              FrAction;
 typedef  struct  _FrActionClass         FrActionClass;
@@ -175,6 +188,7 @@ typedef  struct  _FrWorkerClass      FrWorkerClass;
 
 typedef  struct  _FrMonoContext   FrMonoContext;
 
+typedef void (*FrWindowErrFunc)(SysInt error_code, const SysChar* description);
 typedef SysPointer (*FrJobFunc) (FrJob* job, SysPointer user_data);
 typedef SysPointer (*FrTaskFunc) (FrTask* task, SysPointer user_data);
 typedef SysBool (*FrEventCheckFunc) (FrEvent *e, SysPointer user_data);

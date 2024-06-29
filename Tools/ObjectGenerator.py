@@ -169,7 +169,7 @@ def match_return_default(nstr):
 
 def parse_args_list(arg_str):
     if not arg_str:
-        return None
+        return []
 
     if arg_str == "void":
         return []
@@ -250,7 +250,7 @@ class Prop:
         self.type = None
         self.name = None
         self.args = None
-        self.args_list = None
+        self.args_list = []
 
 class Arg:
     def __init__(self):

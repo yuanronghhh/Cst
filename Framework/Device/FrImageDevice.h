@@ -11,9 +11,6 @@ SYS_BEGIN_DECLS
 #define FR_IMAGE_DEVICE_CLASS(o) ((FrImageDeviceClass *)sys_class_cast_check(o, FR_TYPE_IMAGE_DEVICE))
 #define FR_IMAGE_DEVICE_GET_CLASS(o) sys_instance_get_class(o, FrImageDeviceClass)
 
-typedef struct _FrImageDevice FrImageDevice;
-typedef struct _FrImageDeviceClass FrImageDeviceClass;
-
 struct _FrImageDeviceClass {
   FrDeviceClass parent;
 };

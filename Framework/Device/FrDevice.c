@@ -23,7 +23,7 @@ FrSurface* fr_device_create_surface (FrDevice* self,
   FrSurface *o;
 
   o = fr_device_create_surface_by_type(self,
-      self->surface_type, 
+      self->surface_type,
       info);
 
   return o;

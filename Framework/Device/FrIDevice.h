@@ -15,6 +15,8 @@ struct _FrIDeviceInterface {
 
   /* <private> */
   void (*get_size) (FrIDevice* self, SysInt* width, SysInt* height);
+
+  /* window */
 };
 
 SysType fr_i_device_get_type(void);

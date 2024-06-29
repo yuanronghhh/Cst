@@ -5,7 +5,9 @@
 
 SYS_BEGIN_DECLS
 
+#define SDL_VIDEO_DRIVER_X11
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_syswm.h>
 
 SYS_END_DECLS
 

@@ -104,7 +104,7 @@ void cst_layout_paint_root(CstLayout* self, CstRenderNode* rnode) {
   const FrSInt4* p4 = cst_render_node_get_padding(rnode);
   FrColor color = {1.0, 0.0, 0.0, 1.0};
 
-  fr_i_draw_set_color(cr, &color);
+  fr_draw_set_color(cr, &color);
   fr_context_stroke_mp(cr, bound, m4, p4);
 
   sys_object_unref(cr);

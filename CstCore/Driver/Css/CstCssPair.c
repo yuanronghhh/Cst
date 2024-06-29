@@ -189,7 +189,7 @@ void cst_css_pair_set_color(CstRenderNode* rnode, CstLayout *layout, SysPointer 
   FrContext *cr = cst_surface_get_cr(surface);
   sys_return_if_fail(cr != NULL);
 
-  fr_i_draw_set_color(cr, v);
+  fr_draw_set_color(cr, v);
 }
 
 void cst_css_pair_width_percent(CstRenderNode *rnode, CstLayout *layout, SysInt64 d) {

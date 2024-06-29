@@ -15,10 +15,18 @@ void test_fr_basic(void) {
 
 void test_fr_window_basic(void) {
   FrDisplay *display = fr_display_new_I();
-  FrWindow *window = fr_window_top_new(display);
+  FrWindow *window = fr_window_new_I(display, NULL);
 
   sys_object_unref(window);
   sys_object_unref(display);
+}
+
+void test_fr_sdl_basic(void) {
+  // SDL_Window *gwindow;
+
+  // gwindow = SDL_CreateWindow("abc", 0, 0, 800, 600, 0);
+
+  // SDL_DestroyWindow(gwindow);
 }
 
 static FrRegion* region_create(FrDevice *device) {
@@ -52,8 +60,6 @@ void test_fr_draw_context(void) {
   device = FR_DEVICE(window);
 
   draw_context = fr_cairo_draw_context_new_I(device);
-  fr_draw_context_g_set(draw_context);
-
   surfaces = sys_harray_new_with_free_func((SysDestroyFunc)_sys_object_unref);
 
   FrSurfaceContext info = {.width = 800, .height= 600};
@@ -66,7 +72,6 @@ void test_fr_draw_context(void) {
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
   sys_harray_free(surfaces, true);
-  fr_draw_context_g_unset();
 }
 
 void render_callback(FrMediaPlayer *player) {
@@ -88,7 +93,6 @@ void test_video_player(void) {
   device = FR_DEVICE(window);
 
   draw_context = fr_cairo_draw_context_new_I(device);
-  fr_draw_context_g_set(draw_context);
 
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
@@ -108,8 +112,6 @@ void test_video_player(void) {
 
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
-
-  fr_draw_context_g_unset();
 }
 
 static void test_avformat_leak(void) {
@@ -121,17 +123,16 @@ static void test_avformat_leak(void) {
 }
 
 void test_fr_window_leak(void) {
-  GLFWwindow *gwindow;
+  FrDisplay *display = fr_display_new_I();
+  FrWindow *window = fr_window_top_new(display);
 
-  gwindow = glfwCreateWindow(800, 600, "Leak Demo", NULL, NULL);
-
-  glfwDestroyWindow(gwindow);
-  glfwTerminate();
+  sys_object_unref(window);
 }
 
 void test_video_init(int argc, const SysChar * argv[]) {
   UNITY_BEGIN();
   {
+    RUN_TEST(test_fr_sdl_basic);
     // RUN_TEST(test_avformat_leak);
     // RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_draw_context);

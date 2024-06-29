@@ -68,12 +68,9 @@ static SysPointer decode_frame(
   if(err < 0) { return NULL; }
 
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
-  if(mframe == NULL) { sys_assert_not_reached(); return NULL; }
+  if(mframe == NULL) { return NULL; }
   nframe = (FrMediaFrame *)sys_object_dclone(mframe);
 
-  // sys_debug_N("decode frame: %s,%d", 
-  //     pass->todec->name,
-  //     mpkt->parent.serial);
   sys_async_queue_push(queue, nframe);
   pipe_pass_free(pass);
 

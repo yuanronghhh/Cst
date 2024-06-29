@@ -6,7 +6,7 @@
 #include <Framework/Device/FrDevice.h>
 #include <Framework/Graph/FrIDraw.h>
 
-static FrDrawContext* g_draw = NULL;
+static SysType g_type = 0;
 
 SYS_DEFINE_TYPE(FrDrawContext, fr_draw_context, SYS_TYPE_OBJECT);
 
@@ -177,17 +177,17 @@ void fr_draw_context_construct(FrDrawContext* self, FrDevice* device) {
   cls->construct(self, device);
 }
 
-void fr_draw_context_g_set(FrDrawContext *ctx) {
-  sys_assert(g_draw == NULL && "can not set draw context twice");
+void fr_draw_setup(void) {
+  fr_i_draw_setup();
 
-  g_draw = sys_object_ref(ctx);
-  fr_i_draw_setup(FR_I_DRAW(g_draw));
+#if USE_CAIRO
+  g_type = FR_TYPE_CAIRO_DRAW_CONTEXT;
+
+#elif USE_OPENGL_ES
+#endif
 }
 
-void fr_draw_context_g_unset(void) {
-  sys_assert(g_draw != NULL);
-
-  sys_clear_pointer(&g_draw, _sys_object_unref);
+void fr_draw_teardown(void) {
   fr_i_draw_teardown();
 }
 
@@ -199,7 +199,7 @@ static void fr_draw_context_construct_i(FrDrawContext *self, FrDevice *device) {
 }
 
 FrDrawContext* fr_draw_context_new(void) {
-  return sys_object_new(FR_TYPE_DRAW_CONTEXT, NULL);
+  return sys_object_new(g_type, NULL);
 }
 
 static void fr_draw_context_dispose(SysObject* o) {

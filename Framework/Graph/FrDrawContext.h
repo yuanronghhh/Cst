@@ -27,6 +27,9 @@ struct _FrDrawContext {
   SysBool is_painting;
 };
 
+void fr_draw_setup(void);
+void fr_draw_teardown(void);
+
 SYS_API SysType fr_draw_context_get_type(void);
 SYS_API FrDrawContext *fr_draw_context_new(void);
 
@@ -49,8 +52,9 @@ SYS_API FrSurface* fr_draw_context_get_default_surface(FrDrawContext* self);
 void fr_draw_context_set_is_painting(FrDrawContext *self, SysBool is_painting);
 SysBool fr_draw_context_get_is_painting(FrDrawContext *self);
 
-void fr_draw_context_g_set(FrDrawContext* ctx);
-void fr_draw_context_g_unset(void);
+#define fr_draw_save fr_i_draw_save
+#define fr_draw_restore fr_i_draw_restore
+#define fr_draw_set_color fr_i_draw_set_color
 
 SYS_END_DECLS
 

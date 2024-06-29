@@ -2,5 +2,9 @@
 #define __FR_CONFIG_H__
 
 #define FR_PROJECT_DIR  "${CMAKE_SOURCE_DIR}"
+#define USE_CAIRO  ${USE_CAIRO}
+#define USE_GLFW  ${USE_GLFW}
+#define USE_SDL  ${USE_SDL}
+#define USE_OPENGL_ES ${USE_OPENGL_ES}
 
 #endif

@@ -24,6 +24,8 @@ SYS_API SysType fr_cairo_draw_context_get_type(void);
 SYS_API FrDrawContext *fr_cairo_draw_context_new(void);
 SYS_API FrDrawContext *fr_cairo_draw_context_new_I(FrDevice *device);
 
+void fr_cairo_draw_context_iface_setup(FrIDrawInterface *iface);
+
 SYS_END_DECLS
 
 #endif

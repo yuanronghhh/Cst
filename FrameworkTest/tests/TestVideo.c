@@ -22,11 +22,11 @@ void test_fr_window_basic(void) {
 }
 
 void test_fr_sdl_basic(void) {
-  // SDL_Window *gwindow;
+  SDL_Window *gwindow;
 
-  // gwindow = SDL_CreateWindow("abc", 0, 0, 800, 600, 0);
+  gwindow = SDL_CreateWindow("abc", 0, 0, 800, 600, 0);
 
-  // SDL_DestroyWindow(gwindow);
+  SDL_DestroyWindow(gwindow);
 }
 
 static FrRegion* region_create(FrDevice *device) {
@@ -132,9 +132,9 @@ void test_fr_window_leak(void) {
 void test_video_init(int argc, const SysChar * argv[]) {
   UNITY_BEGIN();
   {
-    RUN_TEST(test_fr_sdl_basic);
+    // RUN_TEST(test_fr_sdl_basic);
     // RUN_TEST(test_avformat_leak);
-    // RUN_TEST(test_video_player);
+    RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_draw_context);
     // RUN_TEST(test_fr_basic);
     // RUN_TEST(test_fr_window_leak);

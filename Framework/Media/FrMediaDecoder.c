@@ -79,16 +79,18 @@ SysInt fr_media_decoder_receive_frame(
   FrMediaFrame* frame = self->frame;
 
   err = fr_media_avcodec_try_receive_frame(self->ctx,
-      frame->ctx, 
+      frame->ctx,
       self->auto_pts);
 
-  if(err == FR_MEDIA_ERROR_EOF) {
-    fr_decoder_set_eof(FR_DECODER(self), true);
-    avcodec_flush_buffers(self->ctx);
+  if (err < 0) {
+    if(err == FR_MEDIA_ERROR_EOF) {
+      fr_decoder_set_eof(FR_DECODER(self), true);
+      avcodec_flush_buffers(self->ctx);
+    }
 
     return err;
   }
-  if (err < 0) { return err; }
+
   frame->ts = frame->ctx->pts;
   *nframe = frame;
 
@@ -186,7 +188,7 @@ SysInt fr_media_decoder_try_decode_frame(
       break;
     }
     nframe = NULL;
-  } while(err != FR_MEDIA_ERROR_AGAIN);
+  } while(err == FR_MEDIA_ERROR_AGAIN);
 
   return err;
 }

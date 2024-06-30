@@ -211,10 +211,7 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
     return;
   }
 
-  for (SysInt i = 0; i < 48; i++) {
-
-    fr_decoder_run_async(self->packet_decoder, process_packet, self);
-  }
+  fr_decoder_run_async(self->packet_decoder, process_packet, self);
 }
 
 /* object api */

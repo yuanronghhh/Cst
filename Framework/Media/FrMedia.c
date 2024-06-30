@@ -31,17 +31,17 @@ const SysChar* fr_media_error_string(SysInt err) {
 
 FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   switch (err) {
-  case 0:
-    return FR_MEDIA_ERROR_SUCCESS;
-  case AVERROR(EAGAIN):
-    return FR_MEDIA_ERROR_AGAIN;
-  case AVERROR_EOF:
-    return FR_MEDIA_ERROR_EOF;
-  case AVERROR(EINVAL):
-    return FR_MEDIA_ERROR_EINVAL;
-  default:
-    sys_warning_N("decoder err not handle: %d", av_err2str(err));
-    return FR_MEDIA_ERROR_UNKNOWN;
+    case 0:
+      return FR_MEDIA_ERROR_SUCCESS;
+    case AVERROR(EAGAIN):
+      return FR_MEDIA_ERROR_AGAIN;
+    case AVERROR_EOF:
+      return FR_MEDIA_ERROR_EOF;
+    case AVERROR(EINVAL):
+      return FR_MEDIA_ERROR_EINVAL;
+    default:
+      sys_warning_N("decoder err not handle: %d", av_err2str(err));
+      return FR_MEDIA_ERROR_UNKNOWN;
   }
 }
 
@@ -230,24 +230,24 @@ SysInt fr_media_avcodec_try_receive_frame (
     SysInt auto_pts) {
   SysInt err;
 
-  do {
-    err = avcodec_receive_frame(codec, frame);
-    if(err >= 0) {
-      frame->pts = auto_pts == -1
-        ? fr_media_frame_get_pts(frame, codec)
-        : frame->pkt_dts;
+  err = avcodec_receive_frame(codec, frame);
+  if(err >= 0) {
+    frame->pts = auto_pts == -1
+      ? fr_media_frame_get_pts(frame, codec)
+      : frame->pkt_dts;
 
-      return err;
-    }
+    return err;
+  }
 
-    if (err == AVERROR_EOF) {
-      return err;
-    }
+  if (err == FR_MEDIA_ERROR_AGAIN 
+      || err == FR_MEDIA_ERROR_EOF) {
 
-    // sys_warning_N("%s", av_err2str(err));
-  } while (err != AVERROR(EAGAIN));
+  } else {
 
-  return FR_MEDIA_ERROR_AGAIN;
+    sys_warning_N("%d,%s", err, av_err2str(err));
+  }
+
+  return err;
 }
 
 SysInt fr_media_avcodec_try_send_packet(
@@ -255,14 +255,16 @@ SysInt fr_media_avcodec_try_send_packet(
     AVPacket* pkt) {
   SysInt err;
 
-  do {
-    err = avcodec_send_packet(codec, pkt);
-    if (err >= 0) {
-      return err;
-    }
+  err = avcodec_send_packet(codec, pkt);
+  if (err >= 0) {
+    return err;
+  }
+
+  if(err != FR_MEDIA_ERROR_AGAIN
+      && err != FR_MEDIA_ERROR_EOF) {
 
     sys_warning_N("error %s", av_err2str(err));
-  } while (err != AVERROR(EAGAIN));
+  }
 
   return err;
 }

@@ -309,11 +309,16 @@ static SysPointer fr_window_get_native_window (FrWindow* window) {
 
 void fr_sdl_window_setup(void) {
   SYS_LEAK_IGNORE_BEGIN;
-  if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
-    sys_error_N("%s", SYS_("SDL failed to init"));
-    SDL_Quit();
+  if (SDL_Init(
+        SDL_INIT_VIDEO
+        | SDL_INIT_AUDIO
+        | SDL_INIT_TIMER) < 0) {
+    sys_error_N("SDL failed to init: %s", SDL_GetError());
   }
   SYS_LEAK_IGNORE_END;
+
+  SDL_EventState(SDL_SYSWMEVENT, SDL_IGNORE);
+  SDL_EventState(SDL_USEREVENT, SDL_IGNORE);
 }
 
 void fr_sdl_window_teardown(void) {

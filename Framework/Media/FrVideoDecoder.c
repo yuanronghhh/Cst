@@ -26,11 +26,12 @@ static SysInt fr_video_decoder_decode_frame_i(
     FrMediaDecoder *o,
     FrMediaFrame **mframe) {
 
+  SysInt err;
   FrVideoFrame* vframe = NULL;
   FrVideoDecoder* self;
 
-  FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, (FrMediaFrame **)&vframe);
-  if(vframe == NULL) { return -1; }
+  err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, (FrMediaFrame **)&vframe);
+  if(err < 0) { return err; }
 
   self = FR_VIDEO_DECODER(o);
   fr_video_frame_init_frame(vframe);
@@ -40,7 +41,7 @@ static SysInt fr_video_decoder_decode_frame_i(
   }
   *mframe = FR_MEDIA_FRAME(vframe);
 
-  return 0;
+  return err;
 }
 
 void fr_video_decoder_resize(FrVideoDecoder *self, SysInt width, SysInt height) {

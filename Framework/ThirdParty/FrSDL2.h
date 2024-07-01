@@ -5,7 +5,11 @@
 
 SYS_BEGIN_DECLS
 
-#define SDL_VIDEO_DRIVER_X11
+#if SYS_OS_UNIX
+ #define SDL_VIDEO_DRIVER_X11
+#elif SYS_OS_WIN32
+#endif
+#define SDL_MAIN_HANDLED
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_syswm.h>
 

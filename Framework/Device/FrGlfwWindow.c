@@ -259,7 +259,7 @@ static void fr_glfw_window_event_register(FrGlfwWindow *self) {
 
 /* window */
 static void fr_wait_events_timeout_i(SysDouble sec) {
-  glfwWaitEventsTimeout(sec);
+  glfwWaitEventsTimeout(sec / 1.0e3);
 }
 
 static void fr_wait_events_i(void) {

@@ -6,8 +6,10 @@
 #include <Framework/Event/FrEventCore.h>
 
 static SysType g_type = 0;
+static void i_device_imp(FrIDeviceInterface* iface);
 
-SYS_DEFINE_TYPE(FrWindow, fr_window, FR_TYPE_DEVICE);
+SYS_DEFINE_WITH_CODE(FrWindow, fr_window, FR_TYPE_DEVICE,
+    SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_DEVICE, i_device_imp));
 
 FrDisplay *fr_window_get_display(FrWindow *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -61,6 +63,19 @@ void fr_window_set_data(FrWindow *self, SysPointer data) {
   sys_return_if_fail(self != NULL);
 
   self->user_data = data;
+}
+
+static void fr_window_get_size_i(FrIDevice* o,
+    SysInt* width,
+    SysInt* height) {
+    sys_return_if_fail(o != NULL);
+    FrWindow* self = FR_WINDOW(o);
+
+    fr_window_get_framebuffer_size(self, width, height);
+}
+
+static void i_device_imp(FrIDeviceInterface* iface) {
+    iface->get_size = fr_window_get_size_i;
 }
 
 /* object api */

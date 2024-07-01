@@ -28,7 +28,6 @@ struct _FrDecoder {
 
   /* <private> */
   SysChar* name;
-  FR_MEDIA_ENUM decoder_type;
 
   /* current codec */
   SysInt64 start_pts;

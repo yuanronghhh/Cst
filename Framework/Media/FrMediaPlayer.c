@@ -37,7 +37,14 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   // get interval
   vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
   fr_media_stream_get_rational(vs, &rt);
-  self->interval = (1 / (SysDouble)rt.num / rt.den);
+
+
+  /* 
+   * TODO:
+   * int64_t pts = av_frame_get_best_effort_timestamp(frame);
+   * SDL_Delay(av_rescale_q(pts, formatCtx->streams[videoStream]->time_base, AV_TIME_BASE_Q) / 1000);
+   **/
+  self->interval = 1 / av_q2d(rt) * 1.0e3;
 
   fr_media_pipeline_run(&self->pipeline, self->file);
   fr_media_pipeline_get_video_size(&self->pipeline, &bound.width, &bound.height);
@@ -45,12 +52,12 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   region = fr_region_create_rectangle(&bound);
 
   while(self->state == FR_JOB_STATE_RUNNING) {
-    fr_media_player_wait(self);
-
     state = process(self);
     if (state == FR_JOB_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
+
+    fr_media_player_wait(self);
   }
 
 done:

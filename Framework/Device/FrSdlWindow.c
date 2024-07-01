@@ -20,7 +20,12 @@ static SDL_Window* fr_sdl_window_create_i(
   SDL_Window *gwindow;
 
   SYS_LEAK_IGNORE_BEGIN;
-  gwindow = SDL_CreateWindow(title, 0, 0, width, height, 0);
+  gwindow = SDL_CreateWindow(title,
+      SDL_WINDOWPOS_CENTERED, 
+      SDL_WINDOWPOS_CENTERED, 
+      width, 
+      height, 
+      0);
   SYS_LEAK_IGNORE_END;
 
   return gwindow;
@@ -301,7 +306,7 @@ static SysPointer fr_window_get_native_window (FrWindow* window) {
   SDL_GetWindowWMInfo(self->gwindow, &info);
 
 #if SYS_OS_WIN32
-  return UINT_TO_POINTER(info.info.win->window);
+  return UINT_TO_POINTER(info.info.win.window);
 #elif SYS_OS_UNIX
   return UINT_TO_POINTER(info.info.x11.window);
 #endif

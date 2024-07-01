@@ -16,6 +16,7 @@ SysInt fr_packet_decoder_decode(FrDecoder *o, FrPacket **npkt) {
   fr_media_file_read_packet(self->file, &mpkt);
   if(mpkt == NULL) {
 
+    fr_decoder_set_eof(o, true);
     return -1;
   }
   *npkt = (FrPacket *)sys_object_dclone(mpkt);

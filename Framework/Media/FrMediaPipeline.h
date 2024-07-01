@@ -23,6 +23,8 @@ struct _FrMediaPipeline {
   FrDecoder* subtitle_decoder;
   FrDecoder* packet_decoder;
   FrMediaPlayer* player;
+  SysInt max_packet;
+  SysInt min_packet;
 
   SysAsyncQueue image_queue;
   SysAsyncQueue sample_queue;

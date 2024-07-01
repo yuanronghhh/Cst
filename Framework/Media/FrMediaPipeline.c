@@ -68,7 +68,7 @@ static SysPointer decode_frame(
   if(err < 0) { return NULL; }
 
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
-  if(mframe == NULL) { return NULL; }
+  if(err < 0) { return NULL; }
   nframe = (FrMediaFrame *)sys_object_dclone(mframe);
 
   sys_async_queue_push(queue, nframe);
@@ -169,7 +169,7 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return sys_async_queue_pop(&self->image_queue);
+  return sys_async_queue_try_pop(&self->image_queue);
 }
 
 void fr_media_pipeline_get_video_size(FrMediaPipeline *self, SysInt *width, SysInt *height) {
@@ -211,7 +211,17 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
     return;
   }
 
-  fr_decoder_run_async(self->packet_decoder, process_packet, self);
+  if (sys_async_queue_length(&self->image_queue) > self->max_packet) {
+    return;
+  }
+
+  if (sys_async_queue_length(&self->image_queue) < self->min_packet) {
+    // sys_debug_N("%s", "wakeup");
+    for(SysInt i = 0 ; i < self->min_packet; i++) {
+
+      fr_decoder_run_async(self->packet_decoder, process_packet, self);
+    }
+  }
 }
 
 /* object api */
@@ -245,6 +255,8 @@ static void fr_media_pipeline_class_init(FrMediaPipelineClass* cls) {
 }
 
 void fr_media_pipeline_init(FrMediaPipeline* self) {
+  self->max_packet = 60;
+  self->min_packet = 2;
   sys_async_queue_init_full(&self->image_queue, (SysDestroyFunc)_sys_object_unref);
   sys_async_queue_init_full(&self->sample_queue, (SysDestroyFunc)_sys_object_unref);
 }

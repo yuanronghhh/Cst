@@ -178,17 +178,21 @@ SysInt fr_media_decoder_try_decode_frame(
     FrMediaFrame **frame) {
   SysInt err;
 
-  FrMediaFrame *nframe = NULL;
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
 
-  do {
-    err = cls->decode_frame(self, &nframe);
-    if (err >= 0) {
-      *frame = nframe;
-      break;
-    }
-    nframe = NULL;
-  } while(err == FR_MEDIA_ERROR_AGAIN);
+  err = cls->decode_frame(self, frame);
+  if (err >= 0) {
+
+    return err;
+  }
+
+  if (err == FR_MEDIA_ERROR_AGAIN 
+      || err == FR_MEDIA_ERROR_EOF) {
+
+  } else {
+
+    sys_warning_N("%d,%s", err, av_err2str(err));
+  }
 
   return err;
 }

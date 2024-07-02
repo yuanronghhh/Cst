@@ -300,16 +300,23 @@ static void fr_swap_buffers_i(FrWindow *o) {
   SDL_GL_SwapWindow(self->gwindow);
 }
 
+void fr_window_display_create (FrDisplay *display) {
+#if SYS_OS_WIN32
+  display->ctx = NULL;
+#elif SYS_OS_UNIX
+  display->ctx = (SysPointer)XOpenDisplay(NULL);
+#endif
+}
+
+static SysPointer fr_window_get_native_display (FrDisplay *display) {
+
+  return display->ctx;
+}
+
 static SysPointer fr_window_get_native_window (FrWindow* window) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
-  SDL_SysWMinfo info;
-  SDL_GetWindowWMInfo(self->gwindow, &info);
 
-#if SYS_OS_WIN32
-  return UINT_TO_POINTER(info.info.win.window);
-#elif SYS_OS_UNIX
-  return UINT_TO_POINTER(info.info.x11.window);
-#endif
+  return self->ctx;
 }
 
 void fr_sdl_window_setup(void) {
@@ -360,6 +367,15 @@ static void fr_sdl_window_create(
   gwindow = fr_sdl_window_create_i(800, 600, title, gshare);
   self->gwindow = gwindow;
 
+  SDL_SysWMinfo info;
+  SDL_GetWindowWMInfo(self->gwindow, &info);
+
+#if SYS_OS_WIN32
+  self->ctx = UINT_TO_POINTER(info.info.win.window);
+#elif SYS_OS_UNIX
+  self->ctx = UINT_TO_POINTER(info.info.x11.window);
+#endif
+
   fr_sdl_set_window(gwindow, self);
 }
 
@@ -387,6 +403,8 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->post_empty_event = fr_post_empty_event_i;
   iface->poll_events = fr_poll_events_i;
   iface->get_native_window = fr_window_get_native_window;
+  iface->get_native_display = fr_window_get_native_display;
+  iface->display_create = fr_window_display_create;
 }
 
 void fr_sdl_window_iface_setup(FrIWindowInterface *iface) {

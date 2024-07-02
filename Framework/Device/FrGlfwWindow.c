@@ -296,6 +296,19 @@ static SysPointer fr_window_get_native_window (FrWindow* window) {
 #endif
 }
 
+SysPointer fr_window_get_native_display(FrDisplay *display) {
+
+  return display->ctx;
+}
+
+void fr_window_display_create (FrDisplay *display) {
+#if SYS_OS_WIN32
+  display->ctx = glfwGetX11Display();
+#elif SYS_OS_UNIX
+  display->ctx = (SysPointer)XOpenDisplay(NULL);
+#endif
+}
+
 void fr_glfw_window_teardown(void) {
 
   glfwTerminate();
@@ -357,6 +370,12 @@ static void fr_glfw_window_create(
   gwindow = fr_glfw_window_create_i(800, 600, title, gshare);
   self->gwindow = gwindow;
 
+#if SYS_OS_WIN32
+  self->ctx = glfwGetWin32Window();
+#elif SYS_OS_UNIX
+  self->ctx = UINT_TO_POINTER(glfwGetX11Window(gwindow));
+#endif
+
   fr_glfw_set_window(gwindow, self);
   fr_glfw_window_event_register(self);
 }
@@ -379,6 +398,8 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->post_empty_event = fr_post_empty_event_i;
   iface->poll_events = fr_poll_events_i;
   iface->get_native_window = fr_window_get_native_window;
+  iface->get_native_display = fr_window_get_native_display;
+  iface->display_create = fr_window_display_create;
 }
 
 void fr_glfw_window_iface_setup(FrIWindowInterface *iface) {

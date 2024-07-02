@@ -43,6 +43,11 @@ void fr_i_window_create (
   return self.create(window, width, height, title, share);
 }
 
+void fr_i_window_display_create (FrDisplay *display) {
+
+  self.display_create(display);
+}
+
 void fr_i_window_set_error_callback (FrWindowErrFunc callback) {
 
   self.set_error_callback(callback);
@@ -121,4 +126,9 @@ void fr_i_window_poll_events (void) {
 SysPointer fr_i_window_get_native_window (FrWindow* window) {
 
   return self.get_native_window(window);
+}
+
+SysPointer fr_i_window_get_native_display (FrDisplay *display) {
+
+  return self.get_native_display(display);
 }

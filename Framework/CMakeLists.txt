@@ -16,6 +16,7 @@ set(EXTERNAL_LIBS
   "glad"
   "glfw3"
   "sdl2"
+  "X11"
   "pangofc"
   "fontconfig"
   "tinyexpr"

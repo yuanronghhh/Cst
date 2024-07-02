@@ -35,7 +35,9 @@ struct _FrIWindowInterface {
   void (*post_empty_event) (void);
   void (*poll_events) (void);
 
+  void (*display_create) (FrDisplay *display);
   SysPointer (*get_native_window) (FrWindow* window);
+  SysPointer (*get_native_display) (FrDisplay *display);
 };
 
 SysType fr_i_window_get_type(void);
@@ -48,6 +50,8 @@ void fr_i_window_create (
     SysInt height,
     const SysChar *title,
     FrWindow *share);
+
+void fr_i_window_display_create (FrDisplay *display);
 void fr_i_window_destroy_window (FrWindow *window);
 void fr_i_window_set_error_callback (FrWindowErrFunc callback);
 void fr_i_window_get_framebuffer_size (FrWindow *window, SysInt *width, SysInt *height);
@@ -65,6 +69,7 @@ void fr_i_window_wait_events (void);
 void fr_i_window_post_empty_event (void);
 void fr_i_window_poll_events (void);
 SysPointer fr_i_window_get_native_window (FrWindow* window);
+SysPointer fr_i_window_get_native_display (FrDisplay *display);
 
 SYS_END_DECLS
 

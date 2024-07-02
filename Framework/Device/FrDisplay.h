@@ -17,6 +17,8 @@ struct _FrDisplayClass {
 
 struct _FrDisplay {
   SysObject parent;
+
+  SysPointer ctx;
 };
 
 SYS_API SysType fr_display_get_type(void);

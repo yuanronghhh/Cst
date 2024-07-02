@@ -18,6 +18,7 @@ struct _FrGlfwWindow {
   FrWindow parent;
   /* <private> */
   GLFWwindow *gwindow;
+  SysPointer ctx;
 };
 
 SYS_API SysType fr_glfw_window_get_type(void);

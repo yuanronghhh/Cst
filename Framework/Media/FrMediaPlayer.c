@@ -12,9 +12,9 @@
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, FR_TYPE_PLAYER);
 
-void fr_media_player_wait(FrMediaPlayer *self) {
+void fr_media_player_delay(FrMediaPlayer *self, SysDouble ms) {
 
-  fr_wait_events_timeout(self->interval);
+  fr_wait_events_timeout(ms);
 }
 
 static SysInt process(FrMediaPlayer* self) {
@@ -37,14 +37,13 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   // get interval
   vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
   fr_media_stream_get_rational(vs, &rt);
+  self->interval = 1.0 / rt.num / (double) rt.den * 1.0e3;
 
-
-  /* 
+  /*
    * TODO:
    * int64_t pts = av_frame_get_best_effort_timestamp(frame);
    * SDL_Delay(av_rescale_q(pts, formatCtx->streams[videoStream]->time_base, AV_TIME_BASE_Q) / 1000);
    **/
-  self->interval = 1 / av_q2d(rt) * 1.0e3;
 
   fr_media_pipeline_run(&self->pipeline, self->file);
   fr_media_pipeline_get_video_size(&self->pipeline, &bound.width, &bound.height);
@@ -56,8 +55,6 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     if (state == FR_JOB_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
-
-    fr_media_player_wait(self);
   }
 
 done:
@@ -79,7 +76,7 @@ SysInt fr_media_player_run(FrMediaPlayer* self) {
 }
 
 SysInt fr_media_player_render(FrMediaPlayer *self,
-    FrIMediaRender *render, 
+    FrIMediaRender *render,
     FrRegion *region) {
   sys_return_val_if_fail(self != NULL, -1);
   FrMediaFrame *frame = NULL;
@@ -90,8 +87,9 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   if (frame == NULL) { return FR_MEDIA_ERROR_EOF; }
   vframe = FR_VIDEO_FRAME(frame);
 
-  self->remain_secs = vframe->remain_sec;
   iface->render_video(render, vframe, region);
+  fr_media_player_delay(self, vframe->remain_sec);
+
   sys_object_unref(frame);
 
   return 0;

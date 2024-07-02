@@ -26,7 +26,6 @@ struct _FrMediaPlayer {
   SysInt64 seek_position;
   FR_JOB_STATE_ENUM state;
   SysDouble interval;
-  SysDouble remain_secs;
   FrIMediaRender *render;
 };
 

@@ -286,6 +286,11 @@ static void fr_window_hint (SysInt p, SysInt v) {
   glfwWindowHint(p, v);
 }
 
+static void fr_delay_i(SysUInt64 msec) {
+
+  sys_usleep((SysUInt64)msec * 1e3);
+}
+
 static SysPointer fr_window_get_native_window (FrWindow* window) {
   FrGlfwWindow *self = FR_GLFW_WINDOW(window);
 
@@ -397,6 +402,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->wait_events = fr_wait_events_i;
   iface->post_empty_event = fr_post_empty_event_i;
   iface->poll_events = fr_poll_events_i;
+  iface->delay = fr_delay_i;
   iface->get_native_window = fr_window_get_native_window;
   iface->get_native_display = fr_window_get_native_display;
   iface->display_create = fr_window_display_create;

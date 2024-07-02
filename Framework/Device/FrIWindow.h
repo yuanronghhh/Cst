@@ -38,6 +38,7 @@ struct _FrIWindowInterface {
   void (*display_create) (FrDisplay *display);
   SysPointer (*get_native_window) (FrWindow* window);
   SysPointer (*get_native_display) (FrDisplay *display);
+  void (*delay) (SysUInt64 msec);
 };
 
 SysType fr_i_window_get_type(void);
@@ -68,6 +69,7 @@ void fr_i_window_wait_events_timeout (SysDouble sec);
 void fr_i_window_wait_events (void);
 void fr_i_window_post_empty_event (void);
 void fr_i_window_poll_events (void);
+void fr_i_window_delay (SysUInt64 ms);
 SysPointer fr_i_window_get_native_window (FrWindow* window);
 SysPointer fr_i_window_get_native_display (FrDisplay *display);
 

@@ -58,21 +58,16 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = Path("./Framework/DataType").as_posix()
-    header_path = "Framework/DataType"
+    dst = Path("./Framework/Device").as_posix()
+    header_path = "Framework/Device"
     common_path = "Framework//FrCommon.h"
 
     template_struct = """
-struct _FrJob {
+struct _FrRender {
   SysObject parent;
 
   /* <private> */
-  SysThread* thread;
-  SysQueue queue;
-  SysCond cond;
-  SysMutex mutex;
-  FrMediaTask *task;
-  FR_JOB_STATE_ENUM state;
+  SysPointer ctx;
 };
 """
     info = TemplateInfo(template_struct)

@@ -1,7 +1,7 @@
 set(USE_CAIRO 1 CACHE BOOL "" FORCE)
 set(USE_OPENGL_ES 0 CACHE BOOL "" FORCE)
 set(USE_GLFW 0 CACHE BOOL "" FORCE)
-set(USE_GPERF 1 CACHE BOOL "" FORCE)
+set(USE_GPERF 0 CACHE BOOL "" FORCE)
 set(USE_SDL 1 CACHE BOOL "" FORCE)
 set(USE_MONO 0 CACHE BOOL "" FORCE)
 set(USE_LLVM 1 CACHE BOOL "" FORCE)
@@ -26,6 +26,7 @@ else()
   set(CLANG_HOME "/usr")
   set(CLANG_VERSION "18.1.4")
   set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/linux)
+  set(CMAKE_C_FLAGS "-Wall -g -Wno-unused-function")
 endif()
 
 

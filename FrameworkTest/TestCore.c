@@ -2,7 +2,7 @@
 #include <FrameworkTest/tests/TestVideo.h>
 #include <FrameworkTest/tests/TestJob.h>
 
-#define CHECK_TYPE SYS_TYPE_FUNDAMENTAL_NODE
+#define CHECK_TYPE FR_TYPE_MEDIA_PACKET
 
 void setUp(void) {
 }
@@ -49,7 +49,7 @@ int main(int argc, const SysChar* argv[]) {
 #endif
   fr_core_setup();
 
-  test_job_init(argc, argv);
+  test_video_init(argc, argv);
 
   fr_core_teardown();
   sys_teardown();

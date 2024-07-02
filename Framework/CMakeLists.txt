@@ -15,7 +15,7 @@ set(EXTERNAL_LIBS
   "glib"
   "glad"
   "glfw3"
-  "sdl2"
+  "sdl3"
   "X11"
   "pangofc"
   "fontconfig"
@@ -58,8 +58,8 @@ set(SRC
   ./ThirdParty/FrExpr.c
   ./ThirdParty/FrLibav.c
   ./ThirdParty/FrLibav.h
-  ./ThirdParty/FrSDL2.c
-  ./ThirdParty/FrSDL2.h
+  ./ThirdParty/FrSDL3.c
+  ./ThirdParty/FrSDL3.h
 
   ./Event/FrEventCore.h
   ./Event/Base/FrEvent.c

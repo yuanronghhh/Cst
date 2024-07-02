@@ -1,5 +1,6 @@
 #include <Framework/Device/FrSdlWindow.h>
 #include <Framework/Device/FrDisplay.h>
+#include <Framework/Device/FrRender.h>
 #include <Framework/Event/FrEventCore.h>
 
 #define fr_sdl_get_window(gwindow) ((FrWindow *)SDL_GetWindowData(gwindow, "sdl_user_data"))
@@ -21,8 +22,6 @@ static SDL_Window* fr_sdl_window_create_i(
 
   SYS_LEAK_IGNORE_BEGIN;
   gwindow = SDL_CreateWindow(title,
-      SDL_WINDOWPOS_CENTERED, 
-      SDL_WINDOWPOS_CENTERED, 
       width, 
       height, 
       0);
@@ -36,14 +35,13 @@ FR_WINDOW_BACKEND_ENUM fr_sdl_window_backend() {
   return FR_WINDOW_GLFW;
 }
 
-static void fr_sdl_window_get_framebuffer_size(
-    FrWindow *window,
-    SysInt *width, 
+static void fr_sdl_render_get_framebuffer_size(
+    FrRender *render,
+    SysInt *width,
     SysInt * height) {
-  FrSdlWindow *self = FR_SDL_WINDOW(window);
-  sys_return_if_fail(window != NULL);
+  sys_return_if_fail(render != NULL);
 
-  SDL_GL_GetDrawableSize(self->gwindow, width, height);
+  SDL_GetRenderOutputSize(render->ctx, width, height);
 }
 
 static void fr_sdl_window_set_size(FrWindow *window, SysInt width, SysInt height) {
@@ -127,9 +125,9 @@ SDL_Window * fr_sdl_window_get_gwindow(FrWindow *window) {
 
 /* event callbacks */
 static void fr_sdl_window_key_callback(SDL_Window* gwindow,
-    SysInt key, 
-    SysInt scancode, 
-    SysInt action, 
+    SysInt key,
+    SysInt scancode,
+    SysInt action,
     SysInt mods) {
   FrWindow *window = fr_sdl_get_window(gwindow);
 
@@ -371,7 +369,7 @@ static void fr_sdl_window_create(
   gwindow = fr_sdl_window_create_i(800, 600, title, gshare);
   self->gwindow = gwindow;
 
-  SDL_SysWMinfo info;
+  SDL_SysWMinfo info = {0};
   SDL_GetWindowWMInfo(self->gwindow, &info);
 
 #if SYS_OS_WIN32
@@ -392,7 +390,7 @@ static void fr_window_destroy(FrWindow *o) {
 static void i_window_imp(FrIWindowInterface *iface) {
   iface->create = fr_sdl_window_create;
   iface->set_error_callback = fr_sdl_set_error_callback;
-  iface->get_framebuffer_size = fr_sdl_window_get_framebuffer_size;
+  iface->get_framebuffer_size = fr_sdl_render_get_framebuffer_size;
   iface->window_get_size = fr_sdl_window_get_size;
   iface->window_set_size = fr_sdl_window_set_size;
   iface->window_set_title = fr_sdl_window_set_title;

@@ -48,11 +48,10 @@ SYS_API FrWindow *fr_window_top_new(FrDisplay *display);
 SYS_API void fr_window_set_data(FrWindow *self, SysPointer data);
 SYS_API SysPointer fr_window_get_data(FrWindow * self);
 
-#define fr_window_set_title fr_i_window_set_window_title
+#define fr_window_set_title fr_i_window_window_set_title
 #define fr_window_set_opacity fr_i_window_set_window_opacity
-#define fr_window_set_size fr_i_window_set_window_size
-#define fr_window_get_size fr_i_window_get_window_size
-#define fr_get_primary_monitor fr_i_window_get_primary_monitor
+#define fr_window_set_size fr_i_window_window_window_size
+#define fr_window_get_size fr_i_window_window_get_size
 #define fr_window_get_framebuffer_size fr_i_window_get_framebuffer_size
 #define fr_swap_buffers fr_i_window_swap_buffers
 #define fr_wait_events fr_i_window_wait_events

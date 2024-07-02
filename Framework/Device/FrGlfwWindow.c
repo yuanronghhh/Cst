@@ -35,11 +35,11 @@ FrMonitor* fr_glfw_get_primary_monitor(void) {
 }
 
 static void fr_glfw_window_get_framebuffer_size(
-    FrWindow *window,
-    SysInt *width, 
+    FrRender *render,
+    SysInt *width,
     SysInt * height) {
-  FrGlfwWindow *self = FR_GLFW_WINDOW(window);
-  sys_return_if_fail(window != NULL);
+  FrGlfwWindow *self = FR_GLFW_WINDOW(render);
+  sys_return_if_fail(render != NULL);
 
   glfwGetFramebufferSize(self->gwindow, width, height);
 }
@@ -307,6 +307,8 @@ SysPointer fr_window_get_native_display(FrDisplay *display) {
 }
 
 void fr_window_display_create (FrDisplay *display) {
+  sys_return_if_fail(display != NULL);
+
 #if SYS_OS_WIN32
   display->ctx = glfwGetX11Display();
 #elif SYS_OS_UNIX

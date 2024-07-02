@@ -9,7 +9,7 @@ set(EXTERNAL_LIBS
   "glib"
   "glad"
   "glfw3"
-  "sdl2"
+  "sdl3"
   "pangofc"
   "tinyexpr"
   "ffmpeg"

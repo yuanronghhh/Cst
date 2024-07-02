@@ -102,6 +102,10 @@ typedef  struct  _FrGlfwWindowClass      FrGlfwWindowClass;
 typedef  struct  _FrSdlWindow           FrSdlWindow;
 typedef  struct  _FrSdlWindowClass      FrSdlWindowClass;
 
+typedef struct _FrRenderContext FrRenderContext;
+typedef struct _FrRender FrRender;
+typedef struct _FrRenderClass FrRenderClass;
+
 typedef struct _FrIWindow FrIWindow;
 typedef struct _FrIWindowInterface FrIWindowInterface;
 

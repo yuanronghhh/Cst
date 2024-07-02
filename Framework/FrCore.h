@@ -28,6 +28,7 @@ SYS_BEGIN_DECLS
 
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
+#include <Framework/Device/FrRender.h>
 #include <Framework/Device/FrSdlWindow.h>
 #include <Framework/Device/FrGlfwWindow.h>
 #include <Framework/Device/FrIWindow.h>
@@ -38,13 +39,6 @@ SYS_BEGIN_DECLS
 #include <Framework/FrTypes.h>
 #include <Framework/FrCommon.h>
 #include <Framework/Event/FrEventCore.h>
-
-#include <Framework/ThirdParty/FrSDL2.h>
-#include <Framework/ThirdParty/FrGlib.h>
-#include <Framework/ThirdParty/FrLibav.h>
-#include <Framework/ThirdParty/FrGlfw.h>
-#include <Framework/ThirdParty/FrCairo.h>
-#include <Framework/ThirdParty/FrFont.h>
 
 void fr_core_setup(void);
 void fr_core_teardown(void);

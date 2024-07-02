@@ -53,9 +53,9 @@ void fr_i_window_set_error_callback (FrWindowErrFunc callback) {
   self.set_error_callback(callback);
 }
 
-void fr_i_window_get_framebuffer_size (FrWindow *window, SysInt *width, SysInt *height) {
+void fr_i_window_get_framebuffer_size (FrRender *render, SysInt *width, SysInt *height) {
 
-  self.get_framebuffer_size(window, width, height);
+  self.get_framebuffer_size(render, width, height);
 }
 
 void fr_i_window_window_get_size (FrWindow *window, SysInt *width, SysInt *height) {

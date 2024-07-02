@@ -20,7 +20,7 @@ struct _FrIWindowInterface {
       const SysChar *title,
       FrWindow *share);
   void (*set_error_callback) (FrWindowErrFunc callback);
-  void (*get_framebuffer_size) (FrWindow *window, SysInt *width, SysInt *height);
+  void (*get_framebuffer_size) (FrRender *render, SysInt *width, SysInt *height);
   void (*window_get_size) (FrWindow *window, SysInt *width, SysInt *height);
   void (*window_set_size) (FrWindow *window, SysInt width, SysInt height);
   void (*window_set_title) (FrWindow *window, const SysChar *title);
@@ -55,7 +55,7 @@ void fr_i_window_create (
 void fr_i_window_display_create (FrDisplay *display);
 void fr_i_window_destroy_window (FrWindow *window);
 void fr_i_window_set_error_callback (FrWindowErrFunc callback);
-void fr_i_window_get_framebuffer_size (FrWindow *window, SysInt *width, SysInt *height);
+void fr_i_window_get_framebuffer_size (FrRender *render, SysInt *width, SysInt *height);
 void fr_i_window_window_get_size (FrWindow *window, SysInt *width, SysInt *height);
 void fr_i_window_window_set_size (FrWindow *window, SysInt width, SysInt height);
 void fr_i_window_window_set_title (FrWindow *window, const SysChar *title);

@@ -86,6 +86,7 @@ SYS_BEGIN_DECLS
 #define ${TYPE_NAME}_CLASS(o) ((${TypeName}Class *)sys_class_cast_check(o, ${FN_TYPE_NAME}))
 #define ${TYPE_NAME}_GET_CLASS(o) sys_instance_get_class(o, ${TypeName}Class)
 
+typedef struct _${TypeName}Context ${TypeName}Context;
 typedef struct _${TypeName} ${TypeName};
 typedef struct _${TypeName}Class ${TypeName}Class;
 
@@ -93,6 +94,9 @@ struct _${TypeName}Class {
   ${ParentTypeName}Class parent;
 };
 ${struct_str}
+struct _${TypeName}Context {
+};
+
 SYS_API SysType ${type_name}_get_type(void);
 SYS_API ${SelfTypeName} *${type_name}_new(void);
 

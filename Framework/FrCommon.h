@@ -10,7 +10,7 @@ SYS_BEGIN_DECLS
 #include <Framework/ThirdParty/FrLibav.h>
 #include <Framework/ThirdParty/FrCairo.h>
 #include <Framework/ThirdParty/FrGlfw.h>
-#include <Framework/ThirdParty/FrSDL2.h>
+#include <Framework/ThirdParty/FrSDL3.h>
 #include <Framework/ThirdParty/FrFont.h>
 #include <Framework/Graph/FrGraph.h>
 #include <Framework/Event/Base/FrEventMapping.h>

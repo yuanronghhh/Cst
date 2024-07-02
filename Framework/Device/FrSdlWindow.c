@@ -268,9 +268,13 @@ static void sdl_handle_event(SDL_Event *e) {
 }
 
 /* window setup */
-static void fr_wait_events_timeout_i(SysDouble sec) {
+static void fr_delay_i(SysUInt64 msec) {
+  SDL_Delay(msec);
+}
+
+static void fr_wait_events_timeout_i(SysDouble msec) {
   SDL_Event e;
-  SDL_WaitEventTimeout(&e, sec);
+  SDL_WaitEventTimeout(&e, msec);
 }
 
 static void fr_wait_events_i(void) {
@@ -386,6 +390,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->wait_events = fr_wait_events_i;
   iface->post_empty_event = fr_post_empty_event_i;
   iface->poll_events = fr_poll_events_i;
+  iface->delay = fr_delay_i;
   iface->get_native_window = fr_window_get_native_window;
 }
 

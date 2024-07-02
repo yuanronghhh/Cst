@@ -31,9 +31,13 @@ done:
 void fr_video_frame_init_frame(FrVideoFrame* self) {
   sys_return_if_fail(self);
 
-  self->width = self->parent.ctx->width;
-  self->height = self->parent.ctx->height;
-  self->format = self->parent.ctx->format;
+  AVFrame *frame = self->parent.ctx;
+  self->width = frame->width;
+  self->height = frame->height;
+  self->format = frame->format;
+
+  SysUInt64 pts = frame->best_effort_timestamp;
+  self->remain_sec = pts;
 }
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {

@@ -118,6 +118,11 @@ void fr_i_window_poll_events (void) {
   self.poll_events();
 }
 
+void fr_i_window_delay (SysUInt64 ms) {
+
+  self.delay(ms);
+}
+
 SysPointer fr_i_window_get_native_window (FrWindow* window) {
 
   return self.get_native_window(window);

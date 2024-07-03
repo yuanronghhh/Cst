@@ -312,7 +312,7 @@ void fr_window_display_create (FrDisplay *display) {
 #if SYS_OS_WIN32
   display->native_ctx = NULL;
 #elif SYS_OS_UNIX
-  display->ctx = (SysPointer)XOpenDisplay(NULL);
+  display->native_ctx = (SysPointer)XOpenDisplay(NULL);
 #endif
 }
 

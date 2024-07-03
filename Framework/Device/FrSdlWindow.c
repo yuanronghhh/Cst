@@ -323,12 +323,15 @@ static void fr_sdl_window_create(
 
 #if SYS_OS_WIN32
   HWND hwnd = (HWND)SDL_GetProperty(
-    SDL_GetWindowProperties(gwindow), 
+    SDL_GetWindowProperties(gwindow),
     SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
-  
+
   self->native_ctx = hwnd;
 #elif SYS_OS_UNIX
-  self->ctx = UINT_TO_POINTER(info.info.x11.window);
+
+  self->native_ctx = SDL_GetProperty(
+    SDL_GetWindowProperties(gwindow), 
+    SDL_PROP_WINDOW_X11_DISPLAY_POINTER, NULL);
 #endif
 }
 

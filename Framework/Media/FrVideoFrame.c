@@ -35,9 +35,6 @@ void fr_video_frame_init_frame(FrVideoFrame* self) {
   self->width = frame->width;
   self->height = frame->height;
   self->format = frame->format;
-
-  SysUInt64 pts = frame->best_effort_timestamp;
-  self->remain_sec = pts;
 }
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {

@@ -21,7 +21,6 @@ struct _FrWindow {
   FrDevice parent;
 
   /* <private> */
-  SysPointer ctx;
   SysPointer user_data;
   FrDisplay* display;
 

@@ -28,18 +28,27 @@ static SysInt fr_video_decoder_decode_frame_i(
 
   SysInt err;
   FrVideoFrame* vframe = NULL;
-  FrVideoDecoder* self;
+  FrVideoDecoder* self = FR_VIDEO_DECODER(o);
 
   err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, (FrMediaFrame **)&vframe);
   if(err < 0) { return err; }
-
-  self = FR_VIDEO_DECODER(o);
   fr_video_frame_init_frame(vframe);
 
   if(!fr_video_frame_scale(vframe, &self->scale)) {
     return -1;
   }
   *mframe = FR_MEDIA_FRAME(vframe);
+
+  if (self->start_time == 0) {
+
+    self->start_time = sys_get_monotonic_time() 
+      - vframe->parent.pts;
+  }
+
+  SysUInt64 time = sys_get_monotonic_time();
+  SysUInt64 frame_time = self->start_time + vframe->parent.pts;
+  vframe->delay = time > frame_time ? 0 : (frame_time - time);
+  sys_debug_N("%ld", vframe->delay);
 
   return err;
 }

@@ -88,7 +88,7 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   vframe = FR_VIDEO_FRAME(frame);
 
   iface->render_video(render, vframe, region);
-  fr_media_player_delay(self, vframe->remain_sec);
+  fr_media_player_delay(self, vframe->delay);
 
   sys_object_unref(frame);
 

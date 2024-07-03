@@ -91,7 +91,7 @@ SysInt fr_media_decoder_receive_frame(
     return err;
   }
 
-  frame->ts = frame->ctx->pts;
+  frame->pts = frame->ctx->pts;
   *nframe = frame;
 
   return err;

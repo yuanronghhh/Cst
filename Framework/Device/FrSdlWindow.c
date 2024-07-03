@@ -3,11 +3,6 @@
 #include <Framework/Device/FrRender.h>
 #include <Framework/Event/FrEventCore.h>
 
-#define fr_sdl_get_window(gwindow) ((FrWindow *)SDL_GetWindowData(gwindow, "sdl_user_data"))
-#define fr_sdl_set_window(gwindow, window) SDL_SetWindowData(gwindow, "sdl_user_data", window)
-
-static void fr_sdl_window_event_register(FrSdlWindow *self);
-static void fr_sdl_window_event_unregister(FrSdlWindow *self);
 static void i_window_imp(FrIWindowInterface *iface);
 static FrWindowErrFunc err_callback = NULL;
 
@@ -124,55 +119,55 @@ SDL_Window * fr_sdl_window_get_gwindow(FrWindow *window) {
 }
 
 /* event callbacks */
-static void fr_sdl_window_key_callback(SDL_Window* gwindow,
+static void fr_sdl_window_key_callback(FrSdlWindow* gwindow,
     SysInt key,
     SysInt scancode,
     SysInt action,
     SysInt mods) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_key_new_I(window, key, scancode, action, mods);
 
   fr_events_push_head(e);
 }
 
-static void fr_sdl_window_mouse_button_callback(SDL_Window* gwindow,
+static void fr_sdl_window_mouse_button_callback(FrSdlWindow* gwindow,
     SysInt button, 
     SysInt action, 
     SysInt mods) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_mousekey_new_I(window, button, action, mods);
 
   fr_events_push_head(e);
 }
 
-static void fr_sdl_window_cursor_pos_callback(SDL_Window* gwindow,
+static void fr_sdl_window_cursor_pos_callback(FrSdlWindow* gwindow,
     SysDouble xpos, 
     SysDouble ypos) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_cursor_move_new_I(window, xpos, ypos);
 
   fr_events_push_head(e);
 }
 
-static void fr_sdl_window_close_callback(SDL_Window* gwindow) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+static void fr_sdl_window_close_callback(FrSdlWindow* gwindow) {
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_any_new_I(window, FR_EVENT_T_WINDOW_CLOSE);
 
   fr_events_push_head(e);
 }
 
-static void fr_sdl_window_scroll_callback(SDL_Window* gwindow,
+static void fr_sdl_window_scroll_callback(FrSdlWindow* gwindow,
     SysDouble xoffset, 
     SysDouble yoffset) {
 
   sys_debug_N("%s", "window_scroll");
 }
 
-static void fr_sdl_window_cursor_enter_callback(SDL_Window* gwindow,
+static void fr_sdl_window_cursor_enter_callback(FrSdlWindow* gwindow,
     SysInt entered) {
   // sys_debug_N("%s", "cursor_enter");
 }
@@ -180,86 +175,42 @@ static void fr_sdl_window_cursor_enter_callback(SDL_Window* gwindow,
 static void fr_sdl_window_maximize_callback(SDL_Window* window, int maximized) {
 }
 
-static void fr_sdl_window_framebuffer_size_callback(SDL_Window* gwindow,
+static void fr_sdl_window_framebuffer_size_callback(FrSdlWindow* gwindow,
     SysInt width, 
     SysInt height) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_any_new_I(window, FR_EVENT_T_FRAMEBUFFER_RESIZE);
 
   fr_events_push_head(e);
 }
 
-static void fr_sdl_window_focus_callback(SDL_Window* gwindow, SysInt focused) {
+static void fr_sdl_window_focus_callback(FrSdlWindow* gwindow, SysInt focused) {
   sys_debug_N("window_focus :%d", focused);
 }
 
-static void fr_sdl_window_size_callback(SDL_Window* gwindow,
+static void fr_sdl_window_size_callback(FrSdlWindow* gwindow,
     SysInt width, 
     SysInt height) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_any_new_I(window, FR_EVENT_T_WINDOW_RESIZE);
 
   fr_events_push_head(e);
 }
 
-static void fr_sdl_window_pos_callback(SDL_Window* gwindow,
+static void fr_sdl_window_pos_callback(FrSdlWindow* gwindow,
     SysInt xpos, 
     SysInt ypos) {
   // sys_debug_N("%s", "window_pos");
 }
 
-static void fr_sdl_window_refresh_callback(SDL_Window* gwindow) {
-  FrWindow *window = fr_sdl_get_window(gwindow);
+static void fr_sdl_window_refresh_callback(FrSdlWindow* gwindow) {
+  FrWindow *window = FR_WINDOW(gwindow);
 
   FrEvent *e = fr_event_refresh_new_I(window);
 
   fr_events_dispatch(e);
-}
-
-static void fr_sdl_window_event_unregister(FrSdlWindow *self) {
-  sys_return_if_fail(self != NULL);
-
-#if 0
-  SDL_Window *gwindow = self->gwindow;
-
-  SDL_SetErrorCallback(NULL);
-  SDL_SetWindowFocusCallback(gwindow, NULL);
-  SDL_SetWindowPosCallback(gwindow, NULL);
-  SDL_SetWindowRefreshCallback(gwindow, NULL);
-  SDL_SetFramebufferSizeCallback(gwindow, NULL);
-  SDL_SetWindowSizeCallback(gwindow, NULL);
-  SDL_SetKeyCallback(gwindow, NULL);
-  SDL_SetMouseButtonCallback(gwindow, NULL);
-  SDL_SetCursorPosCallback(gwindow, NULL);
-  SDL_SetWindowCloseCallback(gwindow, NULL);
-  SDL_SetScrollCallback(gwindow, NULL);
-  SDL_SetCursorEnterCallback(gwindow, NULL);
-  SDL_SetWindowMaximizeCallback(gwindow, NULL);
-#endif
-}
-
-static void fr_sdl_window_event_register(FrSdlWindow *self) {
-  sys_return_if_fail(self != NULL);
-
-#if 0
-  SDL_Window *gwindow = self->gwindow;
-
-  SDL_SetErrorCallback(fr_sdl_error_callback);
-  SDL_SetWindowFocusCallback(gwindow, fr_sdl_window_focus_callback);
-  SDL_SetWindowPosCallback(gwindow, fr_sdl_window_pos_callback);
-  SDL_SetWindowRefreshCallback(gwindow, fr_sdl_window_refresh_callback);
-  SDL_SetFramebufferSizeCallback(gwindow, fr_sdl_window_framebuffer_size_callback);
-  SDL_SetWindowSizeCallback(gwindow, fr_sdl_window_size_callback);
-  SDL_SetKeyCallback(gwindow, fr_sdl_window_key_callback);
-  SDL_SetMouseButtonCallback(gwindow, fr_sdl_window_mouse_button_callback);
-  SDL_SetCursorPosCallback(gwindow, fr_sdl_window_cursor_pos_callback);
-  SDL_SetWindowCloseCallback(gwindow, fr_sdl_window_close_callback);
-  SDL_SetScrollCallback(gwindow, fr_sdl_window_scroll_callback);
-  SDL_SetCursorEnterCallback(gwindow, fr_sdl_window_cursor_enter_callback);
-  SDL_SetWindowMaximizeCallback(gwindow, fr_sdl_window_maximize_callback);
-#endif
 }
 
 static void sdl_handle_event(SDL_Event *e) {
@@ -272,7 +223,11 @@ static void fr_delay_i(SysUInt64 msec) {
 
 static void fr_wait_events_timeout_i(SysDouble msec) {
   SDL_Event e;
-  SDL_WaitEventTimeout(&e, msec);
+
+  if (SDL_WaitEventTimeout(&e, msec)) {
+  }
+
+  sdl_handle_event(&e);
 }
 
 static void fr_wait_events_i(void) {
@@ -304,21 +259,21 @@ static void fr_swap_buffers_i(FrWindow *o) {
 
 void fr_window_display_create (FrDisplay *display) {
 #if SYS_OS_WIN32
-  display->ctx = NULL;
+  display->native_ctx = UINT_TO_POINTER(SDL_GetPrimaryDisplay());
 #elif SYS_OS_UNIX
-  display->ctx = (SysPointer)XOpenDisplay(NULL);
+  display->native_ctx = (SysPointer)XOpenDisplay(NULL);
 #endif
 }
 
 static SysPointer fr_window_get_native_display (FrDisplay *display) {
 
-  return display->ctx;
+  return display->native_ctx;
 }
 
 static SysPointer fr_window_get_native_window (FrWindow* window) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
 
-  return self->ctx;
+  return self->native_ctx;
 }
 
 void fr_sdl_window_setup(void) {
@@ -330,9 +285,6 @@ void fr_sdl_window_setup(void) {
     sys_error_N("SDL failed to init: %s", SDL_GetError());
   }
   SYS_LEAK_IGNORE_END;
-
-  SDL_EventState(SDL_SYSWMEVENT, SDL_IGNORE);
-  SDL_EventState(SDL_USEREVENT, SDL_IGNORE);
 }
 
 void fr_sdl_window_teardown(void) {
@@ -369,16 +321,15 @@ static void fr_sdl_window_create(
   gwindow = fr_sdl_window_create_i(800, 600, title, gshare);
   self->gwindow = gwindow;
 
-  SDL_SysWMinfo info = {0};
-  SDL_GetWindowWMInfo(self->gwindow, &info);
-
 #if SYS_OS_WIN32
-  self->ctx = UINT_TO_POINTER(info.info.win.window);
+  HWND hwnd = (HWND)SDL_GetProperty(
+    SDL_GetWindowProperties(gwindow), 
+    SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
+  
+  self->native_ctx = hwnd;
 #elif SYS_OS_UNIX
   self->ctx = UINT_TO_POINTER(info.info.x11.window);
 #endif
-
-  fr_sdl_set_window(gwindow, self);
 }
 
 static void fr_window_destroy(FrWindow *o) {

@@ -71,7 +71,7 @@ static void fr_window_get_size_i(FrIDevice* o,
     sys_return_if_fail(o != NULL);
     FrWindow* self = FR_WINDOW(o);
 
-    fr_window_get_size(self->ctx, width, height);
+    fr_window_get_size(self, width, height);
 }
 
 static void i_device_imp(FrIDeviceInterface* iface) {

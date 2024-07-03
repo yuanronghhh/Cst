@@ -303,14 +303,14 @@ static SysPointer fr_window_get_native_window (FrWindow* window) {
 
 SysPointer fr_window_get_native_display(FrDisplay *display) {
 
-  return display->ctx;
+  return display->native_ctx;
 }
 
 void fr_window_display_create (FrDisplay *display) {
   sys_return_if_fail(display != NULL);
 
 #if SYS_OS_WIN32
-  display->ctx = glfwGetX11Display();
+  display->native_ctx = NULL;
 #elif SYS_OS_UNIX
   display->ctx = (SysPointer)XOpenDisplay(NULL);
 #endif
@@ -378,9 +378,9 @@ static void fr_glfw_window_create(
   self->gwindow = gwindow;
 
 #if SYS_OS_WIN32
-  self->ctx = glfwGetWin32Window();
+  self->native_ctx = (HWND)glfwGetWin32Window(gwindow);
 #elif SYS_OS_UNIX
-  self->ctx = UINT_TO_POINTER(glfwGetX11Window(gwindow));
+  self->native_ctx = UINT_TO_POINTER(glfwGetX11Window(gwindow));
 #endif
 
   fr_glfw_set_window(gwindow, self);

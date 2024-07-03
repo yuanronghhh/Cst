@@ -18,7 +18,7 @@ struct _FrSdlWindow {
   FrWindow parent;
   /* <private> */
   SDL_Window *gwindow;
-  SysPointer ctx;
+  SysPointer native_ctx;
 };
 
 SYS_API SysType fr_sdl_window_get_type(void);

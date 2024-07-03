@@ -24,7 +24,7 @@ void test_fr_window_basic(void) {
 void test_fr_sdl_basic(void) {
   SDL_Window *gwindow;
 
-  gwindow = SDL_CreateWindow("abc", 0, 0, 800, 600, 0);
+  gwindow = SDL_CreateWindow("abc", 800, 600, SDL_WINDOWPOS_CENTERED);
 
   SDL_DestroyWindow(gwindow);
 }

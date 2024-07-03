@@ -19,7 +19,7 @@ struct _FrMediaFrame {
 
   /* <private> */
   AVFrame *ctx;
-  SysInt64 ts;
+  SysInt64 pts;
   SysPointer user_data;
 };
 

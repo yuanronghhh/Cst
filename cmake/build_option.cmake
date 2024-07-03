@@ -21,6 +21,8 @@ if(WIN32)
   if(USE_MONO)
     set(CMAKE_Csharp_COMPILER "C:/Program Files/Mono/bin/mcs.bat")
   endif()
+
+  set(CMAKE_C_FLAGS "-g")
 else()
   set(OS_ARCHITECH "Linux")
   set(CLANG_HOME "/usr")

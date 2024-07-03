@@ -21,6 +21,7 @@ struct _FrVideoDecoder {
 
   /* <private> */
   FrImageScale scale;
+  SysUInt64 start_time;
 };
 
 SYS_API SysType fr_video_decoder_get_type(void);

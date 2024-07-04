@@ -209,10 +209,12 @@ SysInt64 fr_media_frame_get_pts(AVFrame *frame,
   sys_return_val_if_fail(avctx != NULL, AV_NOPTS_VALUE);
 
   switch(avctx->codec_type) {
-    case AVMEDIA_TYPE_VIDEO:
-      return frame->best_effort_timestamp;
+    case AVMEDIA_TYPE_VIDEO: {
+      return av_rescale_q (frame->best_effort_timestamp,
+          avctx->time_base,
+          (AVRational) { 1, 1e6 });
+    }
     case AVMEDIA_TYPE_AUDIO: {
-
       AVRational tb = (AVRational){1, frame->sample_rate};
       return av_rescale_q(frame->pts, avctx->pkt_timebase, tb);
     }
@@ -232,10 +234,7 @@ SysInt fr_media_avcodec_try_receive_frame (
 
   err = avcodec_receive_frame(codec, frame);
   if(err >= 0) {
-    frame->pts = auto_pts == -1
-      ? fr_media_frame_get_pts(frame, codec)
-      : frame->pkt_dts;
-
+    frame->pts = fr_media_frame_get_pts(frame, codec);
     return err;
   }
 

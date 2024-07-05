@@ -90,6 +90,8 @@ SysInt fr_media_decoder_receive_frame(
 
     return err;
   }
+  fr_media_frame_init_frame(frame);
+  fr_media_stream_init_frame(self->stream, frame);
 
   frame->pts = frame->ctx->pts;
   *nframe = frame;
@@ -108,6 +110,7 @@ static void media_decoder_create_context(FrMediaDecoder *self,
     FrMediaStream *stream) {
   AVStream *as = fr_media_stream_get_ctx(stream);
 
+  self->stream = sys_object_ref(stream);
   self->codec = fr_media_find_decoder(as);
   self->ctx = fr_media_create_avcodec_context(self->codec, as);
 }
@@ -225,9 +228,11 @@ static void fr_media_decoder_dispose(SysObject* o) {
   FrDecoder *decoder = FR_DECODER(o);
 
   if (avcodec_is_open(self->ctx)) {
+
     fr_media_decoder_close_i(decoder);
   }
   avcodec_free_context(&self->ctx);
+  sys_object_unref(self->stream);
 
   SYS_OBJECT_CLASS(fr_media_decoder_parent_class)->dispose(o);
 }

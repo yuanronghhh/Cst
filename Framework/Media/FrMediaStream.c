@@ -1,5 +1,6 @@
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrPacket.h>
+#include <Framework/Media/FrMediaFrame.h>
 
 SYS_DEFINE_TYPE(FrMediaStream, fr_media_stream, FR_TYPE_STREAM);
 
@@ -10,6 +11,30 @@ SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt) {
   *rt = self->ctx->r_frame_rate;
   return true;
 }
+
+SysInt64 fr_media_stream_init_frame(
+    FrMediaStream *self,
+    FrMediaFrame *frame) {
+  sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
+  sys_return_val_if_fail(self != NULL, AV_NOPTS_VALUE);
+
+  switch(self->media_type) {
+    case AVMEDIA_TYPE_VIDEO: {
+      return av_rescale_q (frame->ctx->best_effort_timestamp,
+          self->ctx->time_base,
+          AV_TIME_BASE_Q);
+    }
+    case AVMEDIA_TYPE_AUDIO: {
+      AVRational tb = (AVRational){1, frame->ctx->sample_rate};
+      return av_rescale_q (frame->pts, self->ctx->time_base, tb);
+    }
+    default:
+      break;
+  }
+
+  return AV_NOPTS_VALUE;
+}
+
 
 SysBool fr_media_stream_is_media(FrMediaStream *self, FR_MEDIA_ENUM media_type) {
   return self->media_type == media_type;

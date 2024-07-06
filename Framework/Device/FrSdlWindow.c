@@ -329,10 +329,15 @@ static void fr_sdl_window_create(
   self->native_ctx = hwnd;
 #elif SYS_OS_UNIX
 
-  self->native_ctx = SDL_GetProperty(
-    SDL_GetWindowProperties(gwindow), 
-    SDL_PROP_WINDOW_X11_DISPLAY_POINTER, NULL);
+  self->native_ctx = UINT_TO_POINTER(SDL_GetNumberProperty(
+      SDL_GetWindowProperties(gwindow),
+      SDL_PROP_WINDOW_X11_WINDOW_NUMBER, 0));
 #endif
+
+  if(self->native_ctx == NULL) {
+
+    sys_error_N("failed to get native window handle: %s", SDL_GetError());
+  }
 }
 
 static void fr_window_destroy(FrWindow *o) {

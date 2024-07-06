@@ -45,9 +45,9 @@ static SysInt fr_video_decoder_decode_frame_i(
       - vframe->parent.pts;
   }
 
-  SysUInt64 time = sys_get_monotonic_time();
   SysUInt64 frame_time = self->start_time + vframe->parent.pts;
-  vframe->delay = time > frame_time ? 0 : (frame_time - time);
+  SysUInt64 time = sys_get_monotonic_time();
+  vframe->delay = time > frame_time ? 0 : (frame_time - time) / 1000;
   sys_debug_N("%ld", vframe->delay);
 
   return err;

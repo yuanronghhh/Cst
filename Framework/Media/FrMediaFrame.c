@@ -23,6 +23,9 @@ AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self) {
   return self->ctx;
 }
 
+void fr_media_frame_init_frame(FrMediaFrame *self) {
+}
+
 SysObject* fr_media_frame_dclone_i(SysObject* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysObject* n = SYS_OBJECT_CLASS(fr_media_frame_parent_class)->dclone(o);

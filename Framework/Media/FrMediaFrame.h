@@ -19,7 +19,6 @@ struct _FrMediaFrame {
 
   /* <private> */
   AVFrame *ctx;
-  SysInt64 pts;
   SysPointer user_data;
 };
 
@@ -30,6 +29,9 @@ void fr_media_frame_init_frame(FrMediaFrame *self);
 #define fr_media_frame_create(o) sys_object_create((o), FR_TYPE_MEDIA_FRAME)
 SYS_API void fr_media_frame_set_ctx(FrMediaFrame *self, AVFrame * ctx);
 SYS_API AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self);
+
+void fr_media_frame_set_pts(FrMediaFrame *self, SysInt64 pts);
+SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
 
 SYS_END_DECLS
 

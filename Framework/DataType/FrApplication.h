@@ -22,7 +22,7 @@ struct _FrApplication {
   SysPointer app_data;
   struct {
     SysBool running;
-    SysDouble wait;
+    SysInt wait;
   } media;
 };
 

@@ -217,11 +217,11 @@ static void sdl_handle_event(SDL_Event *e) {
 }
 
 /* window setup */
-static void fr_delay_i(SysUInt64 msec) {
-  SDL_Delay(msec);
+static void fr_delay_i(SysUInt msec) {
+  SDL_Delay((SysUInt)msec);
 }
 
-static void fr_wait_events_timeout_i(SysDouble msec) {
+static void fr_wait_events_timeout_i(SysInt msec) {
   SDL_Event e;
 
   if (SDL_WaitEventTimeout(&e, msec)) {

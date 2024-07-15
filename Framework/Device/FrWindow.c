@@ -114,7 +114,7 @@ static void fr_window_dispose(SysObject* o) {
   FrWindow *self = FR_WINDOW(o);
 
   sys_clear_pointer(&self->display, _sys_object_unref);
-  fr_i_window_destroy_window(self);
+  fr_i_window_window_destroy(self);
 
   SYS_OBJECT_CLASS(fr_window_parent_class)->dispose(o);
 }

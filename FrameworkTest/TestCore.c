@@ -2,7 +2,7 @@
 #include <FrameworkTest/tests/TestVideo.h>
 #include <FrameworkTest/tests/TestJob.h>
 
-#define CHECK_TYPE FR_TYPE_APPLICATION
+#define CHECK_TYPE FR_TYPE_VIDEO_FRAME
 
 void setUp(void) {
 }

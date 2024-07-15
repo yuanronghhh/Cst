@@ -64,14 +64,21 @@ static SysPointer decode_frame(
   FrMediaFrame *mframe = NULL;
   FrMediaFrame *nframe = NULL;
 
+  if(sys_type_from_instance(mdec) != FR_TYPE_VIDEO_DECODER) {
+    goto done;
+  }
+
   err = fr_media_decoder_send_packet(mdec, mpkt);
   if(err < 0) { return NULL; }
 
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
   if(err < 0) { return NULL; }
+
   nframe = (FrMediaFrame *)sys_object_dclone(mframe);
 
   sys_async_queue_push(queue, nframe);
+
+done:
   pipe_pass_free(pass);
 
   return NULL;
@@ -211,16 +218,13 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
     return;
   }
 
-  if (sys_async_queue_length(&self->image_queue) > self->max_packet) {
+  if (sys_async_queue_length(&self->image_queue) > self->min_packet) {
     return;
   }
 
-  if (sys_async_queue_length(&self->image_queue) < self->min_packet) {
-    // sys_debug_N("%s", "wakeup");
-    for(SysInt i = 0 ; i < self->min_packet; i++) {
+  for(int i = 0; i < self->max_packet; i++) {
 
-      fr_decoder_run_async(self->packet_decoder, process_packet, self);
-    }
+    fr_decoder_run_async(self->packet_decoder, process_packet, self);
   }
 }
 
@@ -255,8 +259,9 @@ static void fr_media_pipeline_class_init(FrMediaPipelineClass* cls) {
 }
 
 void fr_media_pipeline_init(FrMediaPipeline* self) {
-  self->max_packet = 60;
+  self->max_packet = 4;
   self->min_packet = 2;
+
   sys_async_queue_init_full(&self->image_queue, (SysDestroyFunc)_sys_object_unref);
   sys_async_queue_init_full(&self->sample_queue, (SysDestroyFunc)_sys_object_unref);
 }

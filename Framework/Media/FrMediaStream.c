@@ -18,6 +18,8 @@ SysInt64 fr_media_stream_init_frame(
   sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
   sys_return_val_if_fail(self != NULL, AV_NOPTS_VALUE);
 
+  SysUInt64 pts = fr_media_frame_get_pts(frame);
+
   switch(self->media_type) {
     case AVMEDIA_TYPE_VIDEO: {
       return av_rescale_q (frame->ctx->best_effort_timestamp,
@@ -26,7 +28,7 @@ SysInt64 fr_media_stream_init_frame(
     }
     case AVMEDIA_TYPE_AUDIO: {
       AVRational tb = (AVRational){1, frame->ctx->sample_rate};
-      return av_rescale_q (frame->pts, self->ctx->time_base, tb);
+      return av_rescale_q (pts, self->ctx->time_base, tb);
     }
     default:
       break;

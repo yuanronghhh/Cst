@@ -40,7 +40,7 @@ void fr_i_window_create (
     const SysChar *title,
     FrWindow *share) {
 
-  return self.create(window, width, height, title, share);
+  self.create(window, width, height, title, share);
 }
 
 void fr_i_window_display_create (FrDisplay *display) {
@@ -88,7 +88,7 @@ void fr_i_window_swap_buffers (FrWindow *window) {
   self.swap_buffers(window);
 }
 
-void fr_i_window_destroy_window (FrWindow *window) {
+void fr_i_window_window_destroy (FrWindow *window) {
 
   self.window_destroy(window);
 }
@@ -103,7 +103,7 @@ SysInt fr_i_window_get_key (FrWindow *window, SysInt key) {
   return self.get_key(window, key);
 }
 
-void fr_i_window_wait_events_timeout (SysDouble sec) {
+void fr_i_window_wait_events_timeout (SysInt sec) {
 
   self.wait_events_timeout(sec);
 }
@@ -123,7 +123,7 @@ void fr_i_window_poll_events (void) {
   self.poll_events();
 }
 
-void fr_i_window_delay (SysUInt64 ms) {
+void fr_i_window_delay (SysUInt ms) {
 
   self.delay(ms);
 }

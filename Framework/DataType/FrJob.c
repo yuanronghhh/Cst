@@ -71,7 +71,7 @@ void fr_job_construct(FrJob *self, FrJobContext *info) {
   FrJobClass* cls = FR_JOB_GET_CLASS(self);
   sys_return_if_fail(cls->construct != NULL);
 
-  return cls->construct(self, info);
+  cls->construct(self, info);
 }
 
 /* object api */

@@ -87,7 +87,7 @@ static SysBool cairo_save_to_png(cairo_surface_t* surface, const SysChar *filena
 }
 
 static SysBool fr_surface_save_to_png(FrSurface* self, const SysChar *filename) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self != NULL, false);
 
   return cairo_save_to_png(self->ctx, filename);
 }

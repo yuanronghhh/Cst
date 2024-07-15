@@ -25,12 +25,12 @@ static GLFWwindow* fr_glfw_window_create_i(
   return gwindow;
 }
 
-FR_WINDOW_BACKEND_ENUM fr_glfw_window_backend() {
+static FR_WINDOW_BACKEND_ENUM fr_glfw_window_backend() {
 
   return FR_WINDOW_GLFW;
 }
 
-FrMonitor* fr_glfw_get_primary_monitor(void) {
+static FrMonitor* fr_glfw_get_primary_monitor(void) {
   return glfwGetPrimaryMonitor();
 }
 
@@ -96,25 +96,25 @@ static void fr_glfw_set_error_callback (FrWindowErrFunc callback) {
   glfwSetErrorCallback(callback);
 }
 
-SysInt fr_glfw_get_key(FrWindow *window, SysInt key) {
+static SysInt fr_glfw_get_key(FrWindow *window, SysInt key) {
   FrGlfwWindow *self = FR_GLFW_WINDOW(window);
   sys_return_val_if_fail(self != NULL, -1);
 
   return glfwGetKey(self->gwindow, key);
 }
 
-const SysChar* fr_glfw_get_key_name(SysInt key, SysInt scancode) {
+static const SysChar* fr_glfw_get_key_name(SysInt key, SysInt scancode) {
   return glfwGetKeyName(key, scancode);
 }
 
-void fr_glfw_window_set_gwindow(FrWindow *window, GLFWwindow * gwindow) {
+static void fr_glfw_window_set_gwindow(FrWindow *window, GLFWwindow * gwindow) {
   FrGlfwWindow *self = FR_GLFW_WINDOW(window);
   sys_return_if_fail(self != NULL);
 
   self->gwindow = gwindow;
 }
 
-GLFWwindow * fr_glfw_window_get_gwindow(FrWindow *window) {
+static GLFWwindow * fr_glfw_window_get_gwindow(FrWindow *window) {
   FrGlfwWindow *self = FR_GLFW_WINDOW(window);
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -258,7 +258,7 @@ static void fr_glfw_window_event_register(FrGlfwWindow *self) {
 }
 
 /* window */
-static void fr_wait_events_timeout_i(SysDouble sec) {
+static void fr_wait_events_timeout_i(SysInt sec) {
   glfwWaitEventsTimeout(sec / 1.0e3);
 }
 
@@ -286,9 +286,9 @@ static void fr_window_hint (SysInt p, SysInt v) {
   glfwWindowHint(p, v);
 }
 
-static void fr_delay_i(SysUInt64 msec) {
+static void fr_delay_i(SysUInt msec) {
 
-  sys_usleep((SysUInt64)msec * 1e3);
+  sys_usleep((SysULong)(msec * 1e3));
 }
 
 static SysPointer fr_window_get_native_window (FrWindow* window) {
@@ -301,12 +301,12 @@ static SysPointer fr_window_get_native_window (FrWindow* window) {
 #endif
 }
 
-SysPointer fr_window_get_native_display(FrDisplay *display) {
+static SysPointer fr_window_get_native_display(FrDisplay *display) {
 
   return display->native_ctx;
 }
 
-void fr_window_display_create (FrDisplay *display) {
+static void fr_window_display_create (FrDisplay *display) {
   sys_return_if_fail(display != NULL);
 
 #if SYS_OS_WIN32
@@ -436,5 +436,5 @@ static void fr_glfw_window_class_init(FrGlfwWindowClass* cls) {
   ocls->dispose = fr_glfw_window_dispose;
 }
 
-void fr_glfw_window_init(FrGlfwWindow* self) {
+static void fr_glfw_window_init(FrGlfwWindow* self) {
 }

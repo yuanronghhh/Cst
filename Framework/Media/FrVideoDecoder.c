@@ -30,7 +30,8 @@ static SysInt fr_video_decoder_decode_frame_i(
   FrVideoFrame* vframe = NULL;
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
 
-  err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o, (FrMediaFrame **)&vframe);
+  err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)
+    ->decode_frame(o, (FrMediaFrame **)&vframe);
   if(err < 0) { return err; }
   fr_video_frame_init_frame(vframe);
 
@@ -38,17 +39,7 @@ static SysInt fr_video_decoder_decode_frame_i(
     return -1;
   }
   *mframe = FR_MEDIA_FRAME(vframe);
-
-  if (self->start_time == 0) {
-
-    self->start_time = sys_get_monotonic_time() 
-      - vframe->parent.pts;
-  }
-
-  SysUInt64 frame_time = self->start_time + vframe->parent.pts;
-  SysUInt64 time = sys_get_monotonic_time();
-  vframe->delay = time > frame_time ? 0 : (frame_time - time) / 1000;
-  sys_debug_N("%ld", vframe->delay);
+  vframe->delay = (SysInt)(1.0 / 120 * 1e3);
 
   return err;
 }

@@ -1,7 +1,7 @@
 #ifndef __TEST_FR_CONFIG_H__
 #define __TEST_FR_CONFIG_H__
 
-#define TEST_VIDEO_FILE  "/media/greyhound/Storage/PRIVATE/Videos/134.mp4"
+#define TEST_VIDEO_FILE  "D:/GreyHound/PRIVATE/Video/spring.mp4"
 #define PROJECT_DIR  "${CMAKE_SOURCE_DIR}"
 
 #endif

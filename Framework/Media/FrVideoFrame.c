@@ -29,7 +29,7 @@ done:
 }
 
 void fr_video_frame_init_frame(FrVideoFrame* self) {
-  sys_return_if_fail(self);
+  sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
   self->width = frame->width;
@@ -71,6 +71,9 @@ SysObject* fr_video_frame_dclone_i(SysObject* o) {
 
   nself->width = oself->width;
   nself->height = oself->height;
+  nself->format = oself->format;
+  nself->window = oself->window ? sys_object_ref(oself->window) : NULL;
+  nself->delay = oself->delay;
 
   return n;
 }

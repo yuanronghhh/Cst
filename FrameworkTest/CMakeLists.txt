@@ -52,3 +52,4 @@ add_deps_options_N(FrameworkTest
 set_property(TARGET FrameworkTest PROPERTY FOLDER CstProject)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/FrTestConfig.h.in
   ${CMAKE_CURRENT_LIST_DIR}/FrTestConfig.h)
+set_target_properties(FrameworkTest PROPERTIES LINK_FLAGS "/PROFILE")

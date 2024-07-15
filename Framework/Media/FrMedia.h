@@ -21,15 +21,9 @@ AVCodecContext *fr_media_create_avcodec_context(const AVCodec *codec,
 
 AVPacket* fr_media_packet_new_from_avpacket(AVPacket* op);
 
-SysInt fr_media_avcodec_receive_frame (
-    AVCodecContext *codec,
-    AVFrame *frame,
-    SysInt64 pts);
-
 SysInt fr_media_avcodec_try_receive_frame (
     AVCodecContext *codec,
-    AVFrame *frame,
-    SysInt auto_pts);
+    AVFrame *frame);
 
 SysInt fr_media_avcodec_try_send_packet(
   AVCodecContext* codec,
@@ -38,9 +32,6 @@ SysInt fr_media_avcodec_try_send_packet(
 AVFormatContext* fr_media_create_context_by_filename(
   const SysChar* default_dec,
   const SysChar* filename);
-
-SysInt64 fr_media_frame_get_pts(AVFrame* frame,
-  AVCodecContext* avctx);
 
 AVStream* fr_media_parse_stream_by_type(
   AVFormatContext* ctx,

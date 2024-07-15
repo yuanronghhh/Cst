@@ -30,7 +30,7 @@ struct _FrIWindowInterface {
   void (*window_destroy) (FrWindow *window);
   const SysChar* (*get_key_name) (SysInt key, SysInt scancode);
   SysInt (*get_key) (FrWindow *window, SysInt key);
-  void (*wait_events_timeout) (SysDouble sec);
+  void (*wait_events_timeout) (SysInt sec);
   void (*wait_events) (void);
   void (*post_empty_event) (void);
   void (*poll_events) (void);
@@ -38,7 +38,7 @@ struct _FrIWindowInterface {
   void (*display_create) (FrDisplay *display);
   SysPointer (*get_native_window) (FrWindow* window);
   SysPointer (*get_native_display) (FrDisplay *display);
-  void (*delay) (SysUInt64 msec);
+  void (*delay) (SysUInt msec);
 };
 
 SysType fr_i_window_get_type(void);
@@ -53,7 +53,7 @@ void fr_i_window_create (
     FrWindow *share);
 
 void fr_i_window_display_create (FrDisplay *display);
-void fr_i_window_destroy_window (FrWindow *window);
+void fr_i_window_window_destroy (FrWindow *window);
 void fr_i_window_set_error_callback (FrWindowErrFunc callback);
 void fr_i_window_get_framebuffer_size (FrRender *render, SysInt *width, SysInt *height);
 void fr_i_window_window_get_size (FrWindow *window, SysInt *width, SysInt *height);
@@ -61,15 +61,14 @@ void fr_i_window_window_set_size (FrWindow *window, SysInt width, SysInt height)
 void fr_i_window_window_set_title (FrWindow *window, const SysChar *title);
 void fr_i_window_window_set_opacity (FrWindow *window, SysDouble opacity);
 void fr_i_window_window_set_should_close (FrWindow *window, SysBool bvalue);
-void fr_i_window_window_destroy (FrWindow *window);
 void fr_i_window_swap_buffers (FrWindow *window);
 const SysChar *fr_i_window_get_key_name (SysInt key, SysInt scancode);
 SysInt fr_i_window_get_key (FrWindow *window, SysInt key);
-void fr_i_window_wait_events_timeout (SysDouble sec);
+void fr_i_window_wait_events_timeout (SysInt sec);
 void fr_i_window_wait_events (void);
 void fr_i_window_post_empty_event (void);
 void fr_i_window_poll_events (void);
-void fr_i_window_delay (SysUInt64 ms);
+void fr_i_window_delay (SysUInt ms);
 SysPointer fr_i_window_get_native_window (FrWindow* window);
 SysPointer fr_i_window_get_native_display (FrDisplay *display);
 

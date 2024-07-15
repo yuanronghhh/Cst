@@ -63,7 +63,7 @@ void fr_task_construct(FrTask *self, FrTaskContext *info) {
   FrTaskClass* cls = FR_TASK_GET_CLASS(self);
   sys_return_if_fail(cls->construct != NULL);
 
-  return cls->construct(self, info);
+  cls->construct(self, info);
 }
 
 void fr_task_wait(FrTask *self) {

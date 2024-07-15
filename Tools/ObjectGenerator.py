@@ -143,7 +143,7 @@ static void ${type_name}_class_init(${TypeName}Class* cls) {
   ocls->dispose = ${type_name}_dispose;
 }
 
-void ${type_name}_init(${TypeName}* self) {
+static void ${type_name}_init(${TypeName}* self) {
 }
 """
 

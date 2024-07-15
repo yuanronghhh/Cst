@@ -230,8 +230,7 @@ SysInt64 fr_media_frame_get_pts(AVFrame *frame,
 
 SysInt fr_media_avcodec_try_receive_frame (
     AVCodecContext *codec,
-    AVFrame *frame,
-    SysInt auto_pts) {
+    AVFrame *frame) {
   SysInt err;
 
   err = avcodec_receive_frame(codec, frame);
@@ -265,18 +264,6 @@ SysInt fr_media_avcodec_try_send_packet(
 
     sys_warning_N("error %s", av_err2str(err));
   }
-
-  return err;
-}
-
-SysInt fr_media_avcodec_receive_frame (
-    AVCodecContext *codec,
-    AVFrame *frame,
-    SysInt64 pts) {
-
-  SysInt err;
-  err = avcodec_receive_frame(codec, frame);
-  frame->pts = pts;
 
   return err;
 }

@@ -8,7 +8,7 @@ static SysPointer task_exec(FrTask *task, SysPointer user_data) {
 
 static SysPointer task_exec2(FrTask *task, SysPointer user_data) {
   sys_debug_N("%p, %d", task, user_data);
-  sys_usleep(1e6);
+  sys_usleep((SysULong)1e6);
 
   return NULL;
 }

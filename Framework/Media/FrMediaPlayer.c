@@ -12,7 +12,7 @@
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, FR_TYPE_PLAYER);
 
-void fr_media_player_delay(FrMediaPlayer *self, SysDouble ms) {
+void fr_media_player_delay(FrMediaPlayer *self, SysInt ms) {
 
   fr_wait_events_timeout(ms);
 }
@@ -55,6 +55,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     if (state == FR_JOB_STATE_STOP) { goto done; }
 
     fr_media_player_render(self, self->render, region);
+    break;
   }
 
 done:
@@ -88,7 +89,8 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   vframe = FR_VIDEO_FRAME(frame);
 
   iface->render_video(render, vframe, region);
-  fr_media_player_delay(self, vframe->delay);
+  // sys_debug_N("delay %p, %ld", vframe, vframe->delay);
+  fr_wait_events_timeout(vframe->delay);
 
   sys_object_unref(frame);
 

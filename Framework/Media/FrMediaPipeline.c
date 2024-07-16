@@ -65,6 +65,7 @@ static SysPointer decode_frame(
   FrMediaFrame *nframe = NULL;
 
   if(sys_type_from_instance(mdec) != FR_TYPE_VIDEO_DECODER) {
+    sys_atomic_int_dec(&pass->pipe->pkt_count);
     goto done;
   }
 
@@ -176,7 +177,11 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return sys_async_queue_try_pop(&self->image_queue);
+  FrMediaFrame *image = sys_async_queue_try_pop(&self->image_queue);
+  if (image == NULL) { return NULL; }
+  sys_atomic_int_dec(&self->pkt_count);
+
+  return image;
 }
 
 void fr_media_pipeline_get_video_size(FrMediaPipeline *self, SysInt *width, SysInt *height) {
@@ -202,11 +207,12 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
 
   sys_async_queue_clear_full(&self->image_queue);
   sys_async_queue_clear_full(&self->sample_queue);
+  self->pkt_count = 0;
 
   return true;
 }
 
-void fr_media_pipeline_stop_player(FrMediaPipeline *self) {
+static void stop_player(FrMediaPipeline *self) {
 
   fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
 }
@@ -215,16 +221,18 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
   sys_return_if_fail(self != NULL);
 
   if(fr_decoder_get_eof(self->packet_decoder)) {
+    stop_player(self);
     return;
   }
 
-  if (sys_async_queue_length(&self->image_queue) > self->min_packet) {
+  if (self->pkt_count > self->min_packet) {
     return;
   }
 
   for(int i = 0; i < self->max_packet; i++) {
 
     fr_decoder_run_async(self->packet_decoder, process_packet, self);
+    sys_atomic_int_inc(&self->pkt_count);
   }
 }
 
@@ -259,8 +267,9 @@ static void fr_media_pipeline_class_init(FrMediaPipelineClass* cls) {
 }
 
 void fr_media_pipeline_init(FrMediaPipeline* self) {
-  self->max_packet = 4;
+  self->max_packet = 10;
   self->min_packet = 2;
+  self->pkt_count = 0;
 
   sys_async_queue_init_full(&self->image_queue, (SysDestroyFunc)_sys_object_unref);
   sys_async_queue_init_full(&self->sample_queue, (SysDestroyFunc)_sys_object_unref);

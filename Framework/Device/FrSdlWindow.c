@@ -294,11 +294,11 @@ void fr_sdl_window_teardown(void) {
 
 #if defined(VK_VERSION_1_0)
 void fr_sdl_window_create_vk_surface(FrWindow *window,
-    VkInstance instance, 
+    VkInstance instance,
     VkSurfaceKHR *surfacekhr) {
   if (SDL_CreateWindowSurface(instance,
-        self->gwindow, 
-        NULL, 
+        self->gwindow,
+        NULL,
         surfacekhr) != VK_SUCCESS) {
 
     sys_error_N("%s", SYS_("failed to create vulkan surface"));

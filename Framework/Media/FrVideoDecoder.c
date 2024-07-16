@@ -39,7 +39,7 @@ static SysInt fr_video_decoder_decode_frame_i(
     return -1;
   }
   *mframe = FR_MEDIA_FRAME(vframe);
-  vframe->delay = (SysInt)(1.0 / 120 * 1e3);
+  vframe->delay = (SysInt)(1.0 / 30 * 1e3);
 
   return err;
 }

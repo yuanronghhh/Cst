@@ -17,15 +17,13 @@ void fr_media_player_delay(FrMediaPlayer *self, SysInt ms) {
   fr_wait_events_timeout(ms);
 }
 
-static SysInt process(FrMediaPlayer* self) {
-  fr_media_pipeline_wakeup_source(&self->pipeline);
+static void process(FrMediaPlayer* self) {
 
-  return FR_JOB_STATE_RUNNING;
+  fr_media_pipeline_wakeup_source(&self->pipeline);
 }
 
 static SysInt media_player_do(FrMediaPlayer *self) {
   FrRegion* region;
-  FR_JOB_STATE_ENUM state;
   FrMediaStream* vs;
   FrRational rt = { .num = 2997, .den = 100 };
   FrBound bound = { .width = 800, .height = 600 };
@@ -51,14 +49,10 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   region = fr_region_create_rectangle(&bound);
 
   while(self->state == FR_JOB_STATE_RUNNING) {
-    state = process(self);
-    if (state == FR_JOB_STATE_STOP) { goto done; }
-
+    process(self);
     fr_media_player_render(self, self->render, region);
-    break;
   }
 
-done:
   fr_region_destroy(region);
 
   return 0;

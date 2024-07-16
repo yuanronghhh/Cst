@@ -29,6 +29,38 @@ const SysChar* fr_media_error_string(SysInt err) {
   return qmsg;
 }
 
+static SysInt error_check_msg(SysInt err, const SysChar *msg) {
+  if(err >= 0) {
+    return err;
+  }
+
+  if (err == FR_MEDIA_ERROR_AGAIN 
+      || err == FR_MEDIA_ERROR_EOF) {
+
+  } else {
+
+    sys_warning_N("%s: %s", av_err2str(err), msg);
+  }
+
+  return err;
+}
+
+static SysInt error_check(SysInt err) {
+  if(err >= 0) {
+    return err;
+  }
+
+  if (err == FR_MEDIA_ERROR_AGAIN 
+      || err == FR_MEDIA_ERROR_EOF) {
+
+  } else {
+
+    sys_warning_N("%d,%s", err, av_err2str(err));
+  }
+
+  return err;
+}
+
 FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   switch (err) {
     case 0:
@@ -234,19 +266,7 @@ SysInt fr_media_avcodec_try_receive_frame (
   SysInt err;
 
   err = avcodec_receive_frame(codec, frame);
-  if(err >= 0) {
-    return err;
-  }
-
-  if (err == FR_MEDIA_ERROR_AGAIN 
-      || err == FR_MEDIA_ERROR_EOF) {
-
-  } else {
-
-    sys_warning_N("%d,%s", err, av_err2str(err));
-  }
-
-  return err;
+  return error_check(err);
 }
 
 SysInt fr_media_avcodec_try_send_packet(
@@ -255,17 +275,7 @@ SysInt fr_media_avcodec_try_send_packet(
   SysInt err;
 
   err = avcodec_send_packet(codec, pkt);
-  if (err >= 0) {
-    return err;
-  }
-
-  if(err != FR_MEDIA_ERROR_AGAIN
-      && err != FR_MEDIA_ERROR_EOF) {
-
-    sys_warning_N("error %s", av_err2str(err));
-  }
-
-  return err;
+  return error_check(err);
 }
 
 AVFormatContext* fr_media_create_context_by_filename(
@@ -276,7 +286,11 @@ AVFormatContext* fr_media_create_context_by_filename(
   AVFormatContext* ctx = NULL;
 
   default_format = av_find_input_format(default_dec);
-  err = avformat_open_input(&ctx, filename, (AVInputFormat*)default_format, NULL);
+  err = avformat_open_input(
+      &ctx,
+      filename,
+      (AVInputFormat*)default_format,
+      NULL);
   if (err < 0) {
     sys_warning_N("avformat_open_input: %s, %s", av_err2str(err), filename);
     return NULL;

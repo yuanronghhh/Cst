@@ -3,15 +3,18 @@
 SYS_DEFINE_TYPE(CstFlexLine, cst_flex_line, SYS_TYPE_OBJECT);
 
 
-static CstFlexLine *cst_flex_line_dclone_i(const CstFlexLine* line) {
-  CstFlexLine* nline = cst_flex_line_new();
+static SysObject *cst_flex_line_dclone_i(SysObject* o) {
+  SysObject* n = SYS_OBJECT_CLASS(cst_flex_line_parent_class)->dclone(o);
 
-  for (SysUInt i = 0; i < line->items.len; i++) {
-    CstIFlexItem* item = (CstIFlexItem *)sys_object_dclone(line->items.pdata[i]);
-    cst_flex_line_add(nline, item);
+  CstFlexLine* nself = CST_FLEX_LINE(n);
+  CstFlexLine* oself = CST_FLEX_LINE(o);
+
+  for (SysUInt i = 0; i < oself->items.len; i++) {
+    CstIFlexItem* item = (CstIFlexItem *)sys_object_dclone(oself->items.pdata[i]);
+    cst_flex_line_add(nself, item);
   }
 
-  return nline;
+  return n;
 }
 
 void cst_flex_line_add(CstFlexLine* self, CstIFlexItem *item) {
@@ -45,7 +48,7 @@ static void cst_flex_line_class_init(CstFlexLineClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = cst_flex_line_dispose;
-  ocls->dclone = (SysCloneFunc)cst_flex_line_dclone_i;
+  ocls->dclone = cst_flex_line_dclone_i;
 }
 
 void cst_flex_line_init(CstFlexLine* self) {

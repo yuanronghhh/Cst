@@ -200,6 +200,7 @@ typedef struct _CstSurfaceClass CstSurfaceClass;
 
 typedef struct _CstRenderNode CstRenderNode;
 typedef struct _CstRenderNodeClass CstRenderNodeClass;
+
 typedef struct _CstBoxNode CstBoxNode;
 typedef struct _CstBoxNodeClass CstBoxNodeClass;
 

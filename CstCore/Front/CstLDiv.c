@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstLDiv.h>
+#include <CstCore/Front/CstLDiv.h>
 #include <CstCore/Driver/CstRender.h>
 
 SYS_DEFINE_TYPE(CstLDiv, cst_ldiv, CST_TYPE_NODE);

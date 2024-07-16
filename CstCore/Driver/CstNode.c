@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstNode.h>
-#include <CstCore/Front/Common/CstLBody.h>
-#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/CstLBody.h>
+#include <CstCore/Front/CstLBox.h>
 #include <CstCore/Driver/FlexLayout/CstFlexContext.h>
 #include <CstCore/Driver/FlexLayout/CstFlexAlgorithm.h>
 #include <CstCore/Driver/CstComNode.h>

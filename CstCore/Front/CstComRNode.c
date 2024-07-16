@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstComRNode.h>
+#include <CstCore/Front/CstComRNode.h>
 #include <CstCore/Driver/CstIComNode.h>
 
 

@@ -77,7 +77,7 @@ h_template = """\
 #ifndef __${TYPE_NAME}_H__
 #define __${TYPE_NAME}_H__
 
-#include <${common_path}>
+#include <${common_header}>
 
 SYS_BEGIN_DECLS
 
@@ -411,14 +411,14 @@ class TemplateInfo:
         return ("%s_TYPE_%s" % (self.p_sep_struct[0], "_".join(self.p_sep_struct[1:]))).upper()
 
 class TemplateGenerator:
-    def __init__(self, relpath, header_path, common_path):
+    def __init__(self, relpath, header_path, common_header):
         self.relpath = Path(relpath).as_posix()
         self.header_path = header_path
-        self.common_path = common_path
+        self.common_header = common_header
         self.dstDir = Path(relpath).absolute().as_posix()
 
     @staticmethod
-    def gen_with_tpl(info, tpl, header_path, common_path):
+    def gen_with_tpl(info, tpl, header_path, common_header):
         parentType = info.get_ParentTypeName()
         selfType = info.get_TypeName()
 
@@ -436,7 +436,7 @@ class TemplateGenerator:
                 .replace("${TypeName}", info.get_TypeName())\
                 .replace("${type_name}", info.get_type_name())\
                 .replace("${struct_str}", info.get_struct_str())\
-                .replace("${common_path}", common_path)\
+                .replace("${common_header}", common_header)\
                 .replace("${header_path}", header_path)
 
         return r
@@ -453,7 +453,7 @@ class TemplateGenerator:
         result = self.gen_with_tpl(info,
                                    h_template, 
                                    self.header_path, 
-                                   self.common_path)
+                                   self.common_header)
         fp = open(h_file, "w+")
         fp.write(result)
         fp.close()
@@ -461,7 +461,7 @@ class TemplateGenerator:
         result = self.gen_with_tpl(info,
                                    c_template, 
                                    self.header_path, 
-                                   self.common_path)
+                                   self.common_header)
         fp = open(c_file, "w+")
         fp.write(result)
         fp.close()
@@ -517,7 +517,7 @@ class TemplateGenerator:
 
 
     def gen_c_result(self, info):
-        result = self.gen_with_tpl(info, interface_c_template, self.header_path, self.common_path)
+        result = self.gen_with_tpl(info, interface_c_template, self.header_path, self.common_header)
 
         func_codes = ""
         for prop in info.props:
@@ -530,7 +530,7 @@ class TemplateGenerator:
         return result
 
     def gen_c_interface_result(self, info):
-        result = self.gen_with_tpl(info, interface_c_template, self.header_path, self.common_path)
+        result = self.gen_with_tpl(info, interface_c_template, self.header_path, self.common_header)
 
         func_codes = ""
         for prop in info.props:
@@ -543,7 +543,7 @@ class TemplateGenerator:
         return result
 
     def gen_h_interface_result(self, info):
-        result = self.gen_with_tpl(info, interface_h_template, self.header_path, self.common_path)
+        result = self.gen_with_tpl(info, interface_h_template, self.header_path, self.common_header)
         has_return = False
 
         func_codes = ""

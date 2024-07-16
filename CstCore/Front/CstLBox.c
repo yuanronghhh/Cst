@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/CstLBox.h>
 
 
 SYS_DEFINE_TYPE(CstLBox, cst_lbox, CST_TYPE_RENDER_NODE);

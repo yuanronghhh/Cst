@@ -18,6 +18,10 @@ typedef struct _CstComRNodeClass CstComRNodeClass;
 typedef struct _CstText CstText;
 typedef struct _CstTextClass CstTextClass;
 
+typedef struct _CstVideoContext CstVideoContext;
+typedef struct _CstVideo CstVideo;
+typedef struct _CstVideoClass CstVideoClass;
+
 typedef struct _CstLBox CstLBox;
 typedef struct _CstLBoxClass CstLBoxClass;
 

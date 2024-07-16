@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstComponentContext.h>
 
-#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/CstLBox.h>
 #include <CstCore/Driver/Css/CstCssGroup.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
 #include <CstCore/Driver/CstModule.h>

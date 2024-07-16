@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstLBody.h>
+#include <CstCore/Front/CstLBody.h>
 
 #include <CstCore/Driver/CstRender.h>
 #include <CstCore/Driver/CstLayout.h>

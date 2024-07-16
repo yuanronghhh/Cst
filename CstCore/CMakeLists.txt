@@ -12,6 +12,7 @@ set(EXTERNAL_LIBS
   "pangocairo"
   "cairo"
   "glib"
+  "sdl3"
   "glad"
   "glfw3"
   "ffmpeg"
@@ -22,18 +23,22 @@ set(INNER_LIBS
 )
 
 set(C_API_SRC
+  ./Front/CstLBox.c
+  ./Front/CstLBox.h
+  ./Front/CstLGrid.c
+  ./Front/CstLGrid.h
+  ./Front/CstLBody.c
+  ./Front/CstLBody.h
+  ./Front/CstText.c
+  ./Front/CstText.h
+  ./Front/CstComRNode.h
+  ./Front/CstComRNode.c
+  ./Front/CstVideo.c
+  ./Front/CstVideo.h
+
   ./Front/CstType.h
-  ./Front/Common/CstLBox.c
-  ./Front/Common/CstLBox.h
-  ./Front/Common/CstLGrid.c
-  ./Front/Common/CstLGrid.h
-  ./Front/Common/CstLBody.c
-  ./Front/Common/CstLBody.h
-  ./Front/Common/CstText.c
-  ./Front/Common/CstText.h
-  ./Front/Common/CstComRNode.h
-  ./Front/Common/CstComRNode.c
   ./Front/CstFrontCore.h
+  ./Front/CstFrontCommon.h
 )
 
 set(SRC
@@ -188,23 +193,6 @@ add_dependencies(CstCore
 set_property(TARGET CstCore PROPERTY FOLDER CstProject)
 configure_file(${CMAKE_CURRENT_LIST_DIR}/Config/CstConfig.h.in
   ${CMAKE_CURRENT_LIST_DIR}/CstConfig.h)
-
-# CstCMake
-set(CMakeFile
-  ../CMakeLists.txt
-  ../../cmake/init.cmake
-  ../../cmake/macros/logger.cmake
-  ../../cmake/macros/policy.cmake
-  ../../cmake/macros/project_common.cmake
-  ../../cmake/config/build_option.cmake
-  ../../cmake/config/platform_unix.cmake
-  ../../cmake/config/platform_win32.cmake
-  ../../release/icon/cst.rc
-  ../../CMakeLists.txt
-)
-
-add_library(CstCMake OBJECT ${CMakeFile})
-set_property(TARGET CstCMake PROPERTY FOLDER CstProject)
 
 # if(WIN32 AND ${CMAKE_BUILD_TYPE} STREQUAL "WIN32")
 #   set_target_properties(${EXECUTABLE_NAME} PROPERTIES COMPILE_FLAGS "/wd4819")

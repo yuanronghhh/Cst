@@ -1,6 +1,6 @@
 #include <CstCore/Driver/CstNodeBuilder.h>
 
-#include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/CstText.h>
 #include <CstCore/Driver/CstComNode.h>
 #include <CstCore/Driver/CstBoxNode.h>
 #include <CstCore/Driver/CstModule.h>

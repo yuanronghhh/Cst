@@ -13,6 +13,7 @@ set(EXTERNAL_LIBS
   "cairo"
   "glib"
   "glad"
+  "sdl3"
   "glfw3"
   "ffmpeg"
   "png"

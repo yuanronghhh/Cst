@@ -1,5 +1,5 @@
 #include <CstCore/Driver/CstRender.h>
-#include <CstCore/Front/Common/CstLBody.h>
+#include <CstCore/Front/CstLBody.h>
 #include <CstCore/Driver/CstAlgorithm.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstNode.h>

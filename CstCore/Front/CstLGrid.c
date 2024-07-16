@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstLGrid.h>
+#include <CstCore/Front/CstLGrid.h>
 
 SYS_DEFINE_TYPE(CstLGrid, cst_lgrid, CST_TYPE_RENDER_NODE);
 

@@ -1,4 +1,4 @@
-#include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/CstText.h>
 #include <CstCore/Driver/CstLayout.h>
 #include <CstCore/Driver/CstLayoutNode.h>
 #include <CstCore/Driver/CstRender.h>

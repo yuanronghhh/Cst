@@ -1,6 +1,6 @@
 #include <CstCore/Driver/Css/CstCssNode.h>
 
-#include <CstCore/Front/Common/CstText.h>
+#include <CstCore/Front/CstText.h>
 #include <CstCore/Driver/Css/CstCssValue.h>
 #include <CstCore/Driver/Css/CstCssClosure.h>
 #include <CstCore/Driver/CstRenderNode.h>

@@ -7,7 +7,7 @@
 #include <CstCore/Driver/CstRenderNode.h>
 #include <CstCore/Driver/Css/CstCss.h>
 #include <CstCore/Driver/Css/CstCssEnv.h>
-#include <CstCore/Front/Common/CstLBox.h>
+#include <CstCore/Front/CstLBox.h>
 
 typedef struct _CstModuleContext CstModuleContext;
 

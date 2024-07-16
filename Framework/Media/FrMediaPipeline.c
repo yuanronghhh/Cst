@@ -54,7 +54,6 @@ static void pipe_pass_free(PipePass *self) {
 static SysPointer decode_frame(
     FrTask* o,
     SysPointer user_data) {
-
   PipePass *pass = user_data;
 
   SysInt err;
@@ -63,24 +62,28 @@ static SysPointer decode_frame(
   SysAsyncQueue *queue = pass->queue;
   FrMediaFrame *mframe = NULL;
   FrMediaFrame *nframe = NULL;
+  SysType tp;
 
-  if(sys_type_from_instance(mdec) != FR_TYPE_VIDEO_DECODER) {
-    sys_atomic_int_dec(&pass->pipe->pkt_count);
-    goto done;
+  tp = sys_type_from_instance(mdec);
+
+  if(tp != FR_TYPE_VIDEO_DECODER) {
+    goto fail;
   }
 
   err = fr_media_decoder_send_packet(mdec, mpkt);
-  if(err < 0) { return NULL; }
+  if(err < 0) { goto fail; }
 
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
-  if(err < 0) { return NULL; }
+  if(err < 0) { goto fail; }
 
   nframe = (FrMediaFrame *)sys_object_dclone(mframe);
-
   sys_async_queue_push(queue, nframe);
 
-done:
   pipe_pass_free(pass);
+  return NULL;
+
+fail:
+  sys_atomic_int_dec(&pass->pipe->pkt_count);
 
   return NULL;
 }
@@ -213,6 +216,7 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
 }
 
 static void stop_player(FrMediaPipeline *self) {
+  sys_debug_N("%s", "stop player");
 
   fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
 }
@@ -228,10 +232,12 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
   if (self->pkt_count > self->min_packet) {
     return;
   }
+  sys_debug_N("wakeup %ld", self->pkt_count);
 
   for(int i = 0; i < self->max_packet; i++) {
 
     fr_decoder_run_async(self->packet_decoder, process_packet, self);
+
     sys_atomic_int_inc(&self->pkt_count);
   }
 }
@@ -267,7 +273,7 @@ static void fr_media_pipeline_class_init(FrMediaPipelineClass* cls) {
 }
 
 void fr_media_pipeline_init(FrMediaPipeline* self) {
-  self->max_packet = 10;
+  self->max_packet = 120;
   self->min_packet = 2;
   self->pkt_count = 0;
 

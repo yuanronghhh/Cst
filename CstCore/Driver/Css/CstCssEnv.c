@@ -49,7 +49,7 @@ void cst_css_env_setup(void) {
 
   sys_rec_mutex_init(&gcss_lock);
 
-  buildin_css_path = CST_PROJECT_DIR"/Cst/CstCore/BuildIn/Styles/Base.cst";
+  buildin_css_path = CST_PROJECT_DIR"/CstCore/BuildIn/Styles/Base.cst";
   gcss_env = cst_css_env_new_I(NULL);
 
   ps = ast_parser_new_for_gcss(buildin_css_path);

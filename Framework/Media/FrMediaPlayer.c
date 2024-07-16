@@ -9,13 +9,9 @@
 #include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Device/FrWindow.h>
+#include <Framework/Media/FrAudioFrame.h>
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, FR_TYPE_PLAYER);
-
-void fr_media_player_delay(FrMediaPlayer *self, SysInt ms) {
-
-  fr_wait_events_timeout(ms);
-}
 
 static void process(FrMediaPlayer* self) {
 
@@ -35,7 +31,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   // get interval
   vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
   fr_media_stream_get_rational(vs, &rt);
-  self->interval = 1.0 / rt.num / (double) rt.den * 1.0e3;
+  self->default_delay = 1.0 / rt.num / (double) rt.den * 1.0e3;
 
   /*
    * TODO:
@@ -50,7 +46,9 @@ static SysInt media_player_do(FrMediaPlayer *self) {
 
   while(self->state == FR_JOB_STATE_RUNNING) {
     process(self);
+
     fr_media_player_render(self, self->render, region);
+    fr_wait_events_timeout(self->interval);
   }
 
   fr_region_destroy(region);
@@ -74,17 +72,22 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
     FrIMediaRender *render,
     FrRegion *region) {
   sys_return_val_if_fail(self != NULL, -1);
+  sys_return_val_if_fail(render != NULL, -1);
+  sys_return_val_if_fail(region != NULL, -1);
+
   FrMediaFrame *frame = NULL;
   FrVideoFrame *vframe;
   FrIMediaRenderInterface *iface = FR_I_MEDIA_RENDER_GET_IFACE(render);
 
   frame = fr_media_pipeline_get_image_frame(&self->pipeline);
-  if (frame == NULL) { return FR_MEDIA_ERROR_EOF; }
-  vframe = FR_VIDEO_FRAME(frame);
+  if (frame == NULL) {
 
+    return FR_MEDIA_ERROR_EOF;
+  }
+
+  vframe = FR_VIDEO_FRAME(frame);
   iface->render_video(render, vframe, region);
-  // sys_debug_N("delay %p, %ld", vframe, vframe->delay);
-  fr_wait_events_timeout(vframe->delay);
+  self->interval = vframe->delay == 0 ? self->default_delay: vframe->delay;
 
   sys_object_unref(frame);
 

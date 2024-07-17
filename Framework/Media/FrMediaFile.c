@@ -138,6 +138,7 @@ const SysChar *fr_media_file_get_url(FrMediaFile *self) {
 FrMediaStream* fr_media_file_stream_by_type(
   FrMediaFile* self,
   FR_MEDIA_ENUM mediaType) {
+  sys_return_val_if_fail(self != NULL, NULL);
 
   return fr_media_streams_get_by_media_type(self->streams, self->n_streams, mediaType);
 }

@@ -103,9 +103,9 @@ SysInt fr_i_window_get_key (FrWindow *window, SysInt key) {
   return self.get_key(window, key);
 }
 
-void fr_i_window_wait_events_timeout (SysInt sec) {
+void fr_i_window_wait_events_timeout (SysInt msec) {
 
-  self.wait_events_timeout(sec);
+  self.wait_events_timeout(msec);
 }
 
 void fr_i_window_wait_events (void) {

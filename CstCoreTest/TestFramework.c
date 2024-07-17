@@ -90,6 +90,8 @@ void test_video_player(void) {
   imrender = FR_I_MEDIA_RENDER(draw_context);
 
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
+  TEST_ASSERT_NOT_NULL(mfile);
+
   mplayer = fr_media_player_new_I(mfile);
   fr_media_player_set_render(mplayer, imrender);
   fr_media_player_run(mplayer);
@@ -102,7 +104,6 @@ void test_video_player(void) {
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
 }
-
 
 void test_fr_window_leak(void) {
   GLFWwindow *gwindow;

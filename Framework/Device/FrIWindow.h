@@ -30,7 +30,7 @@ struct _FrIWindowInterface {
   void (*window_destroy) (FrWindow *window);
   const SysChar* (*get_key_name) (SysInt key, SysInt scancode);
   SysInt (*get_key) (FrWindow *window, SysInt key);
-  void (*wait_events_timeout) (SysInt sec);
+  void (*wait_events_timeout) (SysInt msec);
   void (*wait_events) (void);
   void (*post_empty_event) (void);
   void (*poll_events) (void);

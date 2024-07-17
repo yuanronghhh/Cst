@@ -48,7 +48,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     process(self);
 
     fr_media_player_render(self, self->render, region);
-    fr_wait_events_timeout(self->interval);
+    fr_wait_events_timeout((SysInt)self->delay);
   }
 
   fr_region_destroy(region);
@@ -87,7 +87,7 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
 
   vframe = FR_VIDEO_FRAME(frame);
   iface->render_video(render, vframe, region);
-  self->interval = vframe->delay == 0 ? self->default_delay: vframe->delay;
+  self->delay = vframe->delay == 0 ? self->default_delay: vframe->delay;
 
   sys_object_unref(frame);
 

@@ -25,7 +25,7 @@ struct _FrMediaPlayer {
   SysBool use_hwaccel;
   SysInt64 seek_position;
   FR_JOB_STATE_ENUM state;
-  SysDouble interval;
+  SysDouble delay;
   SysDouble default_delay;
   FrIMediaRender *render;
 };

@@ -22,12 +22,17 @@ struct _FrVideoDecoder {
   /* <private> */
   FrImageScale scale;
   SysUInt64 start_time;
+
+  SysChar *hwaccel_name;
+  FrHwAccel *hwaccel_ctx;
 };
 
 SYS_API SysType fr_video_decoder_get_type(void);
 SYS_API FrDecoder *fr_video_decoder_new(void);
 SYS_API void fr_video_decoder_resize(FrVideoDecoder *self, SysInt width, SysInt height);
 SYS_API void fr_video_decoder_get_size(FrVideoDecoder *self, SysInt *width, SysInt *height);
+
+SysBool fr_video_decoder_get_hwaccel(FrVideoDecoder *self);
 
 SYS_END_DECLS
 

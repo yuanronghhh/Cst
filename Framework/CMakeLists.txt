@@ -158,6 +158,8 @@ set(SRC
   ./Media/FrStream.h
   ./Media/FrVideoDecoder.c
   ./Media/FrVideoDecoder.h
+  ./Media/FrHwAccel.c
+  ./Media/FrHwAccel.h
   ./Media/FrVideoFrame.c
   ./Media/FrVideoFrame.h
   ./Media/FrMediaCommon.c

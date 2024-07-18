@@ -18,6 +18,8 @@ struct _PipePass {
   SysAsyncQueue *queue;
 };
 
+static SysElapse e;
+
 SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
 
 static PipePass* pipe_pass_new_by_type(
@@ -165,6 +167,7 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
       self);
   video_dec = FR_VIDEO_DECODER(vdec);
   fr_video_decoder_resize(video_dec, 800, 600);
+
   self->video_decoder = vdec;
 
   adec = create_media_decoder(file,
@@ -183,6 +186,8 @@ FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   FrMediaFrame *image = sys_async_queue_try_pop(&self->image_queue);
   if (image == NULL) { return NULL; }
   sys_atomic_int_dec(&self->pkt_count);
+  sys_elapse_end(&e);
+  sys_debug_N("elapse %ld", e.end - e.start);
 
   return image;
 }
@@ -234,10 +239,11 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
   }
   sys_debug_N("wakeup %ld", self->pkt_count);
 
+  sys_elapse_begin(&e, "packet elapse");
+
   for(int i = 0; i < self->max_packet; i++) {
 
     fr_decoder_run_async(self->packet_decoder, process_packet, self);
-
     sys_atomic_int_inc(&self->pkt_count);
   }
 }

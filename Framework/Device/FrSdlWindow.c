@@ -14,12 +14,17 @@ static SDL_Window* fr_sdl_window_create_i(
     const SysChar *title,
     SDL_Window *gshare) {
   SDL_Window *gwindow;
+  SysInt flags = 0;
+
+  flags = SDL_WINDOW_VULKAN
+    | SDL_WINDOW_RESIZABLE
+    | SDL_WINDOW_TRANSPARENT;
 
   SYS_LEAK_IGNORE_BEGIN;
   gwindow = SDL_CreateWindow(title,
       width, 
       height, 
-      0);
+      flags);
   SYS_LEAK_IGNORE_END;
 
   return gwindow;

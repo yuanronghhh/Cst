@@ -2,8 +2,15 @@
 #include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrImageScale.h>
+#include <Framework/Media/FrHwAccel.h>
 
 SYS_DEFINE_TYPE(FrVideoDecoder, fr_video_decoder, FR_TYPE_MEDIA_DECODER);
+
+SysBool fr_video_decoder_get_hwaccel(FrVideoDecoder *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return self->hwaccel_ctx != NULL;
+}
 
 static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
@@ -18,6 +25,14 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   info.in_pix_fmt = self->parent.ctx->pix_fmt;
   info.out_pix_fmt = AV_PIX_FMT_BGRA;
   fr_image_scale_construct(&self->scale, &info);
+
+  if(self->hwaccel_name) {
+    self->hwaccel_ctx = fr_hw_accel_new_with_name(self->hwaccel_name);
+    if(self->hwaccel_ctx == NULL) {
+
+      sys_info_N("Not support hardware accelerate %s", self->hwaccel_name);
+    }
+  }
 
   return err;
 }
@@ -87,4 +102,5 @@ void fr_video_decoder_init(FrVideoDecoder* self) {
   FrMediaDecoder *o = FR_MEDIA_DECODER(self);
 
   fr_media_decoder_set_frame_type(o, FR_TYPE_VIDEO_FRAME);
+  self->hwaccel_name = "vulkan";
 }

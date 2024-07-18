@@ -29,6 +29,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Media/FrFrameDecoder.h>
 #include <Framework/Media/FrIMediaRender.h>
+#include <Framework/Media/FrHwAccel.h>
 
 void fr_ffmpeg_setup(void);
 void fr_ffmpeg_teardown(void);

@@ -79,6 +79,10 @@ typedef struct _FrPlayerClass FrPlayerClass;
 typedef struct _FrIDecoder FrIDecoder;
 typedef struct _FrIDecoderInterface FrIDecoderInterface;
 
+typedef struct _FrHwAccelContext FrHwAccelContext;
+typedef struct _FrHwAccel FrHwAccel;
+typedef struct _FrHwAccelClass FrHwAccelClass;
+
 typedef struct _FrFrameDecoder FrFrameDecoder;
 typedef struct _FrFrameDecoderClass FrFrameDecoderClass;
 

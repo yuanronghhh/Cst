@@ -186,8 +186,8 @@ FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   FrMediaFrame *image = sys_async_queue_try_pop(&self->image_queue);
   if (image == NULL) { return NULL; }
   sys_atomic_int_dec(&self->pkt_count);
-  sys_elapse_end(&e);
-  sys_debug_N("elapse %ld", e.end - e.start);
+  // sys_elapse_end(&e);
+  // sys_debug_N("elapse %ld", e.end - e.start);
 
   return image;
 }
@@ -239,7 +239,7 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
   }
   sys_debug_N("wakeup %ld", self->pkt_count);
 
-  sys_elapse_begin(&e, "packet elapse");
+  // sys_elapse_begin(&e, "packet elapse");
 
   for(int i = 0; i < self->max_packet; i++) {
 

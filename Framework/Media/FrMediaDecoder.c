@@ -30,6 +30,28 @@ SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType) {
   }
 }
 
+SysBool fr_media_decoder_get_hw_info(
+    FrMediaDecoder *self,
+    SysInt hw_dtype, 
+    SysInt *hw_pix_format) {
+
+  SysInt i;
+  const AVCodecHWConfig *config;
+
+  for (i = 0; ;i++) {
+    config = avcodec_get_hw_config(self->codec, i);
+    if(config == NULL) { return false; }
+
+    if ((config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX)
+        && config->device_type == hw_dtype) {
+      *hw_pix_format = config->pix_fmt;
+      break;
+    }
+  }
+
+  return true;
+}
+
 static const SysChar* fr_media_decoder_type_to_name(SysType tp) {
   if(tp == FR_TYPE_VIDEO_DECODER) {
     return DECODER_NAMES[FR_MEDIA_VIDEO];

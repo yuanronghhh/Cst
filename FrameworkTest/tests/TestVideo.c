@@ -101,9 +101,10 @@ void test_video_player(void) {
 
   imrender = FR_I_MEDIA_RENDER(draw_context);
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
-  mplayer = fr_media_player_new_I(mfile);
 
-  fr_media_player_set_render(mplayer, imrender);
+  FrMediaPlayerContext pinfo = {.file = mfile, .window = window, .render = imrender};
+  mplayer = fr_media_player_new_I(&pinfo);
+
   fr_media_player_run(mplayer);
 
   sys_object_unref(mplayer);

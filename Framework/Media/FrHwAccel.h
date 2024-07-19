@@ -25,6 +25,7 @@ struct _FrHwAccel {
 
 struct _FrHwAccelContext {
   const SysChar *name;
+  FrMediaDecoder *decoder;
 
   /* <private> */
   AVBufferRef *ctx;
@@ -34,7 +35,6 @@ SYS_API SysType fr_hw_accel_get_type(void);
 SYS_API FrHwAccel *fr_hw_accel_new(void);
 
 SYS_API FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info);
-SYS_API FrHwAccel *fr_hw_accel_new_with_name(const SysChar *name);
 
 SYS_END_DECLS
 

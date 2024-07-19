@@ -64,6 +64,7 @@ SysInt fr_media_decoder_receive_frame(
     FrMediaFrame **nframe);
 
 void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp);
+SysBool fr_media_decoder_get_hw_info(FrMediaDecoder *self, SysInt hw_dtype, SysInt *hw_pix_format);
 
 void fr_media_decoder_set_frame(FrMediaDecoder *self, FrMediaFrame * frame);
 FrMediaFrame * fr_media_decoder_get_frame(FrMediaDecoder *self);

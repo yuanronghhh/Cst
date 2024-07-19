@@ -17,8 +17,7 @@ static SDL_Window* fr_sdl_window_create_i(
   SysInt flags = 0;
 
   flags = SDL_WINDOW_VULKAN
-    | SDL_WINDOW_RESIZABLE
-    | SDL_WINDOW_TRANSPARENT;
+    | SDL_WINDOW_RESIZABLE;
 
   SYS_LEAK_IGNORE_BEGIN;
   gwindow = SDL_CreateWindow(title,

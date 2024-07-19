@@ -41,6 +41,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
 
   fr_media_pipeline_run(&self->pipeline, self->file);
   fr_media_pipeline_get_video_size(&self->pipeline, &bound.width, &bound.height);
+  fr_window_set_size(self->window, bound.width, bound.height);
 
   region = fr_region_create_rectangle(&bound);
 
@@ -60,6 +61,18 @@ void fr_media_player_set_render(FrMediaPlayer* self, FrIMediaRender *render) {
   sys_return_if_fail(self != NULL);
 
   self->render = render;
+}
+
+void fr_media_player_set_window(FrMediaPlayer *self, FrWindow * window) {
+  sys_return_if_fail(self != NULL);
+
+  self->window = window;
+}
+
+FrWindow * fr_media_player_get_window(FrMediaPlayer *self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  return self->window;
 }
 
 SysInt fr_media_player_run(FrMediaPlayer* self) {
@@ -113,18 +126,24 @@ FR_JOB_STATE_ENUM fr_media_player_get_state(FrMediaPlayer *self) {
 }
 
 /* object api */
-static void fr_media_player_construct(FrMediaPlayer *self, FrMediaFile *file) {
-  self->file = sys_object_ref(file);
+static void fr_media_player_construct(FrMediaPlayer *self, FrMediaPlayerContext *info) {
+  self->file = sys_object_ref(info->file);
+  self->window = sys_object_ref(info->window);
+  self->render = sys_object_ref(info->render);
 }
 
 FrMediaPlayer* fr_media_player_new(void) {
   return sys_object_new(FR_TYPE_MEDIA_PLAYER, NULL);
 }
 
-FrMediaPlayer *fr_media_player_new_I(FrMediaFile *file) {
-  FrMediaPlayer *o = fr_media_player_new();
+FrMediaPlayer *fr_media_player_new_I(FrMediaPlayerContext *info) {
+  sys_return_val_if_fail(info != NULL, NULL);
+  sys_return_val_if_fail(info->file != NULL, NULL);
+  sys_return_val_if_fail(info->window != NULL, NULL);
+  sys_return_val_if_fail(info->render != NULL, NULL);
 
-  fr_media_player_construct(o, file);
+  FrMediaPlayer *o = fr_media_player_new();
+  fr_media_player_construct(o, info);
 
   return o;
 }
@@ -134,6 +153,8 @@ static void fr_media_player_dispose(SysObject* o) {
 
   sys_object_destroy(&self->pipeline);
   sys_clear_pointer(&self->file, _sys_object_unref);
+  sys_clear_pointer(&self->window, _sys_object_unref);
+  sys_clear_pointer(&self->render, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_media_player_parent_class)->dispose(o);
 }

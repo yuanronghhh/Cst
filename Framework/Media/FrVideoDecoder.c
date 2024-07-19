@@ -14,10 +14,11 @@ SysBool fr_video_decoder_get_hwaccel(FrVideoDecoder *self) {
 
 static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
-  SysInt err = FR_DECODER_CLASS(fr_video_decoder_parent_class)->open(o);
-  FrImageScaleContext info;
+  SysInt err;
 
   fr_image_scale_create(&self->scale);
+
+  FrImageScaleContext info;
   info.in_width = self->parent.ctx->width;
   info.in_height = self->parent.ctx->height;
   info.out_width = self->parent.ctx->width;
@@ -27,12 +28,19 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   fr_image_scale_construct(&self->scale, &info);
 
   if(self->hwaccel_name) {
-    self->hwaccel_ctx = fr_hw_accel_new_with_name(self->hwaccel_name);
+    FrHwAccelContext hwinfo = {
+      .name = self->hwaccel_name,
+      .decoder = FR_MEDIA_DECODER(self),
+    };
+
+    self->hwaccel_ctx = fr_hw_accel_new_I(&hwinfo);
     if(self->hwaccel_ctx == NULL) {
 
       sys_info_N("Not support hardware accelerate %s", self->hwaccel_name);
     }
   }
+
+  err = FR_DECODER_CLASS(fr_video_decoder_parent_class)->open(o);
 
   return err;
 }
@@ -102,5 +110,9 @@ void fr_video_decoder_init(FrVideoDecoder* self) {
   FrMediaDecoder *o = FR_MEDIA_DECODER(self);
 
   fr_media_decoder_set_frame_type(o, FR_TYPE_VIDEO_FRAME);
-  self->hwaccel_name = "vulkan";
+#if SYS_OS_WIN32
+  self->hwaccel_name = "d3d11va";
+#elif SYS_OS_UNIX
+  self->hwaccel_name = "vaapi";
+#endif
 }

@@ -31,7 +31,6 @@ struct _FrImageScaleContext {
 struct _FrImageScale  {
   SysObject parent;
 
-  /* <private> */
   SysInt in_width;
   SysInt in_height;
   SysInt out_width;
@@ -39,9 +38,11 @@ struct _FrImageScale  {
   SysInt in_pix_fmt;
   SysInt out_pix_fmt;
 
+  /* <private> */
   FrProportion proportion;
   SysBool scale_prop;
   struct SwsContext *ctx;
+  SysInt hw_format;
 };
 
 SYS_API SysType fr_image_scale_get_type(void);
@@ -72,6 +73,9 @@ SysBool fr_image_scale_convert_format(
     SysInt nformat);
 
 #define fr_image_scale_create(o) sys_object_create(o, FR_TYPE_IMAGE_SCALE)
+
+void fr_image_scale_set_hw_format(FrImageScale *self, SysInt hw_format);
+SysInt fr_image_scale_get_hw_format(FrImageScale *self);
 
 SYS_END_DECLS
 

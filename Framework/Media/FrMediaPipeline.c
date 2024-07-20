@@ -18,7 +18,7 @@ struct _PipePass {
   SysAsyncQueue *queue;
 };
 
-static SysElapse e;
+// static SysElapse e;
 
 SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
 

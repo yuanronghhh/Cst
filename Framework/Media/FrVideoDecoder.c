@@ -15,6 +15,7 @@ SysBool fr_video_decoder_get_hwaccel(FrVideoDecoder *self) {
 static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
   SysInt err;
+  SysInt hw_format;
 
   fr_image_scale_create(&self->scale);
 
@@ -37,6 +38,11 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
     if(self->hwaccel_ctx == NULL) {
 
       sys_info_N("Not support hardware accelerate %s", self->hwaccel_name);
+
+    } else {
+
+      hw_format = fr_hw_accel_get_hw_format(self->hwaccel_ctx);
+      fr_image_scale_set_hw_format(&self->scale, hw_format);
     }
   }
 

@@ -81,6 +81,7 @@ AVFrame* fr_media_new_rgba_frame(
     SysInt width,
     SysInt height,
     SysInt format) {
+
   SysInt err;
   AVFrame* rgba_frame;
 
@@ -90,6 +91,7 @@ AVFrame* fr_media_new_rgba_frame(
   rgba_frame->height = height;
 
   err = av_frame_get_buffer(rgba_frame, 0);
+
   if (err < 0) {
     sys_warning_N("new rgba frame failed, check width: %d,%d", width, height);
     av_frame_free(&rgba_frame);

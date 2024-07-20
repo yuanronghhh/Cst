@@ -6,7 +6,9 @@ SYS_DEFINE_TYPE(FrVideoFrame, fr_video_frame, FR_TYPE_MEDIA_FRAME);
 SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   sys_return_val_if_fail(self != NULL, false);
 
-  AVFrame* nframe = fr_media_new_rgba_frame(self->width, self->height, scale->out_pix_fmt);
+  AVFrame* nframe = fr_media_new_rgba_frame(scale->out_width,
+      scale->out_height,
+      scale->out_pix_fmt);
   if (nframe == NULL) { return false; }
 
   if (fr_image_scale_convert_avframe(scale, self->parent.ctx, nframe) < 0) {
@@ -22,7 +24,7 @@ SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   fr_media_rgba_save_to_png(nframe, filename);
 #endif
 
-  fr_video_frame_set_out_size(self, self->width, self->height);
+  fr_video_frame_set_out_size(self, scale->out_width, scale->out_height);
 
 done:
   return self;

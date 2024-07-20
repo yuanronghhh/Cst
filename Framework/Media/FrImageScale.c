@@ -8,6 +8,11 @@ SysBool image_scale_check(
     SysInt src_format,
     SysInt dst_format) {
 
+  if(src_format == self->hw_format) {
+
+    return true;
+  }
+
   if(src_format != self->in_pix_fmt) {
     sys_warning_N("input format check failed: %d -> %d", src_format, self->in_pix_fmt);
     return false;
@@ -30,7 +35,7 @@ void fr_image_scale_set_proportion(FrImageScale* self, FrProportion* prop) {
 
 static void calc_proportion(
   SysInt width,
-  SysInt height, 
+  SysInt height,
   FrProportion *prop) {
   if(height <= 0) { return; }
   SysInt gv;
@@ -150,20 +155,44 @@ SysInt fr_image_scale_convert_avframe(
     AVFrame *dst) {
   sys_return_val_if_fail(src != NULL, -1);
   sys_return_val_if_fail(dst != NULL, -1);
+  SysInt err;
 
   if(!image_scale_check(self, src->format, dst->format)) {
     return -1;
   }
 
-  return fr_image_scale_convert(self,
-      (const uint8_t *const *)src->data,
-      src->linesize,
-      0,
-      src->height,
-      dst->data,
-      dst->linesize);
+  if(self->hw_format > 0 && self->hw_format == src->format) {
+
+    err = av_hwframe_transfer_data(dst, src, 0);
+    if(err < 0) {
+
+      return err;
+    }
+  } else {
+
+    err =  fr_image_scale_convert(self,
+        (const uint8_t *const *)src->data,
+        src->linesize,
+        0,
+        src->height,
+        dst->data,
+        dst->linesize);
+  }
+
+  return err;
 }
 
+void fr_image_scale_set_hw_format(FrImageScale *self, SysInt hw_format) {
+  sys_return_if_fail(self != NULL);
+
+  self->hw_format = hw_format;
+}
+
+SysInt fr_image_scale_get_hw_format(FrImageScale *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->hw_format;
+}
 
 /* object api */
 void fr_image_scale_construct(FrImageScale *self, FrImageScaleContext *info) {

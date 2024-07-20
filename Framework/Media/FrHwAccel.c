@@ -19,6 +19,12 @@ static enum AVPixelFormat get_hw_format(
   return AV_PIX_FMT_NONE;
 }
 
+SysInt fr_hw_accel_get_hw_format(FrHwAccel *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return hw_pix_format;
+}
+
 /* object api */
 static void fr_hw_accel_construct_i(FrHwAccel *self, FrHwAccelContext *info) {
   self->name = sys_strdup(info->name);
@@ -34,22 +40,21 @@ FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
   sys_return_val_if_fail(info->name != NULL, NULL);
   sys_return_val_if_fail(info->decoder != NULL, NULL);
 
-  SysInt err;
   AVBufferRef *ctx = NULL;
   FrMediaDecoder *dec = info->decoder;
 
   SysInt type = av_hwdevice_find_type_by_name(info->name);
-  if(type == 0) { 
+  if(type == 0) {
 
     sys_warning_N("not support hardware device %s", info->name);
     return NULL;
   }
 
   if(!fr_media_decoder_get_hw_info(dec, type, &hw_pix_format)) {
-
     sys_warning_N("Failed to get hw info: %s, %s",
-        fr_decoder_get_name(FR_DECODER(dec)), 
+        fr_decoder_get_name(FR_DECODER(dec)),
         av_hwdevice_get_type_name(type));
+
     return NULL;
   }
 

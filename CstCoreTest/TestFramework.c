@@ -92,7 +92,11 @@ void test_video_player(void) {
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
   TEST_ASSERT_NOT_NULL(mfile);
 
-  mplayer = fr_media_player_new_I(mfile);
+  FrMediaPlayerContext pinfo = {.file = mfile,
+    .window = window, 
+    .render = imrender};
+  mplayer = fr_media_player_new_I(&pinfo);
+
   fr_media_player_set_render(mplayer, imrender);
   fr_media_player_run(mplayer);
 

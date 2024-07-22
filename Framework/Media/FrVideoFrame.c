@@ -6,28 +6,15 @@ SYS_DEFINE_TYPE(FrVideoFrame, fr_video_frame, FR_TYPE_MEDIA_FRAME);
 SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   sys_return_val_if_fail(self != NULL, false);
 
-  AVFrame* nframe = fr_media_new_rgba_frame(scale->out_width,
-      scale->out_height,
-      scale->out_pix_fmt);
-  if (nframe == NULL) { return false; }
-
-  if (fr_image_scale_convert_avframe(scale, self->parent.ctx, nframe) < 0) {
-    sys_warning_N("convert avframe failed: %p", self);
-    av_frame_free(&nframe);
-    goto done;
-  }
-  av_frame_free(&self->parent.ctx);
-  self->parent.ctx = nframe;
+  FrMediaFrame *mframe = FR_MEDIA_FRAME(self);
+  fr_video_frame_set_out_size(self, scale->out_width, scale->out_height);
 
 #if 0
   const SysChar *filename = FR_PROJECT_DIR"/Assets/surface.png";
   fr_media_rgba_save_to_png(nframe, filename);
 #endif
 
-  fr_video_frame_set_out_size(self, scale->out_width, scale->out_height);
-
-done:
-  return self;
+  return fr_image_scale_scale_media_frame(scale, mframe) == 0;
 }
 
 void fr_video_frame_init_frame(FrVideoFrame* self) {

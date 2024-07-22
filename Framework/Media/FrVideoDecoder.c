@@ -15,7 +15,6 @@ SysBool fr_video_decoder_get_hwaccel(FrVideoDecoder *self) {
 static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
   SysInt err;
-  SysInt hw_format;
 
   fr_image_scale_create(&self->scale);
 
@@ -26,7 +25,6 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   info.out_height = self->parent.ctx->height;
   info.in_pix_fmt = self->parent.ctx->pix_fmt;
   info.out_pix_fmt = AV_PIX_FMT_BGRA;
-  fr_image_scale_construct(&self->scale, &info);
 
   if(self->hwaccel_name) {
     FrHwAccelContext hwinfo = {
@@ -34,17 +32,10 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
       .decoder = FR_MEDIA_DECODER(self),
     };
 
-    self->hwaccel_ctx = fr_hw_accel_new_I(&hwinfo);
-    if(self->hwaccel_ctx == NULL) {
-
-      sys_info_N("Not support hardware accelerate %s", self->hwaccel_name);
-
-    } else {
-
-      hw_format = fr_hw_accel_get_hw_format(self->hwaccel_ctx);
-      fr_image_scale_set_hw_format(&self->scale, hw_format);
-    }
+    info.hw_accel = fr_hw_accel_new_I(&hwinfo);
   }
+
+  fr_image_scale_construct(&self->scale, &info);
 
   err = FR_DECODER_CLASS(fr_video_decoder_parent_class)->open(o);
 
@@ -58,11 +49,19 @@ static SysInt fr_video_decoder_decode_frame_i(
   SysInt err;
   FrVideoFrame* vframe = NULL;
   FrVideoDecoder* self = FR_VIDEO_DECODER(o);
+  FrMediaFrame *omframe = NULL;
 
   err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)
-    ->decode_frame(o, (FrMediaFrame **)&vframe);
+    ->decode_frame(o, (FrMediaFrame **)&omframe);
   if(err < 0) { return err; }
-  fr_video_frame_init_frame(vframe);
+  vframe = FR_VIDEO_FRAME(omframe);
+  fr_media_video_frame_init(vframe);
+
+  if(!fr_media_scale_copy_gpu_frame(&self->scale, omframe)) {
+    sys_warning_N("hwaccel copy failed: %s", o->parent.name);
+    return -1;
+  }
+  fr_image_scale_set_in_pix_fmt(&self->scale, omframe->ctx->format);
 
   if(!fr_video_frame_scale(vframe, &self->scale)) {
     return -1;

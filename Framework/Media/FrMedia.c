@@ -1,6 +1,9 @@
 #include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrImageScale.h>
+#include <Framework/Media/FrHwAccel.h>
 #include <Framework/Media/FrImageSaver.h>
+#include <Framework/Media/FrMediaFrame.h>
+#include <Framework/Media/FrVideoFrame.h>
 #include <Framework/Graph/FrImage.h>
 
 const SysChar* fr_media_error_string(SysInt err) {
@@ -61,6 +64,11 @@ static SysInt error_check(SysInt err) {
   return err;
 }
 
+static SysInt media_hwframe_transfer_data(AVFrame *dst, AVFrame *src) {
+  SysInt err = av_hwframe_transfer_data(dst, src, 0);
+  return error_check_msg(err, "av_hwframe_transfer_data");
+}
+
 FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   switch (err) {
     case 0:
@@ -77,10 +85,11 @@ FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   }
 }
 
-AVFrame* fr_media_new_rgba_frame(
+static AVFrame* new_rgba_frame(
     SysInt width,
     SysInt height,
-    SysInt format) {
+    SysInt format,
+    SysBool withbuf) {
 
   SysInt err;
   AVFrame* rgba_frame;
@@ -90,15 +99,121 @@ AVFrame* fr_media_new_rgba_frame(
   rgba_frame->width = width;
   rgba_frame->height = height;
 
-  err = av_frame_get_buffer(rgba_frame, 0);
+  if(withbuf) {
+    err = av_frame_get_buffer(rgba_frame, 0);
 
-  if (err < 0) {
-    sys_warning_N("new rgba frame failed, check width: %d,%d", width, height);
-    av_frame_free(&rgba_frame);
-    return NULL;
+    if (err < 0) {
+      sys_warning_N("new rgba frame failed, check width: %d,%d", width, height);
+      av_frame_free(&rgba_frame);
+      return NULL;
+    }
   }
 
   return rgba_frame;
+}
+
+SysInt fr_media_image_scale_scale(
+    FrImageScale *self,
+    const uint8_t *const src_data[],
+    const int src_stride[],
+    int src_y, 
+    int src_h,
+    uint8_t *const dst_data[],
+    const int dst_stride[]) {
+
+  return sws_scale(self->ctx,
+      src_data,
+      src_stride,
+      0,
+      src_h,
+      dst_data,
+      dst_stride);
+}
+
+static SysInt image_scale_scale_avframe(
+    FrImageScale *self,
+    AVFrame *src,
+    AVFrame *dst) {
+  sys_return_val_if_fail(src != NULL, -1);
+  sys_return_val_if_fail(dst != NULL, -1);
+  SysInt err;
+
+  if(!fr_image_scale_check(self, src->format, dst->format)) {
+    return -1;
+  }
+
+  err =  fr_media_image_scale_scale(self,
+      (const uint8_t *const *)src->data,
+      src->linesize,
+      0,
+      src->height,
+      dst->data,
+      dst->linesize);
+
+  return err;
+}
+
+static SysBool media_scale_hw_check(
+    FrImageScale *self,
+    AVFrame *src) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(src != NULL, false);
+  const AVPixFmtDescriptor *desc;
+
+  desc = av_pix_fmt_desc_get(src->format);
+  if(desc == NULL) { return false; }
+
+  if (!(desc->flags & AV_PIX_FMT_FLAG_HWACCEL)) {
+    return true;
+  }
+
+  return true;
+}
+
+SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame) {
+  AVFrame* nframe = av_frame_alloc();
+  if (nframe == NULL) { return false; }
+
+  if(fr_image_scale_check_hw_accel(scale, frame->ctx->format)) {
+    if(!media_scale_hw_check(scale, frame->ctx)) {
+
+      goto done;
+    }
+
+    if(media_hwframe_transfer_data(nframe, frame->ctx) < 0) {
+
+      goto done;
+    }
+  }
+  av_frame_free(&frame->ctx);
+  frame->ctx = nframe;
+
+  return true;
+done:
+  av_frame_free(&nframe);
+  return false;
+}
+
+SysBool fr_media_scale_media_frame(FrImageScale *scale, FrMediaFrame *frame) {
+  sys_return_val_if_fail(frame != NULL, false);
+  sys_return_val_if_fail(scale != NULL, false);
+
+  AVFrame* nframe = new_rgba_frame(
+      scale->out_width,
+      scale->out_height,
+      scale->out_pix_fmt,
+      true);
+  if (nframe == NULL) { return false; }
+
+  if (image_scale_scale_avframe(scale, frame->ctx, nframe) < 0) {
+    sys_warning_N("convert avframe failed: %p", scale);
+    av_frame_free(&nframe);
+    return false;
+  }
+  av_frame_free(&frame->ctx);
+  frame->ctx = nframe;
+
+  return 0;
 }
 
 void fr_media_rgba_save_to_png(AVFrame* frame, const SysChar* filename) {
@@ -114,8 +229,7 @@ void fr_media_rgba_save_to_png(AVFrame* frame, const SysChar* filename) {
   sys_object_unref(src);
 }
 
-
-void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
+static void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
   FrImageScaleContext scale_info = {
     .in_width = frame->width,
     .in_height = frame->height,
@@ -133,12 +247,21 @@ void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
   saver = fr_image_saver_new_I();
   image = fr_image_new_from_avframe(frame);
 
-  fr_image_scale_convert_format(scale, image, scale_info.out_pix_fmt);
+  fr_image_scale_scale_format(scale, image, scale_info.out_pix_fmt);
   fr_image_saver_save_png(saver, image, filename);
 
   sys_object_unref(saver);
   sys_object_unref(scale);
   sys_object_unref(image);
+}
+
+void fr_media_video_frame_init(FrVideoFrame* self) {
+  sys_return_if_fail(self != NULL);
+
+  AVFrame *frame = self->parent.ctx;
+  self->width = frame->width;
+  self->height = frame->height;
+  self->format = frame->format;
 }
 
 void fr_media_frame_get_frame_rate (

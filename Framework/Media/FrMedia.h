@@ -39,18 +39,18 @@ AVStream* fr_media_parse_stream_by_type(
 
 SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p);
 
-AVFrame* fr_media_new_rgba_frame(
-    SysInt width,
-    SysInt height,
-    SysInt format);
+SysInt fr_media_image_scale_scale(
+    FrImageScale *self,
+    const uint8_t *const src_data[],
+    const int src_stride[],
+    int src_y, 
+    int src_h,
+    uint8_t *const dst_data[],
+    const int dst_stride[]);
 
-SysInt fr_media_avframe_convert(
-    FrImageScale *scale,
-    AVFrame *frame,
-    AVFrame *dst);
-
-void fr_media_yuv_save_to_png(AVFrame * frame, const SysChar *filename);
-void fr_media_rgba_save_to_png(AVFrame* frame, const SysChar* filename);
+void fr_media_video_frame_init(FrVideoFrame* self);
+SysBool fr_media_scale_media_frame(FrImageScale *scale, FrMediaFrame *frame);
+SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame);
 
 SYS_END_DECLS
 

@@ -58,7 +58,7 @@ FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
     return NULL;
   }
 
-  /* FIXME: copy from example */
+  /* TODO: copy from example  */
   dec->ctx->get_format  = get_hw_format;
   if(av_hwdevice_ctx_create(&ctx, type, NULL, NULL, 0) < 0) {
 

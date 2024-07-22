@@ -86,6 +86,7 @@ static SysPointer decode_frame(
 
 fail:
   sys_atomic_int_dec(&pass->pipe->pkt_count);
+  pipe_pass_free(pass);
 
   return NULL;
 }
@@ -279,8 +280,8 @@ static void fr_media_pipeline_class_init(FrMediaPipelineClass* cls) {
 }
 
 void fr_media_pipeline_init(FrMediaPipeline* self) {
-  self->max_packet = 120;
   self->min_packet = 2;
+  self->max_packet = 30 * self->min_packet;
   self->pkt_count = 0;
 
   sys_async_queue_init_full(&self->image_queue, (SysDestroyFunc)_sys_object_unref);

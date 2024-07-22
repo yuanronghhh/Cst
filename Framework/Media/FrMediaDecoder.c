@@ -111,6 +111,7 @@ SysInt fr_media_decoder_receive_frame(
 
     return err;
   }
+
   fr_media_frame_init_frame(frame);
   fr_media_stream_init_frame(self->stream, frame);
   *nframe = frame;

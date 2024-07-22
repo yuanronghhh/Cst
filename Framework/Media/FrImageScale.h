@@ -26,6 +26,7 @@ struct _FrImageScaleContext {
   SysInt out_height;
   SysInt in_pix_fmt;
   SysInt out_pix_fmt;
+  FrHwAccel *hw_accel;
 };
 
 struct _FrImageScale  {
@@ -42,7 +43,7 @@ struct _FrImageScale  {
   FrProportion proportion;
   SysBool scale_prop;
   struct SwsContext *ctx;
-  SysInt hw_format;
+  FrHwAccel *hw_accel;
 };
 
 SYS_API SysType fr_image_scale_get_type(void);
@@ -55,27 +56,31 @@ SYS_API void fr_image_scale_resize_proportion(FrImageScale *self,
     SysInt height,
     SysBool prop_width);
 
-#define fr_image_scale_convert(self, src_data, src_stride, src_y, src_h, dst_data, dst_stride) \
-    sws_scale(self->ctx, src_data, src_stride, 0, src_h, dst_data, dst_stride)
-
-SysInt fr_image_scale_convert_image(
+SysInt fr_image_scale_scale_image(
     FrImageScale *self,
     FrImage *src,
     FrImage *dst);
 
-SysInt fr_image_scale_convert_avframe(
-    FrImageScale *self,
-    AVFrame *frame, AVFrame *dst);
-
-SysBool fr_image_scale_convert_format(
+SysBool fr_image_scale_scale_format(
     FrImageScale *self,
     FrImage *src,
     SysInt nformat);
 
 #define fr_image_scale_create(o) sys_object_create(o, FR_TYPE_IMAGE_SCALE)
 
-void fr_image_scale_set_hw_format(FrImageScale *self, SysInt hw_format);
-SysInt fr_image_scale_get_hw_format(FrImageScale *self);
+SysBool fr_image_scale_check(
+    FrImageScale *self,
+    SysInt src_format,
+    SysInt dst_format);
+
+void fr_image_scale_setup_scale(FrImageScale *self);
+
+SysBool fr_image_scale_check_hw_accel(FrImageScale *self, SysInt src_format);
+
+#define fr_image_scale_scale_media_frame(self, frame) fr_media_scale_media_frame(self, frame)
+
+void fr_image_scale_set_in_pix_fmt(FrImageScale *self, SysInt in_pix_fmt);
+SysInt fr_image_scale_get_in_pix_fmt(FrImageScale *self);
 
 SYS_END_DECLS
 

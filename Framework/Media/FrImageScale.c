@@ -1,17 +1,13 @@
 #include <Framework/Media/FrImageScale.h>
+#include <Framework/Media/FrHwAccel.h>
 #include <Framework/Graph/FrImage.h>
 
 SYS_DEFINE_TYPE(FrImageScale, fr_image_scale, SYS_TYPE_OBJECT);
 
-SysBool image_scale_check(
+SysBool fr_image_scale_check(
     FrImageScale *self,
     SysInt src_format,
     SysInt dst_format) {
-
-  if(src_format == self->hw_format) {
-
-    return true;
-  }
 
   if(src_format != self->in_pix_fmt) {
     sys_warning_N("input format check failed: %d -> %d", src_format, self->in_pix_fmt);
@@ -24,6 +20,12 @@ SysBool image_scale_check(
   }
 
   return true;
+}
+
+SysBool fr_image_scale_check_hw_accel(FrImageScale *self, SysInt src_format) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  return fr_hw_accel_get_hw_format(self->hw_accel) == src_format;
 }
 
 void fr_image_scale_set_proportion(FrImageScale* self, FrProportion* prop) {
@@ -57,11 +59,24 @@ static SysBool fr_image_scale_destroy_i(SysObject* o) {
   return true;
 }
 
-static void setup_scale(FrImageScale *self) {
+void fr_image_scale_setup_scale(FrImageScale *self) {
   self->ctx = sws_getCachedContext(self->ctx,
     self->in_width, self->in_height, self->in_pix_fmt,
     self->out_width, self->out_height, self->out_pix_fmt,
     SWS_BILINEAR, NULL, NULL, NULL);
+}
+
+void fr_image_scale_set_in_pix_fmt(FrImageScale *self, SysInt in_pix_fmt) {
+  sys_return_if_fail(self != NULL);
+
+  self->in_pix_fmt = in_pix_fmt;
+  fr_image_scale_setup_scale(self);
+}
+
+SysInt fr_image_scale_get_in_pix_fmt(FrImageScale *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->in_pix_fmt;
 }
 
 void fr_image_scale_resize_output(FrImageScale *self,
@@ -71,7 +86,7 @@ void fr_image_scale_resize_output(FrImageScale *self,
 
   self->out_width = width;
   self->out_height = height;
-  setup_scale(self);
+  fr_image_scale_setup_scale(self);
 }
 
 void fr_image_scale_resize_proportion(FrImageScale *self,
@@ -94,7 +109,7 @@ void fr_image_scale_resize_proportion(FrImageScale *self,
   fr_image_scale_resize_output(self, nwidth, nheight);
 }
 
-SysBool fr_image_scale_convert_format(
+SysBool fr_image_scale_scale_format(
     FrImageScale *self,
     FrImage *src,
     SysInt nformat) {
@@ -108,7 +123,7 @@ SysBool fr_image_scale_convert_format(
   info.data_size = fr_image_get_size(nformat, src->width, src->height);
   fr_image_context_fill_buffer(&info);
 
-  err = fr_image_scale_convert(
+  err = fr_media_image_scale_scale(
       self,
       (const uint8_t * const*)src->nbuf,
       src->stride,
@@ -131,67 +146,22 @@ SysBool fr_image_scale_convert_format(
   return err == 0;
 }
 
-SysInt fr_image_scale_convert_image(
+SysInt fr_image_scale_scale_image(
     FrImageScale *self,
     FrImage *src,
     FrImage *dst) {
 
-  if(!image_scale_check(self, src->format, dst->format)) {
+  if(!fr_image_scale_check(self, src->format, dst->format)) {
     return -1;
   }
 
-  return fr_image_scale_convert(self,
+  return fr_media_image_scale_scale(self,
       (const SysUInt8 *const *)src->data,
       src->stride,
       0,
       src->height,
       (SysUInt8 *const *)dst->data,
       dst->stride);
-}
-
-SysInt fr_image_scale_convert_avframe(
-    FrImageScale *self,
-    AVFrame *src,
-    AVFrame *dst) {
-  sys_return_val_if_fail(src != NULL, -1);
-  sys_return_val_if_fail(dst != NULL, -1);
-  SysInt err;
-
-  if(!image_scale_check(self, src->format, dst->format)) {
-    return -1;
-  }
-
-  if(self->hw_format > 0 && self->hw_format == src->format) {
-
-    err = av_hwframe_transfer_data(dst, src, 0);
-    if(err < 0) {
-
-      return err;
-    }
-  } else {
-
-    err =  fr_image_scale_convert(self,
-        (const uint8_t *const *)src->data,
-        src->linesize,
-        0,
-        src->height,
-        dst->data,
-        dst->linesize);
-  }
-
-  return err;
-}
-
-void fr_image_scale_set_hw_format(FrImageScale *self, SysInt hw_format) {
-  sys_return_if_fail(self != NULL);
-
-  self->hw_format = hw_format;
-}
-
-SysInt fr_image_scale_get_hw_format(FrImageScale *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->hw_format;
 }
 
 /* object api */
@@ -202,9 +172,10 @@ void fr_image_scale_construct(FrImageScale *self, FrImageScaleContext *info) {
   self->out_height = info->out_height == 0 ? info->in_height : info->out_height;
   self->in_pix_fmt = info->in_pix_fmt ? info->in_pix_fmt : 0;
   self->out_pix_fmt = info->out_pix_fmt ? info->out_pix_fmt : info->in_pix_fmt;
+  self->hw_accel = info->hw_accel;
 
   calc_proportion(self->out_width, self->out_height, &self->proportion);
-  setup_scale(self);
+  fr_image_scale_setup_scale(self);
 }
 
 FrImageScale* fr_image_scale_new(void) {

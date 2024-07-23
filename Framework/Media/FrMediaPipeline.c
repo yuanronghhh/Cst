@@ -137,15 +137,15 @@ static FrDecoder* create_media_decoder(FrMediaFile* file,
     FR_MEDIA_ENUM mediaType,
     FrMediaPipeline *self) {
 
-  sys_return_val_if_fail(file != NULL, false);
-
+  sys_return_val_if_fail(file != NULL, NULL);
   FrDecoder* decoder;
 
   decoder = fr_media_decoder_create_by_media_type(file, mediaType);
-  if (decoder == NULL) { return false; }
+  if (decoder == NULL) { return NULL; }
   fr_decoder_set_user_data(decoder, self);
 
   if (fr_decoder_open(decoder) > 0) {
+
     sys_clear_pointer(&decoder, _sys_object_unref);
     return NULL;
   }
@@ -161,24 +161,31 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
 
   pdec = fr_packet_decoder_new_I(file);
   fr_decoder_set_user_data(pdec, self);
+
   self->packet_decoder = pdec;
+  fr_decoder_start(self->packet_decoder);
 
   vdec = create_media_decoder(file,
       FR_MEDIA_VIDEO,
       self);
-  video_dec = FR_VIDEO_DECODER(vdec);
-  fr_video_decoder_resize(video_dec, 800, 600);
+  if(vdec != NULL) {
 
-  self->video_decoder = vdec;
+    video_dec = FR_VIDEO_DECODER(vdec);
+    fr_video_decoder_resize(video_dec, 800, 600);
+
+    self->video_decoder = vdec;
+    fr_decoder_start(self->video_decoder);
+  }
 
   adec = create_media_decoder(file,
       FR_MEDIA_AUDIO,
       self);
-  self->audio_decoder = adec;
+  if(adec != NULL) {
 
-  fr_decoder_start(self->video_decoder);
-  fr_decoder_start(self->audio_decoder);
-  fr_decoder_start(self->packet_decoder);
+    self->audio_decoder = adec;
+    fr_decoder_start(self->audio_decoder);
+  }
+
 }
 
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {

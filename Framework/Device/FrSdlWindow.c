@@ -3,10 +3,46 @@
 #include <Framework/Device/FrRender.h>
 #include <Framework/Event/FrEventCore.h>
 
+#define SDL_WINDOW_POINTER "FrSdlWindow"
+#define USE_SINGLE_WINDOW 1
 static void i_window_imp(FrIWindowInterface *iface);
 static FrWindowErrFunc err_callback = NULL;
 
+// only single window for performance
+static FrSdlWindow *g_window = NULL; 
+
 SYS_DEFINE_TYPE(FrSdlWindow, fr_sdl_window, FR_TYPE_WINDOW);
+
+static FrSdlWindow *gwindow_get_data(SDL_Window *gwindow) {
+
+  return SDL_GetProperty(
+    SDL_GetWindowProperties(gwindow),
+    SDL_WINDOW_POINTER, NULL);
+}
+
+static FrSdlWindow *gwindow_get_data_by_id(SysInt windowID) {
+  SDL_Window *gwindow = SDL_GetWindowFromID(windowID);
+
+  return gwindow_get_data(gwindow);
+}
+
+static void gwindow_set_data(SDL_Window *gwindow, SysPointer user_data) {
+  SDL_SetProperty(
+      SDL_GetWindowProperties(gwindow),
+      SDL_WINDOW_POINTER, user_data);
+}
+
+static FrSdlWindow* sdl_event_get_window(SysInt windowID) {
+  FrSdlWindow *window;
+
+#if USE_SINGLE_WINDOW
+  window = g_window;
+#else
+  window = gwindow_get_data_by_id(windowID);
+#endif
+
+  return window;
+}
 
 static SDL_Window* fr_sdl_window_create_i(
     SysInt width,
@@ -16,13 +52,15 @@ static SDL_Window* fr_sdl_window_create_i(
   SDL_Window *gwindow;
   SysInt flags = 0;
 
+  SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
+
   flags = SDL_WINDOW_VULKAN
     | SDL_WINDOW_RESIZABLE;
 
   SYS_LEAK_IGNORE_BEGIN;
   gwindow = SDL_CreateWindow(title,
-      width, 
-      height, 
+      width,
+      height,
       flags);
   SYS_LEAK_IGNORE_END;
 
@@ -218,6 +256,53 @@ static void fr_sdl_window_refresh_callback(FrSdlWindow* gwindow) {
 }
 
 static void sdl_handle_event(SDL_Event *e) {
+  FrSdlWindow *window;
+
+  switch(e->type) {
+    case SDL_EVENT_WINDOW_SHOWN:
+      break;
+    case SDL_EVENT_WINDOW_EXPOSED:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_refresh_callback(window);
+      break;
+    case SDL_EVENT_WINDOW_RESIZED:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_size_callback(window, -1, -1);
+      break;
+    case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_framebuffer_size_callback(window, -1, -1);
+      break;
+    case SDL_EVENT_WINDOW_DESTROYED:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_close_callback(window);
+      break;
+    case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_close_callback(window);
+      break;
+    case SDL_EVENT_WINDOW_MOVED:
+      break;
+    case SDL_EVENT_KEY_DOWN:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_close_callback(window);
+      break;
+    case SDL_EVENT_KEY_UP:
+      window = sdl_event_get_window(e->window.windowID);
+      SDL_KeyboardEvent ke = e->key;
+      fr_sdl_window_key_callback(window, ke.key, ke.scancode, ke.state, ke.mod);
+      break;
+    case SDL_EVENT_TEXT_EDITING:
+      break;
+    case SDL_EVENT_TEXT_INPUT:
+      break;
+    case SDL_EVENT_KEYMAP_CHANGED:
+      break;
+    case SDL_EVENT_QUIT:
+      window = sdl_event_get_window(e->window.windowID);
+      fr_sdl_window_close_callback(window);
+      break;
+  }
 }
 
 /* window setup */
@@ -342,6 +427,12 @@ static void fr_sdl_window_create(
 
     sys_error_N("failed to get native window handle: %s", SDL_GetError());
   }
+
+  gwindow_set_data(gwindow, self);
+
+#if USE_SINGLE_WINDOW
+  g_window = self;
+#endif
 }
 
 static void fr_window_destroy(FrWindow *o) {

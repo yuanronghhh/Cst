@@ -40,6 +40,8 @@ SYS_BEGIN_DECLS
 #include <libavcodec/avfft.h>
 #include <libavcodec/avcodec.h>
 
+#include <libavdevice/avdevice.h>
+
 #include <libavfilter/avfilter.h>
 #include <libavfilter/buffersink.h>
 #include <libavfilter/buffersrc.h>

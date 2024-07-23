@@ -85,6 +85,21 @@ FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
   }
 }
 
+static const AVOutputFormat *media_find_audio_device(void) {
+  const AVOutputFormat *format;
+
+  format = av_output_audio_device_next(NULL);
+  while(format == NULL) {
+
+    format = av_output_audio_device_next(format);
+  }
+
+  if (format == NULL)
+    format = av_output_audio_device_next (NULL);
+
+  return format;
+}
+
 static AVFrame* new_rgba_frame(
     SysInt width,
     SysInt height,

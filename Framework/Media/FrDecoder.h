@@ -46,7 +46,7 @@ SYS_API const SysChar * fr_decoder_get_name(FrDecoder *self);
 SYS_API SysInt fr_decoder_open(FrDecoder* self);
 SYS_API SysInt fr_decoder_close(FrDecoder* self);
 
-SYS_API SysInt fr_decoder_start(FrDecoder* self);
+SYS_API SysBool fr_decoder_start(FrDecoder* self);
 SYS_API void fr_decoder_stop(FrDecoder* self);
 
 SYS_API void fr_decoder_run_async(FrDecoder *self,

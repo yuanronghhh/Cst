@@ -30,7 +30,8 @@ static SysPointer decoder_init(FrTask* o, SysPointer user_data) {
   return NULL;
 }
 
-SysInt fr_decoder_start(FrDecoder* self) {
+SysBool fr_decoder_start(FrDecoder* self) {
+  sys_return_val_if_fail(self != NULL, false);
   FrTask *task;
 
   fr_job_start(&self->job);
@@ -38,7 +39,7 @@ SysInt fr_decoder_start(FrDecoder* self) {
   task = fr_task_new_handler(decoder_init, self);
   fr_job_run_task_sync(&self->job, task);
 
-  return 0;
+  return true;
 }
 
 void fr_decoder_stop(FrDecoder* self) {

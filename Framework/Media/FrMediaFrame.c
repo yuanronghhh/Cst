@@ -26,18 +26,6 @@ AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self) {
 void fr_media_frame_init_frame(FrMediaFrame *self) {
 }
 
-void fr_media_frame_set_pts(FrMediaFrame *self, SysInt64 pts) {
-  sys_return_if_fail(self != NULL);
-
-  self->ctx->pts = pts;
-}
-
-SysInt64 fr_media_frame_get_pts(FrMediaFrame *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->ctx->pts;
-}
-
 SysObject* fr_media_frame_dclone_i(SysObject* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysObject* n = SYS_OBJECT_CLASS(fr_media_frame_parent_class)->dclone(o);

@@ -83,56 +83,11 @@ SysInt fr_media_decoder_open_i(FrDecoder* o) {
   return avcodec_open2(self->ctx, self->codec, NULL);
 }
 
-SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
-    FrMediaPacket *pkt) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return fr_media_avcodec_try_send_packet(self->ctx, pkt->ctx);
-}
-
-SysInt fr_media_decoder_receive_frame(
-    FrMediaDecoder* self,
-    FrMediaFrame **nframe) {
-
-  sys_return_val_if_fail(self != NULL, -1);
-  sys_return_val_if_fail(*nframe == NULL, -1);
-
-  SysInt err;
-  FrMediaFrame* frame = self->frame;
-
-  err = fr_media_avcodec_try_receive_frame(self->ctx,
-      frame->ctx);
-
-  if (err < 0) {
-    if(err == FR_MEDIA_ERROR_EOF) {
-      fr_decoder_set_eof(FR_DECODER(self), true);
-      avcodec_flush_buffers(self->ctx);
-    }
-
-    return err;
-  }
-
-  fr_media_frame_init_frame(frame);
-  fr_media_stream_init_frame(self->stream, frame);
-  *nframe = frame;
-
-  return err;
-}
-
 SysInt fr_media_decoder_decode_frame_i(
     FrMediaDecoder* self,
     FrMediaFrame **nframe) {
 
   return fr_media_decoder_receive_frame(self, nframe);
-}
-
-static void media_decoder_create_context(FrMediaDecoder *self,
-    FrMediaStream *stream) {
-  AVStream *as = fr_media_stream_get_ctx(stream);
-
-  self->stream = sys_object_ref(stream);
-  self->codec = fr_media_find_decoder(as);
-  self->ctx = fr_media_create_avcodec_context(self->codec, as);
 }
 
 void fr_media_decoder_construct(FrMediaDecoder *self,
@@ -247,7 +202,7 @@ static void media_decoder_construct(FrMediaDecoder* self,
 
   FR_DECODER_CLASS(fr_media_decoder_parent_class)->construct(o, info);
 
-  media_decoder_create_context(self, ms);
+  fr_media_decoder_create(self, ms);
   self->frame = sys_object_new(self->frame_type, NULL);
 }
 

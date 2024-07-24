@@ -29,38 +29,6 @@ AVFormatContext * fr_media_file_get_ctx(FrMediaFile *self) {
   return self->ctx;
 }
 
-static SysBool format_context_is_realtime(AVFormatContext* s) {
-  if (!strcmp(s->iformat->name, "rtp")
-    || !strcmp(s->iformat->name, "rtsp")
-    || !strcmp(s->iformat->name, "sdp"))
-  {
-    return 1;
-  }
-
-  if (s->pb
-      && (!strncmp(s->url, "rtp:", 4) || !strncmp(s->url, "udp:", 4)))
-  {
-    return true;
-  }
-
-  return false;
-}
-
-static FrMediaStream* parse_stream_by_type(
-    AVFormatContext *ctx,
-    FR_MEDIA_ENUM mediaType) {
-  sys_return_val_if_fail(ctx != NULL, NULL);
-
-  FrMediaStream *stream;
-  AVStream *as;
-
-  as = fr_media_parse_stream_by_type(ctx, mediaType);
-  if(as == NULL) { return NULL; }
-  stream = fr_media_stream_new_I(as, mediaType);
-
-  return stream;
-}
-
 SysInt64 fr_media_file_get_seek_position(FrMediaFile *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
@@ -149,26 +117,8 @@ static void i_stream_imp(FrIStreamInterface *iface) {
 
 /* object api */
 static void fr_media_file_construct(FrMediaFile *self, const SysChar *filename) {
-  const SysChar* default_str = sys_path_extension(filename);
-  AVFormatContext* ctx = fr_media_create_context_by_filename(default_str, filename);
-  FrMediaStream *stream;
 
-  self->seek.seek_flags |= AVSEEK_FLAG_BYTE;
-  self->is_realtime = format_context_is_realtime(ctx);
-
-  self->n_streams = ctx->nb_streams;
-  self->streams = (FrMediaStream **)sgc_type_new(SYS_TYPE_POINTER, self->n_streams);
-
-  stream = parse_stream_by_type(ctx, FR_MEDIA_VIDEO);
-  if(stream) { self->streams[FR_MEDIA_VIDEO] = stream; }
-
-  stream = parse_stream_by_type(ctx, FR_MEDIA_AUDIO);
-  if(stream) { self->streams[FR_MEDIA_AUDIO] = stream; }
-
-  stream = parse_stream_by_type(ctx, FR_MEDIA_SUBTITLE);
-  if(stream) { self->streams[FR_MEDIA_SUBTITLE] = stream; }
-
-  self->ctx = ctx;
+  fr_media_file_create(self, filename);
 }
 
 FrMediaFile* fr_media_file_new(void) {

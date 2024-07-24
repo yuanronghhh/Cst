@@ -18,8 +18,6 @@ struct _PipePass {
   SysAsyncQueue *queue;
 };
 
-// static SysElapse e;
-
 SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
 
 static PipePass* pipe_pass_new_by_type(
@@ -39,6 +37,10 @@ static PipePass* pipe_pass_new_by_type(
     case FR_MEDIA_AUDIO:
       pass->todec = pipe->audio_decoder;
       pass->queue = &pipe->sample_queue;
+      break;
+    case FR_MEDIA_SUBTITLE:
+      pass->todec = pipe->subtitle_decoder;
+      pass->queue = &pipe->subtitle_queue;
       break;
     default:
       return NULL;
@@ -64,13 +66,6 @@ static SysPointer decode_frame(
   SysAsyncQueue *queue = pass->queue;
   FrMediaFrame *mframe = NULL;
   FrMediaFrame *nframe = NULL;
-  SysType tp;
-
-  tp = sys_type_from_instance(mdec);
-
-  if(tp != FR_TYPE_VIDEO_DECODER) {
-    goto fail;
-  }
 
   err = fr_media_decoder_send_packet(mdec, mpkt);
   if(err < 0) { goto fail; }
@@ -188,14 +183,22 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
 
 }
 
+FrMediaFrame* fr_media_pipeline_get_sample_frame (FrMediaPipeline* self) {
+  sys_return_val_if_fail(self != NULL, NULL);
+
+  FrMediaFrame *sample = sys_async_queue_try_pop(&self->sample_queue);
+  if (sample == NULL) { return NULL; }
+  sys_atomic_int_dec(&self->pkt_count);
+
+  return sample;
+}
+
 FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   FrMediaFrame *image = sys_async_queue_try_pop(&self->image_queue);
   if (image == NULL) { return NULL; }
   sys_atomic_int_dec(&self->pkt_count);
-  // sys_elapse_end(&e);
-  // sys_debug_N("elapse %ld", e.end - e.start);
 
   return image;
 }
@@ -246,8 +249,6 @@ void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {
     return;
   }
   sys_debug_N("wakeup %ld", self->pkt_count);
-
-  // sys_elapse_begin(&e, "packet elapse");
 
   for(int i = 0; i < self->max_packet; i++) {
 

@@ -1,5 +1,8 @@
 #include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrImageScale.h>
+#include <Framework/Media/FrMediaFile.h>
+#include <Framework/Media/FrMediaStream.h>
+#include <Framework/Media/FrMediaDecoder.h>
 #include <Framework/Media/FrHwAccel.h>
 #include <Framework/Media/FrImageSaver.h>
 #include <Framework/Media/FrMediaFrame.h>
@@ -69,20 +72,85 @@ static SysInt media_hwframe_transfer_data(AVFrame *dst, AVFrame *src) {
   return error_check_msg(err, "av_hwframe_transfer_data");
 }
 
-FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
-  switch (err) {
-    case 0:
-      return FR_MEDIA_ERROR_SUCCESS;
-    case AVERROR(EAGAIN):
-      return FR_MEDIA_ERROR_AGAIN;
-    case AVERROR_EOF:
-      return FR_MEDIA_ERROR_EOF;
-    case AVERROR(EINVAL):
-      return FR_MEDIA_ERROR_EINVAL;
-    default:
-      sys_warning_N("decoder err not handle: %d", av_err2str(err));
-      return FR_MEDIA_ERROR_UNKNOWN;
+static AVFormatContext* media_create_context_by_filename(
+    const SysChar* default_dec,
+    const SysChar* filename) {
+  int err;
+  const AVInputFormat* default_format;
+  AVFormatContext* ctx = NULL;
+
+  default_format = av_find_input_format(default_dec);
+  err = avformat_open_input(
+      &ctx,
+      filename,
+      (AVInputFormat*)default_format,
+      NULL);
+  if (err < 0) {
+    sys_warning_N("avformat_open_input: %s, %s", av_err2str(err), filename);
+    return NULL;
   }
+
+  err = avformat_find_stream_info(ctx, NULL);
+  if (err < 0) {
+    sys_warning_N("avformat_find_stream_info: %s, %s",
+        av_err2str(err), filename);
+    goto fail;
+  }
+
+  return ctx;
+
+fail:
+  avformat_free_context(ctx);
+  return NULL;
+}
+
+static SysBool format_context_is_realtime(AVFormatContext* s) {
+  if (!strcmp(s->iformat->name, "rtp")
+    || !strcmp(s->iformat->name, "rtsp")
+    || !strcmp(s->iformat->name, "sdp"))
+  {
+    return 1;
+  }
+
+  if (s->pb
+      && (!strncmp(s->url, "rtp:", 4) || !strncmp(s->url, "udp:", 4)))
+  {
+    return true;
+  }
+
+  return false;
+}
+
+static AVStream* fr_media_parse_stream_by_type(
+    AVFormatContext* ctx,
+    FR_MEDIA_ENUM mediaType) {
+  sys_return_val_if_fail(ctx != NULL, NULL);
+
+  AVStream* as;
+  SysInt idx;
+
+  idx = av_find_best_stream(ctx, (SysInt)mediaType,
+      -1, -1, NULL, 0);
+  if (idx < 0) { return NULL; }
+
+  as = ctx->streams[idx];
+
+  return as;
+}
+
+static FrMediaStream* parse_stream_by_type(
+    AVFormatContext *ctx,
+    FR_MEDIA_ENUM mediaType) {
+  sys_return_val_if_fail(ctx != NULL, NULL);
+
+  FrMediaStream *stream;
+  AVStream *as;
+
+  as = fr_media_parse_stream_by_type(ctx, mediaType);
+  if(as == NULL) { return NULL; }
+  stream = fr_media_stream_new_I(as, mediaType);
+
+  return stream;
 }
 
 static const AVOutputFormat *media_find_audio_device(void) {
@@ -308,7 +376,7 @@ SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {
   return err;
 }
 
-AVCodecContext *fr_media_create_avcodec_context(const AVCodec *codec,
+static AVCodecContext *media_create_avcodec_context(const AVCodec *codec,
     AVStream *stream) {
 
   sys_return_val_if_fail(stream != NULL, NULL);
@@ -334,7 +402,22 @@ fail:
   return NULL;
 }
 
-AVPacket* fr_media_packet_new_from_avpacket(AVPacket* op) {
+static const AVCodec *media_find_decoder(AVStream *stream) {
+  sys_return_val_if_fail(stream != NULL, NULL);
+
+  return avcodec_find_decoder(stream->codecpar->codec_id);
+}
+
+void fr_media_decoder_create(FrMediaDecoder *self,
+    FrMediaStream *stream) {
+  AVStream *as = stream->ctx;
+
+  self->stream = sys_object_ref(stream);
+  self->codec = media_find_decoder(as);
+  self->ctx = media_create_avcodec_context(self->codec, as);
+}
+
+static AVPacket* media_packet_new_from_avpacket(AVPacket* op) {
   sys_return_val_if_fail(op != NULL, NULL);
 
   SysInt err;
@@ -363,12 +446,6 @@ AVPacket* fr_media_packet_new_from_avpacket(AVPacket* op) {
   return np;
 }
 
-const AVCodec *fr_media_find_decoder(AVStream *stream) {
-  sys_return_val_if_fail(stream != NULL, NULL);
-
-  return avcodec_find_decoder(stream->codecpar->codec_id);
-}
-
 SysInt64 fr_media_frame_get_audio_pts(AVFrame *frame,
     AVRational avctx_timebase) {
   sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
@@ -377,32 +454,7 @@ SysInt64 fr_media_frame_get_audio_pts(AVFrame *frame,
   return av_rescale_q(frame->pts, avctx_timebase, tb);
 }
 
-#if 0
-SysInt64 fr_media_frame_get_pts(AVFrame *frame,
-    AVCodecContext *avctx) {
-  sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
-  sys_return_val_if_fail(avctx != NULL, AV_NOPTS_VALUE);
-
-  switch(avctx->codec_type) {
-    case AVMEDIA_TYPE_VIDEO: {
-      return av_rescale_q (frame->best_effort_timestamp,
-          avctx->time_base,
-          AV_TIME_BASE_Q);
-    }
-    case AVMEDIA_TYPE_AUDIO: {
-      AVRational tb = (AVRational){1, frame->sample_rate};
-      return av_rescale_q (frame->pts, avctx->pkt_timebase, tb);
-    }
-    default:
-      sys_warning_N("failed to get pts: %d", avctx->codec_type);
-      break;
-  }
-
-  return AV_NOPTS_VALUE;
-}
-#endif
-
-SysInt fr_media_avcodec_try_receive_frame (
+static SysInt media_avcodec_try_receive_frame (
     AVCodecContext *codec,
     AVFrame *frame) {
   SysInt err;
@@ -411,7 +463,61 @@ SysInt fr_media_avcodec_try_receive_frame (
   return error_check(err);
 }
 
-SysInt fr_media_avcodec_try_send_packet(
+SysInt64 fr_media_stream_calc_pts(
+    FrMediaStream *self,
+    FrMediaFrame *frame) {
+  sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
+  sys_return_val_if_fail(self != NULL, AV_NOPTS_VALUE);
+
+  SysUInt64 pts = frame->ctx->pts;
+
+  switch(self->media_type) {
+    case AVMEDIA_TYPE_VIDEO: {
+      return av_rescale_q (frame->ctx->best_effort_timestamp,
+          self->ctx->time_base,
+          AV_TIME_BASE_Q);
+    }
+    case AVMEDIA_TYPE_AUDIO: {
+      AVRational tb = (AVRational){1, frame->ctx->sample_rate};
+      return av_rescale_q (pts, self->ctx->time_base, tb);
+    }
+    default:
+      break;
+  }
+
+  return AV_NOPTS_VALUE;
+}
+
+SysInt fr_media_decoder_receive_frame(
+    FrMediaDecoder* self,
+    FrMediaFrame **nframe) {
+
+  sys_return_val_if_fail(self != NULL, -1);
+  sys_return_val_if_fail(*nframe == NULL, -1);
+
+  SysInt err;
+  FrMediaFrame* frame = self->frame;
+
+  err = media_avcodec_try_receive_frame(self->ctx,
+      frame->ctx);
+
+  if (err < 0) {
+    if(err == FR_MEDIA_ERROR_EOF) {
+      fr_decoder_set_eof(FR_DECODER(self), true);
+      avcodec_flush_buffers(self->ctx);
+    }
+
+    return err;
+  }
+
+  fr_media_frame_init_frame(frame);
+  fr_media_stream_calc_pts(self->stream, frame);
+  *nframe = frame;
+
+  return err;
+}
+
+static SysInt media_avcodec_try_send_packet(
     AVCodecContext* codec,
     AVPacket* pkt) {
   SysInt err;
@@ -420,53 +526,40 @@ SysInt fr_media_avcodec_try_send_packet(
   return error_check(err);
 }
 
-AVFormatContext* fr_media_create_context_by_filename(
-    const SysChar* default_dec,
-    const SysChar* filename) {
-  int err;
-  const AVInputFormat* default_format;
-  AVFormatContext* ctx = NULL;
+SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
+    FrMediaPacket *pkt) {
+  sys_return_val_if_fail(self != NULL, -1);
 
-  default_format = av_find_input_format(default_dec);
-  err = avformat_open_input(
-      &ctx,
-      filename,
-      (AVInputFormat*)default_format,
-      NULL);
-  if (err < 0) {
-    sys_warning_N("avformat_open_input: %s, %s", av_err2str(err), filename);
-    return NULL;
-  }
-
-  err = avformat_find_stream_info(ctx, NULL);
-  if (err < 0) {
-    sys_warning_N("avformat_find_stream_info: %s, %s",
-        av_err2str(err), filename);
-    goto fail;
-  }
-
-  return ctx;
-
-fail:
-  avformat_free_context(ctx);
-  return NULL;
+  return media_avcodec_try_send_packet(self->ctx, pkt->ctx);
 }
 
-AVStream* fr_media_parse_stream_by_type(
-    AVFormatContext* ctx,
-    FR_MEDIA_ENUM mediaType) {
-  sys_return_val_if_fail(ctx != NULL, NULL);
+SysBool fr_media_file_create(
+    FrMediaFile *self,
+    const SysChar *filename) {
+  const SysChar* default_str = sys_path_extension(filename);
+  AVFormatContext* ctx = media_create_context_by_filename(default_str,
+      filename);
+  FrMediaStream *stream;
 
-  AVStream* as;
-  SysInt idx;
+  self->seek.seek_flags |= AVSEEK_FLAG_BYTE;
+  self->is_realtime = format_context_is_realtime(ctx);
 
-  idx = av_find_best_stream(ctx, (SysInt)mediaType,
-      -1, -1, NULL, 0);
-  if (idx < 0) { return NULL; }
+  self->n_streams = ctx->nb_streams;
+  self->streams = (FrMediaStream **)sgc_type_new(SYS_TYPE_POINTER, 
+      self->n_streams);
 
-  as = ctx->streams[idx];
+  stream = parse_stream_by_type(ctx, FR_MEDIA_VIDEO);
+  if(stream) { self->streams[FR_MEDIA_VIDEO] = stream; }
 
-  return as;
+  stream = parse_stream_by_type(ctx, FR_MEDIA_AUDIO);
+  if(stream) { self->streams[FR_MEDIA_AUDIO] = stream; }
+
+  stream = parse_stream_by_type(ctx, FR_MEDIA_SUBTITLE);
+  if(stream) { self->streams[FR_MEDIA_SUBTITLE] = stream; }
+
+  self->ctx = ctx;
+
+  return true;
 }
 
 AVFilter* fr_media_create_filter_context(void) {

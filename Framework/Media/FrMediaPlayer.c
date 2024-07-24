@@ -94,6 +94,12 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   FrVideoFrame *vframe;
   FrIMediaRenderInterface *iface = FR_I_MEDIA_RENDER_GET_IFACE(render);
 
+  frame = fr_media_pipeline_get_sample_frame(&self->pipeline);
+  if (frame == NULL) {
+
+    return FR_MEDIA_ERROR_EOF;
+  }
+
   frame = fr_media_pipeline_get_image_frame(&self->pipeline);
   if (frame == NULL) {
 

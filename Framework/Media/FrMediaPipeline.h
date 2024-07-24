@@ -29,23 +29,25 @@ struct _FrMediaPipeline {
   SysInt pkt_count;
   SysAsyncQueue image_queue;
   SysAsyncQueue sample_queue;
+  SysAsyncQueue subtitle_queue;
 };
 
 #define fr_media_pipeline_create(o) sys_object_create(o, FR_TYPE_MEDIA_PIPELINE)
 SYS_API SysType fr_media_pipeline_get_type(void);
 SYS_API FrMediaPipeline *fr_media_pipeline_new(void);
 
-SYS_API void fr_media_pipeline_get_video_size(FrMediaPipeline *self,
+void fr_media_pipeline_get_video_size(FrMediaPipeline *self,
     SysInt *width,
     SysInt *height);
 
-SYS_API FrMediaFrame* fr_media_pipeline_get_image_frame(FrMediaPipeline* self);
-SYS_API void fr_media_pipeline_wakeup_source(FrMediaPipeline *self);
+FrMediaFrame* fr_media_pipeline_get_image_frame(FrMediaPipeline* self);
+FrMediaFrame* fr_media_pipeline_get_sample_frame (FrMediaPipeline* self);
+void fr_media_pipeline_wakeup_source(FrMediaPipeline *self);
 
-SYS_API void fr_media_pipeline_run(FrMediaPipeline* self,
+void fr_media_pipeline_run(FrMediaPipeline* self,
     FrMediaFile* file);
 
-SYS_API FrMediaPipeline *fr_media_pipeline_new_I(void);
+FrMediaPipeline *fr_media_pipeline_new_I(void);
 
 SYS_END_DECLS
 

@@ -30,9 +30,6 @@ void fr_media_frame_init_frame(FrMediaFrame *self);
 SYS_API void fr_media_frame_set_ctx(FrMediaFrame *self, AVFrame * ctx);
 SYS_API AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self);
 
-void fr_media_frame_set_pts(FrMediaFrame *self, SysInt64 pts);
-SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
-
 SYS_END_DECLS
 
 #endif

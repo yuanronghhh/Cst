@@ -22,7 +22,10 @@ static void ffp_log_callback_brief(void *ptr,
 void fr_ffmpeg_setup(void) {
   if(inited) { return; }
 
-  avdevice_register_all();
+#if LIBAV_DEVICE
+   avdevice_register_all();
+#endif
+
   avformat_network_init();
 
   av_log_set_callback(ffp_log_callback_brief);

@@ -49,7 +49,9 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     process(self);
 
     fr_media_player_render(self, self->render, region);
-    fr_wait_events_timeout((SysInt)self->delay);
+    sys_usleep((SysInt)self->delay * 1e3);
+
+    fr_poll_events();
   }
 
   fr_region_destroy(region);

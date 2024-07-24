@@ -86,8 +86,9 @@ FR_MEDIA_ERROR_ENUM fr_media_error_map(SysInt err) {
 }
 
 static const AVOutputFormat *media_find_audio_device(void) {
-  const AVOutputFormat *format;
+  const AVOutputFormat *format = NULL;
 
+#if LIBAV_DEVICE
   format = av_output_audio_device_next(NULL);
   while(format == NULL) {
 
@@ -96,6 +97,7 @@ static const AVOutputFormat *media_find_audio_device(void) {
 
   if (format == NULL)
     format = av_output_audio_device_next (NULL);
+#endif
 
   return format;
 }

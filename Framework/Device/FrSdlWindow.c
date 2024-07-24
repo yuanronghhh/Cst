@@ -4,7 +4,6 @@
 #include <Framework/Event/FrEventCore.h>
 
 #define SDL_WINDOW_POINTER "FrSdlWindow"
-#define USE_SINGLE_WINDOW 1
 static void i_window_imp(FrIWindowInterface *iface);
 static FrWindowErrFunc err_callback = NULL;
 

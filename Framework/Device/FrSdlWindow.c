@@ -439,18 +439,25 @@ static void fr_sdl_window_close_callback(FrSdlWindow* gwindow) {
 }
 
 static void fr_sdl_window_scroll_callback(FrSdlWindow* gwindow,
-    SysDouble xoffset, 
+    SysDouble xoffset,
     SysDouble yoffset) {
-
-  sys_debug_N("%s", "window_scroll");
 }
 
-static void fr_sdl_window_cursor_enter_callback(FrSdlWindow* gwindow,
+static void fr_sdl_window_cursor_callback(FrSdlWindow* gwindow,
     SysInt entered) {
-  // sys_debug_N("%s", "cursor_enter");
+  FrWindow *window = FR_WINDOW(gwindow);
+
+  FrEvent *e = fr_event_any_new_I(window, entered ? FR_EVENT_T_WINDOW_CURSOR_ENTER : FR_EVENT_T_WINDOW_CURSOR_LEAVE);
+
+  fr_events_push_head(e);
 }
 
-static void fr_sdl_window_maximize_callback(SDL_Window* window, int maximized) {
+static void fr_sdl_window_maximize_callback(FrSdlWindow* gwindow, int maximized) {
+  FrWindow *window = FR_WINDOW(gwindow);
+
+  FrEvent *e = fr_event_any_new_I(window, maximized ? FR_EVENT_T_WINDOW_MAXIMIZE : FR_EVENT_T_WINDOW_MINISIZE);
+
+  fr_events_push_head(e);
 }
 
 static void fr_sdl_window_framebuffer_size_callback(FrSdlWindow* gwindow,
@@ -464,7 +471,6 @@ static void fr_sdl_window_framebuffer_size_callback(FrSdlWindow* gwindow,
 }
 
 static void fr_sdl_window_focus_callback(FrSdlWindow* gwindow, SysInt focused) {
-  sys_debug_N("window_focus :%d", focused);
 }
 
 static void fr_sdl_window_size_callback(FrSdlWindow* gwindow,
@@ -480,7 +486,6 @@ static void fr_sdl_window_size_callback(FrSdlWindow* gwindow,
 static void fr_sdl_window_pos_callback(FrSdlWindow* gwindow,
     SysInt xpos, 
     SysInt ypos) {
-  sys_debug_N("%s", "window_pos");
 }
 
 static void fr_sdl_window_refresh_callback(FrSdlWindow* gwindow) {
@@ -493,7 +498,9 @@ static void fr_sdl_window_refresh_callback(FrSdlWindow* gwindow) {
 
 static void sdl_handle_event(SDL_Event *e) {
   FrSdlWindow *window;
+  if(e->type == SDL_EVENT_POLL_SENTINEL) { return; }
 
+  sys_info_N("event: %s", sdl_event_get_name(e->type));
   switch(e->type) {
     case SDL_EVENT_WINDOW_SHOWN:
       break;
@@ -510,12 +517,16 @@ static void sdl_handle_event(SDL_Event *e) {
       fr_sdl_window_framebuffer_size_callback(window, -1, -1);
       break;
     case SDL_EVENT_WINDOW_DESTROYED:
-      window = sdl_event_get_window(e->window.windowID);
-      fr_sdl_window_close_callback(window);
+      {
+        window = sdl_event_get_window(e->window.windowID);
+        fr_sdl_window_close_callback(window);
+      }
       break;
     case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
-      window = sdl_event_get_window(e->window.windowID);
-      fr_sdl_window_close_callback(window);
+      {
+        window = sdl_event_get_window(e->window.windowID);
+        fr_sdl_window_close_callback(window);
+      }
       break;
     case SDL_EVENT_WINDOW_MOVED:
       {
@@ -548,17 +559,27 @@ static void sdl_handle_event(SDL_Event *e) {
     case SDL_EVENT_KEYMAP_CHANGED:
       break;
     case SDL_EVENT_WINDOW_FOCUS_GAINED:
+      {
+        window = sdl_event_get_window(e->window.windowID);
+        fr_sdl_window_focus_callback(window, true);
+      }
+      break;
+    case SDL_EVENT_WINDOW_FOCUS_LOST:
+      {
+        window = sdl_event_get_window(e->window.windowID);
+        fr_sdl_window_focus_callback(window, false);
+      }
       break;
     case SDL_EVENT_WINDOW_MOUSE_LEAVE:
       {
         window = sdl_event_get_window(e->window.windowID);
-        fr_sdl_window_cursor_enter_callback(window, false);
+        fr_sdl_window_cursor_callback(window, false);
       }
       break;
     case SDL_EVENT_WINDOW_MOUSE_ENTER:
       {
         window = sdl_event_get_window(e->window.windowID);
-        fr_sdl_window_cursor_enter_callback(window, true);
+        fr_sdl_window_cursor_callback(window, true);
       }
       break;
     case SDL_EVENT_MOUSE_MOTION:
@@ -575,17 +596,24 @@ static void sdl_handle_event(SDL_Event *e) {
         fr_sdl_window_scroll_callback(window, ke.x, ke.y);
       }
       break;
+    case SDL_EVENT_WINDOW_RESTORED:
+    case SDL_EVENT_WINDOW_MINIMIZED:
+      {
+        window = sdl_event_get_window(e->window.windowID);
+        fr_sdl_window_maximize_callback(window, false);
+      }
+      break;
+    case SDL_EVENT_WINDOW_MAXIMIZED:
+      {
+        window = sdl_event_get_window(e->window.windowID);
+        fr_sdl_window_maximize_callback(window, true);
+      }
+      break;
     case SDL_EVENT_AUDIO_DEVICE_ADDED:
       break;
     case SDL_EVENT_CLIPBOARD_UPDATE:
       break;
-    case SDL_EVENT_WINDOW_FOCUS_LOST:
-      break;
-    case SDL_EVENT_POLL_SENTINEL:
-      break;
     case SDL_EVENT_QUIT:
-      window = sdl_event_get_window(e->window.windowID);
-      fr_sdl_window_close_callback(window);
       break;
     default:
       sys_info_N("Not handle event: %s", sdl_event_get_name(e->type));
@@ -622,9 +650,10 @@ static void fr_post_empty_event_i(void) {
 
 static void fr_poll_events_i(void) {
   SDL_Event e;
-  SDL_PollEvent(&e);
+  while(SDL_PollEvent(&e)) {
 
-  sdl_handle_event(&e);
+    sdl_handle_event(&e);
+  }
 }
 
 static void fr_swap_buffers_i(FrWindow *o) {

@@ -31,7 +31,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   // get interval
   vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
   fr_media_stream_get_rational(vs, &rt);
-  self->default_delay = 1.0 / rt.num / (double) rt.den * 1.0e3;
+  self->delay = self->default_delay = 1.0 / rt.num / (double) rt.den * 1.0e3;
 
   /*
    * TODO:
@@ -49,8 +49,8 @@ static SysInt media_player_do(FrMediaPlayer *self) {
     process(self);
 
     fr_media_player_render(self, self->render, region);
-    sys_usleep((SysInt)self->delay * 1e3);
 
+    sys_usleep((SysInt)self->delay * 1e3);
     fr_poll_events();
   }
 
@@ -94,11 +94,14 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
   FrVideoFrame *vframe;
   FrIMediaRenderInterface *iface = FR_I_MEDIA_RENDER_GET_IFACE(render);
 
+#if 1
   frame = fr_media_pipeline_get_sample_frame(&self->pipeline);
   if (frame == NULL) {
 
     return FR_MEDIA_ERROR_EOF;
   }
+  sys_object_unref(frame);
+#endif
 
   frame = fr_media_pipeline_get_image_frame(&self->pipeline);
   if (frame == NULL) {

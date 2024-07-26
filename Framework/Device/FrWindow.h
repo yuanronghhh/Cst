@@ -57,6 +57,7 @@ SYS_API SysPointer fr_window_get_data(FrWindow * self);
 #define fr_wait_events_timeout fr_i_window_wait_events_timeout
 #define fr_post_empty_event fr_i_window_post_empty_event
 #define fr_poll_events fr_i_window_poll_events
+#define fr_delay fr_i_window_delay
 #define fr_window_get_key fr_i_window_get_key
 #define fr_window_get_key_name fr_i_window_get_key_name
 

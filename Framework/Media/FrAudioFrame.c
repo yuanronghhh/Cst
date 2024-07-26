@@ -6,14 +6,19 @@ SysObject* fr_audio_frame_dclone_i(SysObject* o) {
   sys_return_val_if_fail(o != NULL, NULL);
   SysObject* n = SYS_OBJECT_CLASS(fr_audio_frame_parent_class)->dclone(o);
 
-  /*
   FrAudioFrame* nself = FR_AUDIO_FRAME(n);
   FrAudioFrame* oself = FR_AUDIO_FRAME(o);
-  */
+  nself->pts = oself->pts;
 
   return n;
 }
 
+void fr_audio_frame_init_frame_i(FrMediaFrame* o) {
+  sys_return_if_fail(o != NULL);
+
+  FrAudioFrame *self = FR_AUDIO_FRAME(o);
+  fr_media_audio_frame_init(self);
+}
 
 /* object api */
 static void fr_audio_frame_construct(FrAudioFrame *self) {
@@ -40,9 +45,12 @@ static void fr_audio_frame_dispose(SysObject* o) {
 
 static void fr_audio_frame_class_init(FrAudioFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FrMediaFrameClass *mcls = FR_MEDIA_FRAME_CLASS(cls);
 
   ocls->dispose = fr_audio_frame_dispose;
   ocls->dclone = fr_audio_frame_dclone_i;
+
+  mcls->init_frame = fr_audio_frame_init_frame_i;
 }
 
 void fr_audio_frame_init(FrAudioFrame* self) {

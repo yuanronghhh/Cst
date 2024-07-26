@@ -17,13 +17,11 @@ SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   return fr_image_scale_scale_media_frame(scale, mframe) == 0;
 }
 
-void fr_video_frame_init_frame(FrVideoFrame* self) {
-  sys_return_if_fail(self != NULL);
+void fr_video_frame_init_frame_i(FrMediaFrame* o) {
+  sys_return_if_fail(o != NULL);
 
-  AVFrame *frame = self->parent.ctx;
-  self->width = frame->width;
-  self->height = frame->height;
-  self->format = frame->format;
+  FrVideoFrame *self = FR_VIDEO_FRAME(o);
+  fr_media_video_frame_init(self);
 }
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {
@@ -41,7 +39,7 @@ void fr_video_frame_get_out_size(FrVideoFrame* self, SysInt *width, SysInt *heig
 }
 
 void fr_video_frame_get_frame_data(FrVideoFrame *self,
-  SysUInt8 **frame_data[], 
+  SysUInt8 **frame_data[],
   SysInt *linesize[]) {
   sys_return_if_fail(self != NULL);
 
@@ -62,7 +60,6 @@ SysObject* fr_video_frame_dclone_i(SysObject* o) {
   nself->height = oself->height;
   nself->format = oself->format;
   nself->window = oself->window ? sys_object_ref(oself->window) : NULL;
-  nself->delay = oself->delay;
 
   return n;
 }
@@ -90,9 +87,12 @@ static void fr_video_frame_dispose(SysObject* o) {
 
 static void fr_video_frame_class_init(FrVideoFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FrMediaFrameClass *mcls = FR_MEDIA_FRAME_CLASS(cls);
 
   ocls->dispose = fr_video_frame_dispose;
   ocls->dclone = fr_video_frame_dclone_i;
+
+  mcls->init_frame = fr_video_frame_init_frame_i;
 }
 
 void fr_video_frame_init(FrVideoFrame* self) {

@@ -21,9 +21,9 @@ struct _FrVideoFrame  {
   SysInt width;
   SysInt height;
   SysInt format;
-  SysInt delay;
   FrWindow *window;
   FrBound *bound;
+  SysUInt64 pts;
 };
 
 SYS_API SysType fr_video_frame_get_type(void);
@@ -41,6 +41,7 @@ void fr_video_frame_get_frame_data(FrVideoFrame *self,
   SysInt *linesize[]);
 
 SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale);
+
 
 SYS_END_DECLS
 

@@ -24,6 +24,7 @@ SysBool fr_image_scale_check(
 
 SysBool fr_image_scale_check_hw_accel(FrImageScale *self, SysInt src_format) {
   sys_return_val_if_fail(self != NULL, false);
+  if(self->hw_accel == NULL) { return false; }
 
   return fr_hw_accel_get_hw_format(self->hw_accel) == src_format;
 }

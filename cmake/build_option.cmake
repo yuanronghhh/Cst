@@ -21,7 +21,7 @@ if(WIN32)
     set(CMAKE_Csharp_COMPILER "C:/Program Files/Mono/bin/mcs.bat")
   endif()
 
-  set(CMAKE_C_FLAGS "-gdwarf")
+  set(CMAKE_C_FLAGS "-Wall -gdwarf -Wno-unused-function")
 else()
   set(OS_ARCHITECH "Linux")
   set(CLANG_HOME "/usr")

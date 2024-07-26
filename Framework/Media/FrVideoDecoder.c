@@ -57,17 +57,18 @@ static SysInt fr_video_decoder_decode_frame_i(
   vframe = FR_VIDEO_FRAME(omframe);
   fr_media_video_frame_init(vframe);
 
-  if(!fr_media_scale_copy_gpu_frame(&self->scale, omframe)) {
-    sys_warning_N("hwaccel copy failed: %s", o->parent.name);
-    return -1;
+  if(fr_image_scale_check_hw_accel(&self->scale, omframe->ctx->format)) {
+    if(!fr_media_scale_copy_gpu_frame(&self->scale, omframe)) {
+      sys_warning_N("hwaccel copy failed: %s", o->parent.name);
+      return -1;
+    }
+    fr_image_scale_set_in_pix_fmt(&self->scale, omframe->ctx->format);
   }
-  fr_image_scale_set_in_pix_fmt(&self->scale, omframe->ctx->format);
 
   if(!fr_video_frame_scale(vframe, &self->scale)) {
     return -1;
   }
   *mframe = FR_MEDIA_FRAME(vframe);
-  vframe->delay = (SysInt)(1.0 / 30 * 1e3);
 
   return err;
 }

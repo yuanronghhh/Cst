@@ -45,6 +45,8 @@ SysBool fr_media_file_create(FrMediaFile *self,
     const SysChar *filename);
 
 void fr_media_video_frame_init(FrVideoFrame* self);
+void fr_media_audio_frame_init(FrAudioFrame* self);
+
 SysBool fr_media_scale_media_frame(FrImageScale *scale, FrMediaFrame *frame);
 SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame);
 

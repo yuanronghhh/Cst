@@ -24,6 +24,15 @@ AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self) {
 }
 
 void fr_media_frame_init_frame(FrMediaFrame *self) {
+  sys_return_if_fail(self != NULL);
+
+  FrMediaFrameClass* cls = FR_MEDIA_FRAME_GET_CLASS(self);
+  sys_return_if_fail(cls->init_frame);
+
+  return cls->init_frame(self);
+}
+
+void fr_media_frame_init_frame_i(FrMediaFrame *self) {
 }
 
 SysObject* fr_media_frame_dclone_i(SysObject* o) {
@@ -54,10 +63,13 @@ static void fr_media_frame_dispose(SysObject* o) {
 
 static void fr_media_frame_class_init(FrMediaFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FrMediaFrameClass *mcls = FR_MEDIA_FRAME_CLASS(cls);
 
   ocls->destroy = fr_media_frame_destroy_i;
   ocls->dispose = fr_media_frame_dispose;
   ocls->dclone = fr_media_frame_dclone_i;
+
+  mcls->init_frame = fr_media_frame_init_frame_i;
 }
 
 void fr_media_frame_init(FrMediaFrame* self) {

@@ -12,6 +12,9 @@ SYS_BEGIN_DECLS
 
 struct _FrMediaFrameClass {
   FrPacketClass parent;
+
+  /* init after receive_frame decode */
+  void (*init_frame) (FrMediaFrame *self);
 };
 
 struct _FrMediaFrame {

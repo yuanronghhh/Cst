@@ -51,10 +51,9 @@ FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
   }
 
   if(!fr_media_decoder_get_hw_info(dec, type, &hw_pix_format)) {
-    sys_warning_N("Failed to get hw info: %s, %s",
+    sys_info_N("Failed to get hw info: %s, %s",
         fr_decoder_get_name(FR_DECODER(dec)),
         av_hwdevice_get_type_name(type));
-
     return NULL;
   }
 

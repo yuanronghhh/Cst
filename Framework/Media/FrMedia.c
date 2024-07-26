@@ -7,6 +7,7 @@
 #include <Framework/Media/FrImageSaver.h>
 #include <Framework/Media/FrMediaFrame.h>
 #include <Framework/Media/FrVideoFrame.h>
+#include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Graph/FrImage.h>
 
 const SysChar* fr_media_error_string(SysInt err) {
@@ -69,7 +70,7 @@ static SysInt error_check(SysInt err) {
 
 static SysInt media_hwframe_transfer_data(AVFrame *dst, AVFrame *src) {
   SysInt err = av_hwframe_transfer_data(dst, src, 0);
-  return error_check_msg(err, "av_hwframe_transfer_data");
+  return error_check_msg(err, "hardware transfer data failed");
 }
 
 static AVFormatContext* media_create_context_by_filename(
@@ -347,6 +348,18 @@ void fr_media_video_frame_init(FrVideoFrame* self) {
   self->width = frame->width;
   self->height = frame->height;
   self->format = frame->format;
+  self->pts = av_rescale_q (frame->best_effort_timestamp,
+          frame->time_base,
+          AV_TIME_BASE_Q);
+}
+
+void fr_media_audio_frame_init(FrAudioFrame* self) {
+  sys_return_if_fail(self != NULL);
+
+  AVFrame *frame = self->parent.ctx;
+  AVRational tb = (AVRational){1, frame->sample_rate};
+
+  self->pts = av_rescale_q (frame->pts, frame->time_base, tb);
 }
 
 void fr_media_frame_get_frame_rate (
@@ -446,14 +459,6 @@ static AVPacket* media_packet_new_from_avpacket(AVPacket* op) {
   return np;
 }
 
-SysInt64 fr_media_frame_get_audio_pts(AVFrame *frame,
-    AVRational avctx_timebase) {
-  sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
-
-  AVRational tb = (AVRational){1, frame->sample_rate};
-  return av_rescale_q(frame->pts, avctx_timebase, tb);
-}
-
 static SysInt media_avcodec_try_receive_frame (
     AVCodecContext *codec,
     AVFrame *frame) {
@@ -512,6 +517,7 @@ SysInt fr_media_decoder_receive_frame(
 
   fr_media_frame_init_frame(frame);
   fr_media_stream_calc_pts(self->stream, frame);
+
   *nframe = frame;
 
   return err;

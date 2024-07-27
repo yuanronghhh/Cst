@@ -21,7 +21,7 @@ struct _FrMediaFrame {
   FrPacket parent;
 
   /* <private> */
-  AVFrame *ctx;
+  SysPointer ctx;
   SysPointer user_data;
 };
 

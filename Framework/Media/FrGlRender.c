@@ -45,6 +45,11 @@ static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegio
   FrGlRender *self = FR_GL_RENDER(o);
   GLuint tex_id = self->tex_id;
 
+  SysUInt8 *data[AV_NUM_DATA_POINTERS] = {0};
+  FrMediaFrame *mframe = FR_MEDIA_FRAME(frame);
+
+  fr_media_frame_get_data(mframe, data);
+
   clear_frame_buffer(self);
   glBindTexture(GL_TEXTURE_2D, tex_id);
   glTexImage2D(GL_TEXTURE_2D,
@@ -54,7 +59,7 @@ static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegio
       self->height, 
       0, 
       GL_RGBA, 
-      GL_UNSIGNED_BYTE, frame->parent.ctx->data);
+      GL_UNSIGNED_BYTE, data);
 
   // Render whatever you want
   glEnable(GL_TEXTURE_2D);

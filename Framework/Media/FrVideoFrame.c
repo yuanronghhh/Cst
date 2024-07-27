@@ -39,12 +39,12 @@ void fr_video_frame_get_out_size(FrVideoFrame* self, SysInt *width, SysInt *heig
 }
 
 void fr_video_frame_get_frame_data(FrVideoFrame *self,
-  SysUInt8 **frame_data[],
-  SysInt *linesize[]) {
+  SysUInt8 *frame_data[],
+  SysInt linesize[]) {
   sys_return_if_fail(self != NULL);
 
-  *frame_data = self->parent.ctx->data;
-  *linesize = self->parent.ctx->linesize;
+  fr_media_frame_get_data(&self->parent, frame_data);
+  fr_media_frame_get_linesize(&self->parent, linesize);
 }
 
 SysObject* fr_video_frame_dclone_i(SysObject* o) {

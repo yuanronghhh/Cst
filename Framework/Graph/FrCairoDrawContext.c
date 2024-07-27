@@ -93,8 +93,6 @@ static SysBool fr_surface_save_to_png(FrSurface* self, const SysChar *filename) 
 }
 
 static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame) {
-  SysUInt8 **data;
-  SysInt *linesize;
   cairo_surface_t *paint_surface;
   cairo_t *window_cr;
   cairo_t *paint_cr;
@@ -102,8 +100,10 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
   SysInt width;
   SysInt height;
   int stride;
+  SysUInt8 *data[AV_NUM_DATA_POINTERS] = {0};
+  SysInt linesize[AV_NUM_DATA_POINTERS] = {0};
 
-  fr_video_frame_get_frame_data(frame, &data, &linesize);
+  fr_video_frame_get_frame_data(frame, data, linesize);
   fr_video_frame_get_out_size(frame, &width, &height);
 
   /* CAIRO is BGRA format */

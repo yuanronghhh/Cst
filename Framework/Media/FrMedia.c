@@ -257,10 +257,13 @@ static SysBool media_scale_hw_check(
 }
 
 SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame) {
+  AVFrame *avf;
   AVFrame* nframe = av_frame_alloc();
   if (nframe == NULL) { return false; }
 
-  if(fr_image_scale_check_hw_accel(scale, frame->ctx->format)) {
+  avf = frame->ctx;
+
+  if(fr_image_scale_check_hw_accel(scale, avf->format)) {
     if(!media_scale_hw_check(scale, frame->ctx)) {
 
       goto done;
@@ -271,7 +274,8 @@ SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame) 
       goto done;
     }
   }
-  av_frame_free(&frame->ctx);
+
+  fr_media_frame_free(frame);
   frame->ctx = nframe;
 
   return true;
@@ -296,7 +300,7 @@ SysBool fr_media_scale_media_frame(FrImageScale *scale, FrMediaFrame *frame) {
     av_frame_free(&nframe);
     return false;
   }
-  av_frame_free(&frame->ctx);
+  fr_media_frame_free(frame);
   frame->ctx = nframe;
 
   return 0;
@@ -468,31 +472,6 @@ static SysInt media_avcodec_try_receive_frame (
   return error_check(err);
 }
 
-SysInt64 fr_media_stream_calc_pts(
-    FrMediaStream *self,
-    FrMediaFrame *frame) {
-  sys_return_val_if_fail(frame != NULL, AV_NOPTS_VALUE);
-  sys_return_val_if_fail(self != NULL, AV_NOPTS_VALUE);
-
-  SysUInt64 pts = frame->ctx->pts;
-
-  switch(self->media_type) {
-    case AVMEDIA_TYPE_VIDEO: {
-      return av_rescale_q (frame->ctx->best_effort_timestamp,
-          self->ctx->time_base,
-          AV_TIME_BASE_Q);
-    }
-    case AVMEDIA_TYPE_AUDIO: {
-      AVRational tb = (AVRational){1, frame->ctx->sample_rate};
-      return av_rescale_q (pts, self->ctx->time_base, tb);
-    }
-    default:
-      break;
-  }
-
-  return AV_NOPTS_VALUE;
-}
-
 SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe) {
@@ -516,8 +495,6 @@ SysInt fr_media_decoder_receive_frame(
   }
 
   fr_media_frame_init_frame(frame, self->stream);
-  fr_media_stream_calc_pts(self->stream, frame);
-
   *nframe = frame;
 
   return err;
@@ -566,6 +543,36 @@ SysBool fr_media_file_create(
   self->ctx = ctx;
 
   return true;
+}
+
+SysInt fr_media_frame_get_format(FrMediaFrame *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+  AVFrame *ctx = self->ctx;
+
+  return ctx->format;
+}
+
+void fr_media_frame_free(FrMediaFrame *self) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(self->ctx != NULL);
+
+  av_frame_free((AVFrame **)&self->ctx);
+}
+
+void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]) {
+  AVFrame *avf = self->ctx;
+
+  for(SysInt i = 0; i < AV_NUM_DATA_POINTERS; i++) {
+    linesize[i] = avf->linesize[i];
+  }
+}
+
+void fr_media_frame_get_data(FrMediaFrame *self, SysUInt8 *data[]) {
+  AVFrame *avf = self->ctx;
+
+  for(SysInt i = 0; i < AV_NUM_DATA_POINTERS; i++) {
+    data[i] = avf->data[i];
+  }
 }
 
 AVFilter* fr_media_create_filter_context(void) {

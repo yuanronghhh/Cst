@@ -14,7 +14,7 @@ struct _FrMediaFrameClass {
   FrPacketClass parent;
 
   /* init after receive_frame decode */
-  void (*init_frame) (FrMediaFrame *self);
+  void (*init_frame) (FrMediaFrame *self, FrMediaStream *stream);
 };
 
 struct _FrMediaFrame {
@@ -28,7 +28,7 @@ struct _FrMediaFrame {
 SYS_API SysType fr_media_frame_get_type(void);
 SYS_API FrMediaFrame *fr_media_frame_new(void);
 
-void fr_media_frame_init_frame(FrMediaFrame *self);
+void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) ;
 #define fr_media_frame_create(o) sys_object_create((o), FR_TYPE_MEDIA_FRAME)
 SYS_API void fr_media_frame_set_ctx(FrMediaFrame *self, AVFrame * ctx);
 SYS_API AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self);

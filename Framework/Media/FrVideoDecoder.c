@@ -55,7 +55,6 @@ static SysInt fr_video_decoder_decode_frame_i(
     ->decode_frame(o, (FrMediaFrame **)&omframe);
   if(err < 0) { return err; }
   vframe = FR_VIDEO_FRAME(omframe);
-  fr_media_video_frame_init(vframe);
 
   if(fr_image_scale_check_hw_accel(&self->scale, omframe->ctx->format)) {
     if(!fr_media_scale_copy_gpu_frame(&self->scale, omframe)) {

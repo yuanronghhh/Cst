@@ -341,7 +341,7 @@ static void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
   sys_object_unref(image);
 }
 
-void fr_media_video_frame_init(FrVideoFrame* self) {
+void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
@@ -349,17 +349,17 @@ void fr_media_video_frame_init(FrVideoFrame* self) {
   self->height = frame->height;
   self->format = frame->format;
   self->pts = av_rescale_q (frame->best_effort_timestamp,
-          frame->time_base,
+          stream->ctx->time_base,
           AV_TIME_BASE_Q);
 }
 
-void fr_media_audio_frame_init(FrAudioFrame* self) {
+void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
   AVRational tb = (AVRational){1, frame->sample_rate};
 
-  self->pts = av_rescale_q (frame->pts, frame->time_base, tb);
+  self->pts = av_rescale_q (frame->pts, stream->ctx->time_base, tb);
 }
 
 void fr_media_frame_get_frame_rate (
@@ -515,7 +515,7 @@ SysInt fr_media_decoder_receive_frame(
     return err;
   }
 
-  fr_media_frame_init_frame(frame);
+  fr_media_frame_init_frame(frame, self->stream);
   fr_media_stream_calc_pts(self->stream, frame);
 
   *nframe = frame;

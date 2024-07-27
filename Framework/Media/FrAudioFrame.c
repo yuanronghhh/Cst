@@ -13,11 +13,11 @@ SysObject* fr_audio_frame_dclone_i(SysObject* o) {
   return n;
 }
 
-void fr_audio_frame_init_frame_i(FrMediaFrame* o) {
+void fr_audio_frame_init_frame_i(FrMediaFrame* o, FrMediaStream *stream) {
   sys_return_if_fail(o != NULL);
 
   FrAudioFrame *self = FR_AUDIO_FRAME(o);
-  fr_media_audio_frame_init(self);
+  fr_media_audio_frame_init(self, stream);
 }
 
 /* object api */

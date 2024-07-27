@@ -17,11 +17,11 @@ SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale) {
   return fr_image_scale_scale_media_frame(scale, mframe) == 0;
 }
 
-void fr_video_frame_init_frame_i(FrMediaFrame* o) {
+void fr_video_frame_init_frame_i(FrMediaFrame* o, FrMediaStream *stream) {
   sys_return_if_fail(o != NULL);
 
   FrVideoFrame *self = FR_VIDEO_FRAME(o);
-  fr_media_video_frame_init(self);
+  fr_media_video_frame_init(self, stream);
 }
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {

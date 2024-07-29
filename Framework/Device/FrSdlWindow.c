@@ -1,4 +1,5 @@
 #include <Framework/Device/FrSdlWindow.h>
+#include <Framework/Media/FrAudioStream.h>
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrRender.h>
 #include <Framework/Event/FrEventCore.h>
@@ -9,8 +10,68 @@ static FrWindowErrFunc err_callback = NULL;
 
 // only single window for performance
 static FrSdlWindow *g_window = NULL; 
+static const int next_nb_channels[] = {0, 0, 1, 6, 2, 6, 4, 6};
+static const int next_sample_rates[] = {0, 44100, 48000, 96000, 192000};
 
 SYS_DEFINE_TYPE(FrSdlWindow, fr_sdl_window, FR_TYPE_WINDOW);
+
+static SysInt sdl_audio_open(
+    SysInt channels,
+    SysInt sample_rate) {
+  sys_return_val_if_fail(sample_rate >= 0, -1);
+  sys_return_val_if_fail(channels >= 0, -1);
+
+  SDL_AudioSpec spec = {0};
+  SysInt dev;
+
+  spec.channels = channels;
+  spec.freq = sample_rate;
+  spec.format = SDL_AUDIO_S16;
+
+  dev = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
+  if(dev == 0) {
+
+    sys_warning_N("Failed to open device: %s", SDL_GetError());
+    return -1;
+  }
+  SDL_ResumeAudioDevice(dev);
+
+  return -1;
+}
+
+static void sdl_audio_close(SysInt dev) {
+
+  SDL_CloseAudioDevice(dev);
+}
+
+static void sdl_audio_stream_create(FrAudioStream *self, FrAudioStreamContext *info) {
+  sys_return_if_fail(self);
+  const SDL_AudioSpec src = { SDL_AUDIO_S16, 1, 22050 };
+  const SDL_AudioSpec dst = { SDL_AUDIO_F32, 2, 48000 };
+
+  self->ctx = SDL_CreateAudioStream(&src, &dst);
+}
+
+static SysBool sdl_audio_write_data(FrAudioStream *self, SysUInt data[], SysInt len) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  SDL_AudioStream *stream = self->ctx;
+  int rc = SDL_PutAudioStreamData(stream, data, len);
+  if (rc == -1) {
+    sys_warning_N("Failed to put samples in stream: %s\n", SDL_GetError());
+    return false;
+  }
+
+  return true;
+}
+
+static SysInt sdl_flush_audio(FrAudioStream *self) {
+  sys_return_val_if_fail(self != NULL, false);
+
+  SDL_AudioStream *stream = self->ctx;
+
+  return SDL_FlushAudioStream(stream);
+}
 
 static FrSdlWindow *gwindow_get_data(SDL_Window *gwindow) {
   sys_return_val_if_fail(gwindow != NULL, NULL);

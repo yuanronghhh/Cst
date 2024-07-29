@@ -106,6 +106,8 @@ set(SRC
   ./Event/FrEvents.c
   ./Event/FrEvents.h
 
+  ./Media/FrAudioStream.c
+  ./Media/FrAudioStream.h
   ./Media/FrAudioDecoder.c
   ./Media/FrAudioDecoder.h
   ./Media/FrAudioFrame.c

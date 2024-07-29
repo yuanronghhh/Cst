@@ -3,6 +3,14 @@
 
 SYS_DEFINE_TYPE(FrAudioDecoder, fr_audio_decoder, FR_TYPE_MEDIA_DECODER);
 
+static SysInt fr_audio_decoder_open_i(FrDecoder* o) {
+  SysInt err;
+
+  err = FR_DECODER_CLASS(fr_audio_decoder_parent_class)->open(o);
+
+  return err;
+}
+
 static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame **frame) {
   SysInt err = FR_MEDIA_DECODER_CLASS(fr_audio_decoder_parent_class)
     ->decode_frame(o, frame);
@@ -22,8 +30,10 @@ static void fr_audio_decoder_dispose(SysObject* o) {
 static void fr_audio_decoder_class_init(FrAudioDecoderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FrMediaDecoderClass *mcls = FR_MEDIA_DECODER_CLASS(cls);
+  FrDecoderClass *dcls = FR_DECODER_CLASS(cls);
 
   mcls->decode_frame = fr_audio_decoder_decode_frame_i;
+  dcls->open = fr_audio_decoder_open_i;
 
   ocls->dispose = fr_audio_decoder_dispose;
 }

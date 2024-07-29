@@ -19,6 +19,7 @@ struct _FrAudioDecoder {
   FrMediaDecoder parent;
 
   /* <private> */
+  AVChannelLayout channel;
 };
 
 SYS_API SysType fr_audio_decoder_get_type(void);

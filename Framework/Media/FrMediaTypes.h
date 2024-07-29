@@ -123,6 +123,10 @@ typedef struct _FrMediaFrameClass FrMediaFrameClass;
 typedef struct _FrMediaFilter FrMediaFilter;
 typedef struct _FrMediaFilterClass FrMediaFilterClass;
 
+typedef struct _FrAudioStreamContext FrAudioStreamContext;
+typedef struct _FrAudioStream FrAudioStream;
+typedef struct _FrAudioStreamClass FrAudioStreamClass;
+
 typedef struct _FrAudioFrame FrAudioFrame;
 typedef struct _FrAudioFrameClass FrAudioFrameClass;
 

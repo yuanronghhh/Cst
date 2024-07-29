@@ -96,8 +96,10 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
 
 #if 1
   frame = fr_media_pipeline_get_sample_frame(&self->pipeline);
+  self->audio_pts += 1;
   if (frame != NULL) {
 
+    sys_debug_N("%lld", fr_media_frame_get_pts(frame));
     sys_object_unref(frame);
   }
 #endif
@@ -107,6 +109,8 @@ SysInt fr_media_player_render(FrMediaPlayer *self,
 
     return FR_MEDIA_ERROR_EOF;
   }
+  sys_debug_N("%lld", fr_media_frame_get_pts(frame));
+  self->video_pts += 1;
 
   vframe = FR_VIDEO_FRAME(frame);
   iface->render_video(render, vframe, region);

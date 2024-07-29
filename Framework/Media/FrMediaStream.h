@@ -42,9 +42,6 @@ FrMediaStream* fr_media_streams_get_by_media_type (
 SysBool fr_media_stream_is_media(FrMediaStream *self, FR_MEDIA_ENUM media_type);
 SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt);
 
-void fr_media_stream_set_ctx(FrMediaStream *self, AVStream * ctx);
-AVStream * fr_media_stream_get_ctx(FrMediaStream *self);
-
 SYS_END_DECLS
 
 #endif

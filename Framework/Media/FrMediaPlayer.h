@@ -29,6 +29,8 @@ struct _FrMediaPlayer {
   SysDouble delay;
   SysDouble default_delay;
   FrIMediaRender *render;
+  SysInt64 audio_pts;
+  SysInt64 video_pts;
 };
 
 struct _FrMediaPlayerContext {

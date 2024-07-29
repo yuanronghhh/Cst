@@ -18,7 +18,7 @@ struct _FrAudioFrame  {
   FrMediaFrame parent;
 
   /* <private> */
-  SysUInt64 pts;
+  SysUInt64 timestamp;
 };
 
 SYS_API SysType fr_audio_frame_get_type(void);

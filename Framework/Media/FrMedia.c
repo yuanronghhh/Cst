@@ -1,4 +1,5 @@
 #include <Framework/Media/FrMedia.h>
+#include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrImageScale.h>
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrMediaStream.h>
@@ -103,6 +104,12 @@ static AVFormatContext* media_create_context_by_filename(
 fail:
   avformat_free_context(ctx);
   return NULL;
+}
+
+SysInt fr_media_audio_open(FrAudioDecoder *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return -1;
 }
 
 static SysBool format_context_is_realtime(AVFormatContext* s) {
@@ -352,7 +359,7 @@ void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream) {
   self->width = frame->width;
   self->height = frame->height;
   self->format = frame->format;
-  self->pts = av_rescale_q (frame->best_effort_timestamp,
+  self->timestamp = av_rescale_q (frame->best_effort_timestamp,
           stream->ctx->time_base,
           AV_TIME_BASE_Q);
 }
@@ -361,9 +368,9 @@ void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
-  AVRational tb = (AVRational){1, frame->sample_rate};
+  AVRational tb = (AVRational){1, AV_TIME_BASE};
 
-  self->pts = av_rescale_q (frame->pts, stream->ctx->time_base, tb);
+  self->timestamp = av_rescale_q (frame->best_effort_timestamp, stream->ctx->time_base, tb);
 }
 
 void fr_media_frame_get_frame_rate (
@@ -557,6 +564,13 @@ void fr_media_frame_free(FrMediaFrame *self) {
   sys_return_if_fail(self->ctx != NULL);
 
   av_frame_free((AVFrame **)&self->ctx);
+}
+
+SysInt64 fr_media_frame_get_pts(FrMediaFrame *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+  AVFrame *avf = self->ctx;
+
+  return avf->pts;
 }
 
 void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]) {

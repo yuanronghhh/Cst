@@ -18,6 +18,8 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrStream.h>
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Media/FrAudioDecoder.h>
+#include <Framework/Media/FrAudioStream.h>
+#include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrVideoFrame.h>
 #include <Framework/Media/FrMediaFrame.h>
@@ -26,7 +28,6 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrImageSaver.h>
 #include <Framework/Media/FrImageScale.h>
 #include <Framework/Media/FrGlRender.h>
-#include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Media/FrFrameDecoder.h>
 #include <Framework/Media/FrIMediaRender.h>
 #include <Framework/Media/FrHwAccel.h>

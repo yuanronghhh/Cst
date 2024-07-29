@@ -31,7 +31,6 @@ struct _FrMediaDecoder {
   AVCodecContext *ctx;
   FrMediaFrame *frame;
   SysType frame_type;
-  SysInt auto_pts;
 };
 
 SYS_API SysType fr_media_decoder_get_type(void);

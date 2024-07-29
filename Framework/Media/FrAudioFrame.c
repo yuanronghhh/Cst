@@ -8,7 +8,7 @@ SysObject* fr_audio_frame_dclone_i(SysObject* o) {
 
   FrAudioFrame* nself = FR_AUDIO_FRAME(n);
   FrAudioFrame* oself = FR_AUDIO_FRAME(o);
-  nself->pts = oself->pts;
+  nself->timestamp = oself->timestamp;
 
   return n;
 }

@@ -23,7 +23,7 @@ struct _FrVideoFrame  {
   SysInt format;
   FrWindow *window;
   FrBound *bound;
-  SysUInt64 pts;
+  SysUInt64 timestamp;
 };
 
 SYS_API SysType fr_video_frame_get_type(void);

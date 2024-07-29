@@ -43,18 +43,6 @@ FrMediaStream* fr_media_streams_get_by_media_type(
   return streams[media_type];
 }
 
-void fr_media_stream_set_ctx(FrMediaStream *self, AVStream * ctx) {
-  sys_return_if_fail(self != NULL);
-
-  self->ctx = ctx;
-}
-
-AVStream * fr_media_stream_get_ctx(FrMediaStream *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->ctx;
-}
-
 /* object api */
 static void fr_media_stream_construct(
     FrMediaStream *self,

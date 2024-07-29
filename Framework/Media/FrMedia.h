@@ -48,6 +48,7 @@ void fr_media_frame_free(FrMediaFrame *self);
 void fr_media_frame_get_data(FrMediaFrame *self, uint8_t *data[]);
 void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]);
 SysInt fr_media_frame_get_format(FrMediaFrame *self);
+SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
 
 void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream);
 void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream);

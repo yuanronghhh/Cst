@@ -102,7 +102,7 @@ static AVFormatContext* media_create_context_by_filename(
   err = avformat_open_input(
       &ctx,
       filename,
-      (AVInputFormat*)default_format,
+      default_format,
       NULL);
   if (err < 0) {
     sys_warning_N("avformat_open_input: %s, %s", av_err2str(err), filename);
@@ -392,11 +392,13 @@ void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
+  AVStream *astream = stream->ctx;
+
   self->width = frame->width;
   self->height = frame->height;
   self->format = frame->format;
   self->timestamp = av_rescale_q (frame->best_effort_timestamp,
-      stream->ctx->time_base,
+      astream->time_base,
       AV_TIME_BASE_Q);
 }
 
@@ -404,9 +406,12 @@ void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
+  AVStream *astream = stream->ctx;
   AVRational tb = (AVRational){1, AV_TIME_BASE};
 
-  self->timestamp = av_rescale_q (frame->best_effort_timestamp, stream->ctx->time_base, tb);
+  self->timestamp = av_rescale_q (frame->best_effort_timestamp,
+      astream->time_base, 
+      tb);
 }
 
 void fr_media_frame_get_frame_rate (

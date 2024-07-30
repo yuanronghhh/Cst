@@ -46,23 +46,21 @@ FrMediaStream* fr_media_streams_get_by_media_type(
 /* object api */
 static void fr_media_stream_construct(
     FrMediaStream *self,
-    AVStream *stream,
-    SysInt media_type) {
+    FrMediaStreamContext *info) {
 
-  self->ctx = stream;
-  self->media_type = media_type;
+  self->ctx = info->ctx;
+
+  fr_media_stream_create(self, info);
 }
 
 FrMediaStream* fr_media_stream_new(void) {
   return sys_object_new(FR_TYPE_MEDIA_STREAM, NULL);
 }
 
-FrMediaStream *fr_media_stream_new_I(
-    AVStream *stream,
-    SysInt media_type) {
-  FrMediaStream *o = fr_media_stream_new();
+FrMediaStream *fr_media_stream_new_I(FrMediaStreamContext *info) {
+  FrMediaStream *o = sys_object_new(info->mediaType, NULL);
 
-  fr_media_stream_construct(o, stream, media_type);
+  fr_media_stream_construct(o, info);
 
   return o;
 }

@@ -18,16 +18,22 @@ struct _FrMediaStream {
   FrStream parent;
 
   /* <private> */
-  AVStream *ctx;
-  FR_MEDIA_ENUM media_type;
+
+  /* AVStream * */
+  SysPointer ctx;
+};
+
+struct _FrMediaStreamContext {
+  SysType mediaType;
+
+  /* AVStream * */
+  SysPointer ctx;
 };
 
 SYS_API SysType fr_media_stream_get_type(void);
 SYS_API FrMediaStream *fr_media_stream_new(void);
 
-SYS_API FrMediaStream *fr_media_stream_new_I(
-    AVStream *stream,
-    SysInt media_type);
+SYS_API FrMediaStream *fr_media_stream_new_I(FrMediaStreamContext *info);
 
 SYS_API FrMediaStream* fr_media_streams_get_by_index(
     FrMediaStream *streams[],

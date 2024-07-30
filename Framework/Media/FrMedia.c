@@ -161,6 +161,9 @@ static FrMediaStream* parse_stream_by_type(
   return stream;
 }
 
+void fr_media_stream_create(FrMediaStream *self, FrMediaStreamContext *info) {
+}
+
 static const AVOutputFormat *media_find_audio_device(void) {
   const AVOutputFormat *format = NULL;
 

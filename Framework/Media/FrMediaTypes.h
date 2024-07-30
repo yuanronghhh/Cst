@@ -110,6 +110,7 @@ typedef struct _FrImageScaleClass FrImageScaleClass;
 typedef struct _FrProportion FrProportion;
 typedef struct _FrImageScaleContext FrImageScaleContext;
 
+typedef struct _FrMediaStreamContext FrMediaStreamContext;
 typedef struct _FrMediaStream FrMediaStream;
 typedef struct _FrMediaStreamClass FrMediaStreamClass;
 

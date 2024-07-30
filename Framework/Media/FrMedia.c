@@ -1,4 +1,5 @@
 #include <Framework/Media/FrMedia.h>
+#include <Framework/Media/FrAudioStream.h>
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrImageScale.h>
 #include <Framework/Media/FrMediaFile.h>
@@ -74,6 +75,22 @@ static SysInt media_hwframe_transfer_data(AVFrame *dst, AVFrame *src) {
   return error_check_msg(err, "hardware transfer data failed");
 }
 
+static SysType media_get_stream_type_by_index(FR_MEDIA_ENUM idx) {
+  SysType tp = 0;
+  switch(idx) {
+    case FR_MEDIA_AUDIO:
+      tp = FR_TYPE_AUDIO_STREAM;
+      break;
+    case FR_MEDIA_VIDEO:
+      tp = FR_TYPE_MEDIA_STREAM;
+      break;
+    default:
+      break;
+  }
+
+  return tp;
+}
+
 static AVFormatContext* media_create_context_by_filename(
     const SysChar* default_dec,
     const SysChar* filename) {
@@ -112,10 +129,19 @@ SysInt fr_media_audio_open(FrAudioDecoder *self) {
   return -1;
 }
 
+SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt) {
+  sys_return_val_if_fail(self != NULL, false);
+  sys_return_val_if_fail(rt != NULL, false);
+  AVStream *stream = self->ctx;
+
+  *rt = stream->r_frame_rate;
+  return true;
+}
+
 static SysBool format_context_is_realtime(AVFormatContext* s) {
   if (!strcmp(s->iformat->name, "rtp")
-    || !strcmp(s->iformat->name, "rtsp")
-    || !strcmp(s->iformat->name, "sdp"))
+      || !strcmp(s->iformat->name, "rtsp")
+      || !strcmp(s->iformat->name, "sdp"))
   {
     return 1;
   }
@@ -129,7 +155,7 @@ static SysBool format_context_is_realtime(AVFormatContext* s) {
   return false;
 }
 
-static AVStream* fr_media_parse_stream_by_type(
+static AVStream* media_parse_stream_by_type(
     AVFormatContext* ctx,
     FR_MEDIA_ENUM mediaType) {
   sys_return_val_if_fail(ctx != NULL, NULL);
@@ -153,15 +179,22 @@ static FrMediaStream* parse_stream_by_type(
 
   FrMediaStream *stream;
   AVStream *as;
+  SysType tp;
 
-  as = fr_media_parse_stream_by_type(ctx, mediaType);
+  as = media_parse_stream_by_type(ctx, mediaType);
   if(as == NULL) { return NULL; }
-  stream = fr_media_stream_new_I(as, mediaType);
+  tp = media_get_stream_type_by_index(mediaType);
+
+  FrMediaStreamContext info = { tp, (SysPointer)as };
+  stream = fr_media_stream_new_I(&info);
 
   return stream;
 }
 
-void fr_media_stream_create(FrMediaStream *self, FrMediaStreamContext *info) {
+void fr_media_stream_create(FrMediaStream *self,
+    FrMediaStreamContext *info) {
+
+  self->ctx = info->ctx;
 }
 
 static const AVOutputFormat *media_find_audio_device(void) {
@@ -363,8 +396,8 @@ void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream) {
   self->height = frame->height;
   self->format = frame->format;
   self->timestamp = av_rescale_q (frame->best_effort_timestamp,
-          stream->ctx->time_base,
-          AV_TIME_BASE_Q);
+      stream->ctx->time_base,
+      AV_TIME_BASE_Q);
 }
 
 void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {

@@ -23,6 +23,9 @@ SysInt64 fr_media_stream_calc_pts(
     FrMediaStream *self,
     FrMediaFrame *frame);
 
+void fr_media_stream_create(FrMediaStream *self,
+    FrMediaStreamContext *info);
+
 SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);
@@ -44,6 +47,7 @@ SysInt fr_media_image_scale_scale(
 SysBool fr_media_file_create(FrMediaFile *self,
     const SysChar *filename);
 
+SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt);
 void fr_media_frame_free(FrMediaFrame *self);
 void fr_media_frame_get_data(FrMediaFrame *self, uint8_t *data[]);
 void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]);

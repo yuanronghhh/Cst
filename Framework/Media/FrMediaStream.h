@@ -35,18 +35,12 @@ SYS_API FrMediaStream *fr_media_stream_new(void);
 
 SYS_API FrMediaStream *fr_media_stream_new_I(FrMediaStreamContext *info);
 
-SYS_API FrMediaStream* fr_media_streams_get_by_index(
-    FrMediaStream *streams[],
-    SysUInt  n_streams,
-    SysInt stream_index);
-
 FrMediaStream* fr_media_streams_get_by_media_type (
   FrMediaStream* streams[],
   SysUInt  n_streams,
   FR_MEDIA_ENUM media_type);
 
 SysBool fr_media_stream_is_media(FrMediaStream *self, FR_MEDIA_ENUM media_type);
-SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt);
 
 SYS_END_DECLS
 

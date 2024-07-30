@@ -158,17 +158,19 @@ set(SRC
   ./Media/FrMediaPipeline.h
   ./Media/FrStream.c
   ./Media/FrStream.h
-  ./Media/FrVideoDecoder.c
-  ./Media/FrVideoDecoder.h
   ./Media/FrHwAccel.c
   ./Media/FrHwAccel.h
-  ./Media/FrVideoFrame.c
-  ./Media/FrVideoFrame.h
   ./Media/FrMediaCommon.c
   ./Media/FrMediaCommon.h
   ./Media/FrMediaTypes.h
   ./Media/FrMediaCore.h
   ./Media/FrMediaCore.c
+  ./Media/FrVideoDecoder.c
+  ./Media/FrVideoDecoder.h
+  ./Media/FrVideoFrame.c
+  ./Media/FrVideoFrame.h
+  ./Media/FrVideoStream.c
+  ./Media/FrVideoStream.h
 
   ./Device/FrIDevice.c
   ./Device/FrIDevice.h

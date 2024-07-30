@@ -16,11 +16,12 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrDecoder.h>
 #include <Framework/Media/FrStream.h>
-#include <Framework/Media/FrVideoDecoder.h>
+#include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrAudioStream.h>
 #include <Framework/Media/FrAudioFrame.h>
-#include <Framework/Media/FrMediaStream.h>
+#include <Framework/Media/FrVideoDecoder.h>
+#include <Framework/Media/FrVideoStream.h>
 #include <Framework/Media/FrVideoFrame.h>
 #include <Framework/Media/FrMediaFrame.h>
 #include <Framework/Media/FrMediaPacket.h>

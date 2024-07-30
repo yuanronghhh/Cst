@@ -4,34 +4,6 @@
 
 SYS_DEFINE_TYPE(FrMediaStream, fr_media_stream, FR_TYPE_STREAM);
 
-SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt) {
-  sys_return_val_if_fail(self != NULL, false);
-  sys_return_val_if_fail(rt != NULL, false);
-
-  *rt = self->ctx->r_frame_rate;
-  return true;
-}
-
-SysBool fr_media_stream_is_media(FrMediaStream *self, FR_MEDIA_ENUM media_type) {
-  return self->media_type == media_type;
-}
-
-FrMediaStream* fr_media_streams_get_by_index(
-    FrMediaStream *streams[],
-    SysUInt  n_streams,
-    SysInt stream_index) {
-  sys_return_val_if_fail(streams != NULL, NULL);
-  sys_return_val_if_fail(stream_index >= 0, NULL);
-
-  for (SysUInt i = 0; i < n_streams; i++) {
-    if (streams[i]->ctx->index == stream_index) {
-      return streams[i];
-    }
-  }
-
-  return NULL;
-}
-
 FrMediaStream* fr_media_streams_get_by_media_type(
   FrMediaStream* streams[],
   SysUInt  n_streams,
@@ -48,8 +20,6 @@ static void fr_media_stream_construct(
     FrMediaStream *self,
     FrMediaStreamContext *info) {
 
-  self->ctx = info->ctx;
-
   fr_media_stream_create(self, info);
 }
 
@@ -58,7 +28,11 @@ FrMediaStream* fr_media_stream_new(void) {
 }
 
 FrMediaStream *fr_media_stream_new_I(FrMediaStreamContext *info) {
+  sys_return_val_if_fail(info != NULL, NULL);
+  sys_return_val_if_fail(info->mediaType, NULL);
+
   FrMediaStream *o = sys_object_new(info->mediaType, NULL);
+  sys_return_val_if_fail(o != NULL, NULL);
 
   fr_media_stream_construct(o, info);
 

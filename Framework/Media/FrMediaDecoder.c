@@ -71,9 +71,8 @@ void fr_media_decoder_flush(FrMediaDecoder* self) {
 }
 
 SysInt fr_media_decoder_close_i(FrDecoder* o) {
-  FrMediaDecoder *self = FR_MEDIA_DECODER(o);
 
-  return avcodec_close(self->ctx);
+  return 0;
 }
 
 SysInt fr_media_decoder_open_i(FrDecoder* o) {

@@ -96,7 +96,7 @@ static AVFormatContext* media_create_context_by_filename(
     const SysChar* filename) {
   int err;
   const AVInputFormat* default_format;
-  AVFormatContext* ctx = NULL;
+  AVFormatContext* ctx = avformat_alloc_context();
 
   default_format = av_find_input_format(default_dec);
   err = avformat_open_input(

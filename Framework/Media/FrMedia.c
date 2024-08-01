@@ -407,11 +407,10 @@ void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
 
   AVFrame *frame = self->parent.ctx;
   AVStream *astream = stream->ctx;
-  AVRational tb = (AVRational){1, AV_TIME_BASE};
 
   self->timestamp = av_rescale_q (frame->best_effort_timestamp,
-      astream->time_base, 
-      tb);
+      astream->time_base,
+      AV_TIME_BASE_Q);
 }
 
 void fr_media_frame_get_frame_rate (

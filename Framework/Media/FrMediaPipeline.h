@@ -23,7 +23,7 @@ struct _FrMediaPipeline {
   FrDecoder* subtitle_decoder;
   FrDecoder* packet_decoder;
   FrDevice *audio_device;
-  FrMediaPlayer* player;
+  FrAvPlayer* player;
   SysInt max_packet;
   SysInt min_packet;
 

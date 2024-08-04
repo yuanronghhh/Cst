@@ -128,8 +128,8 @@ set(SRC
   ./Media/FrIMedia.h
   ./Media/FrIMediaRender.c
   ./Media/FrIMediaRender.h
-  ./Media/FrMediaRender.c
-  ./Media/FrMediaRender.h
+  ./Media/FrAvRender.c
+  ./Media/FrAvRender.h
   ./Media/FrIStream.c
   ./Media/FrIStream.h
   ./Media/FrMedia.c
@@ -144,8 +144,8 @@ set(SRC
   ./Media/FrMediaFrame.h
   ./Media/FrMediaPacket.c
   ./Media/FrMediaPacket.h
-  ./Media/FrMediaPlayer.c
-  ./Media/FrMediaPlayer.h
+  ./Media/FrAvPlayer.c
+  ./Media/FrAvPlayer.h
   ./Media/FrPlayer.c
   ./Media/FrPlayer.h
   ./Media/FrMediaStream.c

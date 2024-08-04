@@ -24,6 +24,8 @@ void fr_video_frame_init_frame_i(FrMediaFrame* o, FrMediaStream *stream) {
   FR_MEDIA_FRAME_CLASS(fr_video_frame_parent_class)->init_frame(o, stream);
 
   fr_media_video_frame_init(self, stream);
+
+  sys_debug_N("%lld", o->timestamp);
 }
 
 void fr_video_frame_set_out_size(FrVideoFrame* self, SysInt width, SysInt height) {

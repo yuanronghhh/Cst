@@ -1,6 +1,6 @@
 #include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrPacketDecoder.h>
-#include <Framework/Media/FrMediaPlayer.h>
+#include <Framework/Media/FrAvPlayer.h>
 #include <Framework/Media/FrMediaPacket.h>
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Device/FrWindow.h>
@@ -233,7 +233,7 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
 static void stop_player(FrMediaPipeline *self) {
   sys_debug_N("%s", "stop player");
 
-  fr_media_player_set_state(self->player, FR_JOB_STATE_STOP);
+  fr_av_player_set_state(self->player, FR_JOB_STATE_STOP);
 }
 
 void fr_media_pipeline_wakeup_source(FrMediaPipeline *self) {

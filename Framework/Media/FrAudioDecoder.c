@@ -11,7 +11,7 @@ static SysInt fr_audio_decoder_open_i(FrDecoder* o) {
   FrAudioStream *astream = (FrAudioStream *)fr_media_decoder_get_stream(dself);
 
   err = FR_DECODER_CLASS(fr_audio_decoder_parent_class)->open(o);
-  err = fr_audio_stream_open_audio(astream, self);
+  // err = fr_audio_stream_open_audio(astream, self);
   fr_window_open_audio(astream, self);
 
   return err;

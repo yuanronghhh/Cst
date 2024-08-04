@@ -45,8 +45,6 @@ static void sdl_audio_close(SysInt dev) {
 static void audio_callback(SysPointer user_data, SDL_AudioStream *stream, SysInt len, SysInt totallen) {
     const int samples = len / sizeof(Sint16);
     Sint16 *buffer = NULL;
-    static int total_samples = 0;
-    int i;
 
     SDL_PutAudioStreamData(stream, buffer, samples * sizeof (Sint16));
 
@@ -360,8 +358,7 @@ static SDL_Window* fr_sdl_window_create_i(
 
   SDL_SetHint(SDL_HINT_VIDEO_X11_NET_WM_BYPASS_COMPOSITOR, "0");
 
-  flags = SDL_WINDOW_VULKAN
-    | SDL_WINDOW_RESIZABLE;
+  flags = SDL_WINDOW_RESIZABLE;
 
   SYS_LEAK_IGNORE_BEGIN;
   gwindow = SDL_CreateWindow(title,

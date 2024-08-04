@@ -118,13 +118,13 @@ typedef struct _FrMediaStreamContext FrMediaStreamContext;
 typedef struct _FrMediaStream FrMediaStream;
 typedef struct _FrMediaStreamClass FrMediaStreamClass;
 
-typedef struct _FrMediaRenderContext FrMediaRenderContext;
-typedef struct _FrMediaRender FrMediaRender;
-typedef struct _FrMediaRenderClass FrMediaRenderClass;
+typedef struct _FrAvRenderContext FrAvRenderContext;
+typedef struct _FrAvRender FrAvRender;
+typedef struct _FrAvRenderClass FrAvRenderClass;
 
-typedef struct _FrMediaPlayerContext FrMediaPlayerContext;
-typedef struct _FrMediaPlayer FrMediaPlayer;
-typedef struct _FrMediaPlayerClass FrMediaPlayerClass;
+typedef struct _FrAvPlayerContext FrAvPlayerContext;
+typedef struct _FrAvPlayer FrAvPlayer;
+typedef struct _FrAvPlayerClass FrAvPlayerClass;
 
 typedef struct _FrMediaFrame FrMediaFrame;
 typedef struct _FrMediaFrameClass FrMediaFrameClass;
@@ -158,7 +158,7 @@ typedef struct _FrVideoFrameClass FrVideoFrameClass;
 typedef struct _FrVideoDecoder FrVideoDecoder;
 typedef struct _FrVideoDecoderClass FrVideoDecoderClass;
 
-typedef SysPointer (*FrMediaPlayerFunc) (FrMediaPlayer *player, SysPointer user_data);
+typedef SysPointer (*FrAvPlayerFunc) (FrAvPlayer *player, SysPointer user_data);
 
 SYS_END_DECLS
 

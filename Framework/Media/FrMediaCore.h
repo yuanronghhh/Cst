@@ -7,7 +7,7 @@ SYS_BEGIN_DECLS
 
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrMediaFilter.h>
-#include <Framework/Media/FrMediaPlayer.h>
+#include <Framework/Media/FrAvPlayer.h>
 #include <Framework/Media/FrPlayer.h>
 #include <Framework/Media/FrPipeline.h>
 #include <Framework/Media/FrMediaPipeline.h>
@@ -31,7 +31,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrGlRender.h>
 #include <Framework/Media/FrFrameDecoder.h>
 #include <Framework/Media/FrIMediaRender.h>
-#include <Framework/Media/FrMediaRender.h>
+#include <Framework/Media/FrAvRender.h>
 #include <Framework/Media/FrHwAccel.h>
 
 void fr_ffmpeg_setup(void);

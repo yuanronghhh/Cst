@@ -1,7 +1,8 @@
 #ifndef __FR_AV_PLAYER_H__
 #define __FR_AV_PLAYER_H__
 
-#include <Framework//FrPlayer.h>
+#include <Framework/Media/FrPlayer.h>
+#include <Framework/Media/FrMediaPipeline.h>
 
 SYS_BEGIN_DECLS
 
@@ -17,7 +18,7 @@ struct _FrAvPlayerClass {
 struct _FrAvPlayer {
   FrPlayer parent;
 
-  /* <private> */
+  /* <private>*/
   FrMediaFile *file;
   FrWindow *window;
   FrMediaPipeline pipeline;
@@ -25,7 +26,7 @@ struct _FrAvPlayer {
   SysBool use_hwaccel;
   SysInt64 seek_position;
   FR_JOB_STATE_ENUM state;
-  FrMediaRender *render;
+  FrAvRender *render;
   SysInt64 base_tsp;
   SysInt64 vtsp;
   SysDouble default_delay;
@@ -35,13 +36,25 @@ struct _FrAvPlayer {
 struct _FrAvPlayerContext {
   FrMediaFile *file;
   FrWindow *window;
-  FrMediaRender *render;
+  FrAvRender *render;
 };
 
 SYS_API SysType fr_av_player_get_type(void);
-SYS_API FrPlayer *fr_av_player_new(void);
+SYS_API FrAvPlayer *fr_av_player_new(void);
 
-SYS_API FrPlayer *fr_av_player_new_I(FrAvPlayerContext *info);
+SYS_API FrAvPlayer *fr_av_player_new_I(FrAvPlayerContext *info);
+SYS_API void fr_av_player_set_render(FrAvPlayer* self, FrAvRender *render);
+SYS_API SysInt fr_av_player_run(FrAvPlayer* self);
+SYS_API void fr_av_player_play(FrAvPlayer* self);
+SYS_API SysInt fr_av_player_render(FrAvPlayer *self,
+    FrAvRender *render,
+    FrRegion *region);
+
+SYS_API void fr_av_player_set_state(FrAvPlayer *self, FR_JOB_STATE_ENUM value);
+SYS_API FR_JOB_STATE_ENUM fr_av_player_get_state(FrAvPlayer *self);
+
+void fr_av_player_set_window(FrAvPlayer *self, FrWindow * window);
+FrWindow * fr_av_player_get_window(FrAvPlayer *self);
 
 SYS_END_DECLS
 

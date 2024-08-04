@@ -127,7 +127,6 @@ fail:
 
 SysInt fr_media_audio_open(FrAudioDecoder *self) {
   sys_return_val_if_fail(self != NULL, -1);
-  AVCodecContext *ctx = NULL;
 
   return -1;
 }
@@ -390,7 +389,7 @@ void fr_media_media_frame_init(FrMediaFrame* self, FrMediaStream *stream) {
   AVFrame *frame = self->ctx;
   AVStream *astream = stream->ctx;
 
-  self->timestamp = av_rescale_q (frame->best_effort_timestamp,
+  self->timestamp = av_rescale_q (frame->pts,
       astream->time_base,
       AV_TIME_BASE_Q);
 }

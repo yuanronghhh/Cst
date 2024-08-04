@@ -31,6 +31,7 @@ SYS_BEGIN_DECLS
 #include <Framework/Media/FrGlRender.h>
 #include <Framework/Media/FrFrameDecoder.h>
 #include <Framework/Media/FrIMediaRender.h>
+#include <Framework/Media/FrMediaRender.h>
 #include <Framework/Media/FrHwAccel.h>
 
 void fr_ffmpeg_setup(void);

@@ -10,12 +10,12 @@ SysBool fr_image_scale_check(
     SysInt dst_format) {
 
   if(src_format != self->in_pix_fmt) {
-    sys_warning_N("input format check failed: %d -> %d", src_format, self->in_pix_fmt);
+    sys_warning_N("input format check failed: expect %d, but %d", self->in_pix_fmt, src_format );
     return false;
   }
 
   if(dst_format != self->out_pix_fmt) {
-    sys_warning_N("output format check failed: %d -> %d", dst_format, self->out_pix_fmt);
+    sys_warning_N("output format check failed: expect %d, but %d", self->out_pix_fmt, dst_format);
     return false;
   }
 
@@ -69,6 +69,7 @@ void fr_image_scale_setup_scale(FrImageScale *self) {
 
 void fr_image_scale_set_in_pix_fmt(FrImageScale *self, SysInt in_pix_fmt) {
   sys_return_if_fail(self != NULL);
+  if(self->in_pix_fmt == in_pix_fmt) { return;}
 
   self->in_pix_fmt = in_pix_fmt;
   fr_image_scale_setup_scale(self);

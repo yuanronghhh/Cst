@@ -12,6 +12,8 @@
 #include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Graph/FrImage.h>
 
+static enum AVPixelFormat hw_pix_format = 0;
+
 const SysChar* fr_media_error_string(SysInt err) {
   const SysChar* qmsg = NULL;
   switch (err) {
@@ -43,7 +45,7 @@ static SysInt error_check_msg(SysInt err, const SysChar *msg) {
     return err;
   }
 
-  if (err == FR_MEDIA_ERROR_AGAIN 
+  if (err == FR_MEDIA_ERROR_AGAIN
       || err == FR_MEDIA_ERROR_EOF) {
 
   } else {
@@ -102,7 +104,7 @@ static AVFormatContext* media_create_context_by_filename(
   err = avformat_open_input(
       &ctx,
       filename,
-      default_format,
+      (AVInputFormat *)default_format,
       NULL);
   if (err < 0) {
     sys_warning_N("avformat_open_input: %s, %s", av_err2str(err), filename);
@@ -125,6 +127,7 @@ fail:
 
 SysInt fr_media_audio_open(FrAudioDecoder *self) {
   sys_return_val_if_fail(self != NULL, -1);
+  AVCodecContext *ctx = NULL;
 
   return -1;
 }
@@ -300,22 +303,17 @@ static SysBool media_scale_hw_check(
 }
 
 SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame) {
-  AVFrame *avf;
   AVFrame* nframe = av_frame_alloc();
   if (nframe == NULL) { return false; }
 
-  avf = frame->ctx;
+  if(!media_scale_hw_check(scale, frame->ctx)) {
 
-  if(fr_image_scale_check_hw_accel(scale, avf->format)) {
-    if(!media_scale_hw_check(scale, frame->ctx)) {
+    goto done;
+  }
 
-      goto done;
-    }
+  if(media_hwframe_transfer_data(nframe, frame->ctx) < 0) {
 
-    if(media_hwframe_transfer_data(nframe, frame->ctx) < 0) {
-
-      goto done;
-    }
+    goto done;
   }
 
   fr_media_frame_free(frame);
@@ -388,29 +386,32 @@ static void fr_media_yuv_save_to_png(AVFrame *frame, const SysChar *filename) {
   sys_object_unref(image);
 }
 
+void fr_media_media_frame_init(FrMediaFrame* self, FrMediaStream *stream) {
+  AVFrame *frame = self->ctx;
+  AVStream *astream = stream->ctx;
+
+  self->timestamp = av_rescale_q (frame->best_effort_timestamp,
+      astream->time_base,
+      AV_TIME_BASE_Q);
+}
+
 void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
-  AVStream *astream = stream->ctx;
 
   self->width = frame->width;
   self->height = frame->height;
-  self->format = frame->format;
-  self->timestamp = av_rescale_q (frame->best_effort_timestamp,
-      astream->time_base,
-      AV_TIME_BASE_Q);
 }
 
 void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
   AVFrame *frame = self->parent.ctx;
-  AVStream *astream = stream->ctx;
 
-  self->timestamp = av_rescale_q (frame->best_effort_timestamp,
-      astream->time_base,
-      AV_TIME_BASE_Q);
+  self->nb_samples = frame->nb_samples;
+  self->sample_rate = frame->sample_rate;
+  self->channels = frame->channels;
 }
 
 void fr_media_frame_get_frame_rate (
@@ -592,6 +593,62 @@ SysBool fr_media_file_create(
   return true;
 }
 
+SysInt fr_hw_accel_get_hw_format(FrHwAccel *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return hw_pix_format;
+}
+
+static enum AVPixelFormat get_hw_format(
+    AVCodecContext *ctx,
+    const enum AVPixelFormat *pix_fmts) {
+  const enum AVPixelFormat *p;
+
+  for (p = pix_fmts; *p != -1; p++) {
+    if (*p == hw_pix_format)
+      return *p;
+  }
+
+  sys_warning_N("%s", "Failed to get HW surface format.");
+  return AV_PIX_FMT_NONE;
+}
+
+void fr_hw_accel_free(FrHwAccel *self) {
+
+  av_buffer_unref((AVBufferRef **)&self->ctx);
+}
+
+SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info) {
+  AVBufferRef *ctx = NULL;
+  FrMediaDecoder *dec = info->decoder;
+
+  SysInt type = av_hwdevice_find_type_by_name(info->name);
+  if(type == 0) {
+
+    sys_warning_N("not support hardware device %s", info->name);
+    return false;
+  }
+
+  if(!fr_media_decoder_get_hw_info(dec, type, &hw_pix_format)) {
+    sys_info_N("Failed to get hw info: %s, %s",
+        fr_decoder_get_name(FR_DECODER(dec)),
+        av_hwdevice_get_type_name(type));
+    return false;
+  }
+
+  /* TODO: copy from example  */
+  dec->ctx->get_format  = get_hw_format;
+  if(av_hwdevice_ctx_create(&ctx, type, NULL, NULL, 0) < 0) {
+
+    sys_warning_N("%s", "Failed to create specified HW device.");
+    return false;
+  }
+  dec->ctx->hw_device_ctx = av_buffer_ref(ctx);
+  info->ctx = ctx;
+
+  return true;
+}
+
 SysInt fr_media_frame_get_format(FrMediaFrame *self) {
   sys_return_val_if_fail(self != NULL, -1);
   AVFrame *ctx = self->ctx;
@@ -604,6 +661,11 @@ void fr_media_frame_free(FrMediaFrame *self) {
   sys_return_if_fail(self->ctx != NULL);
 
   av_frame_free((AVFrame **)&self->ctx);
+}
+
+void fr_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself) {
+
+  av_frame_ref(nself->ctx, oself->ctx);
 }
 
 SysInt64 fr_media_frame_get_pts(FrMediaFrame *self) {

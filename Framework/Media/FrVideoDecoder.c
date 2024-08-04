@@ -63,6 +63,8 @@ static SysInt fr_video_decoder_decode_frame_i(
       sys_warning_N("hwaccel copy failed: %s", o->parent.name);
       return -1;
     }
+
+    format = fr_media_frame_get_format(omframe);
     fr_image_scale_set_in_pix_fmt(&self->scale, format);
   }
 

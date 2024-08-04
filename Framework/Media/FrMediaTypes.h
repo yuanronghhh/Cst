@@ -70,6 +70,10 @@ typedef struct _FrDecoderContext FrDecoderContext;
 typedef struct _FrDecoder FrDecoder;
 typedef struct _FrDecoderClass FrDecoderClass;
 
+typedef struct _FrAvPlayerContext FrAvPlayerContext;
+typedef struct _FrAvPlayer FrAvPlayer;
+typedef struct _FrAvPlayerClass FrAvPlayerClass;
+
 typedef struct _FrStream FrStream;
 typedef struct _FrStreamClass FrStreamClass;
 
@@ -113,6 +117,10 @@ typedef struct _FrImageScaleContext FrImageScaleContext;
 typedef struct _FrMediaStreamContext FrMediaStreamContext;
 typedef struct _FrMediaStream FrMediaStream;
 typedef struct _FrMediaStreamClass FrMediaStreamClass;
+
+typedef struct _FrMediaRenderContext FrMediaRenderContext;
+typedef struct _FrMediaRender FrMediaRender;
+typedef struct _FrMediaRenderClass FrMediaRenderClass;
 
 typedef struct _FrMediaPlayerContext FrMediaPlayerContext;
 typedef struct _FrMediaPlayer FrMediaPlayer;

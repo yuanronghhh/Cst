@@ -10,6 +10,7 @@
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Media/FrAudioFrame.h>
+#include <Framework/Media/FrMediaRender.h>
 
 SYS_DEFINE_TYPE(FrMediaPlayer, fr_media_player, FR_TYPE_PLAYER);
 
@@ -33,12 +34,6 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   fr_media_stream_get_rational(vs, &rt);
   self->delay = self->default_delay = (1.0 / rt.num / (double) rt.den) * 1.0e3;
 
-  /*
-   * TODO:
-   * int64_t pts = av_frame_get_best_effort_timestamp(frame);
-   * SDL_Delay(av_rescale_q(pts, formatCtx->streams[videoStream]->time_base, AV_TIME_BASE_Q) / 1000);
-   **/
-
   fr_media_pipeline_run(&self->pipeline, self->file);
   fr_media_pipeline_get_video_size(&self->pipeline, &bound.width, &bound.height);
   fr_window_set_size(self->window, bound.width, bound.height);
@@ -50,7 +45,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
 
     fr_media_player_render(self, self->render, region);
 
-    fr_delay((SysInt)self->delay);
+    fr_delay(self->delay);
     fr_poll_events();
   }
 
@@ -59,7 +54,7 @@ static SysInt media_player_do(FrMediaPlayer *self) {
   return 0;
 }
 
-void fr_media_player_set_render(FrMediaPlayer* self, FrIMediaRender *render) {
+void fr_media_player_set_render(FrMediaPlayer* self, FrMediaRender *render) {
   sys_return_if_fail(self != NULL);
 
   self->render = render;
@@ -83,42 +78,62 @@ SysInt fr_media_player_run(FrMediaPlayer* self) {
   return media_player_do(self);
 }
 
+static void media_player_calc_diff(FrMediaPlayer *self) {
+  SysInt64 diff = 0;
+
+  if(fr_media_file_has_audio(self->file)) {
+
+    if(fr_media_file_has_video(self->file)) {
+
+       diff = self->vtsp - self->base_tsp;
+    }
+  } else if(fr_media_file_has_video(self->file)) {
+
+  } else {
+  }
+
+  self->delay = diff <= 0 ? self->default_delay : diff / 1.0e6;
+  sys_debug_N("%lf", self->delay);
+}
+
 SysInt fr_media_player_render(FrMediaPlayer *self,
-    FrIMediaRender *render,
+    FrMediaRender *render,
     FrRegion *region) {
   sys_return_val_if_fail(self != NULL, -1);
   sys_return_val_if_fail(render != NULL, -1);
   sys_return_val_if_fail(region != NULL, -1);
 
   FrMediaFrame *frame = NULL;
-  FrVideoFrame *vframe;
-  FrIMediaRenderInterface *iface = FR_I_MEDIA_RENDER_GET_IFACE(render);
+  FrVideoFrame *vframe = NULL;
+  FrAudioFrame *aframe = NULL;
 
-#if 1
   frame = fr_media_pipeline_get_sample_frame(&self->pipeline);
-  self->audio_pts += 1;
   if (frame != NULL) {
+    aframe = FR_AUDIO_FRAME(frame);
+    self->base_tsp = fr_media_frame_get_timestamp(frame);
 
-    sys_debug_N("%lld", fr_media_frame_get_pts(frame));
-    sys_object_unref(frame);
+    fr_media_render_render_audio(render, aframe);
+    sys_object_unref(aframe);
   }
-#endif
 
   frame = fr_media_pipeline_get_image_frame(&self->pipeline);
-  if (frame == NULL) {
+  if (frame != NULL) {
+    self->vtsp = fr_media_frame_get_timestamp(frame);
 
-    return FR_MEDIA_ERROR_EOF;
+    if(!fr_media_file_has_audio(self->file)) {
+
+      self->base_tsp = self->vtsp;
+    }
+
+    vframe = FR_VIDEO_FRAME(frame);
+
+    fr_media_render_render_video(render, vframe, region);
+    sys_object_unref(vframe);
   }
-  sys_debug_N("%lld", fr_media_frame_get_pts(frame));
-  self->video_pts += 1;
 
-  vframe = FR_VIDEO_FRAME(frame);
-  iface->render_video(render, vframe, region);
-  self->delay = self->default_delay;
+  media_player_calc_diff(self);
 
-  sys_object_unref(frame);
-
-  return 0;
+  return FR_MEDIA_ERROR_EOF;
 }
 
 void fr_media_player_play(FrMediaPlayer* self) {

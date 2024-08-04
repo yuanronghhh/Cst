@@ -180,7 +180,6 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
     self->audio_decoder = adec;
     fr_decoder_start(self->audio_decoder);
   }
-
 }
 
 FrMediaFrame* fr_media_pipeline_get_sample_frame (FrMediaPipeline* self) {

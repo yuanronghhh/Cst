@@ -36,6 +36,8 @@ struct _FrMediaDecoder {
 SYS_API SysType fr_media_decoder_get_type(void);
 FrDecoder* fr_media_decoder_new(void);
 
+SYS_API FrMediaStream *fr_media_decoder_get_stream(FrMediaDecoder *self);
+
 SYS_API FrDecoder *fr_media_decoder_create_by_media_type(FrMediaFile *file,
     FR_MEDIA_ENUM mediaType);
 

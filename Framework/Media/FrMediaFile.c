@@ -17,18 +17,6 @@ static void i_stream_imp(FrIStreamInterface *iface);
 SYS_DEFINE_WITH_CODE(FrMediaFile, fr_media_file, FR_TYPE_STREAM,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_STREAM, i_stream_imp));
 
-void fr_media_file_set_ctx(FrMediaFile *self, AVFormatContext * ctx) {
-  sys_return_if_fail(self != NULL);
-
-  self->ctx = ctx;
-}
-
-AVFormatContext * fr_media_file_get_ctx(FrMediaFile *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->ctx;
-}
-
 SysInt64 fr_media_file_get_seek_position(FrMediaFile *self) {
   sys_return_val_if_fail(self != NULL, -1);
 
@@ -101,6 +89,26 @@ SysInt fr_media_file_read_packet(FrMediaFile *self, FrMediaPacket **npkt) {
 
 const SysChar *fr_media_file_get_url(FrMediaFile *self) {
   return self->ctx->url;
+}
+
+SysUInt fr_media_file_stream_count(FrMediaFile* self) {
+
+  return self->n_streams;
+}
+
+SysBool fr_media_file_has_video(FrMediaFile* self) {
+
+  return self->streams[FR_MEDIA_VIDEO] != NULL;
+}
+
+SysBool fr_media_file_has_audio(FrMediaFile* self) {
+
+  return self->streams[FR_MEDIA_AUDIO] != NULL;
+}
+
+SysBool fr_media_file_has_subtitle(FrMediaFile* self) {
+
+  return self->streams[FR_MEDIA_SUBTITLE] != NULL;
 }
 
 FrMediaStream* fr_media_file_stream_by_type(

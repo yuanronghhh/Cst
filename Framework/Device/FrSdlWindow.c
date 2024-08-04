@@ -10,33 +10,31 @@ static FrWindowErrFunc err_callback = NULL;
 
 // only single window for performance
 static FrSdlWindow *g_window = NULL; 
-static const int next_nb_channels[] = {0, 0, 1, 6, 2, 6, 4, 6};
-static const int next_sample_rates[] = {0, 44100, 48000, 96000, 192000};
+// static const int next_nb_channels[] = {0, 0, 1, 6, 2, 6, 4, 6};
+// static const int next_sample_rates[] = {0, 44100, 48000, 96000, 192000};
 
 SYS_DEFINE_TYPE(FrSdlWindow, fr_sdl_window, FR_TYPE_WINDOW);
 
-static SysInt sdl_audio_open(
-    SysInt channels,
-    SysInt sample_rate) {
-  sys_return_val_if_fail(sample_rate >= 0, -1);
-  sys_return_val_if_fail(channels >= 0, -1);
+static SysInt fr_sdl_audio_open(
+    FrAudioStream *o,
+    FrAudioDecoder *d) {
 
   SDL_AudioSpec spec = {0};
   SysInt dev;
 
-  spec.channels = channels;
-  spec.freq = sample_rate;
+  spec.channels = o->channels;
+  spec.freq = o->sample_rate;
   spec.format = SDL_AUDIO_S16;
 
   dev = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
-  if(dev == 0) {
+  if(dev <= 0) {
 
     sys_warning_N("Failed to open device: %s", SDL_GetError());
     return -1;
   }
   SDL_ResumeAudioDevice(dev);
 
-  return -1;
+  return 0;
 }
 
 static void sdl_audio_close(SysInt dev) {
@@ -44,18 +42,29 @@ static void sdl_audio_close(SysInt dev) {
   SDL_CloseAudioDevice(dev);
 }
 
+static void audio_callback(SysPointer user_data, SDL_AudioStream *stream, SysInt len, SysInt totallen) {
+    const int samples = len / sizeof(Sint16);
+    Sint16 *buffer = NULL;
+    static int total_samples = 0;
+    int i;
+
+    SDL_PutAudioStreamData(stream, buffer, samples * sizeof (Sint16));
+
+    SDL_free(buffer);
+}
+
 static void sdl_audio_stream_create(FrAudioStream *self, FrAudioStreamContext *info) {
-  sys_return_if_fail(self);
-  const SDL_AudioSpec src = { SDL_AUDIO_S16, 1, 22050 };
+  sys_return_if_fail(self != NULL);
+
   const SDL_AudioSpec dst = { SDL_AUDIO_F32, 2, 48000 };
 
-  self->ctx = SDL_CreateAudioStream(&src, &dst);
+  self->astream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &dst, audio_callback, self);
 }
 
 static SysBool sdl_audio_write_data(FrAudioStream *self, SysUInt data[], SysInt len) {
   sys_return_val_if_fail(self != NULL, false);
 
-  SDL_AudioStream *stream = self->ctx;
+  SDL_AudioStream *stream = self->astream;
   int rc = SDL_PutAudioStreamData(stream, data, len);
   if (rc == -1) {
     sys_warning_N("Failed to put samples in stream: %s\n", SDL_GetError());
@@ -68,7 +77,7 @@ static SysBool sdl_audio_write_data(FrAudioStream *self, SysUInt data[], SysInt 
 static SysInt sdl_flush_audio(FrAudioStream *self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  SDL_AudioStream *stream = self->ctx;
+  SDL_AudioStream *stream = self->astream;
 
   return SDL_FlushAudioStream(stream);
 }
@@ -683,8 +692,9 @@ static void sdl_handle_event(SDL_Event *e) {
 }
 
 /* window setup */
-static void fr_delay_i(SysUInt msec) {
-  SDL_Delay((SysUInt)msec);
+static void fr_delay_i(SysDouble msec) {
+
+  sys_usleep(msec);
 }
 
 static void fr_wait_events_timeout_i(SysInt msec) {
@@ -747,8 +757,7 @@ void fr_sdl_window_setup(void) {
   SYS_LEAK_IGNORE_BEGIN;
   if (SDL_Init(
         SDL_INIT_VIDEO
-        | SDL_INIT_AUDIO
-        | SDL_INIT_TIMER) < 0) {
+        | SDL_INIT_AUDIO) < 0) {
     sys_error_N("SDL failed to init: %s", SDL_GetError());
   }
   SYS_LEAK_IGNORE_END;
@@ -840,6 +849,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->get_native_window = fr_window_get_native_window;
   iface->get_native_display = fr_window_get_native_display;
   iface->display_create = fr_window_display_create;
+  iface->open_audio = fr_sdl_audio_open;
 }
 
 void fr_sdl_window_iface_setup(FrIWindowInterface *iface) {

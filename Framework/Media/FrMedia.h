@@ -47,13 +47,19 @@ SysInt fr_media_image_scale_scale(
 SysBool fr_media_file_create(FrMediaFile *self,
     const SysChar *filename);
 
+SysInt fr_hw_accel_get_hw_format(FrHwAccel *self);
+void fr_hw_accel_free(FrHwAccel *self);
+SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info);
+
 SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt);
 void fr_media_frame_free(FrMediaFrame *self);
+void fr_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself);
 void fr_media_frame_get_data(FrMediaFrame *self, uint8_t *data[]);
 void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]);
 SysInt fr_media_frame_get_format(FrMediaFrame *self);
 SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
 
+void fr_media_media_frame_init(FrMediaFrame* self, FrMediaStream *stream);
 void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream);
 void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream);
 

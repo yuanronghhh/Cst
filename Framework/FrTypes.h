@@ -72,6 +72,10 @@ typedef  struct  _FrDisplayClass      FrDisplayClass;
 typedef struct _FrDevice FrDevice;
 typedef struct _FrDeviceClass FrDeviceClass;
 
+typedef struct _FrAudioDeviceContext FrAudioDeviceContext;
+typedef struct _FrAudioDevice FrAudioDevice;
+typedef struct _FrAudioDeviceClass FrAudioDeviceClass;
+
 typedef struct _FrCairoDrawContext FrCairoDrawContext;
 typedef struct _FrCairoDrawContextClass FrCairoDrawContextClass;
 

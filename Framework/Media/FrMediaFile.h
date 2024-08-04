@@ -51,8 +51,10 @@ SYS_API SysInt fr_media_file_play(FrMediaFile* self);
 SYS_API const SysChar *fr_media_file_get_url(FrMediaFile *self);
 SYS_API SysInt fr_media_file_seek(FrMediaFile *self, SysInt64 seek_target);
 
-void fr_media_file_set_ctx(FrMediaFile *self, AVFormatContext * ctx);
-AVFormatContext * fr_media_file_get_ctx(FrMediaFile *self);
+SysUInt fr_media_file_stream_count(FrMediaFile* self);
+SysBool fr_media_file_has_video(FrMediaFile* self);
+SysBool fr_media_file_has_audio(FrMediaFile* self);
+SysBool fr_media_file_has_subtitle(FrMediaFile* self);
 
 SysInt64 fr_media_file_get_seek_position(FrMediaFile *self);
 

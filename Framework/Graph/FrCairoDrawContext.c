@@ -10,10 +10,8 @@
 #include <Framework/Media/FrVideoFrame.h>
 
 static void i_draw_imp(FrIDrawInterface *iface);
-static void i_media_render_imp(FrIMediaRenderInterface *iface);
 
-SYS_DEFINE_WITH_CODE(FrCairoDrawContext, fr_cairo_draw_context, FR_TYPE_DRAW_CONTEXT,
-    SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_MEDIA_RENDER, i_media_render_imp));
+SYS_DEFINE_TYPE(FrCairoDrawContext, fr_cairo_draw_context, FR_TYPE_DRAW_CONTEXT);
 
 static void cairo_overlay_i(cairo_t *cr, cairo_surface_t *surface, SysInt x, SysInt y) {
 
@@ -140,18 +138,15 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
   fr_surface_flush(draw_context->device_surface);
 }
 
-static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegion *region) {
-  FrDrawContext *draw_context = FR_DRAW_CONTEXT(o);
+void fr_cairo_draw_context_render_video(FrDrawContext *self, FrVideoFrame *frame, FrRegion *region) {
+  sys_return_if_fail(self != NULL);
+  sys_return_if_fail(frame != NULL);
 
-  fr_draw_context_frame_begin(draw_context, region);
+  fr_draw_context_frame_begin(self, region);
 
-  render_video_frame(draw_context, frame);
+  render_video_frame(self, frame);
 
-  fr_draw_context_frame_end(draw_context, region);
-}
-
-static void i_media_render_audio(FrIMediaRender *o, FrAudioFrame *frame) {
-
+  fr_draw_context_frame_end(self, region);
 }
 
 /* surface */
@@ -240,11 +235,6 @@ static SysInt fr_context_rounded_rectangle(FrContext* self,
   cairo_t *cr = self->ctx;
 
   return cairo_rounded_rectangle_i(cr, x, y, w, h, radius);
-}
-
-static void i_media_render_imp(FrIMediaRenderInterface *iface) {
-  iface->render_video = i_media_render_video;
-  iface->render_audio = i_media_render_audio;
 }
 
 static void fr_context_set_source_surface (FrContext* self, FrSurface* surface, SysDouble x, SysDouble y) {
@@ -349,6 +339,7 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->surface_get_data = fr_surface_get_data;
   iface->image_surface_get_stride = fr_image_surface_get_stride;
   iface->surface_save_to_png = fr_surface_save_to_png;
+  iface->render_video = fr_cairo_draw_context_render_video;
 }
 
 static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {

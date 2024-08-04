@@ -18,7 +18,14 @@ struct _FrAudioStream {
   FrMediaStream parent;
 
   /* <private> */
-  SysPointer ctx;
+
+  /* SDL_AudioStream */
+  SysPointer astream;
+
+  SysInt format;
+  SysInt sample;
+  SysInt sample_rate;
+  SysInt channels;
 };
 
 struct _FrAudioStreamContext {

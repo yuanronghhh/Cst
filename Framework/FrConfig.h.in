@@ -6,6 +6,6 @@
 #define USE_GLFW  ${USE_GLFW}
 #define USE_SDL  ${USE_SDL}
 #define USE_OPENGL_ES ${USE_OPENGL_ES}
-#define USE_SINGLE_WINDOW 0
+#define USE_SINGLE_WINDOW 1
 
 #endif

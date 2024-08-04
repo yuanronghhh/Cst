@@ -24,7 +24,7 @@ struct _FrDecoderClass {
 
 struct _FrDecoder {
   SysObject parent;
-  FrJob job;
+  // FrJob job;
 
   /* <private> */
   SysChar* name;
@@ -41,6 +41,9 @@ struct _FrDecoder {
 
 SYS_API SysType fr_decoder_get_type(void);
 SYS_API FrDecoder *fr_decoder_new(void);
+
+SYS_API void fr_decoder_setup(void);
+SYS_API void fr_decoder_teardown(void);
 
 SYS_API const SysChar * fr_decoder_get_name(FrDecoder *self);
 SYS_API SysInt fr_decoder_open(FrDecoder* self);

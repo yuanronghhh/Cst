@@ -10,18 +10,6 @@ SysBool fr_media_frame_destroy_i(SysObject *o) {
   return SYS_OBJECT_CLASS(fr_media_frame_parent_class)->destroy(o);
 }
 
-void fr_media_frame_set_ctx(FrMediaFrame *self, AVFrame * ctx) {
-  sys_return_if_fail(self != NULL);
-
-  self->ctx = ctx;
-}
-
-AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  return self->ctx;
-}
-
 void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
@@ -32,6 +20,8 @@ void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) {
 }
 
 void fr_media_frame_init_frame_i(FrMediaFrame *self, FrMediaStream *stream) {
+
+  fr_media_media_frame_init(self, stream);
 }
 
 SysObject* fr_media_frame_dclone_i(SysObject* o) {
@@ -41,9 +31,22 @@ SysObject* fr_media_frame_dclone_i(SysObject* o) {
   FrMediaFrame* nself = FR_MEDIA_FRAME(n);
   FrMediaFrame* oself = FR_MEDIA_FRAME(o);
 
-  av_frame_ref(nself->ctx, oself->ctx);
+  nself->timestamp = oself->timestamp;
+  fr_media_frame_ref(nself, oself);
 
   return n;
+}
+
+void fr_media_frame_set_timestamp(FrMediaFrame *self, SysInt64 timestamp) {
+  sys_return_if_fail(self != NULL);
+
+  self->timestamp = timestamp;
+}
+
+SysInt64 fr_media_frame_get_timestamp(FrMediaFrame *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return self->timestamp;
 }
 
 /* object api */

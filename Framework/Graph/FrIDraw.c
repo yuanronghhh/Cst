@@ -452,6 +452,11 @@ void fr_i_draw_update_layout(FrContext *cr, PangoLayout *layout) {
   self.update_layout(cr, layout);
 }
 
+void fr_i_draw_context_render_video(FrDrawContext *ctx, FrVideoFrame *frame, FrRegion *region) {
+
+  self.render_video(ctx, frame, region);
+}
+
 void fr_i_draw_show_layout(FrContext* cr, PangoLayout* layout) {
 
   self.show_layout(cr, layout);

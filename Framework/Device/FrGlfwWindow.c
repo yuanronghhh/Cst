@@ -286,7 +286,7 @@ static void fr_window_hint (SysInt p, SysInt v) {
   glfwWindowHint(p, v);
 }
 
-static void fr_delay_i(SysUInt msec) {
+static void fr_delay_i(SysDouble msec) {
 
   sys_usleep((SysULong)(msec * 1e3));
 }

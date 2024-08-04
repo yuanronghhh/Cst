@@ -26,27 +26,29 @@ struct _FrMediaPlayer {
   SysBool use_hwaccel;
   SysInt64 seek_position;
   FR_JOB_STATE_ENUM state;
-  SysDouble delay;
+  FrMediaRender *render;
+  SysInt64 base_tsp;
+  SysInt64 vtsp;
   SysDouble default_delay;
-  FrIMediaRender *render;
-  SysInt64 audio_pts;
-  SysInt64 video_pts;
+  SysDouble delay;
 };
 
 struct _FrMediaPlayerContext {
   FrMediaFile *file;
   FrWindow *window;
-  FrIMediaRender *render;
+  FrMediaRender *render;
 };
 
 SYS_API SysType fr_media_player_get_type(void);
 SYS_API FrMediaPlayer *fr_media_player_new(void);
 
 SYS_API FrMediaPlayer *fr_media_player_new_I(FrMediaPlayerContext *info);
-SYS_API void fr_media_player_set_render(FrMediaPlayer* self, FrIMediaRender *render);
+SYS_API void fr_media_player_set_render(FrMediaPlayer* self, FrMediaRender *render);
 SYS_API SysInt fr_media_player_run(FrMediaPlayer* self);
 SYS_API void fr_media_player_play(FrMediaPlayer* self);
-SYS_API SysInt fr_media_player_render(FrMediaPlayer *self, FrIMediaRender *render, FrRegion *region);
+SYS_API SysInt fr_media_player_render(FrMediaPlayer *self,
+    FrMediaRender *render,
+    FrRegion *region);
 
 SYS_API void fr_media_player_set_state(FrMediaPlayer *self, FR_JOB_STATE_ENUM value);
 SYS_API FR_JOB_STATE_ENUM fr_media_player_get_state(FrMediaPlayer *self);

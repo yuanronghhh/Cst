@@ -23,6 +23,7 @@ struct _FrMediaFrame {
   /* <private> */
   SysPointer ctx;
   SysPointer user_data;
+  SysInt64 timestamp;
 };
 
 SYS_API SysType fr_media_frame_get_type(void);
@@ -30,8 +31,9 @@ SYS_API FrMediaFrame *fr_media_frame_new(void);
 
 void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) ;
 #define fr_media_frame_create(o) sys_object_create((o), FR_TYPE_MEDIA_FRAME)
-SYS_API void fr_media_frame_set_ctx(FrMediaFrame *self, AVFrame * ctx);
-SYS_API AVFrame * fr_media_frame_get_ctx(FrMediaFrame *self);
+
+void fr_media_frame_set_timestamp(FrMediaFrame *self, SysInt64 timestamp);
+SysInt64 fr_media_frame_get_timestamp(FrMediaFrame *self);
 
 SYS_END_DECLS
 

@@ -20,10 +20,8 @@ struct _FrVideoFrame  {
   /* <private> */
   SysInt width;
   SysInt height;
-  SysInt format;
   FrWindow *window;
   FrBound *bound;
-  SysUInt64 timestamp;
 };
 
 SYS_API SysType fr_video_frame_get_type(void);
@@ -41,7 +39,6 @@ void fr_video_frame_get_frame_data(FrVideoFrame *self,
   SysInt linesize[]);
 
 SysBool fr_video_frame_scale(FrVideoFrame *self, FrImageScale *scale);
-
 
 SYS_END_DECLS
 

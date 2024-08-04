@@ -21,6 +21,8 @@ void fr_video_frame_init_frame_i(FrMediaFrame* o, FrMediaStream *stream) {
   sys_return_if_fail(o != NULL);
 
   FrVideoFrame *self = FR_VIDEO_FRAME(o);
+  FR_MEDIA_FRAME_CLASS(fr_video_frame_parent_class)->init_frame(o, stream);
+
   fr_media_video_frame_init(self, stream);
 }
 
@@ -58,7 +60,6 @@ SysObject* fr_video_frame_dclone_i(SysObject* o) {
 
   nself->width = oself->width;
   nself->height = oself->height;
-  nself->format = oself->format;
   nself->window = oself->window ? sys_object_ref(oself->window) : NULL;
 
   return n;

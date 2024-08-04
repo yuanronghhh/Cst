@@ -26,6 +26,7 @@ SYS_BEGIN_DECLS
 #include <Framework/DataType/FrEnv.h>
 #include <Framework/DataType/FrFunc.h>
 
+#include <Framework/Device/FrAudioDevice.h>
 #include <Framework/Device/FrDisplay.h>
 #include <Framework/Device/FrWindow.h>
 #include <Framework/Device/FrRender.h>

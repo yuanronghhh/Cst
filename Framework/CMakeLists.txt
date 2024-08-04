@@ -128,6 +128,8 @@ set(SRC
   ./Media/FrIMedia.h
   ./Media/FrIMediaRender.c
   ./Media/FrIMediaRender.h
+  ./Media/FrMediaRender.c
+  ./Media/FrMediaRender.h
   ./Media/FrIStream.c
   ./Media/FrIStream.h
   ./Media/FrMedia.c
@@ -176,6 +178,8 @@ set(SRC
   ./Device/FrIDevice.h
   ./Device/FrDevice.c
   ./Device/FrDevice.h
+  ./Device/FrAudioDevice.c
+  ./Device/FrAudioDevice.h
   ./Device/FrDisplay.c
   ./Device/FrDisplay.h
   ./Device/FrImageDevice.c

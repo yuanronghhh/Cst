@@ -38,7 +38,8 @@ struct _FrIWindowInterface {
   void (*display_create) (FrDisplay *display);
   SysPointer (*get_native_window) (FrWindow* window);
   SysPointer (*get_native_display) (FrDisplay *display);
-  void (*delay) (SysUInt msec);
+  void (*delay) (SysDouble msec);
+  SysInt (*open_audio) (FrAudioStream *o, FrAudioDecoder *d);
 };
 
 SysType fr_i_window_get_type(void);
@@ -52,6 +53,7 @@ void fr_i_window_create (
     const SysChar *title,
     FrWindow *share);
 
+SysInt fr_i_window_open_audio (FrAudioStream *o, FrAudioDecoder *d);
 void fr_i_window_display_create (FrDisplay *display);
 void fr_i_window_window_destroy (FrWindow *window);
 void fr_i_window_set_error_callback (FrWindowErrFunc callback);
@@ -68,7 +70,7 @@ void fr_i_window_wait_events_timeout (SysInt sec);
 void fr_i_window_wait_events (void);
 void fr_i_window_post_empty_event (void);
 void fr_i_window_poll_events (void);
-void fr_i_window_delay (SysUInt ms);
+void fr_i_window_delay (SysDouble ms);
 SysPointer fr_i_window_get_native_window (FrWindow* window);
 SysPointer fr_i_window_get_native_display (FrDisplay *display);
 

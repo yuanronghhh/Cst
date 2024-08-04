@@ -19,7 +19,7 @@ struct _FrHwAccel {
 
   /* <private> */
   SysInt accel_type;
-  AVBufferRef *ctx;
+  SysPointer ctx;
   const SysChar *name;
 };
 
@@ -36,8 +36,6 @@ SYS_API SysType fr_hw_accel_get_type(void);
 SYS_API FrHwAccel *fr_hw_accel_new(void);
 
 SYS_API FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info);
-
-SysInt fr_hw_accel_get_hw_format(FrHwAccel *self);
 
 SYS_END_DECLS
 

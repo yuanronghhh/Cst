@@ -8,6 +8,26 @@ SYS_DEFINE_TYPE(FrDecoder, fr_decoder, SYS_TYPE_OBJECT);
 #define DECODER_LOCK sys_async_queue_lock(&self->queue)
 #define DECODER_UNLOCK sys_async_queue_unlock(&self->queue)
 
+static FrJob job;
+
+void fr_decoder_setup(void) {
+  fr_job_create(&job);
+
+  FrJobContext info = {0};
+  info.user_data = NULL;
+  info.name = "decoder job";
+  fr_job_construct(&job, &info);
+
+  fr_job_start(&job);
+}
+
+void fr_decoder_teardown(void) {
+
+  fr_job_stop(&job);
+  fr_job_join(&job);
+  sys_object_destroy(&job);
+}
+
 const SysChar* fr_decoder_get_name(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
@@ -34,10 +54,8 @@ SysBool fr_decoder_start(FrDecoder* self) {
   sys_return_val_if_fail(self != NULL, false);
   FrTask *task;
 
-  fr_job_start(&self->job);
-
   task = fr_task_new_handler(decoder_init, self);
-  fr_job_run_task_sync(&self->job, task);
+  fr_job_run_task_sync(&job, task);
 
   return true;
 }
@@ -45,14 +63,14 @@ SysBool fr_decoder_start(FrDecoder* self) {
 void fr_decoder_stop(FrDecoder* self) {
   sys_return_if_fail(self != NULL);
 
-  fr_job_stop(&self->job);
+  // fr_job_stop(&job);
 }
 
 void fr_decoder_run_async(FrDecoder *self,
     FrTaskFunc func,
     SysPointer user_data) {
   FrTask *task = fr_task_new_handler(func, user_data);
-  fr_job_run_task_async(&self->job, task);
+  fr_job_run_task_async(&job, task);
 }
 
 void fr_decoder_set_user_data(FrDecoder *self, SysPointer user_data) {
@@ -98,13 +116,6 @@ static void fr_decoder_construct_i(FrDecoder *self,
     FrDecoderContext *info) {
 
   self->name = sys_strdup(info->name);
-  fr_job_create(&self->job);
-
-  FrJobContext jinfo = {0};
-  jinfo.name = self->name;
-  jinfo.user_data = self;
-
-  fr_job_construct(&self->job, &jinfo);
 }
 
 FrDecoder* fr_decoder_new(void) {
@@ -114,9 +125,6 @@ FrDecoder* fr_decoder_new(void) {
 static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
 
-  fr_job_stop(&self->job);
-  fr_job_join(&self->job);
-  sys_object_destroy(&self->job);
   sys_free_N(self->name);
 
   SYS_OBJECT_CLASS(fr_decoder_parent_class)->dispose(o);

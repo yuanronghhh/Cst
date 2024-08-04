@@ -43,6 +43,11 @@ void fr_i_window_create (
   self.create(window, width, height, title, share);
 }
 
+SysInt fr_i_window_open_audio (FrAudioStream *o, FrAudioDecoder *d) {
+
+  return self.open_audio(o, d);
+}
+
 void fr_i_window_display_create (FrDisplay *display) {
 
   self.display_create(display);
@@ -123,7 +128,7 @@ void fr_i_window_poll_events (void) {
   self.poll_events();
 }
 
-void fr_i_window_delay (SysUInt ms) {
+void fr_i_window_delay (SysDouble ms) {
 
   self.delay(ms);
 }

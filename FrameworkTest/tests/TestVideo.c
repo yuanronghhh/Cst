@@ -85,7 +85,7 @@ void test_video_player(void) {
   FrDrawContext *draw_context;
   FrMediaFile *mfile;
   FrMediaPlayer *mplayer;
-  FrIMediaRender *imrender;
+  FrMediaRender *imrender;
   FrSurface* paint_surface;
 
   display = fr_display_new_I();
@@ -94,15 +94,24 @@ void test_video_player(void) {
 
   draw_context = fr_cairo_draw_context_new_I(device);
 
-  FrSurfaceContext info = {.width = 800, .height= 600};
-  paint_surface = fr_surface_new_I(&info);
+  FrMediaRenderContext mrinfo = {
+    .video_render = draw_context,
+    .audio_render = NULL};
+  imrender = fr_media_render_new_I(&mrinfo);
+
+  FrSurfaceContext sinfo = {
+    .width = 800,
+    .height= 600};
+  paint_surface = fr_surface_new_I(&sinfo);
 
   fr_draw_context_add_surface(draw_context, paint_surface);
 
-  imrender = FR_I_MEDIA_RENDER(draw_context);
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
 
-  FrMediaPlayerContext pinfo = {.file = mfile, .window = window, .render = imrender};
+  FrMediaPlayerContext pinfo = {
+    .file = mfile,
+    .window = window,
+    .render = imrender};
   mplayer = fr_media_player_new_I(&pinfo);
 
   fr_media_player_run(mplayer);

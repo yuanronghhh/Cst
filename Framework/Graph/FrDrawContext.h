@@ -2,6 +2,7 @@
 #define __FR_DRAW_CONTEXT_H__
 
 #include <Framework/FrCommon.h>
+#include <Framework/Graph/FrIDraw.h>
 
 SYS_BEGIN_DECLS
 
@@ -55,6 +56,7 @@ SysBool fr_draw_context_get_is_painting(FrDrawContext *self);
 #define fr_draw_save fr_i_draw_save
 #define fr_draw_restore fr_i_draw_restore
 #define fr_draw_set_color fr_i_draw_set_color
+#define fr_draw_context_render_video fr_i_draw_context_render_video
 
 SYS_END_DECLS
 

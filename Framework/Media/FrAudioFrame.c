@@ -8,7 +8,11 @@ SysObject* fr_audio_frame_dclone_i(SysObject* o) {
 
   FrAudioFrame* nself = FR_AUDIO_FRAME(n);
   FrAudioFrame* oself = FR_AUDIO_FRAME(o);
-  nself->timestamp = oself->timestamp;
+
+  nself->nb_samples = oself->nb_samples;
+  nself->format = oself->format;
+  nself->sample_rate = oself->sample_rate;
+  nself->channels = oself->channels;
 
   return n;
 }
@@ -17,6 +21,8 @@ void fr_audio_frame_init_frame_i(FrMediaFrame* o, FrMediaStream *stream) {
   sys_return_if_fail(o != NULL);
 
   FrAudioFrame *self = FR_AUDIO_FRAME(o);
+  FR_MEDIA_FRAME_CLASS(fr_audio_frame_parent_class)->init_frame(o, stream);
+
   fr_media_audio_frame_init(self, stream);
 }
 

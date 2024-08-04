@@ -19,6 +19,11 @@ static const SysChar* DECODER_NAMES[] = {
 
 SYS_DEFINE_TYPE(FrMediaDecoder, fr_media_decoder, FR_TYPE_DECODER);
 
+FrMediaStream *fr_media_decoder_get_stream(FrMediaDecoder *self) {
+
+  return self->stream;
+}
+
 SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType) {
   switch (mediaType) {
   case FR_MEDIA_VIDEO:
@@ -32,7 +37,7 @@ SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType) {
 
 SysBool fr_media_decoder_get_hw_info(
     FrMediaDecoder *self,
-    SysInt hw_dtype, 
+    SysInt hw_dtype,
     SysInt *hw_pix_format) {
 
   SysInt i;

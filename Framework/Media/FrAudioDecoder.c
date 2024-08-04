@@ -1,19 +1,28 @@
 #include <Framework/Media/FrAudioDecoder.h>
+#include <Framework/Device/FrWindow.h>
 #include <Framework/Media/FrMediaPipeline.h>
 
 SYS_DEFINE_TYPE(FrAudioDecoder, fr_audio_decoder, FR_TYPE_MEDIA_DECODER);
 
 static SysInt fr_audio_decoder_open_i(FrDecoder* o) {
   SysInt err;
+  FrAudioDecoder* self = FR_AUDIO_DECODER(o);
+  FrMediaDecoder *dself = FR_MEDIA_DECODER(o);
+  FrAudioStream *astream = (FrAudioStream *)fr_media_decoder_get_stream(dself);
 
   err = FR_DECODER_CLASS(fr_audio_decoder_parent_class)->open(o);
+  err = fr_audio_stream_open_audio(astream, self);
+  fr_window_open_audio(astream, self);
 
   return err;
 }
 
-static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o, FrMediaFrame **frame) {
+static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o,
+    FrMediaFrame **frame) {
+
   SysInt err = FR_MEDIA_DECODER_CLASS(fr_audio_decoder_parent_class)
     ->decode_frame(o, frame);
+
   return err;
 }
 

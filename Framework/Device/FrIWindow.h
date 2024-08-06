@@ -39,7 +39,13 @@ struct _FrIWindowInterface {
   SysPointer (*get_native_window) (FrWindow* window);
   SysPointer (*get_native_display) (FrDisplay *display);
   void (*delay) (SysDouble msec);
-  SysInt (*open_audio) (FrAudioStream *o, FrAudioDecoder *d);
+  SysInt (*audio_open) (
+      FrAudioDevice *dev,
+      FrAudioDeviceContext *info);
+  void (*audio_close) (FrAudioDevice *dev);
+
+  void (*audio_stream_create) (FrAudioStream *self, FrAudioStreamContext *info);
+  SysBool (*audio_stream_write_data) (FrAudioStream *self, SysUInt data[], SysInt len);
 };
 
 SysType fr_i_window_get_type(void);
@@ -53,7 +59,18 @@ void fr_i_window_create (
     const SysChar *title,
     FrWindow *share);
 
-SysInt fr_i_window_open_audio (FrAudioStream *o, FrAudioDecoder *d);
+SysInt fr_i_window_audio_open (
+    FrAudioDevice *dev,
+    FrAudioDeviceContext *info);
+void fr_i_window_audio_close (
+    FrAudioDevice *dev);
+
+void fr_i_window_audio_stream_create (
+    FrAudioStream *o,
+    FrAudioStreamContext *info);
+
+SysBool fr_i_window_audio_stream_write_data(FrAudioStream *o, SysUInt data[], SysInt len);
+
 void fr_i_window_display_create (FrDisplay *display);
 void fr_i_window_window_destroy (FrWindow *window);
 void fr_i_window_set_error_callback (FrWindowErrFunc callback);

@@ -43,9 +43,30 @@ void fr_i_window_create (
   self.create(window, width, height, title, share);
 }
 
-SysInt fr_i_window_open_audio (FrAudioStream *o, FrAudioDecoder *d) {
+SysInt fr_i_window_audio_open (
+    FrAudioDevice *dev,
+    FrAudioDeviceContext *info) {
 
-  return self.open_audio(o, d);
+  return self.audio_open(dev, info);
+}
+
+void fr_i_window_audio_close (
+    FrAudioDevice *dev) {
+
+  self.audio_close(dev);
+}
+
+void fr_i_window_audio_stream_create (
+    FrAudioStream *o, FrAudioStreamContext *info) {
+
+  self.audio_stream_create(o, info);
+}
+
+SysBool fr_i_window_audio_stream_write_data(FrAudioStream *o,
+    SysUInt data[],
+    SysInt len) {
+
+  return self.audio_stream_write_data(o, data, len);
 }
 
 void fr_i_window_display_create (FrDisplay *display) {

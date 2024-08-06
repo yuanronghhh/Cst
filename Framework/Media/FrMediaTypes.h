@@ -90,6 +90,7 @@ typedef struct _FrHwAccelClass FrHwAccelClass;
 typedef struct _FrFrameDecoder FrFrameDecoder;
 typedef struct _FrFrameDecoderClass FrFrameDecoderClass;
 
+typedef struct _FrAudioDecoderContext FrAudioDecoderContext;
 typedef struct _FrAudioDecoder FrAudioDecoder;
 typedef struct _FrAudioDecoderClass FrAudioDecoderClass;
 

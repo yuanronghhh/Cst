@@ -76,26 +76,6 @@ static void fr_image_construct_i(FrImage *self, FrImageContext *info) {
   }
 }
 
-void fr_image_context_fill_buffer(FrImageContext *info) {
-    sys_return_if_fail(info != NULL);
-    sys_return_if_fail(info->data_size > 0);
-    sys_return_if_fail(info->format >= 0);
-    sys_return_if_fail(info->width > 0);
-    sys_return_if_fail(info->height > 0);
-    SysInt err;
-
-    err = info->data_size = av_image_alloc(
-        info->nbuf,
-        info->stride,
-        info->width,
-        info->height,
-        info->format,
-        1);
-    info->data = info->nbuf[0];
-
-    sys_return_if_fail(err > 0);
-}
-
 SysInt fr_image_context_get_size(FrImageContext *info) {
   sys_return_val_if_fail(info != NULL, -1);
   sys_return_val_if_fail(info->width != 0, -1);

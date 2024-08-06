@@ -8,11 +8,10 @@ static SysInt fr_audio_decoder_open_i(FrDecoder* o) {
   SysInt err;
   FrAudioDecoder* self = FR_AUDIO_DECODER(o);
   FrMediaDecoder *dself = FR_MEDIA_DECODER(o);
+
   FrAudioStream *astream = (FrAudioStream *)fr_media_decoder_get_stream(dself);
 
   err = FR_DECODER_CLASS(fr_audio_decoder_parent_class)->open(o);
-  // err = fr_audio_stream_open_audio(astream, self);
-  fr_window_open_audio(astream, self);
 
   return err;
 }
@@ -29,6 +28,18 @@ static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o,
 /* object api */
 FrDecoder* fr_audio_decoder_new(void) {
   return sys_object_new(FR_TYPE_AUDIO_DECODER, NULL);
+}
+
+void fr_audio_decoder_new_I(FrDecoder *o, FrAudioDecoderContext *info) {
+}
+
+
+FrDecoder *fr_audio_decoder_new_I(FrAudioDecoderContext *info) {
+  FrDecoder *o = fr_audio_decoder_new();
+
+  fr_audio_decoder_construct_i(o, info);
+
+  return o;
 }
 
 static void fr_audio_decoder_dispose(SysObject* o) {

@@ -39,14 +39,14 @@ set(SRC
   ./FrTestConfig.h.in
 )
 
-set(FFMPEG_LIBRARIES
-  "/media/greyhound/Storage/Git/FFmpeg/libavcodec/libavcodec.a"
-  "/media/greyhound/Storage/Git/FFmpeg/libavfilter/libavfilter.a"
-  "/media/greyhound/Storage/Git/FFmpeg/libavformat/libavformat.a"
-  "/media/greyhound/Storage/Git/FFmpeg/libavutil/libavutil.a"
-  "/media/greyhound/Storage/Git/FFmpeg/libswscale/libswscale.a"
-  "/media/greyhound/Storage/Git/FFmpeg/libswresample/libswresample.a"
-  )
+# set(FFMPEG_LIBRARIES
+#   "/media/greyhound/Storage/Git/FFmpeg/libavcodec/libavcodec.a"
+#   "/media/greyhound/Storage/Git/FFmpeg/libavfilter/libavfilter.a"
+#   "/media/greyhound/Storage/Git/FFmpeg/libavformat/libavformat.a"
+#   "/media/greyhound/Storage/Git/FFmpeg/libavutil/libavutil.a"
+#   "/media/greyhound/Storage/Git/FFmpeg/libswscale/libswscale.a"
+#   "/media/greyhound/Storage/Git/FFmpeg/libswresample/libswresample.a"
+# )
 
 add_executable(FrameworkTest "${SRC}")
 LIST(APPEND EXTERNAL_LIBS "${ADDTIONAL_LIBRARIES}")

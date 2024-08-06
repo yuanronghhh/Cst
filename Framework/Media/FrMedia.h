@@ -47,6 +47,10 @@ SysInt fr_media_image_scale_scale(
 SysBool fr_media_file_create(FrMediaFile *self,
     const SysChar *filename);
 
+/* image */
+SysInt fr_image_context_fill_buffer(FrImageContext *info);
+#define fr_image_get_size(format, width, height) av_image_get_buffer_size(format, width, height, 1)
+
 SysInt fr_hw_accel_get_hw_format(FrHwAccel *self);
 void fr_hw_accel_free(FrHwAccel *self);
 SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info);

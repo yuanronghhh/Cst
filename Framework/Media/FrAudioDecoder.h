@@ -21,8 +21,15 @@ struct _FrAudioDecoder {
   /* <private> */
 };
 
+struct _FrAudioDecoderContext {
+
+  SysPointer dev;
+};
+
 SYS_API SysType fr_audio_decoder_get_type(void);
 SYS_API FrDecoder *fr_audio_decoder_new(void);
+
+SYS_API FrDecoder *fr_audio_decoder_new_I(FrAudioDecoderContext *info);
 
 SYS_END_DECLS
 

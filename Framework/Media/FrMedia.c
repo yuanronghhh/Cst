@@ -14,6 +14,25 @@
 
 static enum AVPixelFormat hw_pix_format = 0;
 
+SysInt fr_image_context_fill_buffer(FrImageContext *info) {
+    sys_return_val_if_fail(info != NULL, -1);
+    sys_return_val_if_fail(info->data_size > 0, -1);
+    sys_return_val_if_fail(info->format >= 0, -1);
+    sys_return_val_if_fail(info->width > 0, -1);
+    sys_return_val_if_fail(info->height > 0, -1);
+
+    info->data_size = av_image_alloc(
+        info->nbuf,
+        info->stride,
+        info->width,
+        info->height,
+        info->format,
+        1);
+    info->data = info->nbuf[0];
+
+    return info->data_size;
+}
+
 const SysChar* fr_media_error_string(SysInt err) {
   const SysChar* qmsg = NULL;
   switch (err) {
@@ -410,7 +429,7 @@ void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
 
   self->nb_samples = frame->nb_samples;
   self->sample_rate = frame->sample_rate;
-  self->channels = frame->channels;
+  self->channels = frame->ch_layout.nb_channels;
 }
 
 void fr_media_frame_get_frame_rate (

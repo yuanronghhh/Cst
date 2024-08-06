@@ -19,11 +19,13 @@ struct _FrAudioDevice {
 
   /* <private> */
   /* SDL_AudioDevice */
-  SysPointer dev;
+  SysPointer ctx;
 };
 
 struct _FrAudioDeviceContext {
-  SysPointer dev;
+  SysInt channels;
+  SysInt sample_rate;
+  SysInt format;
 };
 
 SYS_API SysType fr_audio_device_get_type(void);

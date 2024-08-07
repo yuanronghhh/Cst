@@ -28,9 +28,9 @@ struct _FrMediaPipeline {
   SysInt min_packet;
 
   SysInt pkt_count;
-  SysAsyncQueue image_queue;
-  SysAsyncQueue sample_queue;
-  SysAsyncQueue subtitle_queue;
+  // SysAsyncQueue image_queue;
+  // SysAsyncQueue sample_queue;
+  // SysAsyncQueue subtitle_queue;
 };
 
 #define fr_media_pipeline_create(o) sys_object_create(o, FR_TYPE_MEDIA_PIPELINE)
@@ -41,8 +41,6 @@ void fr_media_pipeline_get_video_size(FrMediaPipeline *self,
     SysInt *width,
     SysInt *height);
 
-FrMediaFrame* fr_media_pipeline_get_image_frame(FrMediaPipeline* self);
-FrMediaFrame* fr_media_pipeline_get_sample_frame (FrMediaPipeline* self);
 void fr_media_pipeline_wakeup_source(FrMediaPipeline *self);
 
 void fr_media_pipeline_run(FrMediaPipeline* self,

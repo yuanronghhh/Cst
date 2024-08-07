@@ -1,6 +1,6 @@
 #include <Framework/Media/FrMediaFrame.h>
 
-SYS_DEFINE_TYPE(FrMediaFrame, fr_media_frame, FR_TYPE_PACKET);
+SYS_DEFINE_TYPE(FrMediaFrame, fr_media_frame, FR_TYPE_MEDIA_PACKET);
 
 SysBool fr_media_frame_destroy_i(SysObject *o) {
   FrMediaFrame* self = FR_MEDIA_FRAME(o);

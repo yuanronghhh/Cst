@@ -20,6 +20,8 @@ struct _FrMediaDecoderClass {
     FrMediaStream *ms);
 
    SysInt (*decode_frame) (FrMediaDecoder* o, FrMediaFrame **frame);
+   SysInt (*read) (FrMediaDecoder *stream, FrMediaPacket **pkt);
+   SysInt (*write) (FrMediaDecoder *stream, FrMediaPacket *pkt);
 };
 
 struct _FrMediaDecoder {
@@ -27,6 +29,7 @@ struct _FrMediaDecoder {
 
   /* <private> */
   FrMediaStream *stream;
+  SysAsyncQueue queue;
   const AVCodec *codec;
   AVCodecContext *ctx;
   FrMediaFrame *frame;
@@ -60,6 +63,9 @@ SysInt fr_media_decoder_try_decode_frame(
 SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);
+
+SysInt fr_media_decoder_read(FrMediaDecoder *self, FrMediaPacket **pkt);
+void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt);
 
 void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp);
 SysBool fr_media_decoder_get_hw_info(FrMediaDecoder *self, SysInt hw_dtype, SysInt *hw_pix_format);

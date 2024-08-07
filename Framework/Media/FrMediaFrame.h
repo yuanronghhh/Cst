@@ -1,7 +1,7 @@
 #ifndef __FR_MEDIA_FRAME_H__
 #define __FR_MEDIA_FRAME_H__
 
-#include <Framework/Media/FrPacket.h>
+#include <Framework/Media/FrMediaPacket.h>
 
 SYS_BEGIN_DECLS
 
@@ -11,14 +11,14 @@ SYS_BEGIN_DECLS
 #define FR_MEDIA_FRAME_GET_CLASS(o) sys_instance_get_class(o, FrMediaFrameClass)
 
 struct _FrMediaFrameClass {
-  FrPacketClass parent;
+  FrMediaPacketClass parent;
 
   /* init after receive_frame decode */
   void (*init_frame) (FrMediaFrame *self, FrMediaStream *stream);
 };
 
 struct _FrMediaFrame {
-  FrPacket parent;
+  FrMediaPacket parent;
 
   /* <private> */
   SysPointer ctx;

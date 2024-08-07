@@ -1,9 +1,20 @@
 #include <Framework/Device/FrAudioDevice.h>
+#include <Framework/Device/FrWindow.h>
 
 SYS_DEFINE_TYPE(FrAudioDevice, fr_audio_device, FR_TYPE_DEVICE);
 
+
+void fr_audio_device_resume(FrAudioDevice *dev) {
+
+  fr_window_audio_resume(dev);
+}
+
 /* object api */
-static void fr_audio_device_construct_i(FrDevice *self, FrAudioDeviceContext *info) {
+static void fr_audio_device_construct_i(FrDevice *self,
+    FrAudioDeviceContext *info) {
+  FrAudioDevice *dev = FR_AUDIO_DEVICE(self);
+
+  fr_window_audio_open(dev, info);
 }
 
 FrDevice* fr_audio_device_new(void) {

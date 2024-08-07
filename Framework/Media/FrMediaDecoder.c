@@ -87,6 +87,40 @@ SysInt fr_media_decoder_open_i(FrDecoder* o) {
   return avcodec_open2(self->ctx, self->codec, NULL);
 }
 
+void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt) {
+  sys_return_if_fail(self != NULL);
+
+  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
+  sys_return_if_fail(cls->write);
+
+  cls->write(self, pkt);
+}
+
+SysInt fr_media_decoder_read(FrMediaDecoder *self, FrMediaPacket **pkt) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
+  sys_return_val_if_fail(cls->read, -1);
+
+  return cls->read(self, pkt);
+}
+
+SysInt fr_media_decoder_read_i(FrMediaDecoder *self, FrMediaPacket **pkt) {
+  FrMediaPacket *npkt;
+
+  npkt = sys_async_queue_try_pop(&self->queue);
+  *pkt = npkt;
+
+  return npkt != NULL;
+}
+
+SysInt fr_media_decoder_write_i(FrMediaDecoder *self, FrMediaPacket *pkt) {
+
+  sys_async_queue_push(&self->queue, pkt);
+
+  return 0;
+}
+
 SysInt fr_media_decoder_decode_frame_i(
     FrMediaDecoder* self,
     FrMediaFrame **nframe) {
@@ -224,6 +258,7 @@ static void fr_media_decoder_dispose(SysObject* o) {
   }
   avcodec_free_context(&self->ctx);
   sys_object_unref(self->stream);
+  sys_async_queue_clear_full(&self->queue);
 
   SYS_OBJECT_CLASS(fr_media_decoder_parent_class)->dispose(o);
 }
@@ -234,6 +269,8 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
 
   cls->construct = media_decoder_construct;
   cls->decode_frame = fr_media_decoder_decode_frame_i;
+  cls->read = fr_media_decoder_read_i;
+  cls->write = fr_media_decoder_write_i;
 
   dcls->open = fr_media_decoder_open_i;
   dcls->close = fr_media_decoder_close_i;
@@ -242,4 +279,6 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
 }
 
 void fr_media_decoder_init(FrMediaDecoder* self) {
+
+  sys_async_queue_init_full(&self->queue, (SysDestroyFunc)_sys_object_unref);
 }

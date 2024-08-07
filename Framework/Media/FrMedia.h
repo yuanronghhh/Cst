@@ -26,6 +26,8 @@ SysInt64 fr_media_stream_calc_pts(
 void fr_media_stream_create(FrMediaStream *self,
     FrMediaStreamContext *info);
 
+void fr_media_stream_free(FrMediaStream *self);
+
 SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);

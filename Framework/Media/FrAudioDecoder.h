@@ -23,7 +23,7 @@ struct _FrAudioDecoder {
 
 struct _FrAudioDecoderContext {
 
-  SysPointer dev;
+  SysInt channels;
 };
 
 SYS_API SysType fr_audio_decoder_get_type(void);

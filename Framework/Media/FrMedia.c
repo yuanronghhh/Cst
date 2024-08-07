@@ -218,6 +218,10 @@ void fr_media_stream_create(FrMediaStream *self,
   self->ctx = info->ctx;
 }
 
+void fr_media_stream_free(FrMediaStream *self) {
+  // avformat_free_context to free
+}
+
 static const AVOutputFormat *media_find_audio_device(void) {
   const AVOutputFormat *format = NULL;
 
@@ -420,6 +424,12 @@ void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream) {
 
   self->width = frame->width;
   self->height = frame->height;
+}
+
+SysUInt8* fr_media_audio_frame_get_data(FrAudioFrame* self) {
+  AVFrame *frame = self->parent.ctx;
+
+  return frame->data[0];
 }
 
 void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {

@@ -12,6 +12,7 @@ SYS_BEGIN_DECLS
 
 struct _FrMediaStreamClass {
   FrStreamClass parent;
+
 };
 
 struct _FrMediaStream {
@@ -39,8 +40,6 @@ FrMediaStream* fr_media_streams_get_by_media_type (
   FrMediaStream* streams[],
   SysUInt  n_streams,
   FR_MEDIA_ENUM media_type);
-
-SysBool fr_media_stream_is_media(FrMediaStream *self, FR_MEDIA_ENUM media_type);
 
 SYS_END_DECLS
 

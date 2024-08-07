@@ -1,4 +1,5 @@
 #include <Framework/Media/FrMediaPipeline.h>
+#include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrPacketDecoder.h>
 #include <Framework/Media/FrAvPlayer.h>
 #include <Framework/Media/FrMediaPacket.h>
@@ -15,7 +16,6 @@ struct _PipePass {
   FrDecoder* pdec;
   FrDecoder* todec;
   FrPacket* pkt;
-  SysAsyncQueue *queue;
 };
 
 SYS_DEFINE_TYPE(FrMediaPipeline, fr_media_pipeline, SYS_TYPE_OBJECT);
@@ -25,22 +25,19 @@ static PipePass* pipe_pass_new_by_type(
     FR_MEDIA_ENUM type,
     FrPacket *pkt) {
   sys_return_val_if_fail(pipe != NULL, NULL);
-  PipePass *pass = sgc_malloc0(sizeof(PipePass));
+  PipePass *pass = sys_new0_N(PipePass, 1);
 
   pass->pkt = pkt;
   pass->pipe = pipe;
   switch (type) {
     case FR_MEDIA_VIDEO:
       pass->todec = pipe->video_decoder;
-      pass->queue = &pipe->image_queue;
       break;
     case FR_MEDIA_AUDIO:
       pass->todec = pipe->audio_decoder;
-      pass->queue = &pipe->sample_queue;
       break;
     case FR_MEDIA_SUBTITLE:
       pass->todec = pipe->subtitle_decoder;
-      pass->queue = &pipe->subtitle_queue;
       break;
     default:
       return NULL;
@@ -63,9 +60,8 @@ static SysPointer decode_frame(
   SysInt err;
   FrMediaDecoder *mdec = FR_MEDIA_DECODER(pass->todec);
   FrMediaPacket *mpkt = FR_MEDIA_PACKET(pass->pkt);
-  SysAsyncQueue *queue = pass->queue;
   FrMediaFrame *mframe = NULL;
-  FrMediaFrame *nframe = NULL;
+  FrMediaPacket *nframe = NULL;
 
   err = fr_media_decoder_send_packet(mdec, mpkt);
   if(err < 0) { goto fail; }
@@ -73,8 +69,8 @@ static SysPointer decode_frame(
   err = fr_media_decoder_try_decode_frame(mdec, &mframe);
   if(err < 0) { goto fail; }
 
-  nframe = (FrMediaFrame *)sys_object_dclone(mframe);
-  sys_async_queue_push(queue, nframe);
+  nframe = (FrMediaPacket *)sys_object_dclone(mframe);
+  fr_media_decoder_write(mdec, nframe);
 
   pipe_pass_free(pass);
   return NULL;
@@ -182,26 +178,6 @@ void fr_media_pipeline_run(FrMediaPipeline *self, FrMediaFile *file) {
   }
 }
 
-FrMediaFrame* fr_media_pipeline_get_sample_frame (FrMediaPipeline* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  FrMediaFrame *sample = sys_async_queue_try_pop(&self->sample_queue);
-  if (sample == NULL) { return NULL; }
-  sys_atomic_int_dec(&self->pkt_count);
-
-  return sample;
-}
-
-FrMediaFrame* fr_media_pipeline_get_image_frame (FrMediaPipeline* self) {
-  sys_return_val_if_fail(self != NULL, NULL);
-
-  FrMediaFrame *image = sys_async_queue_try_pop(&self->image_queue);
-  if (image == NULL) { return NULL; }
-  sys_atomic_int_dec(&self->pkt_count);
-
-  return image;
-}
-
 void fr_media_pipeline_get_video_size(FrMediaPipeline *self, SysInt *width, SysInt *height) {
   sys_return_if_fail(self != NULL);
 
@@ -223,8 +199,6 @@ SysBool fr_media_pipeline_destroy_i(SysObject *o) {
   fr_decoder_stop(self->audio_decoder);
   sys_clear_pointer(&self->audio_decoder, _sys_object_unref);
 
-  sys_async_queue_clear_full(&self->image_queue);
-  sys_async_queue_clear_full(&self->sample_queue);
   self->pkt_count = 0;
 
   return true;
@@ -290,7 +264,4 @@ void fr_media_pipeline_init(FrMediaPipeline* self) {
   self->min_packet = 2;
   self->max_packet = 30 * self->min_packet;
   self->pkt_count = 0;
-
-  sys_async_queue_init_full(&self->image_queue, (SysDestroyFunc)_sys_object_unref);
-  sys_async_queue_init_full(&self->sample_queue, (SysDestroyFunc)_sys_object_unref);
 }

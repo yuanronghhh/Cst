@@ -30,8 +30,9 @@ struct _FrAudioDeviceContext {
 
 SYS_API SysType fr_audio_device_get_type(void);
 SYS_API FrDevice *fr_audio_device_new(void);
-
 SYS_API FrDevice *fr_audio_device_new_I(FrAudioDeviceContext *info);
+
+SYS_API void fr_audio_device_resume(FrAudioDevice *dev);
 
 SYS_END_DECLS
 

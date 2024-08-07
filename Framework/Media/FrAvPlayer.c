@@ -1,4 +1,5 @@
 #include <Framework/Media/FrAvPlayer.h>
+
 #include <Framework/Media/FrMediaPacket.h>
 #include <Framework/Media/FrMediaDecoder.h>
 #include <Framework/Media/FrPacketDecoder.h>
@@ -104,8 +105,9 @@ SysInt fr_av_player_render(FrAvPlayer *self,
 
   FrMediaFrame *frame = NULL;
   FrVideoFrame *vframe = NULL;
-  FrAudioFrame *aframe = NULL;
 
+#if 0
+  FrAudioFrame *aframe = NULL;
   frame = fr_media_pipeline_get_sample_frame(&self->pipeline);
   if (frame != NULL) {
     aframe = FR_AUDIO_FRAME(frame);
@@ -114,6 +116,7 @@ SysInt fr_av_player_render(FrAvPlayer *self,
     fr_av_render_render_audio(render, aframe);
     sys_object_unref(aframe);
   }
+#endif
 
   frame = fr_media_pipeline_get_image_frame(&self->pipeline);
   if (frame != NULL) {

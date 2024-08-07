@@ -1,4 +1,5 @@
 #include <Framework/Media/FrAvRender.h>
+#include <Framework/Media/FrAudioStream.h>
 #include <Framework/Graph/FrDrawContext.h>
 
 SYS_DEFINE_TYPE(FrAvRender, fr_av_render, SYS_TYPE_OBJECT);
@@ -11,7 +12,10 @@ void fr_av_render_render_video (FrAvRender *self,  FrVideoFrame *vframe, FrRegio
 }
 
 void fr_av_render_render_audio (FrAvRender *self, FrAudioFrame *aframe) {
-  // sys_return_if_fail(self->audio_render != NULL);
+  sys_return_if_fail(self->audio_render != NULL);
+
+  FrAudioStream *as = self->audio_render;
+  fr_audio_stream_resume(as);
 }
 
 /* object api */

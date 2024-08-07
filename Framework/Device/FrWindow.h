@@ -60,7 +60,12 @@ SYS_API SysPointer fr_window_get_data(FrWindow * self);
 #define fr_delay fr_i_window_delay
 #define fr_window_get_key fr_i_window_get_key
 #define fr_window_get_key_name fr_i_window_get_key_name
-#define fr_window_open_audio fr_i_window_open_audio
+#define fr_window_audio_open fr_i_window_audio_open
+#define fr_window_audio_resume fr_i_window_audio_resume
+#define fr_window_audio_close fr_i_window_audio_close
+#define fr_window_audio_stream_create fr_i_window_audio_stream_create
+#define fr_window_audio_stream_put_data fr_i_window_audio_stream_put_data
+#define fr_window_audio_stream_free fr_i_window_audio_stream_free
 
 #if SYS_OS_WIN32
   SYS_API HWND fr_window_get_win32_window(FrWindow* window);

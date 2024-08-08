@@ -502,12 +502,28 @@ static const AVCodec *media_find_decoder(AVStream *stream) {
 }
 
 void fr_media_decoder_create(FrMediaDecoder *self,
-    FrMediaStream *stream) {
-  AVStream *as = stream->ctx;
+    FrMediaDecoderContext *info) {
+  AVStream *as = info->media_stream->ctx;
 
-  self->stream = sys_object_ref(stream);
-  self->codec = media_find_decoder(as);
-  self->ctx = media_create_avcodec_context(self->codec, as);
+  self->codec = (SysPointer)media_find_decoder(as);
+  self->ctx = (SysPointer)media_create_avcodec_context(self->codec, as);
+}
+
+void fr_media_decoder_get_info(FrMediaDecoder *o, 
+    SysInt *width,
+    SysInt *height,
+    SysInt *pix_fmt) {
+
+  AVCodecContext *ctx = o->ctx;
+
+  *width = ctx->width;
+  *height = ctx->height;
+  *pix_fmt = ctx->pix_fmt;
+}
+
+void fr_media_decoder_free(FrMediaDecoder *self) {
+
+  avcodec_free_context((AVCodecContext **)&self->ctx);
 }
 
 static AVPacket* media_packet_new_from_avpacket(AVPacket* op) {
@@ -665,13 +681,14 @@ SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info) {
   }
 
   /* TODO: copy from example  */
-  dec->ctx->get_format  = get_hw_format;
+  AVCodecContext *cctx = dec->ctx;
+  cctx->get_format  = get_hw_format;
   if(av_hwdevice_ctx_create(&ctx, type, NULL, NULL, 0) < 0) {
 
     sys_warning_N("%s", "Failed to create specified HW device.");
     return false;
   }
-  dec->ctx->hw_device_ctx = av_buffer_ref(ctx);
+  cctx->hw_device_ctx = av_buffer_ref(ctx);
   info->ctx = ctx;
 
   return true;

@@ -21,7 +21,15 @@ struct _FrAvPlayer {
   /* <private>*/
   FrMediaFile *file;
   FrWindow *window;
-  FrMediaPipeline pipeline;
+
+  FrMediaDecoder* video_decoder;
+  FrMediaDecoder* audio_decoder;
+  FrMediaDecoder* subtitle_decoder;
+  FrMediaDecoder* packet_decoder;
+  FrDevice *audio_device;
+  SysInt max_packet;
+  SysInt min_packet;
+  SysInt pkt_count;
 
   SysBool use_hwaccel;
   SysInt64 seek_position;

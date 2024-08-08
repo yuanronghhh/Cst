@@ -14,11 +14,6 @@ SYS_BEGIN_DECLS
 struct _FrMediaDecoderClass {
   FrDecoderClass parent;
 
-  void (*construct) (
-    FrMediaDecoder *o,
-    FrDecoderContext *info,
-    FrMediaStream *ms);
-
    SysInt (*decode_frame) (FrMediaDecoder* o, FrMediaFrame **frame);
    SysInt (*read) (FrMediaDecoder *stream, FrMediaPacket **pkt);
    SysInt (*write) (FrMediaDecoder *stream, FrMediaPacket *pkt);
@@ -30,10 +25,19 @@ struct _FrMediaDecoder {
   /* <private> */
   FrMediaStream *stream;
   SysAsyncQueue queue;
-  const AVCodec *codec;
-  AVCodecContext *ctx;
   FrMediaFrame *frame;
   SysType frame_type;
+
+  /* const AVCodec *codec */
+  SysPointer codec;
+  /* AVCodecContext * */
+  SysPointer ctx;
+};
+
+struct _FrMediaDecoderContext {
+  SysType type;
+  const SysChar *name;
+  FrMediaStream *media_stream;
 };
 
 SYS_API SysType fr_media_decoder_get_type(void);
@@ -41,19 +45,15 @@ FrDecoder* fr_media_decoder_new(void);
 
 SYS_API FrMediaStream *fr_media_decoder_get_stream(FrMediaDecoder *self);
 
-SYS_API FrDecoder *fr_media_decoder_create_by_media_type(FrMediaFile *file,
+SYS_API FrMediaDecoder *fr_media_decoder_create_by_media_type(FrMediaFile *file,
     FR_MEDIA_ENUM mediaType);
 
 SYS_API SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType);
 void fr_media_decoder_flush(FrMediaDecoder* self);
 
-FrDecoder* fr_media_decoder_new_by_type(
+FrMediaDecoder* fr_media_decoder_new_by_type(
     SysType tp,
     const SysChar *name,
-    FrMediaStream *ms);
-
-void fr_media_decoder_construct(FrMediaDecoder *self,
-    FrDecoderContext *info, 
     FrMediaStream *ms);
 
 SysInt fr_media_decoder_try_decode_frame(

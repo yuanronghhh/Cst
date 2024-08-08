@@ -19,11 +19,15 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   fr_image_scale_create(&self->scale);
 
   FrImageScaleContext info;
-  info.in_width = self->parent.ctx->width;
-  info.in_height = self->parent.ctx->height;
-  info.out_width = self->parent.ctx->width;
-  info.out_height = self->parent.ctx->height;
-  info.in_pix_fmt = self->parent.ctx->pix_fmt;
+
+  fr_media_decoder_get_info(
+      &self->parent,
+      &info.in_width,
+      &info.in_height,
+      &info.in_pix_fmt);
+
+  info.out_width = info.in_width;
+  info.out_height = info.in_height;
   info.out_pix_fmt = AV_PIX_FMT_BGRA;
 
   if(self->hwaccel_name) {
@@ -92,7 +96,7 @@ void fr_video_decoder_get_size(FrVideoDecoder *self, SysInt *width, SysInt *heig
 }
 
 /* object api */
-FrDecoder* fr_video_decoder_new(void) {
+FrMediaDecoder* fr_video_decoder_new(void) {
   return sys_object_new(FR_TYPE_VIDEO_DECODER, NULL);
 }
 

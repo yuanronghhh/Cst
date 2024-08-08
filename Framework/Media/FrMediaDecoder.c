@@ -128,55 +128,13 @@ SysInt fr_media_decoder_decode_frame_i(
   return fr_media_decoder_receive_frame(self, nframe);
 }
 
-void fr_media_decoder_construct(FrMediaDecoder *self,
-    FrDecoderContext *info, 
-    FrMediaStream *ms) {
-  sys_return_if_fail(self != NULL);
-
-  FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
-  sys_return_if_fail(cls->construct);
-
-  cls->construct(self, info, ms);
-}
-
-FrDecoder* fr_media_decoder_new_by_type(
-    SysType tp,
-    const SysChar *name,
-    FrMediaStream *ms) {
-  FrMediaDecoder *o;
-
-  o = sys_object_new(tp, NULL);
-  FrDecoderContext info = { .name = (SysChar *)name };
-  fr_media_decoder_construct(o, &info, ms);
-
-  return FR_DECODER(o);
-}
-
-FrDecoder* fr_media_decoder_create_by_media_type(FrMediaFile* file,
-    FR_MEDIA_ENUM mediaType) {
-
-  FrMediaStream* mst;
-  FrDecoder* o;
-  SysType tp;
-  const SysChar *name;
-
-  mst = fr_media_file_stream_by_type(file, mediaType);
-  tp = fr_media_decoder_enum_to_type(mediaType);
-  if (tp == 0) { return NULL; }
-
-  name = fr_media_decoder_type_to_name(tp);
-  o = fr_media_decoder_new_by_type(tp, name, mst);
-
-  return o;
-}
-
 SysInt fr_media_decoder_decode_frame(
     FrMediaDecoder *self,
     FrMediaFrame **frame) {
   sys_return_val_if_fail(self != NULL, -1);
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
-  sys_return_val_if_fail(cls->construct, -1);
+  sys_return_val_if_fail(cls->decode_frame, -1);
 
   return cls->decode_frame(self, frame);
 }
@@ -233,20 +191,57 @@ void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp) {
 }
 
 /* object api */
-static void media_decoder_construct(FrMediaDecoder* self,
-  FrDecoderContext *info,
-  FrMediaStream* ms) {
+static void fr_media_decoder_construct_i(FrMediaDecoder* self,
+  FrMediaDecoderContext *minfo) {
   FrDecoder* o = FR_DECODER(self);
 
-  FR_DECODER_CLASS(fr_media_decoder_parent_class)->construct(o, info);
+  FrDecoderContext info = { .name = minfo->name };
+  FR_DECODER_CLASS(fr_media_decoder_parent_class)->construct(o, &info);
 
-  fr_media_decoder_create(self, ms);
+  self->stream = sys_object_ref(minfo->media_stream);
   self->frame = sys_object_new(self->frame_type, NULL);
+
+  fr_media_decoder_create(self, minfo);
 }
 
 FrDecoder* fr_media_decoder_new(void) {
-  return sys_object_new(FR_TYPE_MEDIA_DECODER, NULL);
+  return sys_object_new(g_type, NULL);
 }
+
+FrDecoder *fr_media_decoder_new_I(FrMediaDecoderContext *info) {
+  FrDecoder *o;
+
+  sys_return_val_if_fail(info != 0, NULL);
+  sys_return_val_if_fail(info->type != 0, NULL);
+  sys_return_val_if_fail(info->name != NULL, NULL);
+  sys_return_val_if_fail(info->media_stream != NULL, NULL);
+
+  o = sys_object_new(info->type, NULL);
+  fr_media_decoder_construct_i((FrMediaDecoder *)o, info);
+
+  return o;
+}
+
+FrDecoder* fr_media_decoder_create_by_media_type(FrMediaFile* file,
+    FR_MEDIA_ENUM mediaType) {
+
+  FrMediaStream* mst;
+  FrMediaDecoder* o;
+  SysType tp;
+  const SysChar *name;
+
+  mst = fr_media_file_stream_by_type(file, mediaType);
+  tp = fr_media_decoder_enum_to_type(mediaType);
+  if (tp == 0) { return NULL; }
+
+  name = fr_media_decoder_type_to_name(tp);
+
+  FrMediaDecoderContext info = { .name = name, .type = tp, .media_stream = mst };
+  o = fr_media_decoder_new_I(&info);
+
+  return o;
+}
+
 
 static void fr_media_decoder_dispose(SysObject* o) {
   FrMediaDecoder *self = FR_MEDIA_DECODER(o);
@@ -256,9 +251,10 @@ static void fr_media_decoder_dispose(SysObject* o) {
 
     fr_media_decoder_close_i(decoder);
   }
-  avcodec_free_context(&self->ctx);
   sys_object_unref(self->stream);
   sys_async_queue_clear_full(&self->queue);
+
+  fr_media_decoder_free(self);
 
   SYS_OBJECT_CLASS(fr_media_decoder_parent_class)->dispose(o);
 }
@@ -267,7 +263,6 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FrDecoderClass *dcls = FR_DECODER_CLASS(cls);
 
-  cls->construct = media_decoder_construct;
   cls->decode_frame = fr_media_decoder_decode_frame_i;
   cls->read = fr_media_decoder_read_i;
   cls->write = fr_media_decoder_write_i;

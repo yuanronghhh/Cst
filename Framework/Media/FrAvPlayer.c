@@ -1,5 +1,4 @@
 #include <Framework/Media/FrAvPlayer.h>
-
 #include <Framework/Media/FrMediaPacket.h>
 #include <Framework/Media/FrMediaDecoder.h>
 #include <Framework/Media/FrPacketDecoder.h>
@@ -9,15 +8,199 @@
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrMediaStream.h>
-#include <Framework/Device/FrWindow.h>
 #include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Media/FrAvRender.h>
+#include <Framework/Device/FrWindow.h>
+
+typedef struct _PipePass PipePass;
+
+struct _PipePass {
+  FrMediaPipeline *pipe;
+  FrDecoder* todec;
+  FrPacket* pkt;
+};
 
 SYS_DEFINE_TYPE(FrAvPlayer, fr_av_player, FR_TYPE_PLAYER);
 
-static void process(FrAvPlayer* self) {
+static PipePass* pipe_pass_new_by_type(
+    FrMediaPipeline *pipe,
+    FR_MEDIA_ENUM type,
+    FrPacket *pkt) {
+  sys_return_val_if_fail(pipe != NULL, NULL);
+  PipePass *pass = sys_new0_N(PipePass, 1);
 
-  fr_media_pipeline_wakeup_source(&self->pipeline);
+  pass->pkt = pkt;
+  pass->pipe = pipe;
+  switch (type) {
+    case FR_MEDIA_VIDEO:
+      pass->todec = pipe->video_decoder;
+      break;
+    case FR_MEDIA_AUDIO:
+      pass->todec = pipe->audio_decoder;
+      break;
+    case FR_MEDIA_SUBTITLE:
+      pass->todec = pipe->subtitle_decoder;
+      break;
+    default:
+      return NULL;
+  }
+
+  return pass;
+}
+
+static void pipe_pass_free(PipePass *self) {
+
+  sys_object_unref(self->pkt);
+  sys_free_N(self);
+}
+
+static SysPointer decode_frame(
+    FrTask* o,
+    SysPointer user_data) {
+  PipePass *pass = user_data;
+
+  SysInt err;
+  FrMediaDecoder *mdec = FR_MEDIA_DECODER(pass->todec);
+  FrMediaPacket *mpkt = FR_MEDIA_PACKET(pass->pkt);
+  FrMediaFrame *mframe = NULL;
+  FrMediaPacket *nframe = NULL;
+
+  err = fr_media_decoder_send_packet(mdec, mpkt);
+  if(err < 0) { goto fail; }
+
+  err = fr_media_decoder_try_decode_frame(mdec, &mframe);
+  if(err < 0) { goto fail; }
+
+  nframe = (FrMediaPacket *)sys_object_dclone(mframe);
+  fr_media_decoder_write(mdec, nframe);
+
+  pipe_pass_free(pass);
+  return NULL;
+
+fail:
+  sys_atomic_int_dec(&pass->pipe->pkt_count);
+  pipe_pass_free(pass);
+
+  return NULL;
+}
+
+
+static SysPointer process_packet(
+    FrTask* o,
+    SysPointer user_data) {
+
+  SysInt err;
+  FrMediaPacket *mpkt;
+  SysInt sindex;
+  PipePass *pass = NULL;
+
+  FrPacket *npkt = NULL;
+  FrMediaPipeline *pipe = user_data;
+
+  err = fr_packet_decoder_decode(pipe->packet_decoder, &npkt);
+  if(err < 0) { return NULL; }
+
+  mpkt = FR_MEDIA_PACKET(npkt);
+  sindex = fr_media_packet_get_stream_index(mpkt);
+  if(sindex < 0) { goto fail; }
+
+  pass = pipe_pass_new_by_type(pipe, sindex, npkt);
+  if(pass == NULL) {
+
+    sys_warning_N("Not found media packet type: %s", sindex);
+    return NULL;
+  }
+  fr_decoder_run_async(pass->todec, decode_frame, pass);
+
+  return NULL;
+fail:
+  if(npkt != NULL) {
+
+    sys_clear_pointer(&npkt, _sys_object_unref);
+  }
+
+  if(pass != NULL) {
+
+    sys_clear_pointer(&pass, pipe_pass_free);
+  }
+
+  return NULL;
+}
+
+
+
+static void process(FrAvPlayer* self) {
+  FrDecoder *o = FR_DECODER(self->packet_decoder);
+  if(fr_decoder_get_eof(o)) {
+    fr_av_player_set_state(self, FR_JOB_STATE_STOP);
+    return;
+  }
+
+  if (self->pkt_count > self->min_packet) {
+    return;
+  }
+  sys_debug_N("wakeup %ld", self->pkt_count);
+
+  for(int i = 0; i < self->max_packet; i++) {
+
+    fr_decoder_run_async(o, process_packet, self);
+    sys_atomic_int_inc(&self->pkt_count);
+  }
+}
+
+
+static FrDecoder* create_media_decoder(FrMediaFile* file,
+    FR_MEDIA_ENUM mediaType,
+    FrMediaPipeline *self) {
+
+  sys_return_val_if_fail(file != NULL, NULL);
+  FrMediaDecoder* decoder;
+
+  decoder = fr_media_decoder_create_by_media_type(file, mediaType);
+  if (decoder == NULL) { return NULL; }
+  fr_decoder_set_user_data(decoder, self);
+
+  if (fr_decoder_open(decoder) > 0) {
+
+    sys_clear_pointer(&decoder, _sys_object_unref);
+    return NULL;
+  }
+
+  return decoder;
+}
+
+static void media_player_run(FrAvPlayer *self, FrMediaFile *file) {
+  FrMediaDecoder *vdec;
+  FrMediaDecoder *adec;
+  FrMediaDecoder *pdec;
+  FrVideoDecoder *video_dec;
+
+  pdec = fr_packet_decoder_new_I(file);
+  fr_decoder_set_user_data(pdec, self);
+
+  self->packet_decoder = pdec;
+  fr_decoder_start(self->packet_decoder);
+
+  vdec = create_media_decoder(file,
+      FR_MEDIA_VIDEO,
+      self);
+  if(vdec != NULL) {
+
+    video_dec = FR_VIDEO_DECODER(vdec);
+    fr_video_decoder_resize(video_dec, 800, 600);
+
+    self->video_decoder = vdec;
+    fr_decoder_start(self->video_decoder);
+  }
+
+  adec = create_media_decoder(file,
+      FR_MEDIA_AUDIO,
+      self);
+  if(adec != NULL) {
+
+    self->audio_decoder = adec;
+    fr_decoder_start(self->audio_decoder);
+  }
 }
 
 static SysInt media_player_do(FrAvPlayer *self) {
@@ -118,7 +301,7 @@ SysInt fr_av_player_render(FrAvPlayer *self,
   }
 #endif
 
-  frame = fr_media_pipeline_get_image_frame(&self->pipeline);
+  frame = fr_media_decoder_read(self->video_decoder);
   if (frame != NULL) {
     self->vtsp = fr_media_frame_get_timestamp(frame);
 

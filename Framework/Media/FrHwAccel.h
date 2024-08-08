@@ -28,7 +28,9 @@ struct _FrHwAccelContext {
   FrMediaDecoder *decoder;
 
   /* <private> */
-  AVBufferRef *ctx;
+
+  /* AVBufferRef * */
+  SysPointer ctx;
   SysInt hw_format;
 };
 

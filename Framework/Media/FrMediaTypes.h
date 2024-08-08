@@ -103,6 +103,7 @@ typedef struct _FrMediaFileClass FrMediaFileClass;
 typedef struct _FrIMedia FrIMedia;
 typedef struct _FrIMediaInterface FrIMediaInterface;
 
+typedef struct _FrMediaDecoderContext FrMediaDecoderContext;
 typedef struct _FrMediaDecoder FrMediaDecoder;
 typedef struct _FrMediaDecoderClass FrMediaDecoderClass;
 

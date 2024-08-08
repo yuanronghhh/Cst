@@ -28,7 +28,7 @@ struct _FrVideoDecoder {
 };
 
 SYS_API SysType fr_video_decoder_get_type(void);
-SYS_API FrDecoder *fr_video_decoder_new(void);
+SYS_API FrMediaDecoder *fr_video_decoder_new(void);
 SYS_API void fr_video_decoder_resize(FrVideoDecoder *self, SysInt width, SysInt height);
 SYS_API void fr_video_decoder_get_size(FrVideoDecoder *self, SysInt *width, SysInt *height);
 

@@ -19,18 +19,18 @@ static SysInt fr_audio_decoder_decode_frame_i(FrMediaDecoder* o,
 }
 
 /* object api */
-FrDecoder* fr_audio_decoder_new(void) {
+FrMediaDecoder* fr_audio_decoder_new(void) {
   return sys_object_new(FR_TYPE_AUDIO_DECODER, NULL);
 }
 
-static void fr_audio_decoder_construct_i(FrDecoder *o, FrAudioDecoderContext *info) {
+static void fr_audio_decoder_construct_i(FrMediaDecoder *o, FrAudioDecoderContext *info) {
   FrAudioDecoder *self = FR_AUDIO_DECODER(o);
 
   UNUSED(self);
 }
 
-FrDecoder *fr_audio_decoder_new_I(FrAudioDecoderContext *info) {
-  FrDecoder *o = fr_audio_decoder_new();
+FrMediaDecoder *fr_audio_decoder_new_I(FrAudioDecoderContext *info) {
+  FrMediaDecoder *o = fr_audio_decoder_new();
 
   fr_audio_decoder_construct_i(o, info);
 

@@ -9,21 +9,6 @@ void fr_audio_stream_resume(FrAudioStream *stream) {
   fr_window_audio_resume(stream->dev);
 }
 
-SysInt fr_audio_stream_write(FrMediaStream *o, FrMediaPacket *pkt) {
-  FrAudioStream *self = FR_AUDIO_STREAM(o);
-
-  sys_async_queue_push(&self->queue, pkt);
-}
-
-SysInt fr_audio_stream_read(FrMediaStream *o, FrMediaPacket **pkt) {
-  FrAudioStream *self = FR_AUDIO_STREAM(o);
-  FrAudioFrame *frame = sys_async_queue_try_pop(&self->queue);
-
-  *pkt = FR_MEDIA_PACKET(frame);
-
-  return 0;
-}
-
 /* object api */
 static void fr_audio_stream_construct_i(FrMediaStream *o,
     FrAudioStreamContext *info) {
@@ -62,11 +47,8 @@ static void fr_audio_stream_dispose(SysObject* o) {
 
 static void fr_audio_stream_class_init(FrAudioStreamClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  FrMediaStreamClass *scls = FR_MEDIA_STREAM_CLASS(cls);
 
   ocls->dispose = fr_audio_stream_dispose;
-  scls->read = fr_audio_stream_read;
-  scls->write = fr_audio_stream_write;
 }
 
 static void fr_audio_stream_init(FrAudioStream* self) {

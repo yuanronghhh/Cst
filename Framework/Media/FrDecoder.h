@@ -11,13 +11,14 @@ SYS_BEGIN_DECLS
 #define FR_DECODER_GET_CLASS(o) sys_instance_get_class(o, FrDecoderClass)
 
 struct _FrDecoderContext {
-  SysChar *name;
+  const SysChar *name;
 };
 
 struct _FrDecoderClass {
   SysObjectClass parent;
 
   void (*construct) (FrDecoder* o, FrDecoderContext *info);
+  SysInt (*decode) (FrDecoder *o, FrPacket **npkt);
   SysInt (*open) (FrDecoder* o);
   SysInt (*close) (FrDecoder* o);
 };

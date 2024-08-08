@@ -16,8 +16,15 @@ void fr_media_frame_get_frame_rate (
 
 const AVCodec *fr_media_find_decoder(AVStream *stream);
 
+void fr_media_decoder_get_info(FrMediaDecoder *o, 
+    SysInt *width,
+    SysInt *height,
+    SysInt *pix_fmt);
+
 void fr_media_decoder_create(FrMediaDecoder *self,
-    FrMediaStream *stream);
+    FrMediaDecoderContext *info);
+
+void fr_media_decoder_free(FrMediaDecoder *self);
 
 SysInt64 fr_media_stream_calc_pts(
     FrMediaStream *self,

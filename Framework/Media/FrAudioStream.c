@@ -9,6 +9,12 @@ void fr_audio_stream_resume(FrAudioStream *stream) {
   fr_window_audio_resume(stream->dev);
 }
 
+void fr_audio_stream_get_audio_info(FrAudioStream *stream,
+    SysInt *channels,
+    SysInt *sample_rate,
+    SysInt *format) {
+}
+
 /* object api */
 static void fr_audio_stream_construct_i(FrMediaStream *o,
     FrAudioStreamContext *info) {
@@ -40,7 +46,6 @@ static void fr_audio_stream_dispose(SysObject* o) {
   FrAudioStream *self = FR_AUDIO_STREAM(o);
 
   sys_clear_pointer(self->dev, _sys_object_unref);
-  sys_async_queue_clear_full(&self->queue);
 
   SYS_OBJECT_CLASS(fr_audio_stream_parent_class)->dispose(o);
 }
@@ -52,6 +57,4 @@ static void fr_audio_stream_class_init(FrAudioStreamClass* cls) {
 }
 
 static void fr_audio_stream_init(FrAudioStream* self) {
-
-  sys_async_queue_init_full(&self->queue, (SysDestroyFunc)_sys_object_unref);
 }

@@ -63,9 +63,6 @@ typedef struct _FrIStreamInterface FrIStreamInterface;
 typedef struct _FrPipeline FrPipeline;
 typedef struct _FrPipelineClass FrPipelineClass;
 
-typedef struct _FrMediaPipeline FrMediaPipeline;
-typedef struct _FrMediaPipelineClass FrMediaPipelineClass;
-
 typedef struct _FrDecoderContext FrDecoderContext;
 typedef struct _FrDecoder FrDecoder;
 typedef struct _FrDecoderClass FrDecoderClass;
@@ -74,6 +71,7 @@ typedef struct _FrAvPlayerContext FrAvPlayerContext;
 typedef struct _FrAvPlayer FrAvPlayer;
 typedef struct _FrAvPlayerClass FrAvPlayerClass;
 
+typedef struct _FrStreamContext FrStreamContext;
 typedef struct _FrStream FrStream;
 typedef struct _FrStreamClass FrStreamClass;
 

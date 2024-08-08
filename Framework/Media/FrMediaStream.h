@@ -12,7 +12,6 @@ SYS_BEGIN_DECLS
 
 struct _FrMediaStreamClass {
   FrStreamClass parent;
-
 };
 
 struct _FrMediaStream {

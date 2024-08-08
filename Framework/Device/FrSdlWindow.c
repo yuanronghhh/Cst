@@ -8,11 +8,12 @@
 
 #define SDL_WINDOW_POINTER "FrSdlWindow"
 
-typedef struct _AudioPass AudioPass;
+typedef struct _MediaPass MediaPass;
 
-struct _AudioPass {
-  FrAudioStream *stream;
-  FrMediaPipeline *pipe;
+struct _MediaPass {
+  FrMediaStream *in_stream;
+  FrMediaStream *out_stream;
+  FrAvPlayer *pipe;
 };
 
 static void i_window_imp(FrIWindowInterface *iface);
@@ -55,19 +56,20 @@ static void sdl_audio_resume(FrAudioDevice *self) {
 }
 
 static void sdl_audio_render(FrAudioStream *self, FrAudioFrame *frame) {
-  const int samples = len / sizeof(Sint16);
-  Sint16 *data = fr_audio_frame_get_buffer(frame);
+  const int samples = frame->nb_samples;
+  SysUInt8 *data[FR_MEDIA_NUM_DATA];
+  SysInt linesize[FR_MEDIA_NUM_DATA];
+
+  fr_media_frame_get_info(FR_MEDIA_FRAME(frame), data, linesize);
 
   SDL_AudioStream *stream = self->ctx;
-  int rc = SDL_PutAudioStreamData(stream, data, len);
+  int rc = SDL_PutAudioStreamData(stream, data[0], linesize[0]);
   if (rc == -1) {
     sys_warning_N("Failed to put samples in stream: %s\n", SDL_GetError());
-    return false;
+    return;
   }
 
-  SDL_PutAudioStreamData(stream, buffer, samples * sizeof (Sint16));
-
-  SDL_free(buffer);
+  SDL_PutAudioStreamData(stream, data[0], samples * sizeof (Sint16));
 }
 
 static void audio_callback(SysPointer user_data,
@@ -75,10 +77,11 @@ static void audio_callback(SysPointer user_data,
     SysInt len,
     SysInt totallen) {
 
-  FrAudioStream *self = FR_AUDIO_STREAM(user_data);
-  FrAudioFrame *frame = fr_audio_stream_get_audio_frame(self);
+  FrAudioStream *out_stream = FR_AUDIO_STREAM(user_data);
+  FrMediaStream *in_stream = user_data;
+  FrAudioFrame *frame = NULL;
 
-  sdl_audio_render(self, frame);
+  sdl_audio_render(out_stream, frame);
 }
 
 static void sdl_audio_stream_create(FrAudioStream *self, FrAudioStreamContext *info) {
@@ -86,8 +89,9 @@ static void sdl_audio_stream_create(FrAudioStream *self, FrAudioStreamContext *i
 
   const SDL_AudioSpec dst = { SDL_AUDIO_F32, 2, 48000 };
   SDL_AudioDeviceID dev = POINTER_TO_UINT(info->dev->ctx);
+  FrMediaStream *in_stream = info->in_stream;
 
-  self->ctx = SDL_OpenAudioDeviceStream(dev, &dst, audio_callback, self);
+  self->ctx = SDL_OpenAudioDeviceStream(dev, &dst, audio_callback, in_stream);
   sdl_audio_resume(info->dev);
 }
 

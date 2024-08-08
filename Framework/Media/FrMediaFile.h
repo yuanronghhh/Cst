@@ -1,7 +1,7 @@
 #ifndef __FR_MEDIA_FILE_H__
 #define __FR_MEDIA_FILE_H__
 
-#include <Framework/Media/FrStream.h>
+#include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrMediaPacket.h>
 
 SYS_BEGIN_DECLS
@@ -12,11 +12,11 @@ SYS_BEGIN_DECLS
 #define FR_MEDIA_FILE_GET_CLASS(o) sys_instance_get_class(o, FrMediaFileClass)
 
 struct _FrMediaFileClass {
-  FrStreamClass parent;
+  FrMediaStreamClass parent;
 };
 
 struct _FrMediaFile {
-  FrStream parent;
+  FrMediaStream parent;
 
   /* <private> */
   AVFormatContext *ctx;
@@ -32,7 +32,7 @@ struct _FrMediaFile {
     SysInt64 seek_rel;
   } seek;
 
-  FrMediaPacket pkt;
+  FrMediaPacket mpkt;
   SysInt serial;
 };
 

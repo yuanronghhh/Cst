@@ -2,7 +2,6 @@
 #define __FR_AV_PLAYER_H__
 
 #include <Framework/Media/FrPlayer.h>
-#include <Framework/Media/FrMediaPipeline.h>
 
 SYS_BEGIN_DECLS
 
@@ -22,10 +21,10 @@ struct _FrAvPlayer {
   FrMediaFile *file;
   FrWindow *window;
 
-  FrMediaDecoder* video_decoder;
-  FrMediaDecoder* audio_decoder;
-  FrMediaDecoder* subtitle_decoder;
-  FrMediaDecoder* packet_decoder;
+  FrDecoder* video_decoder;
+  FrDecoder* audio_decoder;
+  FrDecoder* subtitle_decoder;
+  FrDecoder* packet_decoder;
   FrDevice *audio_device;
   SysInt max_packet;
   SysInt min_packet;

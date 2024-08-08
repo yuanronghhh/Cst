@@ -74,13 +74,6 @@ void fr_i_window_audio_stream_free (
   self.audio_stream_free(o);
 }
 
-SysBool fr_i_window_audio_stream_put_data(FrAudioStream *o,
-    SysUInt data[],
-    SysInt len) {
-
-  return self.audio_stream_put_data(o, data, len);
-}
-
 void fr_i_window_display_create (FrDisplay *display) {
 
   self.display_create(display);

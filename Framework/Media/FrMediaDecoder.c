@@ -5,7 +5,6 @@
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrVideoDecoder.h>
 #include <Framework/Media/FrMediaPacket.h>
-#include <Framework/Media/FrMediaPipeline.h>
 
 static const SysChar* DECODER_NAMES[] = {
   "video_decoder",
@@ -205,7 +204,7 @@ static void fr_media_decoder_construct_i(FrMediaDecoder* self,
 }
 
 FrDecoder* fr_media_decoder_new(void) {
-  return sys_object_new(g_type, NULL);
+  return sys_object_new(private_g_type, NULL);
 }
 
 FrDecoder *fr_media_decoder_new_I(FrMediaDecoderContext *info) {
@@ -222,11 +221,12 @@ FrDecoder *fr_media_decoder_new_I(FrMediaDecoderContext *info) {
   return o;
 }
 
-FrDecoder* fr_media_decoder_create_by_media_type(FrMediaFile* file,
+FrDecoder* fr_media_decoder_create_by_media_type(
+    FrMediaFile* file,
     FR_MEDIA_ENUM mediaType) {
 
   FrMediaStream* mst;
-  FrMediaDecoder* o;
+  FrDecoder* o;
   SysType tp;
   const SysChar *name;
 

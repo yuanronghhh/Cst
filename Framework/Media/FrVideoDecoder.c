@@ -1,5 +1,4 @@
 #include <Framework/Media/FrVideoDecoder.h>
-#include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrMedia.h>
 #include <Framework/Media/FrImageScale.h>
 #include <Framework/Media/FrHwAccel.h>

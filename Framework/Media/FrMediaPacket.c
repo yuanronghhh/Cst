@@ -4,17 +4,10 @@ SYS_DEFINE_TYPE(FrMediaPacket, fr_media_packet, FR_TYPE_PACKET);
 
 SysBool fr_media_packet_destroy_i(SysObject* o) {
   FrMediaPacket* self = FR_MEDIA_PACKET(o);
-  if(self->ctx == NULL) { return false; }
 
-  av_packet_free(&self->ctx);
+  fr_media_packet_free(self);
 
   return SYS_OBJECT_CLASS(fr_media_packet_parent_class)->destroy(o);
-}
-
-SysInt fr_media_packet_get_stream_index(FrMediaPacket *self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return self->ctx->stream_index;
 }
 
 SysObject *fr_media_packet_dclone_i(SysObject *o) {
@@ -38,7 +31,7 @@ FrPacket* fr_media_packet_new(void) {
 static void fr_media_packet_dispose(SysObject* o) {
   FrMediaPacket *self = FR_MEDIA_PACKET(o);
 
-  av_packet_free(&self->ctx);
+  fr_media_packet_free(self);
 
   SYS_OBJECT_CLASS(fr_media_packet_parent_class)->dispose(o);
 }

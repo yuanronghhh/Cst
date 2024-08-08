@@ -18,10 +18,16 @@ struct _FrStream {
   SysObject parent;
 
   /* <private> */
+  SysInt io_type;
+};
+
+struct _FrStreamContext {
+  SysInt io_type;
 };
 
 SYS_API SysType fr_stream_get_type(void);
 SYS_API FrStream *fr_stream_new(void);
+SYS_API FrStream *fr_stream_new_I(FrStreamContext *info);
 
 SYS_END_DECLS
 

@@ -5,6 +5,8 @@
 
 SYS_BEGIN_DECLS
 
+#define FR_MEDIA_NUM_DATA AV_NUM_DATA_POINTERS
+
 const SysChar* fr_media_error_string(SysInt err);
 
 void fr_media_frame_get_frame_rate (
@@ -39,8 +41,6 @@ SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);
 
-SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p);
-
 SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
     FrMediaPacket *pkt);
 
@@ -56,6 +56,12 @@ SysInt fr_media_image_scale_scale(
 SysBool fr_media_file_create(FrMediaFile *self,
     const SysChar *filename);
 
+SysInt fr_media_media_file_read_packet(FrMediaFile *self,
+    FrMediaPacket *pkt);
+
+void fr_media_packet_free(FrMediaPacket *self);
+SysInt fr_media_packet_get_stream_index(FrMediaPacket *self);
+
 /* image */
 SysInt fr_image_context_fill_buffer(FrImageContext *info);
 #define fr_image_get_size(format, width, height) av_image_get_buffer_size(format, width, height, 1)
@@ -69,6 +75,11 @@ void fr_media_frame_free(FrMediaFrame *self);
 void fr_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself);
 void fr_media_frame_get_data(FrMediaFrame *self, uint8_t *data[]);
 void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]);
+
+void fr_media_frame_get_info(FrMediaFrame *self,
+    SysUInt8 *data[],
+    SysInt linesize[]);
+
 SysInt fr_media_frame_get_format(FrMediaFrame *self);
 SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
 

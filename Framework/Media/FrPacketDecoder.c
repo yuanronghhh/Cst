@@ -1,7 +1,6 @@
 #include <Framework/Media/FrPacketDecoder.h>
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrMediaStream.h>
-#include <Framework/Media/FrMediaPipeline.h>
 
 /* media packet decoder */
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
@@ -32,9 +31,9 @@ static void fr_packet_decoder_construct_i(
   FR_DECODER_CLASS(fr_packet_decoder_parent_class)->construct(o, info);
 }
 
-static void fr_packet_decoder_construct (FrPacketDecoder *self,
+static void fr_packet_decoder_construct (FrDecoder *o,
     FrMediaFile *file) {
-  FrDecoder *o = FR_DECODER(self);
+  FrPacketDecoder *self = FR_PACKET_DECODER(o);
 
   FrDecoderContext info = { .name = "packet_decoder" };
   fr_packet_decoder_construct_i(o, &info);
@@ -43,11 +42,11 @@ static void fr_packet_decoder_construct (FrPacketDecoder *self,
 }
 
 FrDecoder* fr_packet_decoder_new(void) {
-  return sys_object_new(FR_TYPE_PACKET_DECODER, NULL);
+  return sys_object_new(private_g_type, NULL);
 }
 
-FrMediaDecoder *fr_packet_decoder_new_I(FrMediaFile *file) {
-  FrMediaDecoder *o = fr_packet_decoder_new();
+FrDecoder *fr_packet_decoder_new_I(FrMediaFile *file) {
+  FrDecoder *o = fr_packet_decoder_new();
 
   fr_packet_decoder_construct(o, file);
 

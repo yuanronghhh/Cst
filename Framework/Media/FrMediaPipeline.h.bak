@@ -28,9 +28,6 @@ struct _FrMediaPipeline {
   SysInt min_packet;
 
   SysInt pkt_count;
-  // SysAsyncQueue image_queue;
-  // SysAsyncQueue sample_queue;
-  // SysAsyncQueue subtitle_queue;
 };
 
 #define fr_media_pipeline_create(o) sys_object_create(o, FR_TYPE_MEDIA_PIPELINE)

@@ -75,8 +75,6 @@ void fr_i_window_audio_stream_create (
 void fr_i_window_audio_stream_free (
     FrAudioStream *o);
 
-SysBool fr_i_window_audio_stream_put_data(FrAudioStream *o, SysUInt data[], SysInt len);
-
 void fr_i_window_display_create (FrDisplay *display);
 void fr_i_window_window_destroy (FrWindow *window);
 void fr_i_window_set_error_callback (FrWindowErrFunc callback);

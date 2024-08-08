@@ -6,7 +6,6 @@
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Media/FrIMediaRender.h>
 #include <Framework/Media/FrVideoDecoder.h>
-#include <Framework/Media/FrMediaPipeline.h>
 #include <Framework/Media/FrMediaStream.h>
 #include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Media/FrAvRender.h>
@@ -15,15 +14,15 @@
 typedef struct _PipePass PipePass;
 
 struct _PipePass {
-  FrMediaPipeline *pipe;
   FrDecoder* todec;
   FrPacket* pkt;
+  FrAvPlayer *pipe;
 };
 
 SYS_DEFINE_TYPE(FrAvPlayer, fr_av_player, FR_TYPE_PLAYER);
 
 static PipePass* pipe_pass_new_by_type(
-    FrMediaPipeline *pipe,
+    FrAvPlayer *pipe,
     FR_MEDIA_ENUM type,
     FrPacket *pkt) {
   sys_return_val_if_fail(pipe != NULL, NULL);
@@ -95,9 +94,9 @@ static SysPointer process_packet(
   PipePass *pass = NULL;
 
   FrPacket *npkt = NULL;
-  FrMediaPipeline *pipe = user_data;
+  FrAvPlayer *pipe = user_data;
 
-  err = fr_packet_decoder_decode(pipe->packet_decoder, &npkt);
+  err = fr_decoder_decode(pipe->packet_decoder, &npkt);
   if(err < 0) { return NULL; }
 
   mpkt = FR_MEDIA_PACKET(npkt);
@@ -151,10 +150,10 @@ static void process(FrAvPlayer* self) {
 
 static FrDecoder* create_media_decoder(FrMediaFile* file,
     FR_MEDIA_ENUM mediaType,
-    FrMediaPipeline *self) {
+    FrAvPlayer *self) {
 
   sys_return_val_if_fail(file != NULL, NULL);
-  FrMediaDecoder* decoder;
+  FrDecoder* decoder;
 
   decoder = fr_media_decoder_create_by_media_type(file, mediaType);
   if (decoder == NULL) { return NULL; }
@@ -169,10 +168,19 @@ static FrDecoder* create_media_decoder(FrMediaFile* file,
   return decoder;
 }
 
-static void media_player_run(FrAvPlayer *self, FrMediaFile *file) {
-  FrMediaDecoder *vdec;
-  FrMediaDecoder *adec;
-  FrMediaDecoder *pdec;
+void av_player_get_video_size(FrAvPlayer *self, SysInt *width, SysInt *height) {
+  sys_return_if_fail(self != NULL);
+
+  FrVideoDecoder *video_decoder = FR_VIDEO_DECODER(self->video_decoder);
+  if(video_decoder == NULL) { return; }
+
+  fr_video_decoder_get_size(video_decoder, width, height);
+}
+
+static void av_player_run(FrAvPlayer *self, FrMediaFile *file) {
+  FrDecoder *vdec;
+  FrDecoder *adec;
+  FrDecoder *pdec;
   FrVideoDecoder *video_dec;
 
   pdec = fr_packet_decoder_new_I(file);
@@ -218,8 +226,8 @@ static SysInt media_player_do(FrAvPlayer *self) {
   fr_media_stream_get_rational(vs, &rt);
   self->delay = self->default_delay = (1.0 / rt.num / (double) rt.den) * 1.0e9;
 
-  fr_media_pipeline_run(&self->pipeline, self->file);
-  fr_media_pipeline_get_video_size(&self->pipeline, &bound.width, &bound.height);
+  av_player_run(self, self->file);
+  av_player_get_video_size(self, &bound.width, &bound.height);
   fr_window_set_size(self->window, bound.width, bound.height);
 
   region = fr_region_create_rectangle(&bound);
@@ -288,6 +296,7 @@ SysInt fr_av_player_render(FrAvPlayer *self,
 
   FrMediaFrame *frame = NULL;
   FrVideoFrame *vframe = NULL;
+  FrMediaDecoder *mdec;
 
 #if 0
   FrAudioFrame *aframe = NULL;
@@ -301,7 +310,8 @@ SysInt fr_av_player_render(FrAvPlayer *self,
   }
 #endif
 
-  frame = fr_media_decoder_read(self->video_decoder);
+  mdec = FR_MEDIA_DECODER(self->video_decoder);
+  fr_media_decoder_read(mdec, (FrMediaPacket **)&frame);
   if (frame != NULL) {
     self->vtsp = fr_media_frame_get_timestamp(frame);
 
@@ -365,7 +375,16 @@ FrAvPlayer *fr_av_player_new_I(FrAvPlayerContext *info) {
 static void fr_av_player_dispose(SysObject* o) {
   FrAvPlayer *self = FR_AV_PLAYER(o);
 
-  sys_object_destroy(&self->pipeline);
+  fr_decoder_stop(self->packet_decoder);
+  sys_clear_pointer(&self->packet_decoder, _sys_object_unref);
+
+  fr_decoder_stop(self->video_decoder);
+  sys_clear_pointer(&self->video_decoder, _sys_object_unref);
+
+  fr_decoder_stop(self->audio_decoder);
+  sys_clear_pointer(&self->audio_decoder, _sys_object_unref);
+  self->pkt_count = 0;
+
   sys_clear_pointer(&self->file, _sys_object_unref);
   sys_clear_pointer(&self->window, _sys_object_unref);
   sys_clear_pointer(&self->render, _sys_object_unref);
@@ -382,7 +401,4 @@ static void fr_av_player_class_init(FrAvPlayerClass* cls) {
 void fr_av_player_init(FrAvPlayer* self) {
   self->state = FR_JOB_STATE_RUNNING;
   self->seek_position = -1;
-
-  fr_media_pipeline_create(&self->pipeline);
-  self->pipeline.player = self;
 }

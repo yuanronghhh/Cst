@@ -14,7 +14,7 @@ typedef enum _SHOW_MODE_ENUM {
 
 static void i_stream_imp(FrIStreamInterface *iface);
 
-SYS_DEFINE_WITH_CODE(FrMediaFile, fr_media_file, FR_TYPE_STREAM,
+SYS_DEFINE_WITH_CODE(FrMediaFile, fr_media_file, FR_TYPE_MEDIA_STREAM,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_STREAM, i_stream_imp));
 
 SysInt64 fr_media_file_get_seek_position(FrMediaFile *self) {
@@ -64,15 +64,11 @@ SysInt media_file_read_packet_i(FrIStream *o, FrPacket **pkt) {
   sys_return_val_if_fail(*pkt == NULL, -1);
 
   SysInt err;
-  AVPacket *p;
-  FrPacket *npkt;
+  FrPacket *npkt = FR_PACKET(&self->mpkt);
 
-  npkt = FR_PACKET(&self->pkt);
-  p = self->pkt.ctx;
-
-  sys_assert(self->ctx != NULL);
-  err = fr_media_read_packet(self->ctx, p);
+  err = fr_media_media_file_read_packet(self, &self->mpkt);
   if(err < 0) { return err; }
+
   self->serial++;
   fr_packet_set_serial(npkt, self->serial);
   *pkt = npkt;
@@ -119,6 +115,13 @@ FrMediaStream* fr_media_file_stream_by_type(
   return fr_media_streams_get_by_media_type(self->streams, self->n_streams, mediaType);
 }
 
+void fr_media_file_find_audio_device_info(FrMediaFile* self,
+    FrAudioDeviceContext *info) {
+  FrMediaStream* astream = fr_media_file_stream_by_type(self, FR_MEDIA_AUDIO);
+
+  fr_media_file_get_audio_info(astream, info);
+}
+
 static void i_stream_imp(FrIStreamInterface *iface) {
   iface->read_packet = media_file_read_packet_i;
 }
@@ -160,7 +163,7 @@ static void fr_media_file_dispose(SysObject* o) {
 
   sys_assert(self->ctx != NULL);
   avformat_close_input(&self->ctx);
-  sys_object_destroy(&self->pkt);
+  sys_object_destroy(&self->mpkt);
 
   SYS_OBJECT_CLASS(fr_media_file_parent_class)->dispose(o);
 }
@@ -174,5 +177,5 @@ static void fr_media_file_class_init(FrMediaFileClass* cls) {
 void fr_media_file_init(FrMediaFile* self) {
   self->show_mode = SHOW_MODE_VIDEO;
   self->serial = -1;
-  fr_media_packet_create(&self->pkt);
+  fr_media_packet_create(&self->mpkt);
 }

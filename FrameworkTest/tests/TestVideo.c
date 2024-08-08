@@ -81,18 +81,24 @@ void render_callback(FrAvPlayer *player) {
 void test_video_player(void) {
   FrWindow *window;
   FrDisplay* display;
-  FrDevice *device;
+  FrDevice *video_device;
+  FrDevice *audio_device;
   FrDrawContext *draw_context;
   FrMediaFile *mfile;
   FrAvPlayer *mplayer;
   FrAvRender *imrender;
+  FrAudioStream *arender;
   FrSurface* paint_surface;
 
   display = fr_display_new_I();
   window = fr_window_top_new(display);
-  device = FR_DEVICE(window);
+  video_device = FR_DEVICE(window);
 
-  draw_context = fr_cairo_draw_context_new_I(device);
+  mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
+  sys_return_if_fail(mfile != NULL);
+
+  audio_device = fr_audio_device_new_by_media_file(mfile);
+  draw_context = fr_cairo_draw_context_new_I(video_device);
 
   FrAvRenderContext mrinfo = {
     .video_render = draw_context,
@@ -106,7 +112,6 @@ void test_video_player(void) {
 
   fr_draw_context_add_surface(draw_context, paint_surface);
 
-  mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
 
   FrAvPlayerContext pinfo = {
     .file = mfile,

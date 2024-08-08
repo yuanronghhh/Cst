@@ -1,6 +1,5 @@
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Device/FrWindow.h>
-#include <Framework/Media/FrMediaPipeline.h>
 
 SYS_DEFINE_TYPE(FrAudioDecoder, fr_audio_decoder, FR_TYPE_MEDIA_DECODER);
 

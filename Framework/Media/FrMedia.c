@@ -454,7 +454,7 @@ void fr_media_frame_get_frame_rate (
   *den = rational.den;
 }
 
-SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {
+static SysInt media_read_packet(AVFormatContext *ctx, AVPacket *p) {
   sys_return_val_if_fail(ctx != NULL, -1);
   sys_return_val_if_fail(p != NULL, -1);
   SysInt err;
@@ -467,6 +467,26 @@ SysInt fr_media_read_packet(AVFormatContext *ctx, AVPacket *p) {
   }
 
   return err;
+}
+
+SysInt fr_media_media_file_read_packet(FrMediaFile *self,
+    FrMediaPacket *pkt) {
+  sys_return_val_if_fail(self != NULL, -1);
+  sys_return_val_if_fail(pkt != NULL, -1);
+
+  return media_read_packet(self->ctx, pkt->ctx);
+}
+
+SysInt fr_media_packet_get_stream_index(FrMediaPacket *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+  AVPacket *ctx = self->ctx;
+
+  return ctx->stream_index;
+}
+
+void fr_media_packet_free(FrMediaPacket *self) {
+
+  av_packet_free((AVPacket **)&self->ctx);
 }
 
 static AVCodecContext *media_create_avcodec_context(const AVCodec *codec,
@@ -725,6 +745,17 @@ void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]) {
 
   for(SysInt i = 0; i < AV_NUM_DATA_POINTERS; i++) {
     linesize[i] = avf->linesize[i];
+  }
+}
+
+void fr_media_frame_get_info(FrMediaFrame *self,
+    SysUInt8 *data[],
+    SysInt linesize[]) {
+  AVFrame *avf = self->ctx;
+
+  for(SysInt i = 0; i < FR_MEDIA_NUM_DATA; i++) {
+    linesize[i] = avf->linesize[i];
+    data[i] = avf->data[i];
   }
 }
 

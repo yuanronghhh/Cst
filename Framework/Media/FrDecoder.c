@@ -111,6 +111,19 @@ SysInt fr_decoder_close_i(FrDecoder* o) {
   return 0;
 }
 
+SysInt fr_decoder_decode_i(FrDecoder *o, FrPacket **npkt) {
+  return -1;
+}
+
+SysInt fr_decoder_decode(FrDecoder *o, FrPacket **npkt) {
+  sys_return_val_if_fail(o != NULL, -1);
+
+  FrDecoderClass* cls = FR_DECODER_GET_CLASS(o);
+  sys_return_val_if_fail(cls->decode, -1);
+
+  return cls->decode(o, npkt);
+}
+
 /* object api */
 static void fr_decoder_construct_i(FrDecoder *self,
     FrDecoderContext *info) {
@@ -136,6 +149,7 @@ static void fr_decoder_class_init(FrDecoderClass* cls) {
   cls->open = fr_decoder_open_i;
   cls->close = fr_decoder_close_i;
   cls->construct = fr_decoder_construct_i;
+  cls->decode = fr_decoder_decode_i;
 
   ocls->dispose = fr_decoder_dispose;
 }

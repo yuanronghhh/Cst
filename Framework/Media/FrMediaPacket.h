@@ -18,13 +18,13 @@ struct _FrMediaPacket {
   FrPacket parent;
 
   /* <private> */
-  AVPacket *ctx;
+
+  /* AVPacket * */
+  SysPointer ctx;
 };
 
 SYS_API SysType fr_media_packet_get_type(void);
 SYS_API FrPacket *fr_media_packet_new(void);
-
-SysInt fr_media_packet_get_stream_index(FrMediaPacket *self);
 #define fr_media_packet_create(o) sys_object_create(o, FR_TYPE_MEDIA_PACKET)
 
 SYS_END_DECLS

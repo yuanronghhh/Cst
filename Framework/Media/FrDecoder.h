@@ -54,6 +54,9 @@ SYS_API SysInt fr_decoder_decode(FrDecoder *o, FrPacket **npkt);
 SYS_API SysBool fr_decoder_start(FrDecoder* self);
 SYS_API void fr_decoder_stop(FrDecoder* self);
 
+void fr_decoder_construct(FrDecoder *o,
+    FrDecoderContext *info);
+
 SYS_API void fr_decoder_run_async(FrDecoder *self,
     FrTaskFunc func, 
     SysPointer user_data);

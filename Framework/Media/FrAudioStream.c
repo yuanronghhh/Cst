@@ -4,24 +4,12 @@
 
 SYS_DEFINE_TYPE(FrAudioStream, fr_audio_stream, FR_TYPE_MEDIA_STREAM);
 
-void fr_audio_stream_resume(FrAudioStream *stream) {
-
-  fr_window_audio_resume(stream->dev);
-}
-
-void fr_audio_stream_get_audio_info(FrAudioStream *stream,
-    SysInt *channels,
-    SysInt *sample_rate,
-    SysInt *format) {
-}
-
 /* object api */
 static void fr_audio_stream_construct_i(FrMediaStream *o,
     FrAudioStreamContext *info) {
   FrAudioStream *self = FR_AUDIO_STREAM(o);
 
-  self->dev = sys_object_ref(info->dev);
-
+  fr_media_audio_stream_create(self, info);
   fr_window_audio_stream_create(self, info);
 }
 
@@ -31,7 +19,6 @@ FrMediaStream* fr_audio_stream_new(void) {
 
 FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
-  sys_return_val_if_fail(info->dev != NULL, NULL);
   sys_return_val_if_fail(info->channels != 0, NULL);
   sys_return_val_if_fail(info->sample_rate != 0, NULL);
 
@@ -44,8 +31,6 @@ FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info) {
 
 static void fr_audio_stream_dispose(SysObject* o) {
   FrAudioStream *self = FR_AUDIO_STREAM(o);
-
-  sys_clear_pointer(self->dev, _sys_object_unref);
 
   SYS_OBJECT_CLASS(fr_audio_stream_parent_class)->dispose(o);
 }

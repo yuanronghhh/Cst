@@ -4,21 +4,18 @@
 
 SYS_DEFINE_TYPE(FrAudioDevice, fr_audio_device, FR_TYPE_DEVICE);
 
-
 void fr_audio_device_resume(FrAudioDevice *dev) {
 
   fr_window_audio_resume(dev);
 }
 
-FrDevice *fr_audio_device_new_by_media_file(FrMediaFile *file) {
+FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file) {
   sys_return_val_if_fail(file != NULL, NULL);
 
   if(!fr_media_file_has_audio(file)) { return NULL; }
 
   FrAudioDeviceContext info = {0};
   FrAudioStream *astream = fr_media_file_stream_by_type(file, FR_MEDIA_AUDIO);
-
-  fr_audio_stream_get_audio_info(astream, &info);
 
   FrDevice *o = fr_audio_device_new_I(info);
 

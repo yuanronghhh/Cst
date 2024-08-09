@@ -78,7 +78,6 @@ static void audio_callback(SysPointer user_data,
     SysInt totallen) {
 
   FrAudioStream *out_stream = FR_AUDIO_STREAM(user_data);
-  FrMediaStream *in_stream = user_data;
   FrAudioFrame *frame = NULL;
 
   sdl_audio_render(out_stream, frame);

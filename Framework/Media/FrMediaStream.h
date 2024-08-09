@@ -12,6 +12,8 @@ SYS_BEGIN_DECLS
 
 struct _FrMediaStreamClass {
   FrStreamClass parent;
+
+  void (*construct) (FrMediaStream *stream, FrMediaStreamContext *info);
 };
 
 struct _FrMediaStream {
@@ -24,8 +26,6 @@ struct _FrMediaStream {
 };
 
 struct _FrMediaStreamContext {
-  SysType mediaType;
-
   /* AVStream * */
   SysPointer ctx;
 };
@@ -34,6 +34,10 @@ SYS_API SysType fr_media_stream_get_type(void);
 SYS_API FrMediaStream *fr_media_stream_new(void);
 
 SYS_API FrMediaStream *fr_media_stream_new_I(FrMediaStreamContext *info);
+
+SYS_API void fr_media_stream_construct(
+    FrMediaStream *o,
+    FrMediaStreamContext *info);
 
 FrMediaStream* fr_media_streams_get_by_media_type (
   FrMediaStream* streams[],

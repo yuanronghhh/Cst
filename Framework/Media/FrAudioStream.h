@@ -27,7 +27,6 @@ struct _FrAudioStreamContext {
   SysInt format;
   SysInt sample_rate;
   SysInt channels;
-  FrAudioDevice *dev;
   FrMediaStream *in_stream;
 };
 
@@ -35,7 +34,6 @@ SYS_API SysType fr_audio_stream_get_type(void);
 SYS_API FrMediaStream *fr_audio_stream_new(void);
 
 SYS_API FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info);
-SYS_API void fr_audio_stream_resume(FrAudioStream *stream);
 
 SYS_END_DECLS
 

@@ -15,8 +15,19 @@ FrMediaStream* fr_media_streams_get_by_media_type(
   return streams[media_type];
 }
 
+void fr_media_stream_construct(
+    FrMediaStream *o,
+    FrMediaStreamContext *info) {
+  sys_return_if_fail(o != NULL);
+
+  FrMediaStreamClass* cls = FR_MEDIA_STREAM_GET_CLASS(o);
+  sys_return_if_fail(cls->construct);
+
+  cls->construct(o, info);
+}
+
 /* object api */
-static void fr_media_stream_construct(
+static void fr_media_stream_construct_i(
     FrMediaStream *self,
     FrMediaStreamContext *info) {
 
@@ -29,12 +40,11 @@ FrMediaStream* fr_media_stream_new(void) {
 
 FrMediaStream *fr_media_stream_new_I(FrMediaStreamContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
-  sys_return_val_if_fail(info->mediaType, NULL);
 
-  FrMediaStream *o = sys_object_new(info->mediaType, NULL);
+  FrMediaStream *o = fr_media_stream_new();
   sys_return_val_if_fail(o != NULL, NULL);
 
-  fr_media_stream_construct(o, info);
+  fr_media_stream_construct_i(o, info);
 
   return o;
 }
@@ -50,6 +60,7 @@ static void fr_media_stream_dispose(SysObject* o) {
 static void fr_media_stream_class_init(FrMediaStreamClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
+  cls->construct = fr_media_stream_construct_i;
   ocls->dispose = fr_media_stream_dispose;
 }
 

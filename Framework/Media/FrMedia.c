@@ -206,8 +206,9 @@ static FrMediaStream* parse_stream_by_type(
   if(as == NULL) { return NULL; }
   tp = media_get_stream_type_by_index(mediaType);
 
-  FrMediaStreamContext info = { tp, (SysPointer)as };
-  stream = fr_media_stream_new_I(&info);
+  FrMediaStreamContext info = { .ctx = as };
+  stream = sys_object_new(tp, NULL);
+  fr_media_stream_construct(stream, &info);
 
   return stream;
 }
@@ -746,6 +747,9 @@ void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]) {
   for(SysInt i = 0; i < AV_NUM_DATA_POINTERS; i++) {
     linesize[i] = avf->linesize[i];
   }
+}
+
+void fr_media_audio_stream_create(FrAudioStream *o, FrAudioStreamContext *info) {
 }
 
 void fr_media_frame_get_info(FrMediaFrame *self,

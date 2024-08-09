@@ -118,8 +118,6 @@ FrMediaStream* fr_media_file_stream_by_type(
 void fr_media_file_find_audio_device_info(FrMediaFile* self,
     FrAudioDeviceContext *info) {
   FrMediaStream* astream = fr_media_file_stream_by_type(self, FR_MEDIA_AUDIO);
-
-  fr_media_file_get_audio_info(astream, info);
 }
 
 static void i_stream_imp(FrIStreamInterface *iface) {

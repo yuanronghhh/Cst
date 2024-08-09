@@ -125,6 +125,16 @@ SysInt fr_decoder_decode(FrDecoder *o, FrPacket **npkt) {
 }
 
 /* object api */
+void fr_decoder_construct(FrDecoder *o,
+    FrDecoderContext *info) {
+  sys_return_if_fail(o != NULL);
+
+  FrDecoderClass* cls = FR_DECODER_GET_CLASS(o);
+  sys_return_if_fail(cls->construct);
+
+  cls->construct(o, info);
+}
+
 static void fr_decoder_construct_i(FrDecoder *self,
     FrDecoderContext *info) {
 

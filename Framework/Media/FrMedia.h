@@ -64,7 +64,8 @@ SysInt fr_media_packet_get_stream_index(FrMediaPacket *self);
 
 /* image */
 SysInt fr_image_context_fill_buffer(FrImageContext *info);
-#define fr_image_get_size(format, width, height) av_image_get_buffer_size(format, width, height, 1)
+#define fr_image_get_size(format, width, height) \
+  av_image_get_buffer_size(format, width, height, 1)
 
 SysInt fr_hw_accel_get_hw_format(FrHwAccel *self);
 void fr_hw_accel_free(FrHwAccel *self);
@@ -82,6 +83,8 @@ void fr_media_frame_get_info(FrMediaFrame *self,
 
 SysInt fr_media_frame_get_format(FrMediaFrame *self);
 SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
+
+void fr_media_audio_stream_create(FrAudioStream *o, FrAudioStreamContext *info);
 
 void fr_media_media_frame_init(FrMediaFrame* self, FrMediaStream *stream);
 void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream);

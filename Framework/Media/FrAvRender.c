@@ -15,7 +15,7 @@ void fr_av_render_render_audio (FrAvRender *self, FrAudioFrame *aframe) {
   sys_return_if_fail(self->audio_render != NULL);
 
   FrAudioStream *as = self->audio_render;
-  fr_audio_stream_resume(as);
+
 }
 
 /* object api */

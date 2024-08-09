@@ -23,8 +23,6 @@ void fr_audio_frame_init_frame_i(FrMediaFrame* o, FrMediaStream *stream) {
   FrAudioFrame *self = FR_AUDIO_FRAME(o);
   FR_MEDIA_FRAME_CLASS(fr_audio_frame_parent_class)->init_frame(o, stream);
 
-  sys_debug_N("%lld", o->timestamp);
-
   fr_media_audio_frame_init(self, stream);
 }
 

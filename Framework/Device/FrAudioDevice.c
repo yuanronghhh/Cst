@@ -2,6 +2,8 @@
 #include <Framework/Media/FrMediaFile.h>
 #include <Framework/Device/FrWindow.h>
 
+static SysHSList *g_devices = NULL;
+
 SYS_DEFINE_TYPE(FrAudioDevice, fr_audio_device, FR_TYPE_DEVICE);
 
 void fr_audio_device_resume(FrAudioDevice *dev) {
@@ -11,15 +13,18 @@ void fr_audio_device_resume(FrAudioDevice *dev) {
 
 FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file) {
   sys_return_val_if_fail(file != NULL, NULL);
+  FrAudioDevice *dev;
 
   if(!fr_media_file_has_audio(file)) { return NULL; }
 
   FrAudioDeviceContext info = {0};
   FrAudioStream *astream = fr_media_file_stream_by_type(file, FR_MEDIA_AUDIO);
 
-  FrDevice *o = fr_audio_device_new_I(info);
+  sys_hslist_foreach(g_devices, item) {
+    dev = FR_AUDIO_DEVICE(item);
+  }
 
-  return o;
+  return dev;
 
 }
 

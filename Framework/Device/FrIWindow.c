@@ -56,6 +56,14 @@ void fr_i_window_audio_close (
   self.audio_close(dev);
 }
 
+void fr_i_window_audio_get_info (FrAudioDevice *dev,
+    SysInt *channels,
+    SysInt *sample_rate,
+    SysInt *format) {
+
+  self.audio_get_info(dev, channels, sample_rate, format);
+}
+
 void fr_i_window_audio_resume (
     FrAudioDevice *dev) {
 

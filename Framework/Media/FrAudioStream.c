@@ -1,8 +1,20 @@
 #include <Framework/Media/FrAudioStream.h>
 #include <Framework/Media/FrMediaPacket.h>
+#include <Framework/Device/FrAudioDevice.h>
 #include <Framework/Device/FrWindow.h>
 
 SYS_DEFINE_TYPE(FrAudioStream, fr_audio_stream, FR_TYPE_MEDIA_STREAM);
+
+FrMediaStream *fr_audio_stream_new_out_by_device(FrAudioDevice *dev) {
+  FrAudioStreamContext info = {0};
+
+  fr_audio_device_get_info(dev,
+      &info.channels,
+      &info.sample_rate,
+      &info.format);
+
+  return fr_audio_stream_new_I(&info);
+}
 
 /* object api */
 static void fr_audio_stream_construct_i(FrMediaStream *o,

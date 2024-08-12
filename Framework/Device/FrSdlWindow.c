@@ -83,15 +83,14 @@ static void audio_callback(SysPointer user_data,
   sdl_audio_render(out_stream, frame);
 }
 
-static void sdl_audio_stream_create(FrAudioStream *self, FrAudioStreamContext *info) {
+static void sdl_audio_stream_create(FrAudioStream *self,
+    FrAudioStreamContext *info) {
   sys_return_if_fail(self != NULL);
 
   const SDL_AudioSpec dst = { SDL_AUDIO_F32, 2, 48000 };
-  SDL_AudioDeviceID dev = POINTER_TO_UINT(info->dev->ctx);
-  FrMediaStream *in_stream = info->in_stream;
 
-  self->ctx = SDL_OpenAudioDeviceStream(dev, &dst, audio_callback, in_stream);
-  sdl_audio_resume(info->dev);
+  self->ctx = SDL_OpenAudioDeviceStream(info->device_id, &dst, audio_callback, self);
+  sdl_audio_resume(self->ctx);
 }
 
 static SysBool sdl_audio_stream_put_data(FrAudioStream *self, SysUInt data[], SysInt len) {

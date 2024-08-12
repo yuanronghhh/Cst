@@ -66,6 +66,7 @@ SYS_API SysPointer fr_window_get_data(FrWindow * self);
 #define fr_window_audio_stream_create fr_i_window_audio_stream_create
 #define fr_window_audio_stream_put_data fr_i_window_audio_stream_put_data
 #define fr_window_audio_stream_free fr_i_window_audio_stream_free
+#define fr_window_audio_get_info fr_i_window_audio_get_info
 
 #if SYS_OS_WIN32
   SYS_API HWND fr_window_get_win32_window(FrWindow* window);

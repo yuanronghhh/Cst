@@ -11,6 +11,7 @@
 #include <Framework/Media/FrVideoFrame.h>
 #include <Framework/Media/FrAudioFrame.h>
 #include <Framework/Graph/FrImage.h>
+#include <Framework/Device/FrAudioDevice.h>
 
 static enum AVPixelFormat hw_pix_format = 0;
 
@@ -749,7 +750,21 @@ void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]) {
   }
 }
 
-void fr_media_audio_stream_create(FrAudioStream *o, FrAudioStreamContext *info) {
+void fr_media_audio_stream_create(FrAudioStream *o,
+    FrAudioStreamContext *info) {
+}
+
+void fr_audio_stream_get_device_info(FrAudioStream *self,
+    FrAudioDeviceContext *info) {
+  sys_return_if_fail(self != NULL);
+  AVStream *avf = self->ctx;
+  const AVCodec *codec;
+
+  codec = media_find_decoder(avf);
+
+  info->format = avf->codecpar->format;
+  info->sample_rate = avf->codecpar->sample_rate;
+  info->channels = codec->ch_layouts->nb_channels;
 }
 
 void fr_media_frame_get_info(FrMediaFrame *self,

@@ -85,6 +85,8 @@ SysInt fr_media_frame_get_format(FrMediaFrame *self);
 SysInt64 fr_media_frame_get_pts(FrMediaFrame *self);
 
 void fr_media_audio_stream_create(FrAudioStream *o, FrAudioStreamContext *info);
+void fr_audio_stream_get_device_info(FrAudioStream *self,
+    FrAudioDeviceContext *info);
 
 void fr_media_media_frame_init(FrMediaFrame* self, FrMediaStream *stream);
 void fr_media_video_frame_init(FrVideoFrame* self, FrMediaStream *stream);

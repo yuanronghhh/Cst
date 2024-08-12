@@ -42,6 +42,10 @@ struct _FrIWindowInterface {
   void (*audio_open) (
       FrAudioDevice *dev,
       FrAudioDeviceContext *info);
+  void (*audio_get_info) (FrAudioDevice *dev,
+      SysInt *channels,
+      SysInt *sample_rate,
+      SysInt *format);
   void (*audio_close) (FrAudioDevice *dev);
   void (*audio_resume) (FrAudioDevice *dev);
 
@@ -63,6 +67,10 @@ void fr_i_window_create (
 void fr_i_window_audio_open (
     FrAudioDevice *dev,
     FrAudioDeviceContext *info);
+void fr_i_window_audio_get_info (FrAudioDevice *dev,
+    SysInt *channels,
+    SysInt *sample_rate,
+    SysInt *format);
 void fr_i_window_audio_close (
     FrAudioDevice *dev);
 void fr_i_window_audio_resume (

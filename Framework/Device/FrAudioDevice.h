@@ -20,6 +20,10 @@ struct _FrAudioDevice {
   /* <private> */
   /* SDL_AudioDevice */
   SysPointer ctx;
+
+  SysInt channels;
+  SysInt sample_rate;
+  SysInt format;
 };
 
 struct _FrAudioDeviceContext {
@@ -31,7 +35,12 @@ struct _FrAudioDeviceContext {
 SYS_API SysType fr_audio_device_get_type(void);
 SYS_API FrDevice *fr_audio_device_new(void);
 SYS_API FrDevice *fr_audio_device_new_I(FrAudioDeviceContext *info);
-SYS_API FrDevice *fr_audio_device_new_by_media_file(FrMediaFile *file);
+SYS_API FrDevice *fr_audio_device_find_by_id(SysUInt deviceID);
+SYS_API FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file);
+SYS_API void fr_audio_device_get_info(FrAudioDevice *self,
+  SysInt *channels,
+  SysInt *sample_rate,
+  SysInt *format);
 
 SYS_API void fr_audio_device_resume(FrAudioDevice *dev);
 

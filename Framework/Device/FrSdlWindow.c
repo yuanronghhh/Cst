@@ -47,6 +47,17 @@ static SysInt audio_format_to_sdl(SysInt format) {
   }
 }
 
+static void sdl_audio_get_info (FrAudioDevice *dev,
+    SysInt *channels,
+    SysInt *sample_rate,
+    SysInt *format) {
+
+  SDL_AudioDeviceID sdev = POINTER_TO_UINT(dev->ctx);
+  SDL_AudioSpec spec = {0};
+
+  SDL_GetAudioDeviceFormat(sdev, &spec, sample_rate);
+}
+
 static void sdl_audio_open(
     FrAudioDevice *self,
     FrAudioDeviceContext *info) {
@@ -904,6 +915,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->get_native_display = fr_window_get_native_display;
   iface->display_create = fr_window_display_create;
   iface->audio_open = sdl_audio_open;
+  iface->audio_get_info = sdl_audio_get_info;
   iface->audio_close = sdl_audio_close;
   iface->audio_resume = sdl_audio_resume;
   iface->audio_stream_create = sdl_audio_stream_create;

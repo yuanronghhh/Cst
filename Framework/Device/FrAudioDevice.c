@@ -14,10 +14,12 @@ void fr_audio_device_resume(FrAudioDevice *dev) {
   fr_window_audio_resume(dev);
 }
 
-static void fr_audio_device_add(FrDevice *adev) {
+static SysHSList* fr_audio_device_append(FrDevice *adev) {
   FrAudioDevice *self = FR_AUDIO_DEVICE(adev);
 
-  sys_hslist_append(g_devices, &self->hslist);
+  g_devices = sys_hslist_append(g_devices, &self->hslist);
+
+  return g_devices;
 }
 
 FrDevice *fr_audio_device_find_by_info(FrAudioDeviceContext *info) {
@@ -66,8 +68,7 @@ FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file) {
   if(dev == NULL) {
 
     dev = fr_audio_device_new_I(&info);
-
-    fr_audio_device_add(dev);
+    g_devices = fr_audio_device_append(dev);
   }
 
   return dev;

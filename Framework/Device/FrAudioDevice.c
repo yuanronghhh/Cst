@@ -7,9 +7,17 @@ static SysHSList *g_devices = NULL;
 
 SYS_DEFINE_TYPE(FrAudioDevice, fr_audio_device, FR_TYPE_DEVICE);
 
+#define AUDIO_DEVICE_TO_HLIST(o) SYS_MEM
+
 void fr_audio_device_resume(FrAudioDevice *dev) {
 
   fr_window_audio_resume(dev);
+}
+
+static void fr_audio_device_add(FrDevice *adev) {
+  FrAudioDevice *self = FR_AUDIO_DEVICE(adev);
+
+  sys_hslist_append(g_devices, &self->hslist);
 }
 
 FrDevice *fr_audio_device_find_by_info(FrAudioDeviceContext *info) {
@@ -55,6 +63,12 @@ FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file) {
 
   fr_audio_stream_get_device_info(astream, &info);
   dev = fr_audio_device_find_by_info(&info);
+  if(dev == NULL) {
+
+    dev = fr_audio_device_new_I(&info);
+
+    fr_audio_device_add(dev);
+  }
 
   return dev;
 }

@@ -16,6 +16,22 @@ typedef enum _FR_MEDIA_ENUM {
   FR_MEDIA_PACKET,
 } FR_MEDIA_ENUM;
 
+typedef enum _FR_AUDIO_FORMAT_ENUM {
+  FR_AUDIO_FORMAT_UNKNOWN = AV_SAMPLE_FMT_NONE,
+  FR_AUDIO_FORMAT_U8,          ///< unsigned 8 bits
+  FR_AUDIO_FORMAT_S16,         ///< signed 16 bits
+  FR_AUDIO_FORMAT_S32,         ///< signed 32 bits
+  FR_AUDIO_FORMAT_FLT,         ///< float
+  FR_AUDIO_FORMAT_DBL,         ///< double
+  FR_AUDIO_FORMAT_U8P,         ///< unsigned 8 bits, planar
+  FR_AUDIO_FORMAT_S16P,        ///< signed 16 bits, planar
+  FR_AUDIO_FORMAT_S32P,        ///< signed 32 bits, planar
+  FR_AUDIO_FORMAT_FLTP,        ///< float, planar
+  FR_AUDIO_FORMAT_DBLP,        ///< double, planar
+  FR_AUDIO_FORMAT_S64,         ///< signed 64 bits
+  FR_AUDIO_FORMAT_S64P,        ///< signed 64 bits, planar
+} FR_AUDIO_FORMAT_ENUM;
+
 typedef enum _FR_MEDIA_ERROR_ENUM {
   FR_MEDIA_ERROR_FILTER_NOT_FOUND = AVERROR_FILTER_NOT_FOUND,
   FR_MEDIA_ERROR_STREAM_NOT_FOUND = AVERROR_STREAM_NOT_FOUND,

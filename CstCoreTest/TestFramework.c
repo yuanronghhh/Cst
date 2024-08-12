@@ -71,40 +71,43 @@ void test_video_player(void) {
   FrWindow *window;
   FrDisplay* display;
   FrDevice *device;
-  FrDrawContext *draw_context;
+  FrDrawContext *video_render;
   FrMediaFile *mfile;
   FrAvPlayer *mplayer;
-  FrIMediaRender *imrender;
+  FrAvRender *avrender;
   FrSurface* paint_surface;
 
   display = fr_display_new_I();
   window = fr_window_top_new(display);
   device = FR_DEVICE(window);
-  
 
   FrSurfaceContext info = {.width = 800, .height= 600};
   paint_surface = fr_surface_new_I(&info);
-  draw_context = fr_cairo_draw_context_new_I(device);
-  fr_draw_context_add_surface(draw_context, paint_surface);
+  video_render = fr_cairo_draw_context_new_I(device);
+  fr_draw_context_add_surface(video_render, paint_surface);
 
-  imrender = FR_I_MEDIA_RENDER(draw_context);
+  FrAvRenderContext mrinfo = {
+    .video_render = video_render,
+    .audio_render = NULL
+  };
+  avrender = fr_av_render_new_I(&mrinfo);
 
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
   TEST_ASSERT_NOT_NULL(mfile);
 
   FrAvPlayerContext pinfo = {.file = mfile,
     .window = window, 
-    .render = imrender};
+    .render = avrender};
   mplayer = fr_av_player_new_I(&pinfo);
 
-  fr_av_player_set_render(mplayer, imrender);
+  fr_av_player_set_render(mplayer, avrender);
   fr_av_player_run(mplayer);
 
-  sys_object_unref(imrender);
+  sys_object_unref(avrender);
   sys_object_unref(mplayer);
   sys_object_unref(mfile);
 
-  sys_clear_pointer(&draw_context, _sys_object_unref);
+  sys_clear_pointer(&video_render, _sys_object_unref);
   sys_clear_pointer(&device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);
 }

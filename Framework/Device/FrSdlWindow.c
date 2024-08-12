@@ -24,6 +24,29 @@ static FrSdlWindow *g_window = NULL;
 
 SYS_DEFINE_TYPE(FrSdlWindow, fr_sdl_window, FR_TYPE_WINDOW);
 
+static SysInt audio_format_to_sdl(SysInt format) {
+  /* SDL_AudioFormat */
+  /* AVSampleFormat */
+
+  switch(format) {
+    case FR_AUDIO_FORMAT_U8:
+    case FR_AUDIO_FORMAT_U8P:
+      return SDL_AUDIO_U8;
+    case FR_AUDIO_FORMAT_S16:
+    case FR_AUDIO_FORMAT_S16P:
+      return SDL_AUDIO_S16;
+    case FR_AUDIO_FORMAT_S32:
+    case FR_AUDIO_FORMAT_S32P:
+      return SDL_AUDIO_S32;
+    case FR_AUDIO_FORMAT_FLT:
+    case AV_SAMPLE_FMT_FLTP:
+      return SDL_AUDIO_F32;
+    default:
+      sys_warning_N("not support audio format: %d", format);
+      return -1;
+  }
+}
+
 static void sdl_audio_open(
     FrAudioDevice *self,
     FrAudioDeviceContext *info) {
@@ -33,7 +56,7 @@ static void sdl_audio_open(
 
   spec.channels = info->channels;
   spec.freq = info->sample_rate;
-  spec.format = SDL_AUDIO_S16;
+  spec.format = audio_format_to_sdl(info->format);
 
   dev = SDL_OpenAudioDevice(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec);
   if(dev <= 0) {

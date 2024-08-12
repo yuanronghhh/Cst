@@ -9,6 +9,7 @@
 #include <CstCore/Driver/CstRender.h>
 
 #define HNODE_TO(o, TypeName) ((TypeName *)SYS_HNODE_CAST_TO(o, CstBoxNode, tree_node))
+#define BOX_NODE_TO_HNODE(o) (&(o)->tree_node)
 
 typedef struct _BoxNodePass BoxNodePass;
 
@@ -21,11 +22,6 @@ static void i_layer_node_imp(CstILayerNodeInterface *iface);
 SYS_DEFINE_WITH_CODE(CstBoxNode, cst_box_node, CST_TYPE_LAYER_NODE,
     SYS_IMPLEMENT_INTERFACE(CST_TYPE_I_LAYER_NODE, i_layer_node_imp));
 
-SysHNode *box_node_to_hnode(CstBoxNode *self) {
-  if (self == NULL) { return NULL; }
-
-  return SYS_HNODE(&self->tree_node);
-}
 
 CstBoxNode *cst_box_node_get_last_child(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
@@ -46,9 +42,9 @@ CstBoxNode* cst_box_node_insert_after(CstBoxNode *parent,
   sys_return_val_if_fail (parent != NULL, NULL);
   sys_return_val_if_fail (box_node != NULL, NULL);
 
-  SysHNode *p = box_node_to_hnode(parent);
-  SysHNode *s = box_node_to_hnode(sibling);
-  SysHNode *c = box_node_to_hnode(box_node);
+  SysHNode *p = BOX_NODE_TO_HNODE(parent);
+  SysHNode *s = BOX_NODE_TO_HNODE(sibling);
+  SysHNode *c = BOX_NODE_TO_HNODE(box_node);
 
   SysHNode *node = sys_hnode_insert_after(p, s, c);
 
@@ -68,7 +64,7 @@ void cst_box_node_append(CstBoxNode *parent, CstBoxNode *box_node) {
 SysBool cst_box_node_has_one_child(CstBoxNode* self) {
   sys_return_val_if_fail(self != NULL, false);
 
-  return sys_hnode_has_one_child(box_node_to_hnode(self));
+  return sys_hnode_has_one_child(BOX_NODE_TO_HNODE(self));
 }
 
 void cst_box_node_repaint_node(CstLayerNode* o, CstLayout* layout) {
@@ -176,7 +172,7 @@ void cst_box_node_handle_ft_r(CstBoxNode *self,
 
 CstBoxNode* cst_box_node_get_parent(CstBoxNode* self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  SysHNode *hnode = sys_hnode_parent(box_node_to_hnode(self));
+  SysHNode *hnode = sys_hnode_parent(BOX_NODE_TO_HNODE(self));
 
   return HNODE_TO(hnode, CstBoxNode);
 }
@@ -201,7 +197,7 @@ void cst_box_node_print_r(CstBoxNode* self, SysPointer user_data) {
 
 CstBoxNode* cst_box_node_children(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  SysHNode *hnode = sys_hnode_children(box_node_to_hnode(self));
+  SysHNode *hnode = sys_hnode_children(BOX_NODE_TO_HNODE(self));
 
   return HNODE_TO(hnode, CstBoxNode);
 }
@@ -209,14 +205,14 @@ CstBoxNode* cst_box_node_children(CstBoxNode *self) {
 CstBoxNode* cst_box_node_next(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
-  SysHNode *hnode = sys_hnode_next(box_node_to_hnode(self));
+  SysHNode *hnode = sys_hnode_next(BOX_NODE_TO_HNODE(self));
 
   return HNODE_TO(hnode, CstBoxNode);
 }
 
 CstBoxNode* cst_box_node_parent(CstBoxNode *self) {
   sys_return_val_if_fail(self != NULL, NULL);
-  SysHNode *hnode = sys_hnode_parent(box_node_to_hnode(self));
+  SysHNode *hnode = sys_hnode_parent(BOX_NODE_TO_HNODE(self));
 
   return HNODE_TO(hnode, CstBoxNode);
 }

@@ -16,6 +16,7 @@ set(EXTERNAL_LIBS
   "glfw3"
   "pangofc"
   "tinyexpr"
+  "sdl3"
   "ffmpeg"
 )
 

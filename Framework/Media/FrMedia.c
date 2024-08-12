@@ -218,7 +218,7 @@ static FrMediaStream* parse_stream_by_type(
 void fr_media_stream_create(FrMediaStream *self,
     FrMediaStreamContext *info) {
 
-  sys_assert(self->ctx != NULL);
+  sys_assert(info->ctx != NULL);
   self->ctx = info->ctx;
 }
 
@@ -764,6 +764,7 @@ void fr_audio_stream_get_device_info(FrAudioStream *self,
 
   codec = media_find_decoder(avf);
 
+  /* AVSampleFormat */
   info->format = avf->codecpar->format;
   info->sample_rate = avf->codecpar->sample_rate;
   info->channels = codec->ch_layouts->nb_channels;

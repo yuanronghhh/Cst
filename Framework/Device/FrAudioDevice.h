@@ -18,6 +18,7 @@ struct _FrAudioDevice {
   FrDevice parent;
 
   /* <private> */
+  SysHSList hslist;
   /* SDL_AudioDevice */
   SysPointer ctx;
 
@@ -29,6 +30,8 @@ struct _FrAudioDevice {
 struct _FrAudioDeviceContext {
   SysInt channels;
   SysInt sample_rate;
+
+  /* FR_AUDIO_FORMAT_ENUM */
   SysInt format;
 };
 

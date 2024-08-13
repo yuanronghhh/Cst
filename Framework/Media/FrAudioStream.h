@@ -36,8 +36,8 @@ struct _FrAudioStreamContext {
 SYS_API SysType fr_audio_stream_get_type(void);
 SYS_API FrMediaStream *fr_audio_stream_new(void);
 
-SYS_API FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info);
-SYS_API FrMediaStream *fr_audio_stream_new_out_by_device(FrAudioDevice *dev);
+FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info);
+FrMediaStream *fr_audio_stream_new_out_by_device(FrAudioDevice *dev);
 
 SYS_END_DECLS
 

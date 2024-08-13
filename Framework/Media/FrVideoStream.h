@@ -18,19 +18,12 @@ struct _FrVideoStream {
   FrMediaStream parent;
 
   /* <private> */
-  SysPointer ctx;
-};
-
-struct _FrVideoStreamContext {
-  SysInt format;
-  SysInt sample;
-  SysInt channels;
 };
 
 SYS_API SysType fr_video_stream_get_type(void);
 SYS_API FrMediaStream *fr_video_stream_new(void);
 
-SYS_API FrMediaStream *fr_video_stream_new_I(FrVideoStreamContext *info);
+FrMediaStream *fr_video_stream_new_I(FrMediaStreamContext *info);
 
 SYS_END_DECLS
 

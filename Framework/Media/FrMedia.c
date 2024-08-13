@@ -1,4 +1,5 @@
 #include <Framework/Media/FrMedia.h>
+#include <Framework/Media/FrVideoStream.h>
 #include <Framework/Media/FrAudioStream.h>
 #include <Framework/Media/FrAudioDecoder.h>
 #include <Framework/Media/FrImageScale.h>
@@ -104,7 +105,7 @@ static SysType media_get_stream_type_by_index(FR_MEDIA_ENUM idx) {
       tp = FR_TYPE_AUDIO_STREAM;
       break;
     case FR_MEDIA_VIDEO:
-      tp = FR_TYPE_MEDIA_STREAM;
+      tp = FR_TYPE_VIDEO_STREAM;
       break;
     default:
       break;
@@ -217,6 +218,7 @@ static FrMediaStream* parse_stream_by_type(
 void fr_media_stream_create(FrMediaStream *self,
     FrMediaStreamContext *info) {
 
+  sys_assert(self->ctx != NULL);
   self->ctx = info->ctx;
 }
 
@@ -757,7 +759,7 @@ void fr_media_audio_stream_create(FrAudioStream *o,
 void fr_audio_stream_get_device_info(FrAudioStream *self,
     FrAudioDeviceContext *info) {
   sys_return_if_fail(self != NULL);
-  AVStream *avf = self->ctx;
+  AVStream *avf = self->parent.ctx;
   const AVCodec *codec;
 
   codec = media_find_decoder(avf);

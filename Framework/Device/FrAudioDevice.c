@@ -49,7 +49,7 @@ FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file) {
   FrDevice *dev = NULL;
 
   if(!fr_media_file_has_audio(file)) { return NULL; }
-  FrAudioStream *astream = 
+  FrAudioStream *astream =
     (FrAudioStream *)fr_media_file_stream_by_type(file, FR_MEDIA_AUDIO);
   FrAudioDeviceContext info = {0};
 

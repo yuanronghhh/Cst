@@ -148,7 +148,6 @@ typedef struct _FrGlRenderClass FrGlRenderClass;
 typedef struct _FrCairoRender FrCairoRender;
 typedef struct _FrCairoRenderClass FrCairoRenderClass;
 
-typedef struct _FrVideoStreamContext FrVideoStreamContext;
 typedef struct _FrVideoStream FrVideoStream;
 typedef struct _FrVideoStreamClass FrVideoStreamClass;
 

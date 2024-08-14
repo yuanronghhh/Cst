@@ -39,10 +39,10 @@ struct _FrIWindowInterface {
   SysPointer (*get_native_window) (FrWindow* window);
   SysPointer (*get_native_display) (FrDisplay *display);
   void (*delay) (SysDouble msec);
-  void (*audio_open) (
+  SysInt (*audio_open) (
       FrAudioDevice *dev,
       FrAudioDeviceContext *info);
-  void (*audio_get_info) (FrAudioDevice *dev,
+  SysInt (*audio_get_info) (FrAudioDevice *dev,
       SysInt *channels,
       SysInt *sample_rate,
       SysInt *format);
@@ -64,10 +64,10 @@ void fr_i_window_create (
     const SysChar *title,
     FrWindow *share);
 
-void fr_i_window_audio_open (
+SysInt fr_i_window_audio_open (
     FrAudioDevice *dev,
     FrAudioDeviceContext *info);
-void fr_i_window_audio_get_info (FrAudioDevice *dev,
+SysInt fr_i_window_audio_get_info (FrAudioDevice *dev,
     SysInt *channels,
     SysInt *sample_rate,
     SysInt *format);

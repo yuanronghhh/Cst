@@ -7,7 +7,8 @@ static SysHSList *g_devices = NULL;
 
 SYS_DEFINE_TYPE(FrAudioDevice, fr_audio_device, FR_TYPE_DEVICE);
 
-#define AUDIO_DEVICE_TO_HLIST(o) SYS_MEM
+#define AUDIO_DEVICE_TO_HLIST(o) SYS_DATA_TO_HDATA(o)
+#define HLIST_TO_AUDIO_DEVICE(o) SYS_HDATA_CAST_TO(o, FrAudioDevice, hslist)
 
 void fr_audio_device_resume(FrAudioDevice *dev) {
 
@@ -26,7 +27,7 @@ FrDevice *fr_audio_device_find_by_info(FrAudioDeviceContext *info) {
   FrAudioDevice *mdev;
 
   sys_hslist_foreach(g_devices, dev) {
-    mdev = FR_AUDIO_DEVICE(dev);
+    mdev = HLIST_TO_AUDIO_DEVICE(dev);
 
     if(mdev->sample_rate == info->sample_rate
        && mdev->format == info->format
@@ -68,7 +69,7 @@ FrDevice *fr_audio_device_find_by_media_file(FrMediaFile *file) {
   if(dev == NULL) {
 
     dev = fr_audio_device_new_I(&info);
-    g_devices = fr_audio_device_append(dev);
+    fr_audio_device_append(dev);
   }
 
   return dev;
@@ -83,11 +84,15 @@ void fr_audio_device_get_info(FrAudioDevice *self,
 }
 
 /* object api */
-static void fr_audio_device_construct_i(FrDevice *self,
+static void fr_audio_device_construct_i(FrDevice *o,
     FrAudioDeviceContext *info) {
-  FrAudioDevice *dev = FR_AUDIO_DEVICE(self);
+  FrAudioDevice *self = FR_AUDIO_DEVICE(o);
 
-  fr_window_audio_open(dev, info);
+  fr_window_audio_open(self, info);
+
+  self->channels = info->channels;
+  self->sample_rate = info->sample_rate;
+  self->format = info->format;
 }
 
 FrDevice* fr_audio_device_new(void) {

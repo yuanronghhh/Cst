@@ -21,12 +21,15 @@ struct _FrAudioDevice {
   SysHSList hslist;
   /* SDL_AudioDevice */
   SysPointer ctx;
+
+  SysInt channels;
+  SysInt sample_rate;
+  SysInt format;
 };
 
 struct _FrAudioDeviceContext {
   SysInt channels;
   SysInt sample_rate;
-
   /* FR_AUDIO_FORMAT_ENUM */
   SysInt format;
 };

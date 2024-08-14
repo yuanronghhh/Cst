@@ -760,14 +760,11 @@ void fr_audio_stream_get_device_info(FrAudioStream *self,
     FrAudioDeviceContext *info) {
   sys_return_if_fail(self != NULL);
   AVStream *avf = self->parent.ctx;
-  const AVCodec *codec;
-
-  codec = media_find_decoder(avf);
 
   /* AVSampleFormat */
   info->format = avf->codecpar->format;
   info->sample_rate = avf->codecpar->sample_rate;
-  info->channels = codec->ch_layouts->nb_channels;
+  info->channels = avf->codecpar->ch_layout.nb_channels;
 }
 
 void fr_media_frame_get_info(FrMediaFrame *self,

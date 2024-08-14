@@ -43,11 +43,11 @@ void fr_i_window_create (
   self.create(window, width, height, title, share);
 }
 
-void fr_i_window_audio_open (
+SysInt fr_i_window_audio_open (
     FrAudioDevice *dev,
     FrAudioDeviceContext *info) {
 
-  self.audio_open(dev, info);
+  return self.audio_open(dev, info);
 }
 
 void fr_i_window_audio_close (
@@ -56,12 +56,12 @@ void fr_i_window_audio_close (
   self.audio_close(dev);
 }
 
-void fr_i_window_audio_get_info (FrAudioDevice *dev,
+SysInt fr_i_window_audio_get_info (FrAudioDevice *dev,
     SysInt *channels,
     SysInt *sample_rate,
     SysInt *format) {
 
-  self.audio_get_info(dev, channels, sample_rate, format);
+  return self.audio_get_info(dev, channels, sample_rate, format);
 }
 
 void fr_i_window_audio_resume (

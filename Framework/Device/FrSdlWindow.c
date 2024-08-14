@@ -47,18 +47,26 @@ static SysInt audio_format_to_sdl(SysInt format) {
   }
 }
 
-static void sdl_audio_get_info (FrAudioDevice *dev,
+static SysInt sdl_audio_get_info (FrAudioDevice *dev,
     SysInt *channels,
     SysInt *sample_rate,
     SysInt *format) {
 
   SDL_AudioDeviceID sdev = POINTER_TO_UINT(dev->ctx);
   SDL_AudioSpec spec = {0};
+  SysInt err;
 
-  SDL_GetAudioDeviceFormat(sdev, &spec, sample_rate);
+  sys_assert(sdev != 0);
+  err = SDL_GetAudioDeviceFormat(sdev, &spec, sample_rate);
+  if(err < 0) {
+
+    sys_warning_N("SDL_GetAudioDeviceFormat failed: %s", SDL_GetError());
+  }
+
+  return err;
 }
 
-static void sdl_audio_open(
+static SysInt sdl_audio_open(
     FrAudioDevice *self,
     FrAudioDeviceContext *info) {
 
@@ -73,8 +81,9 @@ static void sdl_audio_open(
   if(dev <= 0) {
 
     sys_warning_N("Failed to open device: %s", SDL_GetError());
-    return;
   }
+
+  return dev;
 }
 
 static void sdl_audio_close(FrAudioDevice *self) {

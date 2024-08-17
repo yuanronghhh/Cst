@@ -25,13 +25,17 @@ static SysHSList* fr_audio_device_append(FrDevice *adev) {
 
 FrDevice *fr_audio_device_find_by_info(FrAudioDeviceContext *info) {
   FrAudioDevice *mdev;
+    SysInt channels = 0;
+    SysInt sample_rate = 0;
+    SysInt format = 0;
 
   sys_hslist_foreach(g_devices, dev) {
     mdev = HLIST_TO_AUDIO_DEVICE(dev);
+    fr_window_audio_get_info(mdev, &channels, &sample_rate, &format);
 
-    if(mdev->sample_rate == info->sample_rate
-       && mdev->format == info->format
-       && mdev->channels == info->channels) {
+    if(sample_rate == info->sample_rate
+       && format == info->format
+       && channels == info->channels) {
 
       return FR_DEVICE(mdev);
     }
@@ -89,10 +93,6 @@ static void fr_audio_device_construct_i(FrDevice *o,
   FrAudioDevice *self = FR_AUDIO_DEVICE(o);
 
   fr_window_audio_open(self, info);
-
-  self->channels = info->channels;
-  self->sample_rate = info->sample_rate;
-  self->format = info->format;
 }
 
 FrDevice* fr_audio_device_new(void) {

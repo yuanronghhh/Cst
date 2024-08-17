@@ -21,10 +21,6 @@ struct _FrAudioDevice {
   SysHSList hslist;
   /* SDL_AudioDevice */
   SysPointer ctx;
-
-  SysInt channels;
-  SysInt sample_rate;
-  SysInt format;
 };
 
 struct _FrAudioDeviceContext {

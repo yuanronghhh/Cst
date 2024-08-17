@@ -30,7 +30,7 @@ struct _FrAudioStreamContext {
   SysBool is_in_stream;
 
   /* <private> */
-  SysInt device_id;
+  FrAudioDevice* dev;
 };
 
 SYS_API SysType fr_audio_stream_get_type(void);

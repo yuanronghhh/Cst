@@ -72,6 +72,7 @@ static SysPointer decode_frame(
 
   nframe = (FrMediaPacket *)sys_object_dclone(mframe);
   fr_media_decoder_write(mdec, nframe);
+  sys_atomic_int_dec(&pass->pipe->pkt_count);
 
   pipe_pass_free(pass);
   return NULL;
@@ -271,6 +272,7 @@ SysInt fr_av_player_run(FrAvPlayer* self) {
 }
 
 static void media_player_calc_diff(FrAvPlayer *self) {
+#if 0
   SysInt64 diff = 0;
 
   if(fr_media_file_has_audio(self->file)) {
@@ -279,12 +281,14 @@ static void media_player_calc_diff(FrAvPlayer *self) {
 
        diff = self->vtsp - self->base_tsp;
     }
-  } else if(fr_media_file_has_video(self->file)) {
+  } else if(fr_media_file_has_audio(self->file)) {
 
   } else {
   }
 
-  self->delay = diff <= 0 ? self->default_delay : diff / 1.0e9;
+  self->delay = diff <= 0 ? self->default_delay : diff / 1.0e3;
+  sys_debug_N("%ld", self->delay);
+#endif
 }
 
 SysInt fr_av_player_render(FrAvPlayer *self,
@@ -401,4 +405,6 @@ static void fr_av_player_class_init(FrAvPlayerClass* cls) {
 void fr_av_player_init(FrAvPlayer* self) {
   self->state = FR_JOB_STATE_RUNNING;
   self->seek_position = -1;
+  self->max_packet = 60;
+  self->min_packet = 30;
 }

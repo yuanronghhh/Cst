@@ -39,8 +39,27 @@ static SysInt audio_format_to_sdl(SysInt format) {
     case FR_AUDIO_FORMAT_S32P:
       return SDL_AUDIO_S32;
     case FR_AUDIO_FORMAT_FLT:
-    case AV_SAMPLE_FMT_FLTP:
+    case FR_AUDIO_FORMAT_FLTP:
       return SDL_AUDIO_F32;
+    default:
+      sys_warning_N("not support audio format: %d", format);
+      return -1;
+  }
+}
+
+static SysInt audio_format_from_sdl(SysInt format) {
+  /* SDL_AudioFormat */
+  /* AVSampleFormat */
+
+  switch(format) {
+    case SDL_AUDIO_U8:
+      return FR_AUDIO_FORMAT_U8P;
+    case SDL_AUDIO_S16:
+      return FR_AUDIO_FORMAT_S16P;
+    case SDL_AUDIO_S32:
+      return FR_AUDIO_FORMAT_S32P;
+    case SDL_AUDIO_F32:
+      return FR_AUDIO_FORMAT_FLTP;
     default:
       sys_warning_N("not support audio format: %d", format);
       return -1;
@@ -63,6 +82,10 @@ static SysInt sdl_audio_get_info (FrAudioDevice *dev,
     sys_warning_N("SDL_GetAudioDeviceFormat failed: %s", SDL_GetError());
   }
 
+  *channels = spec.channels;
+  *sample_rate = spec.freq;
+  *format = audio_format_from_sdl(spec.format);
+
   return err;
 }
 
@@ -83,6 +106,8 @@ static SysInt sdl_audio_open(
     sys_warning_N("Failed to open device: %s", SDL_GetError());
   }
 
+  self->ctx = UINT_TO_POINTER(dev);
+
   return dev;
 }
 
@@ -93,6 +118,7 @@ static void sdl_audio_close(FrAudioDevice *self) {
 }
 
 static void sdl_audio_resume(FrAudioDevice *self) {
+  sys_return_if_fail(self != NULL);
   SDL_AudioDeviceID dev = POINTER_TO_UINT(self->ctx);
 
   SDL_ResumeAudioDevice(dev);
@@ -130,9 +156,15 @@ static void sdl_audio_stream_create(FrAudioStream *self,
     FrAudioStreamContext *info) {
   sys_return_if_fail(self != NULL);
 
-  const SDL_AudioSpec dst = { SDL_AUDIO_F32, 2, 48000 };
+  FrAudioDevice *dev = FR_AUDIO_DEVICE(info->dev);
+  SDL_AudioDeviceID id = POINTER_TO_UINT(dev->ctx);
 
-  self->ctx = SDL_OpenAudioDeviceStream(info->device_id, &dst, audio_callback, self);
+  const SDL_AudioSpec dst = { 
+    .format = info->format, 
+    .channels = info->channels, 
+    .freq = info->sample_rate };
+
+  self->ctx = SDL_OpenAudioDeviceStream(id, &dst, audio_callback, self);
   sdl_audio_resume(self->ctx);
 }
 

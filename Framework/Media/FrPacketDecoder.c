@@ -42,7 +42,7 @@ static void fr_packet_decoder_construct (FrDecoder *o,
 }
 
 FrDecoder* fr_packet_decoder_new(void) {
-  return sys_object_new(private_g_type, NULL);
+  return sys_object_new(FR_TYPE_PACKET_DECODER, NULL);
 }
 
 FrDecoder *fr_packet_decoder_new_I(FrMediaFile *file) {

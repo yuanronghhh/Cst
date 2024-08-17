@@ -12,7 +12,7 @@ FrStream* fr_stream_new(void) {
 }
 
 FrStream *fr_stream_new_I(FrStreamContext *info) {
-  FrStream *o = sys_object_new(private_g_type, NULL);
+  FrStream *o = fr_stream_new();
 
   fr_stream_construct_i(o, info);
 

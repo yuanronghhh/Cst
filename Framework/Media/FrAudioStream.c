@@ -12,6 +12,7 @@ FrMediaStream *fr_audio_stream_new_out_by_device(FrAudioDevice *dev) {
       &info.channels,
       &info.sample_rate,
       &info.format);
+  info.dev = dev;
 
   return fr_audio_stream_new_I(&info);
 }
@@ -33,6 +34,7 @@ FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
   sys_return_val_if_fail(info->channels != 0, NULL);
   sys_return_val_if_fail(info->sample_rate != 0, NULL);
+  sys_return_val_if_fail(info->dev != NULL, NULL);
 
   FrMediaStream *o = fr_audio_stream_new();
 

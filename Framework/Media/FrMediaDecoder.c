@@ -204,7 +204,7 @@ static void fr_media_decoder_construct_i(FrMediaDecoder* self,
 }
 
 FrDecoder* fr_media_decoder_new(void) {
-  return sys_object_new(private_g_type, NULL);
+  return sys_object_new(FR_TYPE_MEDIA_DECODER, NULL);
 }
 
 FrDecoder *fr_media_decoder_new_I(FrMediaDecoderContext *info) {

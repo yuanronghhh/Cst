@@ -63,7 +63,7 @@ SysBool fr_decoder_start(FrDecoder* self) {
 void fr_decoder_stop(FrDecoder* self) {
   sys_return_if_fail(self != NULL);
 
-  // fr_job_stop(&job);
+  fr_job_stop(&job);
 }
 
 void fr_decoder_run_async(FrDecoder *self,

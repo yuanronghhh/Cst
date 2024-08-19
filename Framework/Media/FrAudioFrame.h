@@ -18,7 +18,6 @@ struct _FrAudioFrame  {
   FrMediaFrame parent;
 
   /* <private> */
-  SysInt nb_samples;
   SysInt format;
   SysInt sample_rate;
   SysInt channels;

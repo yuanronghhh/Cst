@@ -125,7 +125,6 @@ static void sdl_audio_resume(FrAudioDevice *self) {
 }
 
 static void sdl_audio_render(FrAudioStream *self, FrAudioFrame *frame) {
-  const int samples = frame->nb_samples;
   SysUInt8 *data[FR_MEDIA_NUM_DATA];
   SysInt linesize[FR_MEDIA_NUM_DATA];
 
@@ -138,18 +137,10 @@ static void sdl_audio_render(FrAudioStream *self, FrAudioFrame *frame) {
     return;
   }
 
-  SDL_PutAudioStreamData(stream, data[0], samples * sizeof (Sint16));
-}
+  if(SDL_GetAudioStreamQueued(stream) > 0) {
 
-static void audio_callback(SysPointer user_data,
-    SDL_AudioStream *stream,
-    SysInt len,
-    SysInt totallen) {
-
-  FrAudioStream *out_stream = FR_AUDIO_STREAM(user_data);
-  FrAudioFrame *frame = NULL;
-
-  sdl_audio_render(out_stream, frame);
+    SDL_Delay(10);
+  };
 }
 
 static void sdl_audio_stream_create(FrAudioStream *self,
@@ -164,21 +155,8 @@ static void sdl_audio_stream_create(FrAudioStream *self,
     .channels = info->channels, 
     .freq = info->sample_rate };
 
-  self->ctx = SDL_OpenAudioDeviceStream(id, &dst, audio_callback, self);
-  sdl_audio_resume(self->ctx);
-}
-
-static SysBool sdl_audio_stream_put_data(FrAudioStream *self, SysUInt data[], SysInt len) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  SDL_AudioStream *stream = self->ctx;
-  int rc = SDL_PutAudioStreamData(stream, data, len);
-  if (rc == -1) {
-    sys_warning_N("Failed to put samples in stream: %s\n", SDL_GetError());
-    return false;
-  }
-
-  return true;
+  self->ctx = SDL_OpenAudioDeviceStream(id, &dst, NULL, NULL);
+  SDL_ResumeAudioDevice(id);
 }
 
 static SysInt sdl_flush_audio(FrAudioStream *self) {

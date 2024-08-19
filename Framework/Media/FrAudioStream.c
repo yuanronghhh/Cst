@@ -46,6 +46,8 @@ FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info) {
 static void fr_audio_stream_dispose(SysObject* o) {
   FrAudioStream *self = FR_AUDIO_STREAM(o);
 
+  UNUSED(self);
+
   SYS_OBJECT_CLASS(fr_audio_stream_parent_class)->dispose(o);
 }
 

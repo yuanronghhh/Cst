@@ -225,7 +225,7 @@ static SysInt media_player_do(FrAvPlayer *self) {
   // get interval
   vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
   fr_media_stream_get_rational(vs, &rt);
-  self->delay = self->default_delay = (1.0 / rt.num / (double) rt.den) * 1.0e9;
+  self->delay = self->default_delay = (1.0 / rt.num / (double) rt.den) * 1.0e10;
 
   av_player_run(self, self->file);
   av_player_get_video_size(self, &bound.width, &bound.height);
@@ -240,6 +240,8 @@ static SysInt media_player_do(FrAvPlayer *self) {
 
     fr_delay(self->delay);
     fr_poll_events();
+
+    fr_av_player_set_state(self, 0);
   }
 
   fr_region_destroy(region);

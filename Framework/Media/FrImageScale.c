@@ -200,6 +200,11 @@ static void fr_image_scale_dispose(SysObject* o) {
     sys_clear_pointer(&self->ctx, sws_freeContext);
   }
 
+  if (self->hw_accel) {
+
+    sys_clear_pointer(&self->hw_accel, _sys_object_unref);
+  }
+
   SYS_OBJECT_CLASS(fr_image_scale_parent_class)->dispose(o);
 }
 

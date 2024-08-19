@@ -17,7 +17,7 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
 
   fr_image_scale_create(&self->scale);
 
-  FrImageScaleContext info;
+  FrImageScaleContext info = {0};
 
   fr_media_decoder_get_info(
       &self->parent,

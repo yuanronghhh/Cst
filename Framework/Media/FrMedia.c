@@ -36,7 +36,7 @@ SysInt fr_image_context_fill_buffer(FrImageContext *info) {
 }
 
 const SysChar* fr_media_error_string(SysInt err) {
-  const SysChar* qmsg = NULL;
+  static const SysChar* qmsg = NULL;
   switch (err) {
   case FR_MEDIA_ERROR_SUCCESS:
     qmsg = "success";
@@ -443,7 +443,12 @@ void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
 
   self->nb_samples = frame->nb_samples;
   self->sample_rate = frame->sample_rate;
+
+#if LIBAVUTIL_VERSION_MAJOR > 56
   self->channels = frame->ch_layout.nb_channels;
+#else
+  self->channels = frame->channels;
+#endif
 }
 
 void fr_media_frame_get_frame_rate (
@@ -764,7 +769,12 @@ void fr_audio_stream_get_device_info(FrAudioStream *self,
   /* AVSampleFormat */
   info->format = avf->codecpar->format;
   info->sample_rate = avf->codecpar->sample_rate;
+
+#if LIBAVUTIL_VERSION_MAJOR > 56
   info->channels = avf->codecpar->ch_layout.nb_channels;
+#else
+  info->channels = avf->codecpar->channels;
+#endif
 }
 
 void fr_media_frame_get_info(FrMediaFrame *self,

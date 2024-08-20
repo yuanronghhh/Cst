@@ -9,7 +9,6 @@ SysObject* fr_audio_frame_dclone_i(SysObject* o) {
   FrAudioFrame* nself = FR_AUDIO_FRAME(n);
   FrAudioFrame* oself = FR_AUDIO_FRAME(o);
 
-  nself->nb_samples = oself->nb_samples;
   nself->format = oself->format;
   nself->sample_rate = oself->sample_rate;
   nself->channels = oself->channels;

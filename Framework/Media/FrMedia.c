@@ -441,10 +441,9 @@ void fr_media_audio_frame_init(FrAudioFrame* self, FrMediaStream *stream) {
 
   AVFrame *frame = self->parent.ctx;
 
-  self->nb_samples = frame->nb_samples;
   self->sample_rate = frame->sample_rate;
 
-#if LIBAVUTIL_VERSION_MAJOR > 56
+#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100)
   self->channels = frame->ch_layout.nb_channels;
 #else
   self->channels = frame->channels;
@@ -770,7 +769,7 @@ void fr_audio_stream_get_device_info(FrAudioStream *self,
   info->format = avf->codecpar->format;
   info->sample_rate = avf->codecpar->sample_rate;
 
-#if LIBAVUTIL_VERSION_MAJOR > 56
+#if LIBAVUTIL_VERSION_INT >= AV_VERSION_INT(57, 28, 100)
   info->channels = avf->codecpar->ch_layout.nb_channels;
 #else
   info->channels = avf->codecpar->channels;

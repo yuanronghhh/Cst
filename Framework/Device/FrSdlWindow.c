@@ -170,7 +170,7 @@ static SysInt sdl_flush_audio(FrAudioStream *self) {
 static FrSdlWindow *gwindow_get_data(SDL_Window *gwindow) {
   sys_return_val_if_fail(gwindow != NULL, NULL);
 
-  return SDL_GetProperty(
+  return SDL_GetPointerProperty(
     SDL_GetWindowProperties(gwindow),
     SDL_WINDOW_POINTER, NULL);
 }
@@ -186,7 +186,7 @@ static FrSdlWindow *gwindow_get_data_by_id(SysInt windowID) {
 static void gwindow_set_data(SDL_Window *gwindow, SysPointer user_data) {
   sys_return_if_fail(gwindow != NULL);
 
-  SDL_SetProperty(
+  SDL_SetPointerProperty(
       SDL_GetWindowProperties(gwindow),
       SDL_WINDOW_POINTER, user_data);
 }
@@ -277,8 +277,6 @@ static const SysChar *sdl_event_get_name(SysInt event_type) {
       return "SDL_EVENT_WINDOW_FOCUS_LOST";
     case SDL_EVENT_WINDOW_CLOSE_REQUESTED:
       return "SDL_EVENT_WINDOW_CLOSE_REQUESTED";
-    case SDL_EVENT_WINDOW_TAKE_FOCUS:
-      return "SDL_EVENT_WINDOW_TAKE_FOCUS";
     case SDL_EVENT_WINDOW_HIT_TEST:
       return "SDL_EVENT_WINDOW_HIT_TEST";
     case SDL_EVENT_WINDOW_ICCPROF_CHANGED:
@@ -287,6 +285,8 @@ static const SysChar *sdl_event_get_name(SysInt event_type) {
       return "SDL_EVENT_WINDOW_DISPLAY_CHANGED";
     case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
       return "SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED";
+    case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+      return "SDL_EVENT_WINDOW_SAFE_AREA_CHANGED";
     case SDL_EVENT_WINDOW_OCCLUDED:
       return "SDL_EVENT_WINDOW_OCCLUDED";
     case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
@@ -295,10 +295,6 @@ static const SysChar *sdl_event_get_name(SysInt event_type) {
       return "SDL_EVENT_WINDOW_LEAVE_FULLSCREEN";
     case SDL_EVENT_WINDOW_DESTROYED:
       return "SDL_EVENT_WINDOW_DESTROYED";
-    case SDL_EVENT_WINDOW_PEN_ENTER:
-      return "SDL_EVENT_WINDOW_PEN_ENTER";
-    case SDL_EVENT_WINDOW_PEN_LEAVE:
-      return "SDL_EVENT_WINDOW_PEN_LEAVE";
     case SDL_EVENT_WINDOW_HDR_STATE_CHANGED:
       return "SDL_EVENT_WINDOW_HDR_STATE_CHANGED";
     case SDL_EVENT_KEY_DOWN:
@@ -778,7 +774,7 @@ static void sdl_handle_event(SDL_Event *e) {
 /* window setup */
 static void fr_delay_i(SysDouble msec) {
 
-  sys_usleep(msec);
+  sys_usleep((SysULong)msec);
 }
 
 static void fr_wait_events_timeout_i(SysInt msec) {
@@ -882,7 +878,7 @@ static void fr_sdl_window_create(
   self->gwindow = gwindow;
 
 #if SYS_OS_WIN32
-  HWND hwnd = (HWND)SDL_GetProperty(
+  HWND hwnd = (HWND)SDL_GetPointerProperty(
     SDL_GetWindowProperties(gwindow),
     SDL_PROP_WINDOW_WIN32_HWND_POINTER, NULL);
 

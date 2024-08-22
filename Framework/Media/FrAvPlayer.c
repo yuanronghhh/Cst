@@ -240,8 +240,6 @@ static SysInt media_player_do(FrAvPlayer *self) {
 
     fr_delay(self->delay);
     fr_poll_events();
-
-    fr_av_player_set_state(self, 0);
   }
 
   fr_region_destroy(region);
@@ -407,6 +405,6 @@ static void fr_av_player_class_init(FrAvPlayerClass* cls) {
 void fr_av_player_init(FrAvPlayer* self) {
   self->state = FR_JOB_STATE_RUNNING;
   self->seek_position = -1;
-  self->max_packet = 60;
-  self->min_packet = 30;
+  self->max_packet = 2;
+  self->min_packet = 1;
 }

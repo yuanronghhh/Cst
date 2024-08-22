@@ -16,7 +16,7 @@ void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) {
   FrMediaFrameClass* cls = FR_MEDIA_FRAME_GET_CLASS(self);
   sys_return_if_fail(cls->init_frame);
 
-  return cls->init_frame(self, stream);
+  cls->init_frame(self, stream);
 }
 
 void fr_media_frame_init_frame_i(FrMediaFrame *self, FrMediaStream *stream) {

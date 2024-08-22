@@ -14,7 +14,7 @@
 #include <Framework/Graph/FrImage.h>
 #include <Framework/Device/FrAudioDevice.h>
 
-static enum AVPixelFormat hw_pix_format = 0;
+static SysInt hw_pix_format = 0;
 
 SysInt fr_image_context_fill_buffer(FrImageContext *info) {
     sys_return_val_if_fail(info != NULL, -1);

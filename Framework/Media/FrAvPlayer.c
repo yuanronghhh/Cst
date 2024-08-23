@@ -212,20 +212,26 @@ static void av_player_run(FrAvPlayer *self, FrMediaFile *file) {
   }
 }
 
-static SysInt media_player_do(FrAvPlayer *self) {
-  FrRegion* region;
+static void calc_video_delay (FrAvPlayer *self) {
   FrMediaStream* vs;
   FrRational rt = { .num = 2997, .den = 100 };
+
+  vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
+  fr_media_stream_get_rational(vs, &rt);
+  self->delay = self->default_delay = (1 / (rt.num / (double) rt.den)) * 1.0e6;
+}
+
+static SysInt media_player_do(FrAvPlayer *self) {
+  FrRegion* region;
   FrBound bound = { .width = 800, .height = 600 };
 
   if(self->state != FR_JOB_STATE_RUNNING) {
     return -1;
   }
 
-  // get interval
-  vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
-  fr_media_stream_get_rational(vs, &rt);
-  self->delay = self->default_delay = (1.0 / rt.num / (double) rt.den) * 1.0e10;
+  if(fr_media_file_has_video(self->file)) {
+    calc_video_delay(self);
+  }
 
   av_player_run(self, self->file);
   av_player_get_video_size(self, &bound.width, &bound.height);

@@ -676,7 +676,7 @@ static enum AVPixelFormat get_hw_format(
     const enum AVPixelFormat *pix_fmts) {
   const enum AVPixelFormat *p;
 
-  for (p = pix_fmts; *p != -1; p++) {
+  for (p = pix_fmts; *p != AV_PIX_FMT_NONE; p++) {
     if (*p == hw_pix_format)
       return *p;
   }
@@ -697,7 +697,9 @@ SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info) {
   SysInt type = av_hwdevice_find_type_by_name(info->name);
   if(type == 0) {
 
-    sys_warning_N("not support hardware device %s", info->name);
+    sys_warning_N("not support hardware device %s,%s",
+        info->name,
+        av_hwdevice_get_type_name(type));
     return false;
   }
 

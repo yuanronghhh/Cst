@@ -84,7 +84,7 @@ FrVideoFrame *fr_video_frame_new_I(void) {
 
 static void fr_video_frame_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_video_frame_parent_class)->dispose(o);
+
 }
 
 static void fr_video_frame_class_init(FrVideoFrameClass* cls) {

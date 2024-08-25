@@ -109,7 +109,7 @@ static void cst_abs_layer_dispose(SysObject* o) {
 
   sys_pqueue_destroy(&self->pqueue, (SysDestroyFunc)_sys_object_unref);
 
-  SYS_OBJECT_CLASS(cst_abs_layer_parent_class)->dispose(o);
+
 }
 
 CstLayer * cst_abs_layer_new_I(void) {

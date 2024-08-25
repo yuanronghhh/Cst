@@ -13,14 +13,9 @@ struct _FrIDecoderInterface {
   SysTypeInterface unowned;
 
   /* <private> */
-  FrPacket *(*get_packet_ptr)(FrIDecoder *self);
-  SysInt (*process_task) (FrDecoder* self);
-  SysInt (*process_packet) (FrDecoder* self);
 };
 
 SysType fr_i_decoder_get_type(void);
-
-FrPacket * fr_i_decoder_get_packet_ptr (FrIDecoder *self);
 
 
 SYS_END_DECLS

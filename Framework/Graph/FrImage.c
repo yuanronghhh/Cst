@@ -21,7 +21,7 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
 
   fr_image_context_fill_buffer(&info);
 
-  err = av_image_copy_to_buffer(
+  err = fr_image_copy_to_buffer(
       info.data,
       info.data_size,
       (const uint8_t * const*)frame->data,
@@ -131,7 +131,7 @@ static void fr_image_dispose(SysObject* o) {
     sys_clear_pointer(&self->data, sgc_free);
   }
 
-  SYS_OBJECT_CLASS(fr_image_parent_class)->dispose(o);
+
 }
 
 static void fr_image_class_init(FrImageClass* cls) {

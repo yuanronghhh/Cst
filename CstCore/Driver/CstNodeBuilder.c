@@ -369,7 +369,7 @@ static void cst_node_builder_dispose(SysObject* o) {
   sys_clear_pointer(&self->v_id, sys_free);
   sys_clear_pointer(&self->v_name, sys_free);
 
-  SYS_OBJECT_CLASS(cst_node_builder_parent_class)->dispose(o);
+
 }
 
 CstNodeBuilder *cst_node_builder_new(void) {

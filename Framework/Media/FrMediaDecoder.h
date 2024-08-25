@@ -51,7 +51,6 @@ SYS_API FrDecoder* fr_media_decoder_create_by_media_type(
     FR_MEDIA_ENUM mediaType);
 
 SYS_API SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType);
-void fr_media_decoder_flush(FrMediaDecoder* self);
 
 FrMediaDecoder* fr_media_decoder_new_by_type(
     SysType tp,
@@ -70,7 +69,6 @@ SysInt fr_media_decoder_read(FrMediaDecoder *self, FrMediaPacket **pkt);
 void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt);
 
 void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp);
-SysBool fr_media_decoder_get_hw_info(FrMediaDecoder *self, SysInt hw_dtype, SysInt *hw_pix_format);
 
 void fr_media_decoder_set_frame(FrMediaDecoder *self, FrMediaFrame * frame);
 FrMediaFrame * fr_media_decoder_get_frame(FrMediaDecoder *self);

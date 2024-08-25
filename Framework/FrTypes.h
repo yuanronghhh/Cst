@@ -109,6 +109,9 @@ typedef  struct  _FrGlfwWindowClass      FrGlfwWindowClass;
 typedef  struct  _FrSdlWindow           FrSdlWindow;
 typedef  struct  _FrSdlWindowClass      FrSdlWindowClass;
 
+typedef  struct  _FrX11Window           FrX11Window;
+typedef  struct  _FrX11WindowClass      FrX11WindowClass;
+
 typedef struct _FrRenderContext FrRenderContext;
 typedef struct _FrRender FrRender;
 typedef struct _FrRenderClass FrRenderClass;
@@ -122,8 +125,10 @@ typedef struct _FrIDeviceInterface FrIDeviceInterface;
 typedef struct _FrImageDevice FrImageDevice;
 typedef struct _FrImageDeviceClass FrImageDeviceClass;
 
+typedef  struct  _FrActionContext       FrActionContext;
 typedef  struct  _FrAction              FrAction;
 typedef  struct  _FrActionClass         FrActionClass;
+
 typedef  struct  _FrAKey                FrAKey;
 typedef  struct  _FrAKeyClass           FrAKeyClass;
 typedef  struct  _FrAMouseKey           FrAMouseKey;

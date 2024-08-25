@@ -118,6 +118,7 @@ static AVFormatContext* media_create_context_by_filename(
     const SysChar* default_dec,
     const SysChar* filename) {
   int err;
+
   const AVInputFormat* default_format;
   AVFormatContext* ctx = avformat_alloc_context();
 
@@ -129,7 +130,8 @@ static AVFormatContext* media_create_context_by_filename(
       NULL);
   if (err < 0) {
     sys_warning_N("avformat_open_input: %s, %s", av_err2str(err), filename);
-    return NULL;
+
+    goto fail;
   }
 
   err = avformat_find_stream_info(ctx, NULL);
@@ -270,6 +272,10 @@ static AVFrame* new_rgba_frame(
   return rgba_frame;
 }
 
+SysInt64 fr_media_gcd(SysInt64 a, SysInt64 b) {
+  return av_gcd(a, b);
+}
+
 SysInt fr_media_image_scale_scale(
     FrImageScale *self,
     const uint8_t *const src_data[],
@@ -363,7 +369,7 @@ SysBool fr_media_scale_media_frame(FrImageScale *scale, FrMediaFrame *frame) {
   if (nframe == NULL) { return false; }
 
   if (image_scale_scale_avframe(scale, frame->ctx, nframe) < 0) {
-    sys_warning_N("convert avframe failed: %p", scale);
+    sys_warning_N("convert avframe failed: %p", nframe);
     av_frame_free(&nframe);
     return false;
   }
@@ -485,6 +491,11 @@ SysInt fr_media_media_file_read_packet(FrMediaFile *self,
   return media_read_packet(self->ctx, pkt->ctx);
 }
 
+void fr_media_packet_ref(FrMediaPacket* nself, FrMediaPacket* oself) {
+
+  av_packet_ref(nself->ctx, oself->ctx);
+}
+
 SysInt fr_media_packet_get_stream_index(FrMediaPacket *self) {
   sys_return_val_if_fail(self != NULL, -1);
   AVPacket *ctx = self->ctx;
@@ -492,7 +503,12 @@ SysInt fr_media_packet_get_stream_index(FrMediaPacket *self) {
   return ctx->stream_index;
 }
 
-void fr_media_packet_free(FrMediaPacket *self) {
+void fr_media_media_packet_create(FrMediaPacket *self) {
+
+  self->ctx = av_packet_alloc();
+}
+
+void fr_media_media_packet_free(FrMediaPacket *self) {
 
   av_packet_free((AVPacket **)&self->ctx);
 }
@@ -529,6 +545,17 @@ static const AVCodec *media_find_decoder(AVStream *stream) {
   return avcodec_find_decoder(stream->codecpar->codec_id);
 }
 
+SysInt fr_media_decoder_open(FrMediaDecoder* self) {
+
+  return avcodec_open2(self->ctx, self->codec, NULL);
+}
+
+void fr_media_decoder_flush(FrMediaDecoder* self) {
+  sys_return_if_fail(self != NULL);
+
+  avcodec_flush_buffers(self->ctx);
+}
+
 void fr_media_decoder_create(FrMediaDecoder *self,
     FrMediaDecoderContext *info) {
   AVStream *as = info->media_stream->ctx;
@@ -547,6 +574,11 @@ void fr_media_decoder_get_info(FrMediaDecoder *o,
   *width = ctx->width;
   *height = ctx->height;
   *pix_fmt = ctx->pix_fmt;
+}
+
+SysBool fr_media_decoder_is_open(FrMediaDecoder *self) {
+
+  return avcodec_is_open((AVCodecContext *)self->ctx) > 0;
 }
 
 void fr_media_decoder_free(FrMediaDecoder *self) {
@@ -636,6 +668,52 @@ SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
   return media_avcodec_try_send_packet(self->ctx, pkt->ctx);
 }
 
+SysInt fr_media_file_pause(FrMediaFile* self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return av_read_pause(self->ctx);
+}
+
+SysInt fr_media_file_play(FrMediaFile* self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  return av_read_play(self->ctx);
+}
+
+void fr_media_file_free(FrMediaFile *self) {
+
+  avformat_close_input((AVFormatContext **)&self->ctx);
+}
+
+const SysChar *fr_media_file_get_url(FrMediaFile *self) {
+  AVFormatContext *ctx = self->ctx;
+
+  return ctx->url;
+}
+
+SysInt fr_media_file_seek(FrMediaFile *self, SysInt64 seek_target) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  SysInt64 seek_min;
+  SysInt64 seek_max;
+  SysInt err;
+
+  seek_min = self->seek.seek_rel > 0 ?
+    seek_target - self->seek.seek_rel + 2: INT64_MIN;
+
+  seek_max = self->seek.seek_rel < 0 ?
+    seek_target - self->seek.seek_rel - 2: INT64_MAX;
+
+  err = avformat_seek_file(self->ctx,
+      -1,
+      seek_min,
+      seek_target,
+      seek_max,
+      self->seek.seek_flags);
+
+  return err;
+}
+
 SysBool fr_media_file_create(
     FrMediaFile *self,
     const SysChar *filename) {
@@ -690,6 +768,28 @@ void fr_hw_accel_free(FrHwAccel *self) {
   av_buffer_unref((AVBufferRef **)&self->ctx);
 }
 
+static SysBool media_decoder_get_hw_info(
+    FrMediaDecoder *self,
+    SysInt hw_dtype,
+    SysInt *hw_pix_format) {
+
+  SysInt i;
+  const AVCodecHWConfig *config;
+
+  for (i = 0; ;i++) {
+    config = avcodec_get_hw_config(self->codec, i);
+    if(config == NULL) { return false; }
+
+    if ((config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX)
+        && config->device_type == hw_dtype) {
+      *hw_pix_format = config->pix_fmt;
+      break;
+    }
+  }
+
+  return true;
+}
+
 SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info) {
   AVBufferRef *ctx = NULL;
   FrMediaDecoder *dec = info->decoder;
@@ -703,7 +803,7 @@ SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info) {
     return false;
   }
 
-  if(!fr_media_decoder_get_hw_info(dec, type, &hw_pix_format)) {
+  if(!media_decoder_get_hw_info(dec, type, &hw_pix_format)) {
     sys_info_N("Failed to get hw info: %s, %s",
         fr_decoder_get_name(FR_DECODER(dec)),
         av_hwdevice_get_type_name(type));
@@ -729,6 +829,11 @@ SysInt fr_media_frame_get_format(FrMediaFrame *self) {
   AVFrame *ctx = self->ctx;
 
   return ctx->format;
+}
+
+void fr_media_media_frame_create(FrMediaFrame *self) {
+
+  self->ctx = av_frame_alloc();
 }
 
 void fr_media_frame_free(FrMediaFrame *self) {

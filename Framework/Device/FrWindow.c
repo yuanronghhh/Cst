@@ -89,6 +89,11 @@ static void fr_window_construct(
   self->share = info->share;
 
   fr_i_window_create(self, 800, 600, title, info->share);
+
+  if(fr_display_get_native_display(self->display) == NULL) {
+
+    fr_window_update_display(self, self->display);
+  }
 }
 
 FrWindow* fr_window_new(void) {
@@ -116,7 +121,7 @@ static void fr_window_dispose(SysObject* o) {
   sys_clear_pointer(&self->display, _sys_object_unref);
   fr_i_window_window_destroy(self);
 
-  SYS_OBJECT_CLASS(fr_window_parent_class)->dispose(o);
+
 }
 
 static void fr_window_class_init(FrWindowClass* cls) {

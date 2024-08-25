@@ -16,7 +16,7 @@ static void cst_lbox_init(CstLBox *self) {
 }
 
 static void cst_lbox_dispose(SysObject* o) {
-  SYS_OBJECT_CLASS(cst_lbox_parent_class)->dispose(o);
+
 }
 
 static void cst_lbox_class_init(CstLBoxClass* cls) {

@@ -1,4 +1,12 @@
+set(INC
+  ../
+  ./tests/
+  ${INIT_HOME}/../
+  # ${CMAKE_SOURCE_DIR}/../CstDemo/
+)
+
 set(EXTERNAL_LIBS
+  "System"
   "unity"
   "pthread"
   "openssl"
@@ -17,13 +25,6 @@ set(EXTERNAL_LIBS
 
 set(INNER_LIBS
   "Framework"
-)
-
-set(INC
-  ../
-  ./tests/
-  ${INIT_HOME}/../
-  ${CMAKE_SOURCE_DIR}/../CstDemo/
 )
 
 set(SRC

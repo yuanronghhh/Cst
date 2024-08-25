@@ -19,7 +19,9 @@ struct _FrMediaFile {
   FrMediaStream parent;
 
   /* <private> */
-  AVFormatContext *ctx;
+
+  /* AVFormatContext * */
+  SysPointer ctx;
   SysBool is_realtime;
 
   FrMediaStream **streams;
@@ -45,11 +47,6 @@ SYS_API SysInt fr_media_file_read_packet(FrMediaFile *self, FrMediaPacket **npkt
 SYS_API FrMediaStream* fr_media_file_stream_by_type(
     FrMediaFile *self,
     FR_MEDIA_ENUM mediaType);
-
-SYS_API SysInt fr_media_file_pause(FrMediaFile* self);
-SYS_API SysInt fr_media_file_play(FrMediaFile* self);
-SYS_API const SysChar *fr_media_file_get_url(FrMediaFile *self);
-SYS_API SysInt fr_media_file_seek(FrMediaFile *self, SysInt64 seek_target);
 
 SysUInt fr_media_file_stream_count(FrMediaFile* self);
 SysBool fr_media_file_has_video(FrMediaFile* self);

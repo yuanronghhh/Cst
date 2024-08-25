@@ -24,7 +24,7 @@ static void fr_media_filter_dispose(SysObject* o) {
 
   UNUSED(self);
 
-  SYS_OBJECT_CLASS(fr_media_filter_parent_class)->dispose(o);
+
 }
 
 static void fr_media_filter_class_init(FrMediaFilterClass* cls) {

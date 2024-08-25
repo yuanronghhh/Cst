@@ -58,7 +58,7 @@ SysObject *fr_awatch_key_press_clone_i(SysObject *o) {
 /* object api */
 static void fr_awatch_key_press_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_awatch_key_press_parent_class)->dispose(o);
+
 }
 
 void fr_awatch_key_press_construct_i(FrAWatch* o, FrAWatchBuilder *builder) {

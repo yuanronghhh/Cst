@@ -97,7 +97,7 @@ static void fr_context_dispose(SysObject* o) {
   sys_clear_pointer(&self->surface, _sys_object_unref);
   fr_i_draw_destroy(self);
 
-  SYS_OBJECT_CLASS(fr_context_parent_class)->dispose(o);
+
 }
 
 static void fr_context_class_init(FrContextClass* cls) {

@@ -90,7 +90,7 @@ static void cst_application_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->main_module, _sys_object_unref);
 
-  SYS_OBJECT_CLASS(cst_application_parent_class)->dispose(o);
+
 }
 
 void cst_application_construct(CstApplication* self, const SysChar *appname) {

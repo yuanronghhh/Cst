@@ -48,7 +48,7 @@ FrEvent *fr_event_key_new_I(FrWindow *window, SysInt key, SysInt scancode, SysIn
 
 static void fr_event_key_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_event_key_parent_class)->dispose(o);
+
 }
 
 static void fr_event_key_class_init(FrEventKeyClass* cls) {

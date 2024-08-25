@@ -61,28 +61,31 @@ const SysChar *fr_action_get_name(FrAction *self) {
   return self->name;
 }
 
-void fr_action_set_name(FrAction *self, const SysChar *name) {
-  sys_return_if_fail(self != NULL);
+void fr_action_create(FrAction *self, FrActionContext *info) {
+  FrActionClass *cls = FR_ACTION_GET_CLASS(self);
 
-  sys_assert(self->name == NULL);
+  sys_return_if_fail(cls->create != NULL);
 
-  self->name = sys_strdup(name);
+  cls->create(self, info);
 }
 
 /* object api */
-void fr_action_create_i(FrAction *self) {
+void fr_action_create_i(FrAction *self, FrActionContext *info) {
   self->awatch_list = NULL;
+  self->name = sys_strdup(info->name);
 }
 
 FrAction* fr_action_new(void) {
   return sys_object_new(FR_TYPE_ACTION, NULL);
 }
 
-FrAction *fr_action_new_I(void) {
+FrAction *fr_action_new_I(FrActionContext *info) {
+  sys_return_val_if_fail(info != NULL, NULL);
+  sys_return_val_if_fail(info->name != NULL, NULL);
+
   FrAction *o = fr_action_new();
 
-  fr_action_set_name(o, "action");
-  fr_action_create_i(o);
+  fr_action_create_i(o, info);
 
   return o;
 }
@@ -92,8 +95,6 @@ static void fr_action_dispose(SysObject* o) {
 
   sys_list_free_full(self->awatch_list, (SysDestroyFunc)_sys_object_unref);
   sys_clear_pointer(&self->name, sys_free);
-
-  SYS_OBJECT_CLASS(fr_action_parent_class)->dispose(o);
 }
 
 static void fr_action_class_init(FrActionClass* cls) {
@@ -116,7 +117,8 @@ FrAction* fr_action_get_static(void) {
   if(node != NULL) {
     goto done;
   }
-  node = fr_action_new_I();
+  FrActionContext info = {.name = "action"};
+  node = fr_action_new_I(&info);
 
 done:
   fr_events_unlock();

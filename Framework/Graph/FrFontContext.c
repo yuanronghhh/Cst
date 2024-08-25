@@ -22,7 +22,7 @@ FrFontContext *fr_font_context_new_I(void) {
 static void fr_font_context_dispose(SysObject* o) {
   // FrFontContext *self = FR_FONT_CONTEXT(o);
 
-  SYS_OBJECT_CLASS(fr_font_context_parent_class)->dispose(o);
+
 }
 
 static void fr_font_context_class_init(FrFontContextClass* cls) {

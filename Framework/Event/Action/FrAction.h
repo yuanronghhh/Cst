@@ -14,7 +14,7 @@ SYS_BEGIN_DECLS
 struct _FrActionClass {
   SysObjectClass parent;
 
-  void (*create) (FrAction *self);
+  void (*create) (FrAction *self, FrActionContext *info);
   SysBool (*check) (FrAction *self, FrEvent *e);
   void (*dispatch) (FrAction *self, FrEvent *e);
 };
@@ -27,16 +27,20 @@ struct _FrAction {
   SysChar *name;
 };
 
-SYS_API FrAction* fr_action_new_I(void);
+struct _FrActionContext {
+  SysChar *name;
+};
+
+SYS_API FrAction* fr_action_new_I(FrActionContext *info);
 SYS_API SysType fr_action_get_type(void);
 SYS_API FrAction* fr_action_get_static(void);
 
+SYS_API void fr_action_create(FrAction *self, FrActionContext *info);
 SYS_API void fr_action_dispatch(FrAction *self, FrEvent *e);
 SYS_API SysBool fr_action_check(FrAction *self, FrEvent *e);
 SYS_API SysList* fr_action_bind_awatch(FrAction *self, FrAWatch* awatch);
 SYS_API void fr_action_unbind_awatch(FrAction *self, SysList *action_link);
 SYS_API const SysChar *fr_action_get_name(FrAction *self);
-SYS_API void fr_action_set_name(FrAction *self, const SysChar *name);
 
 SYS_END_DECLS
 

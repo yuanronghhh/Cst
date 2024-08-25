@@ -271,7 +271,7 @@ static void cst_css_pair_dispose(SysObject* o) {
   sys_clear_pointer(&self->value, _sys_object_unref);
   sys_clear_pointer(&self->css_node, _sys_object_unref);
 
-  SYS_OBJECT_CLASS(cst_css_pair_parent_class)->dispose(o);
+
 }
 
 static void cst_css_pair_construct(CstCssPair* self, CstCssNode *node, CstCssValue *value) {

@@ -47,7 +47,7 @@ static void mini_component_init(MiniComponent *self) {
 
 static void mini_component_dispose(SysObject *o) {
 
-  SYS_OBJECT_CLASS(mini_component_parent_class)->dispose(o);
+
 }
 
 static void mini_component_class_init(MiniComponentClass *cls) {

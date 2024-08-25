@@ -48,7 +48,7 @@ FrDevice *fr_audio_device_find_by_id(SysUInt deviceID) {
   FrAudioDevice *mdev = NULL;
 
   sys_hslist_foreach(g_devices, dev) {
-    mdev = FR_AUDIO_DEVICE(dev);
+    mdev = HLIST_TO_AUDIO_DEVICE(dev);
 
     if(POINTER_TO_UINT(mdev->ctx) == deviceID) {
 
@@ -115,9 +115,7 @@ FrDevice *fr_audio_device_new_I(FrAudioDeviceContext *info) {
 static void fr_audio_device_dispose(SysObject* o) {
   FrAudioDevice *self = FR_AUDIO_DEVICE(o);
 
-  UNUSED(self);
-
-  SYS_OBJECT_CLASS(fr_audio_device_parent_class)->dispose(o);
+  self->ctx = NULL;
 }
 
 static void fr_audio_device_class_init(FrAudioDeviceClass* cls) {
@@ -127,4 +125,19 @@ static void fr_audio_device_class_init(FrAudioDeviceClass* cls) {
 }
 
 static void fr_audio_device_init(FrAudioDevice* self) {
+}
+
+void fr_audio_device_setup(void) {
+}
+
+void fr_audio_device_teardown(void) {
+  FrAudioDevice *mdev = NULL;
+  SysHSList *node = g_devices;
+
+  while(node) {
+    mdev = HLIST_TO_AUDIO_DEVICE(node);
+    node = node->next;
+
+    sys_clear_pointer(&mdev, _sys_object_unref);
+  }
 }

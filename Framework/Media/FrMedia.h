@@ -23,8 +23,14 @@ void fr_media_decoder_get_info(FrMediaDecoder *o,
     SysInt *height,
     SysInt *pix_fmt);
 
+SysInt fr_media_decoder_open(FrMediaDecoder* self);
+
+void fr_media_decoder_flush(FrMediaDecoder* self);
+
 void fr_media_decoder_create(FrMediaDecoder *self,
     FrMediaDecoderContext *info);
+
+SysBool fr_media_decoder_is_open(FrMediaDecoder *self);
 
 void fr_media_decoder_free(FrMediaDecoder *self);
 
@@ -44,6 +50,8 @@ SysInt fr_media_decoder_receive_frame(
 SysInt fr_media_decoder_send_packet(FrMediaDecoder* self,
     FrMediaPacket *pkt);
 
+SysInt64 fr_media_gcd(SysInt64 a, SysInt64 b);
+
 SysInt fr_media_image_scale_scale(
     FrImageScale *self,
     const uint8_t *const src_data[],
@@ -53,13 +61,24 @@ SysInt fr_media_image_scale_scale(
     uint8_t *const dst_data[],
     const int dst_stride[]);
 
+SysInt fr_media_file_pause(FrMediaFile* self);
+
+SysInt fr_media_file_play(FrMediaFile* self);
+
 SysBool fr_media_file_create(FrMediaFile *self,
     const SysChar *filename);
+
+SysInt fr_media_file_seek(FrMediaFile *self, SysInt64 seek_target);
+
+void fr_media_file_free(FrMediaFile *self);
+const SysChar *fr_media_file_get_url(FrMediaFile *self);
 
 SysInt fr_media_media_file_read_packet(FrMediaFile *self,
     FrMediaPacket *pkt);
 
-void fr_media_packet_free(FrMediaPacket *self);
+void fr_media_media_packet_create(FrMediaPacket *self);
+void fr_media_media_packet_free(FrMediaPacket *self);
+void fr_media_packet_ref(FrMediaPacket* nself, FrMediaPacket* oself);
 SysInt fr_media_packet_get_stream_index(FrMediaPacket *self);
 
 /* image */
@@ -67,11 +86,15 @@ SysInt fr_image_context_fill_buffer(FrImageContext *info);
 #define fr_image_get_size(format, width, height) \
   av_image_get_buffer_size(format, width, height, 1)
 
+
+#define fr_image_copy_to_buffer av_image_copy_to_buffer
+
 SysInt fr_hw_accel_get_hw_format(FrHwAccel *self);
 void fr_hw_accel_free(FrHwAccel *self);
 SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info);
 
 SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt);
+void fr_media_media_frame_create(FrMediaFrame *self);
 void fr_media_frame_free(FrMediaFrame *self);
 void fr_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself);
 void fr_media_frame_get_data(FrMediaFrame *self, uint8_t *data[]);

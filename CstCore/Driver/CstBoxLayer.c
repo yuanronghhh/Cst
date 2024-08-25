@@ -139,7 +139,7 @@ static void cst_box_layer_dispose(SysObject* o) {
     cst_box_node_handle_ft_r(root, (CstBoxNodeFunc)box_node_unlink, self);
   }
 
-  SYS_OBJECT_CLASS(cst_box_layer_parent_class)->dispose(o);
+
 }
 
 CstLayer *cst_box_layer_new_I(void) {

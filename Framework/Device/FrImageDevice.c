@@ -24,7 +24,7 @@ static void fr_image_device_dispose(SysObject* o) {
 
   UNUSED(self);
 
-  SYS_OBJECT_CLASS(fr_image_device_parent_class)->dispose(o);
+
 }
 
 static void fr_image_device_class_init(FrImageDeviceClass* cls) {

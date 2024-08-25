@@ -23,41 +23,6 @@ SysInt64 fr_media_file_get_seek_position(FrMediaFile *self) {
   return self->seek.seek_position;
 }
 
-SysInt fr_media_file_seek(FrMediaFile *self, SysInt64 seek_target) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  SysInt64 seek_min;
-  SysInt64 seek_max;
-  SysInt err;
-
-  seek_min = self->seek.seek_rel > 0 ?
-    seek_target - self->seek.seek_rel + 2: INT64_MIN;
-
-  seek_max = self->seek.seek_rel < 0 ?
-    seek_target - self->seek.seek_rel - 2: INT64_MAX;
-
-  err = avformat_seek_file(self->ctx,
-      -1,
-      seek_min,
-      seek_target,
-      seek_max,
-      self->seek.seek_flags);
-
-  return err;
-}
-
-SysInt fr_media_file_pause(FrMediaFile* self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return av_read_pause(self->ctx);
-}
-
-SysInt fr_media_file_play(FrMediaFile* self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return av_read_play(self->ctx);
-}
-
 SysInt media_file_read_packet_i(FrIStream *o, FrPacket **pkt) {
   FrMediaFile *self = FR_MEDIA_FILE(o);
   sys_return_val_if_fail(self != NULL, -1);
@@ -81,10 +46,6 @@ SysInt fr_media_file_read_packet(FrMediaFile *self, FrMediaPacket **npkt) {
   FrIStream *sm = FR_I_STREAM(self);
 
   return media_file_read_packet_i(sm, (FrPacket **)npkt);
-}
-
-const SysChar *fr_media_file_get_url(FrMediaFile *self) {
-  return self->ctx->url;
 }
 
 SysUInt fr_media_file_stream_count(FrMediaFile* self) {
@@ -156,16 +117,20 @@ static void fr_media_file_dispose(SysObject* o) {
 
   for (SysUInt i = 0; i < self->n_streams; i++) {
 
-    sys_clear_pointer(&self->streams[i], _sys_object_unref);
+    if(self->streams[i]) {
+
+      sys_clear_pointer(&self->streams[i], _sys_object_unref);
+    }
   }
   self->n_streams = 0;
   sys_clear_pointer(&self->streams, sys_free);
 
   sys_assert(self->ctx != NULL);
-  avformat_close_input(&self->ctx);
   sys_object_destroy(&self->mpkt);
 
-  SYS_OBJECT_CLASS(fr_media_file_parent_class)->dispose(o);
+  fr_media_file_free(self);
+
+
 }
 
 static void fr_media_file_class_init(FrMediaFileClass* cls) {

@@ -28,5 +28,5 @@ static void app_box_class_init(AppBoxClass *cls) {
 
 static void app_box_dispose(SysObject *o) {
 
-  SYS_OBJECT_CLASS(app_box_parent_class)->dispose(o);
+
 }

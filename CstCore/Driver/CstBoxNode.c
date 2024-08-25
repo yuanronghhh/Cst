@@ -265,7 +265,7 @@ CstLayerNode* cst_box_node_new(void) {
 
 static void cst_box_node_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(cst_box_node_parent_class)->dispose(o);
+
 }
 
 static void cst_box_node_construct(CstLayerNode* o, CstLayer *layer) {

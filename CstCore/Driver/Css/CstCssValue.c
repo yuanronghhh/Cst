@@ -216,7 +216,7 @@ static void cst_css_value_dispose(SysObject* o) {
       break;
   }
 
-  SYS_OBJECT_CLASS(cst_css_value_parent_class)->dispose(o);
+
 }
 
 SysObject* cst_css_value_dclone_i(SysObject *o) {

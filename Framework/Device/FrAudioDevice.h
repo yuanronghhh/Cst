@@ -42,6 +42,9 @@ SYS_API void fr_audio_device_get_info(FrAudioDevice *self,
 
 SYS_API void fr_audio_device_resume(FrAudioDevice *dev);
 
+void fr_audio_device_setup(void);
+void fr_audio_device_teardown(void);
+
 SYS_END_DECLS
 
 #endif

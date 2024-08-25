@@ -24,7 +24,7 @@ static void fr_player_dispose(SysObject* o) {
 
   UNUSED(self);
 
-  SYS_OBJECT_CLASS(fr_player_parent_class)->dispose(o);
+
 }
 
 static void fr_player_class_init(FrPlayerClass* cls) {

@@ -58,7 +58,7 @@ FrSource *fr_worker_new_I(SysPointer app_data) {
 
 static void fr_worker_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_worker_parent_class)->dispose(o);
+
 }
 
 static void fr_worker_class_init(FrWorkerClass* cls) {

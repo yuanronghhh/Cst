@@ -48,7 +48,7 @@ static void fr_audio_stream_dispose(SysObject* o) {
 
   UNUSED(self);
 
-  SYS_OBJECT_CLASS(fr_audio_stream_parent_class)->dispose(o);
+
 }
 
 static void fr_audio_stream_class_init(FrAudioStreamClass* cls) {

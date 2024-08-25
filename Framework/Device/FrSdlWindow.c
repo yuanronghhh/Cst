@@ -71,11 +71,13 @@ static SysInt sdl_audio_get_info (FrAudioDevice *dev,
     SysInt *sample_rate,
     SysInt *format) {
 
+  sys_return_val_if_fail(dev != NULL, -1);
+  sys_return_val_if_fail(dev->ctx != NULL, -1);
+
   SDL_AudioDeviceID sdev = POINTER_TO_UINT(dev->ctx);
   SDL_AudioSpec spec = {0};
   SysInt err;
 
-  sys_assert(sdev != 0);
   err = SDL_GetAudioDeviceFormat(sdev, &spec, sample_rate);
   if(err < 0) {
 
@@ -170,7 +172,7 @@ static SysInt sdl_flush_audio(FrAudioStream *self) {
 static FrSdlWindow *gwindow_get_data(SDL_Window *gwindow) {
   sys_return_val_if_fail(gwindow != NULL, NULL);
 
-  return SDL_GetPointerProperty(
+  return SDL_GetProperty(
     SDL_GetWindowProperties(gwindow),
     SDL_WINDOW_POINTER, NULL);
 }
@@ -186,7 +188,7 @@ static FrSdlWindow *gwindow_get_data_by_id(SysInt windowID) {
 static void gwindow_set_data(SDL_Window *gwindow, SysPointer user_data) {
   sys_return_if_fail(gwindow != NULL);
 
-  SDL_SetPointerProperty(
+  SDL_SetProperty(
       SDL_GetWindowProperties(gwindow),
       SDL_WINDOW_POINTER, user_data);
 }
@@ -285,8 +287,10 @@ static const SysChar *sdl_event_get_name(SysInt event_type) {
       return "SDL_EVENT_WINDOW_DISPLAY_CHANGED";
     case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
       return "SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED";
-    case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
-      return "SDL_EVENT_WINDOW_SAFE_AREA_CHANGED";
+    // case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+    //   return "SDL_EVENT_WINDOW_SAFE_AREA_CHANGED";
+    case SDL_EVENT_WINDOW_TAKE_FOCUS:
+      return "SDL_EVENT_WINDOW_TAKE_FOCUS";
     case SDL_EVENT_WINDOW_OCCLUDED:
       return "SDL_EVENT_WINDOW_OCCLUDED";
     case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:
@@ -471,37 +475,37 @@ static void fr_sdl_window_set_size(FrWindow *window, SysInt width, SysInt height
   FrSdlWindow *self = FR_SDL_WINDOW(window);
   sys_return_if_fail(self != NULL);
 
-  SDL_SetWindowSize(self->gwindow, width, height);
+  SDL_SetWindowSize(self->ctx, width, height);
 }
 
 static void fr_sdl_window_set_title(FrWindow *window, const SysChar *title) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
   sys_return_if_fail(self != NULL);
 
-  SDL_SetWindowTitle(self->gwindow, title);
+  SDL_SetWindowTitle(self->ctx, title);
 }
 
 static void fr_sdl_window_set_opacity(FrWindow *window, double opacity) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
   sys_return_if_fail(self != NULL);
 
-  SDL_SetWindowOpacity(self->gwindow, (float)opacity);
+  SDL_SetWindowOpacity(self->ctx, (float)opacity);
 }
 
 static void fr_sdl_window_set_should_close (FrWindow *window, SysBool bvalue) {
 }
 
-static void fr_sdl_window_destroy (FrWindow *window) {
+static void fr_sdl_window_destroy_i (FrWindow *window) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
 
-  SDL_DestroyWindow(self->gwindow);
+  SDL_DestroyWindow(self->ctx);
 }
 
 static void fr_sdl_window_get_size(FrWindow *window, SysInt *width, SysInt *height) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
   sys_return_if_fail(self != NULL);
 
-  SDL_GetWindowSize(self->gwindow, width, height);
+  SDL_GetWindowSize(self->ctx, width, height);
 }
 
 static void fr_sdl_error_callback(void) {
@@ -536,14 +540,14 @@ void fr_sdl_window_set_gwindow(FrWindow *window, SDL_Window * gwindow) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
   sys_return_if_fail(self != NULL);
 
-  self->gwindow = gwindow;
+  self->ctx = gwindow;
 }
 
 SDL_Window * fr_sdl_window_get_gwindow(FrWindow *window) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
   sys_return_val_if_fail(self != NULL, NULL);
 
-  return self->gwindow;
+  return self->ctx;
 }
 
 /* event callbacks */
@@ -650,7 +654,7 @@ static void sdl_handle_event(SDL_Event *e) {
   FrSdlWindow *window;
   if(e->type == SDL_EVENT_POLL_SENTINEL) { return; }
 
-  sys_info_N("event: %s", sdl_event_get_name(e->type));
+  // sys_info_N("event: %s", sdl_event_get_name(e->type));
   switch(e->type) {
     case SDL_EVENT_WINDOW_SHOWN:
       break;
@@ -683,7 +687,7 @@ static void sdl_handle_event(SDL_Event *e) {
         SysInt x, y;
         window = sdl_event_get_window(e->window.windowID);
 
-        SDL_GetWindowPosition(window->gwindow, &x, &y);
+        SDL_GetWindowPosition(window->ctx, &x, &y);
         fr_sdl_window_pos_callback(window, x, y);
       }
       break;
@@ -811,23 +815,29 @@ static void fr_swap_buffers_i(FrWindow *o) {
   FrSdlWindow *self = FR_SDL_WINDOW(o);
 
   sys_return_if_fail(self != NULL);
-  SDL_GL_SwapWindow(self->gwindow);
+  SDL_GL_SwapWindow(self->ctx);
 }
 
-void fr_window_display_create (FrDisplay *display) {
+
+void fr_window_display_close (FrDisplay *display) {
 #if SYS_OS_WIN32
-  display->native_ctx = UINT_TO_POINTER(SDL_GetPrimaryDisplay());
 #elif SYS_OS_UNIX
-  display->native_ctx = (SysPointer)XOpenDisplay(NULL);
+  XCloseDisplay(display->native_ctx);
 #endif
 }
 
-static SysPointer fr_window_get_native_display (FrDisplay *display) {
+void fr_window_display_create (FrDisplay *self) {
+
+ self->ctx = UINT_TO_POINTER(SDL_GetPrimaryDisplay());
+ self->native_ctx = NULL;
+}
+
+static SysPointer fr_sdl_window_get_native_display (FrDisplay *display) {
 
   return display->native_ctx;
 }
 
-static SysPointer fr_window_get_native_window (FrWindow* window) {
+static SysPointer fr_sdl_window_get_native_window (FrWindow* window) {
   FrSdlWindow *self = FR_SDL_WINDOW(window);
 
   return self->native_ctx;
@@ -837,7 +847,8 @@ void fr_sdl_window_setup(void) {
   SYS_LEAK_IGNORE_BEGIN;
   if (SDL_Init(
         SDL_INIT_VIDEO
-        | SDL_INIT_AUDIO) < 0) {
+        | SDL_INIT_AUDIO
+        | SDL_INIT_EVENTS) < 0) {
     sys_error_N("SDL failed to init: %s", SDL_GetError());
   }
   SYS_LEAK_IGNORE_END;
@@ -853,7 +864,7 @@ void fr_sdl_window_create_vk_surface(FrWindow *window,
     VkInstance instance,
     VkSurfaceKHR *surfacekhr) {
   if (SDL_CreateWindowSurface(instance,
-        self->gwindow,
+        self->ctx,
         NULL,
         surfacekhr) != VK_SUCCESS) {
 
@@ -861,6 +872,22 @@ void fr_sdl_window_create_vk_surface(FrWindow *window,
   }
 }
 #endif
+
+static void sdl_window_update_display (FrWindow* window, FrDisplay *display) {
+  FrSdlWindow *self = FR_SDL_WINDOW(window);
+
+#if SYS_OS_WIN32
+
+  display->native_ctx = (HDC)SDL_GetPointerProperty(
+      SDL_GetWindowProperties(self->ctx),
+      SDL_PROP_WINDOW_WIN32_HDC_POINTER, NULL);
+#elif SYS_OS_UNIX
+
+  display->native_ctx = (Display *)(SDL_GetProperty(
+        SDL_GetWindowProperties(self->ctx),
+        SDL_PROP_WINDOW_X11_DISPLAY_POINTER, 0));
+#endif
+}
 
 static void fr_sdl_window_create(
     FrWindow *o,
@@ -872,10 +899,10 @@ static void fr_sdl_window_create(
   FrSdlWindow *self = FR_SDL_WINDOW(o);
   FrSdlWindow *sshare = FR_SDL_WINDOW(share);
   SDL_Window *gwindow = NULL;
-  SDL_Window *gshare = share == NULL ? NULL : sshare->gwindow;
+  SDL_Window *gshare = share == NULL ? NULL : sshare->ctx;
 
   gwindow = fr_sdl_window_create_i(800, 600, title, gshare);
-  self->gwindow = gwindow;
+  self->ctx = gwindow;
 
 #if SYS_OS_WIN32
   HWND hwnd = (HWND)SDL_GetPointerProperty(
@@ -902,14 +929,15 @@ static void fr_sdl_window_create(
 #endif
 }
 
-static void fr_window_destroy(FrWindow *o) {
+static void fr_glfw_window_destroy_i(FrWindow *o) {
   FrSdlWindow *self = FR_SDL_WINDOW(o);
 
-  SDL_DestroyWindow(self->gwindow);
+  SDL_DestroyWindow(self->ctx);
 }
 
 static void i_window_imp(FrIWindowInterface *iface) {
   iface->create = fr_sdl_window_create;
+  iface->update_display = sdl_window_update_display;
   iface->set_error_callback = fr_sdl_set_error_callback;
   iface->get_framebuffer_size = fr_sdl_render_get_framebuffer_size;
   iface->window_get_size = fr_sdl_window_get_size;
@@ -917,7 +945,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->window_set_title = fr_sdl_window_set_title;
   iface->window_set_opacity = fr_sdl_window_set_opacity;
   iface->window_set_should_close = fr_sdl_window_set_should_close;
-  iface->window_destroy = fr_window_destroy;
+  iface->window_destroy = fr_glfw_window_destroy_i;
   iface->swap_buffers = fr_swap_buffers_i;
   iface->get_key_name = fr_sdl_get_key_name;
   iface->get_key = fr_sdl_get_key;
@@ -926,8 +954,8 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->post_empty_event = fr_post_empty_event_i;
   iface->poll_events = fr_poll_events_i;
   iface->delay = fr_delay_i;
-  iface->get_native_window = fr_window_get_native_window;
-  iface->get_native_display = fr_window_get_native_display;
+  iface->get_native_window = fr_sdl_window_get_native_window;
+  iface->get_native_display = fr_sdl_window_get_native_display;
   iface->display_create = fr_window_display_create;
   iface->audio_open = sdl_audio_open;
   iface->audio_get_info = sdl_audio_get_info;
@@ -956,9 +984,7 @@ static void fr_sdl_window_construct(
 static void fr_sdl_window_dispose(SysObject* o) {
   FrSdlWindow *self = FR_SDL_WINDOW(o);
 
-  fr_window_destroy(FR_WINDOW(self));
-
-  SYS_OBJECT_CLASS(fr_sdl_window_parent_class)->dispose(o);
+  fr_sdl_window_destroy_i((FrWindow *)self);
 }
 
 static void fr_sdl_window_class_init(FrSdlWindowClass* cls) {

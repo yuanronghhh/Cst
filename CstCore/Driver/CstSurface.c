@@ -75,7 +75,7 @@ static void cst_surface_dispose(SysObject* o) {
   sys_clear_pointer(&self->box_layer, _sys_object_unref);
   sys_clear_pointer(&self->abs_layer, _sys_object_unref);
 
-  SYS_OBJECT_CLASS(cst_surface_parent_class)->dispose(o);
+
 }
 
 static void cst_surface_class_init(CstSurfaceClass* cls) {

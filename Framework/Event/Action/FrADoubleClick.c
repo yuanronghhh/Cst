@@ -19,7 +19,7 @@ FrADoubleClick *fr_adouble_click_new_I(void) {
 }
 
 static void fr_adouble_click_dispose(SysObject* o) {
-  SYS_OBJECT_CLASS(fr_adouble_click_parent_class)->dispose(o);
+
 }
 
 static void fr_adouble_click_class_init(FrADoubleClickClass* cls) {

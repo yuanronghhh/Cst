@@ -5,11 +5,8 @@
 SYS_DEFINE_TYPE(FrAKey, fr_akey, FR_TYPE_ACTION);
 
 SysBool fr_akey_check_i (FrAction *self, FrEvent *e) {
-  if(!fr_event_is(e, FR_TYPE_EVENT_KEY)) {
-    return false;
-  }
 
-  return true;
+  return fr_event_is(e, FR_TYPE_EVENT_KEY);
 }
 
 void fr_akey_dispatch_i (FrAction *o, FrEvent *e) {
@@ -18,9 +15,10 @@ void fr_akey_dispatch_i (FrAction *o, FrEvent *e) {
 }
 
 /* object api */
-static void fr_akey_create_i(FrAction *o) {
+static void fr_akey_create_i(FrAction *o, FrActionContext *info) {
+  info->name = "akey";
 
-  FR_ACTION_CLASS(fr_akey_parent_class)->create(o);
+  FR_ACTION_CLASS(fr_akey_parent_class)->create(o, info);
 }
 
 FrAction* fr_akey_new(void) {
@@ -29,7 +27,7 @@ FrAction* fr_akey_new(void) {
 
 static void fr_akey_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_akey_parent_class)->dispose(o);
+
 }
 
 static void fr_akey_class_init(FrAKeyClass* cls) {
@@ -43,17 +41,15 @@ static void fr_akey_class_init(FrAKeyClass* cls) {
   ocls->dispose = fr_akey_dispose;
 }
 
-FrAction *fr_akey_new_I(void) {
+FrAction *fr_akey_new_I(FrActionContext *info) {
   FrAction *o = fr_akey_new();
 
-  fr_akey_create_i(o);
+  fr_akey_create_i(o, info);
 
   return o;
 }
 
 void fr_akey_init(FrAKey *self) {
-
-  fr_action_set_name(FR_ACTION(self), "key");
 }
 
 FrAction* fr_akey_get_static(void) {
@@ -64,7 +60,9 @@ FrAction* fr_akey_get_static(void) {
   if(node != NULL) {
     goto done;
   }
-  node = fr_akey_new_I();
+
+  FrActionContext info = {0};
+  node = fr_akey_new_I(&info);
 
 done:
   fr_events_unlock();

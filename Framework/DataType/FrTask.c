@@ -3,16 +3,6 @@
 
 SYS_DEFINE_TYPE(FrTask, fr_task, SYS_TYPE_OBJECT);
 
-static SysBool fr_task_destroy_i(SysObject* o) {
-  FrTask *self = FR_TASK(o);
-
-  self->user_data = NULL;
-  self->handler = NULL;
-  self->callback = NULL;
-
-  return true;
-}
-
 void fr_task_run(FrTask *self) {
   sys_return_if_fail(self != NULL);
 
@@ -116,17 +106,18 @@ FrTask *fr_task_new_I(FrTaskContext *info) {
 static void fr_task_dispose(SysObject* o) {
   FrTask *self = FR_TASK(o);
 
+  self->user_data = NULL;
+  self->handler = NULL;
+  self->callback = NULL;
+
   sys_cond_clear(&self->cond);
   sys_mutex_clear(&self->mutex);
-
-  SYS_OBJECT_CLASS(fr_task_parent_class)->dispose(o);
 }
 
 static void fr_task_class_init(FrTaskClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_task_dispose;
-  ocls->destroy = fr_task_destroy_i;
   cls->construct = fr_task_construct_i;
 }
 

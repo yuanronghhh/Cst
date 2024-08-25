@@ -41,7 +41,7 @@ FrEvent *fr_event_refresh_new_bound(FrWindow *window, FrBound *bound) {
 }
 
 static void fr_event_refresh_dispose(SysObject* o) {
-  SYS_OBJECT_CLASS(fr_event_refresh_parent_class)->dispose(o);
+
 }
 
 static void fr_event_refresh_class_init(FrEventRefreshClass* cls) {

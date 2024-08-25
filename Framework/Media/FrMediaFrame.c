@@ -2,14 +2,6 @@
 
 SYS_DEFINE_TYPE(FrMediaFrame, fr_media_frame, FR_TYPE_MEDIA_PACKET);
 
-SysBool fr_media_frame_destroy_i(SysObject *o) {
-  FrMediaFrame* self = FR_MEDIA_FRAME(o);
-
-  fr_media_frame_free(self);
-
-  return SYS_OBJECT_CLASS(fr_media_frame_parent_class)->destroy(o);
-}
-
 void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) {
   sys_return_if_fail(self != NULL);
 
@@ -54,19 +46,16 @@ FrMediaFrame* fr_media_frame_new(void) {
   return sys_object_new(FR_TYPE_MEDIA_FRAME, NULL);
 }
 
-static void fr_media_frame_dispose(SysObject* o) {
+void fr_media_frame_dispose(SysObject *o) {
   FrMediaFrame* self = FR_MEDIA_FRAME(o);
 
   fr_media_frame_free(self);
-
-  SYS_OBJECT_CLASS(fr_media_frame_parent_class)->dispose(o);
 }
 
 static void fr_media_frame_class_init(FrMediaFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FrMediaFrameClass *mcls = FR_MEDIA_FRAME_CLASS(cls);
 
-  ocls->destroy = fr_media_frame_destroy_i;
   ocls->dispose = fr_media_frame_dispose;
   ocls->dclone = fr_media_frame_dclone_i;
 
@@ -74,5 +63,6 @@ static void fr_media_frame_class_init(FrMediaFrameClass* cls) {
 }
 
 void fr_media_frame_init(FrMediaFrame* self) {
-  self->ctx = av_frame_alloc();
+
+  fr_media_media_frame_create(self);
 }

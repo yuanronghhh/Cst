@@ -54,7 +54,7 @@ static void fr_media_stream_dispose(SysObject* o) {
 
   fr_media_stream_free(self);
 
-  SYS_OBJECT_CLASS(fr_media_stream_parent_class)->dispose(o);
+
 }
 
 static void fr_media_stream_class_init(FrMediaStreamClass* cls) {

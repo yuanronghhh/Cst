@@ -18,19 +18,17 @@ struct _FrDisplayClass {
 struct _FrDisplay {
   SysObject parent;
 
+  /* SDL_DisplayID */
+  SysPointer ctx;
+
+  /* Display */
   SysPointer native_ctx;
 };
 
 SYS_API SysType fr_display_get_type(void);
 SYS_API FrDisplay* fr_display_new_I (void);
 
-#if SYS_OS_WIN32
-
-#elif SYS_OS_UNIX
-
-SYS_API Display* fr_display_get_x11_display(FrDisplay *display);
-
-#endif
+#define fr_display_get_native_display(o) fr_i_window_get_native_display(o)
 
 SYS_END_DECLS
 

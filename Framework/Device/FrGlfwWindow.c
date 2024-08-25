@@ -71,8 +71,11 @@ static void fr_glfw_window_set_should_close (FrWindow *window, SysBool bvalue) {
   glfwSetWindowShouldClose(self->gwindow, bvalue);
 }
 
-static void fr_glfw_window_destroy (FrWindow *window) {
+static void fr_glfw_window_destroy_i (FrWindow *window) {
   FrGlfwWindow *self = FR_GLFW_WINDOW(window);
+
+  fr_glfw_set_window(self->gwindow, NULL);
+  fr_glfw_window_event_unregister(self);
 
   glfwDestroyWindow(self->gwindow);
 }
@@ -291,7 +294,7 @@ static void fr_delay_i(SysDouble msec) {
   sys_usleep((SysULong)(msec * 1e3));
 }
 
-static SysPointer fr_window_get_native_window (FrWindow* window) {
+static SysPointer fr_glfw_window_get_native_window (FrWindow* window) {
   FrGlfwWindow *self = FR_GLFW_WINDOW(window);
 
 #if SYS_OS_WIN32
@@ -301,7 +304,13 @@ static SysPointer fr_window_get_native_window (FrWindow* window) {
 #endif
 }
 
-static SysPointer fr_window_get_native_display(FrDisplay *display) {
+static void fr_window_set_native_display(FrDisplay *self, SysPointer ctx) {
+  sys_return_if_fail(self != NULL);
+
+  self->native_ctx = ctx;
+}
+
+static SysPointer fr_glfw_window_get_native_display(FrDisplay *display) {
 
   return display->native_ctx;
 }
@@ -387,6 +396,7 @@ static void fr_glfw_window_create(
   fr_glfw_window_event_register(self);
 }
 
+
 static void i_window_imp(FrIWindowInterface *iface) {
   iface->create = fr_glfw_window_create;
   iface->set_error_callback = fr_glfw_set_error_callback;
@@ -396,7 +406,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->window_set_title = fr_glfw_window_set_title;
   iface->window_set_opacity = fr_glfw_window_set_opacity;
   iface->window_set_should_close = fr_glfw_window_set_should_close;
-  iface->window_destroy = fr_glfw_window_destroy;
+  iface->window_destroy = fr_glfw_window_destroy_i;
   iface->swap_buffers = fr_swap_buffers_i;
   iface->get_key_name = fr_glfw_get_key_name;
   iface->get_key = fr_glfw_get_key;
@@ -405,8 +415,8 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->post_empty_event = fr_post_empty_event_i;
   iface->poll_events = fr_poll_events_i;
   iface->delay = fr_delay_i;
-  iface->get_native_window = fr_window_get_native_window;
-  iface->get_native_display = fr_window_get_native_display;
+  iface->get_native_window = fr_glfw_window_get_native_window;
+  iface->get_native_display = fr_glfw_window_get_native_display;
   iface->display_create = fr_window_display_create;
 }
 
@@ -416,18 +426,9 @@ void fr_glfw_window_iface_setup(FrIWindowInterface *iface) {
 }
 
 /* object api */
-static void fr_window_destroy_i(SysObject *o) {
-  FrGlfwWindow *self = FR_GLFW_WINDOW(o);
+static void fr_glfw_window_dispose(SysObject *o) {
 
-  fr_glfw_set_window(self->gwindow, NULL);
-  fr_glfw_window_event_unregister(self);
-
-  glfwDestroyWindow(self->gwindow);
-}
-
-static void fr_glfw_window_dispose(SysObject* o) {
-
-  fr_window_destroy_i(o);
+  fr_glfw_window_destroy_i((FrWindow *)o);
 }
 
 static void fr_glfw_window_class_init(FrGlfwWindowClass* cls) {

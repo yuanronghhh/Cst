@@ -24,7 +24,7 @@ CstFlexContext *cst_flex_context_new_I() {
 static void cst_flex_context_dispose(SysObject* o) {
   // CstFlexContext *self = CST_FLEX_CONTEXT(o);
 
-  SYS_OBJECT_CLASS(cst_flex_context_parent_class)->dispose(o);
+
 }
 
 static void cst_flex_context_class_init(CstFlexContextClass* cls) {

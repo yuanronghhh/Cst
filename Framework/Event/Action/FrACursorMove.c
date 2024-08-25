@@ -18,9 +18,9 @@ SysBool fr_acursor_move_get_position (FrACursorMove *self, SysDouble *x, SysDoub
   return true;
 }
 
-static void fr_acursor_move_create_i (FrAction *o) {
-
-  FR_ACTION_CLASS(fr_acursor_move_parent_class)->create(o);
+static void fr_acursor_move_create_i (FrAction *o, FrActionContext *info) {
+  info->name = "cursor_move";
+  FR_ACTION_CLASS(fr_acursor_move_parent_class)->create(o, info);
 }
 
 static SysBool fr_acursor_move_check_i (FrAction *self, FrEvent *e) {
@@ -45,17 +45,17 @@ FrAction* fr_acursor_move_new(void) {
   return sys_object_new(FR_TYPE_ACURSOR_MOVE, NULL);
 }
 
-FrAction *fr_acursor_move_new_I(void) {
+FrAction *fr_acursor_move_new_I(FrActionContext *info) {
   FrAction *o = fr_acursor_move_new();
 
-  fr_acursor_move_create_i(o);
+  fr_acursor_move_create_i(o, info);
 
   return o;
 }
 
 static void fr_acursor_move_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_acursor_move_parent_class)->dispose(o);
+
 }
 
 static void fr_acursor_move_class_init(FrACursorMoveClass* cls) {
@@ -70,8 +70,6 @@ static void fr_acursor_move_class_init(FrACursorMoveClass* cls) {
 }
 
 static void fr_acursor_move_init(FrACursorMove *self) {
-
-  fr_action_set_name(FR_ACTION(self), "cursor_move");
 }
 
 FrAction *fr_acursor_move_get_static(void) {
@@ -82,7 +80,8 @@ FrAction *fr_acursor_move_get_static(void) {
     goto done;
   }
 
-  node = fr_acursor_move_new_I();
+  FrActionContext info = {0};
+  node = fr_acursor_move_new_I(&info);
 
 done:
   fr_events_unlock();

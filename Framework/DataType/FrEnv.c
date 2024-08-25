@@ -91,7 +91,7 @@ static void fr_env_dispose(SysObject* o) {
 
   fr_env_set_parent(self, NULL);
 
-  SYS_OBJECT_CLASS(fr_env_parent_class)->dispose(o);
+
 }
 
 static void fr_env_class_init(FrEnvClass* cls) {

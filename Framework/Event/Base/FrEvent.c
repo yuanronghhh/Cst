@@ -33,7 +33,7 @@ FrEvent *fr_event_new_I(FrWindow *window) {
 }
 
 static void fr_event_dispose(SysObject* o) {
-  SYS_OBJECT_CLASS(fr_event_parent_class)->dispose(o);
+
 }
 
 static void fr_event_class_init(FrEventClass* cls) {

@@ -23,7 +23,7 @@ FrDecoder *fr_frame_decoder_new_I(void) {
 
 static void fr_frame_decoder_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_frame_decoder_parent_class)->dispose(o);
+
 }
 
 static void fr_frame_decoder_class_init(FrFrameDecoderClass* cls) {

@@ -31,6 +31,12 @@ FrAvRender* fr_av_render_new(void) {
 
 FrAvRender *fr_av_render_new_I(FrAvRenderContext *info) {
   FrAvRender *o = fr_av_render_new();
+  sys_return_val_if_fail(info != NULL, NULL);
+
+  if(info->audio_render == NULL
+      && info->video_render == NULL) {
+    return NULL;
+  }
 
   fr_av_render_construct_i(o, info);
 
@@ -40,10 +46,17 @@ FrAvRender *fr_av_render_new_I(FrAvRenderContext *info) {
 static void fr_av_render_dispose(SysObject* o) {
   FrAvRender *self = FR_AV_RENDER(o);
 
-  sys_object_unref(self->video_render);
-  sys_object_unref(self->audio_render);
+  if(self->video_render) {
 
-  SYS_OBJECT_CLASS(fr_av_render_parent_class)->dispose(o);
+    sys_clear_pointer(&self->video_render, _sys_object_unref);
+  }
+
+  if(self->audio_render) {
+
+    sys_clear_pointer(&self->audio_render, _sys_object_unref);
+  }
+
+
 }
 
 static void fr_av_render_class_init(FrAvRenderClass* cls) {

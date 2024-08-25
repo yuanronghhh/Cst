@@ -8,8 +8,6 @@ struct _LayoutComponentPrivate {
   SysChar reserved;
 };
 
-static void layout_component_dispose(SysObject *self);
-
 SYS_DEFINE_TYPE_WITH_PRIVATE(LayoutComponent, layout_component, CST_TYPE_COMPONENT);
 
 LayoutComponent* layout_component_new(void) {
@@ -27,5 +25,5 @@ static void layout_component_class_init(LayoutComponentClass *cls) {
 }
 
 static void layout_component_dispose(SysObject *o) {
-  SYS_OBJECT_CLASS(layout_component_parent_class)->dispose(o);
+
 }

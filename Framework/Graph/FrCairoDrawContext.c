@@ -25,7 +25,7 @@ static void fr_surface_flush(FrSurface *self) {
   cairo_surface_flush(self->ctx);
 }
 
-static void fr_surface_destroy(FrSurface *self) {
+static void fr_surface_free(FrSurface *self) {
   sys_return_if_fail(self != NULL);
 
   cairo_surface_destroy(self->ctx);
@@ -160,8 +160,8 @@ static cairo_surface_t* create_cairo_surface(FrWindow* window, SysInt width, Sys
 
 #elif SYS_OS_UNIX
     FrDisplay* display = fr_window_get_display(window);
-    Window xwindow = fr_window_get_x11_window(window);
-    Display* ndisplay = fr_display_get_x11_display(display);
+    Window xwindow = (Window)fr_window_get_native_window(window);
+    Display* ndisplay = (Display *)fr_display_get_native_display(display);
     int nscreen = DefaultScreen(ndisplay);
     Visual* nvisual = DefaultVisual(ndisplay, nscreen);
 
@@ -308,7 +308,7 @@ static void fr_context_create(FrContext *self, FrSurface *surface) {
   self->ctx = cairo_create(surface->ctx);
 }
 
-static void fr_context_destroy(FrContext *self) {
+static void fr_context_free(FrContext *self) {
 
   cairo_destroy(self->ctx);
 }
@@ -322,11 +322,11 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->create = fr_context_create;
   iface->stroke = fr_context_stroke;
   iface->clip = fr_context_clip;
-  iface->destroy = fr_context_destroy;
+  iface->destroy = fr_context_free;
   iface->rounded_rectangle = fr_context_rounded_rectangle;
   iface->surface_create_similar_image = fr_surface_create_similar_image;
   iface->surface_flush = fr_surface_flush;
-  iface->surface_destroy = fr_surface_destroy;
+  iface->surface_destroy = fr_surface_free;
   iface->show_layout = fr_context_show_layout;
   iface->update_layout = fr_context_layout_update;
   iface->paint = fr_context_paint;
@@ -367,7 +367,7 @@ FrDrawContext *fr_cairo_draw_context_new_I(FrDevice *device) {
 
 static void fr_cairo_draw_context_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_cairo_draw_context_parent_class)->dispose(o);
+
 }
 
 static void fr_cairo_draw_context_class_init(FrCairoDrawContextClass* cls) {

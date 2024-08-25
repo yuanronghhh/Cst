@@ -41,7 +41,7 @@ CstFlexLine *cst_flex_line_new_I(void) {
 static void cst_flex_line_dispose(SysObject* o) {
   // CstFlexLine *self = CST_FLEX_LINE(o);
 
-  SYS_OBJECT_CLASS(cst_flex_line_parent_class)->dispose(o);
+
 }
 
 static void cst_flex_line_class_init(CstFlexLineClass* cls) {

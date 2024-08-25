@@ -12,6 +12,7 @@ void fr_core_setup(void) {
   // fr_font_setup();
   fr_main_setup();
   fr_window_setup();
+  fr_audio_device_setup();
   fr_draw_setup();
   fr_events_setup();
 
@@ -30,6 +31,7 @@ void fr_core_teardown(void) {
 #endif
 
   fr_events_teardown();
+  fr_audio_device_teardown();
   fr_window_teardown();
   fr_draw_teardown();
   fr_main_teardown();

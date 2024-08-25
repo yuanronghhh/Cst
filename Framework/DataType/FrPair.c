@@ -4,12 +4,11 @@
 
 SYS_DEFINE_TYPE(FrPair, fr_pair, SYS_TYPE_OBJECT);
 
-static void fr_pair_key_destroy(SysPointer key) {
+static void fr_pair_key_dispose(SysPointer key) {
 
 }
 
-static void fr_pair_value_destroy(SysPointer value) {
-
+static void fr_pair_value_dispose(SysPointer value) {
 }
 
 /* object api */
@@ -40,16 +39,14 @@ static void fr_pair_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->value, cls->value_destroy);
   }
-
-  SYS_OBJECT_CLASS(fr_pair_parent_class)->dispose(o);
 }
 
 static void fr_pair_class_init(FrPairClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   cls->construct = fr_pair_construct;
-  cls->key_destroy = fr_pair_key_destroy;
-  cls->value_destroy = fr_pair_value_destroy;
+  cls->key_destroy = fr_pair_key_dispose;
+  cls->value_destroy = fr_pair_value_dispose;
 
   ocls->dispose = fr_pair_dispose;
 }

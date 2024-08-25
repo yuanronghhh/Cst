@@ -372,7 +372,7 @@ static void cst_module_dispose(SysObject* o) {
 
   fr_env_set_parent(FR_ENV(self), NULL);
 
-  SYS_OBJECT_CLASS(cst_module_parent_class)->dispose(o);
+
 }
 
 static void cst_module_class_init(CstModuleClass* cls) {

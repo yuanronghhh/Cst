@@ -95,7 +95,7 @@ void cst_css_node_teardown(void) {
 static void cst_css_node_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
-  SYS_OBJECT_CLASS(cst_css_node_parent_class)->dispose(o);
+
 }
 
 static void cst_css_node_construct(CstCssNode* self, SysChar* name, SysInt css_ptype, SysInt css_state, CstCssFunc set_value) {

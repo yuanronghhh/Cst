@@ -942,7 +942,7 @@ static void ast_parser_construct_i(CstParser *o, FILE *fp, const SysChar *fullpa
 
 static void ast_parser_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(ast_parser_parent_class)->dispose(o);
+
 }
 
 CstParser *ast_parser_new(void) {

@@ -57,8 +57,6 @@ static void fr_packet_decoder_dispose(SysObject* o) {
   FrPacketDecoder *self = FR_PACKET_DECODER(o);
 
   sys_clear_pointer(&self->file, _sys_object_unref);
-
-  SYS_OBJECT_CLASS(fr_packet_decoder_parent_class)->dispose(o);
 }
 
 static void fr_packet_decoder_class_init(FrPacketDecoderClass* cls) {

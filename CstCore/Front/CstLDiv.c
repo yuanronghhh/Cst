@@ -15,7 +15,7 @@ static void cst_ldiv_init(CstLDiv *self) {
 
 static void cst_ldiv_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(cst_ldiv_parent_class)->dispose(o);
+
 }
 
 static void cst_ldiv_class_init(CstLDivClass* cls) {

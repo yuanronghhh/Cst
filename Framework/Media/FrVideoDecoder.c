@@ -34,8 +34,9 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
       .name = self->hwaccel_name,
       .decoder = FR_MEDIA_DECODER(self),
     };
+    UNUSED(hwinfo);
 
-    info.hw_accel = fr_hw_accel_new_I(&hwinfo);
+    info.hw_accel = NULL;// fr_hw_accel_new_I(&hwinfo);
   }
 
   fr_image_scale_construct(&self->scale, &info);
@@ -104,7 +105,7 @@ static void fr_video_decoder_dispose(SysObject* o) {
 
   sys_object_destroy(&self->scale);
 
-  SYS_OBJECT_CLASS(fr_video_decoder_parent_class)->dispose(o);
+  
 }
 
 static void fr_video_decoder_class_init(FrVideoDecoderClass* cls) {

@@ -15,19 +15,18 @@ if(WIN32)
   if(USE_LLVM)
     SET(CMAKE_TOOLCHAIN_FILE "${INIT_HOME}/toolchain/ClangWindows.cmake")
     set(CMAKE_GENERATOR_TOOLSET "ClangCL")
+    set(CMAKE_C_FLAGS "-Wall -g -Wno-unused-function")
   endif()
 
   if(USE_MONO)
     set(CMAKE_Csharp_COMPILER "C:/Program Files/Mono/bin/mcs.bat")
   endif()
-
-  set(CMAKE_C_FLAGS "-Wall -gdwarf -Wno-unused-function")
 else()
   set(OS_ARCHITECH "Linux")
   set(CLANG_HOME "/usr")
   set(CLANG_VERSION "18.1.4")
   set(LIBDIR ${CMAKE_SOURCE_DIR}/../lib/linux)
-  set(CMAKE_C_FLAGS "-Wall -g -Wno-unused-function")
+  set(CMAKE_C_FLAGS "-Wall -Wno-unused-function")
 endif()
 
 

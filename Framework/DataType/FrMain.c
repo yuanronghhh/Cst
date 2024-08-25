@@ -9,8 +9,6 @@ struct _FrMainPrivate {
 
 SYS_DEFINE_TYPE(FrMain, fr_main, SYS_TYPE_OBJECT);
 
-static void fr_main_destroy(FrMain * self);
-
 static FrMain *main_loop = NULL;
 
 FrMain *fr_main_get_main_loop(void) {
@@ -84,7 +82,7 @@ SysBool fr_main_is_running(FrMain *self) {
   return (SysBool)sys_atomic_int_get(&self->is_running);
 }
 
-static void fr_main_destroy(FrMain *self) {
+static void fr_main_clear(FrMain *self) {
   sys_return_if_fail(self != NULL);
 
   sys_assert(self->is_running == false);
@@ -116,7 +114,7 @@ void fr_main_run(FrMain *self) {
     fr_source_finish(source);
   }
 
-  fr_main_destroy(self);
+  fr_main_clear(self);
 }
 
 void fr_main_setup(void) {
@@ -151,9 +149,8 @@ FrMain *fr_main_new_I(void) {
 
 static void fr_main_dispose(SysObject* o) {
   FrMain *self = FR_MAIN(o);
-  sys_rec_mutex_clear(&self->mutex);
 
-  SYS_OBJECT_CLASS(fr_main_parent_class)->dispose(o);
+  sys_rec_mutex_clear(&self->mutex);
 }
 
 static void fr_main_class_init(FrMainClass* cls) {

@@ -34,28 +34,6 @@ SysType fr_media_decoder_enum_to_type(FR_MEDIA_ENUM mediaType) {
   }
 }
 
-SysBool fr_media_decoder_get_hw_info(
-    FrMediaDecoder *self,
-    SysInt hw_dtype,
-    SysInt *hw_pix_format) {
-
-  SysInt i;
-  const AVCodecHWConfig *config;
-
-  for (i = 0; ;i++) {
-    config = avcodec_get_hw_config(self->codec, i);
-    if(config == NULL) { return false; }
-
-    if ((config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX)
-        && config->device_type == hw_dtype) {
-      *hw_pix_format = config->pix_fmt;
-      break;
-    }
-  }
-
-  return true;
-}
-
 static const SysChar* fr_media_decoder_type_to_name(SysType tp) {
   if(tp == FR_TYPE_VIDEO_DECODER) {
     return DECODER_NAMES[FR_MEDIA_VIDEO];
@@ -68,12 +46,6 @@ static const SysChar* fr_media_decoder_type_to_name(SysType tp) {
   return NULL;
 }
 
-void fr_media_decoder_flush(FrMediaDecoder* self) {
-  sys_return_if_fail(self != NULL);
-
-  avcodec_flush_buffers(self->ctx);
-}
-
 SysInt fr_media_decoder_close_i(FrDecoder* o) {
 
   return 0;
@@ -83,7 +55,7 @@ SysInt fr_media_decoder_open_i(FrDecoder* o) {
   FrMediaDecoder *self = FR_MEDIA_DECODER(o);
   sys_return_val_if_fail(self != NULL, -1);
 
-  return avcodec_open2(self->ctx, self->codec, NULL);
+  return fr_media_decoder_open(self);
 }
 
 void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt) {
@@ -108,6 +80,7 @@ SysInt fr_media_decoder_read_i(FrMediaDecoder *self, FrMediaPacket **pkt) {
   FrMediaPacket *npkt;
 
   npkt = sys_async_queue_try_pop(&self->queue);
+  int len = sys_async_queue_length(&self->queue);
   *pkt = npkt;
 
   return npkt != NULL;
@@ -176,7 +149,7 @@ SysInt fr_media_decoder_try_decode_frame(
 
   } else {
 
-    sys_warning_N("%d,%s", err, av_err2str(err));
+    sys_warning_N("%d,%s", err, fr_media_error_string(err));
   }
 
   return err;
@@ -231,6 +204,8 @@ FrDecoder* fr_media_decoder_create_by_media_type(
   const SysChar *name;
 
   mst = fr_media_file_stream_by_type(file, mediaType);
+  if(mst == NULL) { return NULL; }
+
   tp = fr_media_decoder_enum_to_type(mediaType);
   if (tp == 0) { return NULL; }
 
@@ -243,11 +218,11 @@ FrDecoder* fr_media_decoder_create_by_media_type(
 }
 
 
-static void fr_media_decoder_dispose(SysObject* o) {
+static void cst_css_node_dispose(SysObject* o) {
   FrMediaDecoder *self = FR_MEDIA_DECODER(o);
   FrDecoder *decoder = FR_DECODER(o);
 
-  if (avcodec_is_open(self->ctx)) {
+  if (fr_media_decoder_is_open(self)) {
 
     fr_media_decoder_close_i(decoder);
   }
@@ -256,7 +231,12 @@ static void fr_media_decoder_dispose(SysObject* o) {
 
   fr_media_decoder_free(self);
 
-  SYS_OBJECT_CLASS(fr_media_decoder_parent_class)->dispose(o);
+  if(self->frame) {
+
+    sys_clear_pointer(&self->frame, _sys_object_unref);
+  }
+
+  
 }
 
 static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
@@ -270,7 +250,7 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
   dcls->open = fr_media_decoder_open_i;
   dcls->close = fr_media_decoder_close_i;
 
-  ocls->dispose = fr_media_decoder_dispose;
+  ocls->dispose = cst_css_node_dispose;
 }
 
 void fr_media_decoder_init(FrMediaDecoder* self) {

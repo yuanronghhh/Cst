@@ -150,7 +150,7 @@ static void fr_decoder_dispose(SysObject* o) {
 
   sys_free_N(self->name);
 
-  SYS_OBJECT_CLASS(fr_decoder_parent_class)->dispose(o);
+
 }
 
 static void fr_decoder_class_init(FrDecoderClass* cls) {

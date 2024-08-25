@@ -387,7 +387,7 @@ static void cst_render_node_dispose(SysObject* o) {
   }
   sys_clear_pointer(&self->name, sys_free);
 
-  SYS_OBJECT_CLASS(cst_render_node_parent_class)->dispose(o);
+
 }
 
 void cst_render_node_construct(CstRenderNode* self, CstRenderNodeContext *param) {

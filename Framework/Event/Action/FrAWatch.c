@@ -219,7 +219,7 @@ static void fr_awatch_dispose(SysObject* o) {
     sys_clear_pointer(&self->func_name, sys_free);
   }
 
-  SYS_OBJECT_CLASS(fr_awatch_parent_class)->dispose(o);
+
 }
 
 static void fr_awatch_construct_i(FrAWatch* self, FrAWatchBuilder *builder) {

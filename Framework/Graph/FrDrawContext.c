@@ -211,7 +211,7 @@ static void fr_draw_context_dispose(SysObject* o) {
   }
   sys_harray_destroy(&self->surfaces);
 
-  SYS_OBJECT_CLASS(fr_draw_context_parent_class)->dispose(o);
+
 }
 
 static void fr_draw_context_class_init(FrDrawContextClass* cls) {

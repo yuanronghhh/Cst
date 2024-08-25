@@ -1,6 +1,6 @@
 set(INC
   ../
-  ../../CstDemo
+  # ${CMAKE_SOURCE_DIR}/../CstDemo/
 )
 
 set(EXTERNAL_LIBS

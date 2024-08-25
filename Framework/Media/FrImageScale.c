@@ -43,21 +43,10 @@ static void calc_proportion(
   if(height <= 0) { return; }
   SysInt gv;
 
-  gv = (SysInt)av_gcd(width, height);
+  gv = (SysInt)fr_media_gcd(width, height);
 
   prop->width = width / gv;
   prop->height = height / gv;
-}
-
-static SysBool fr_image_scale_destroy_i(SysObject* o) {
-  FrImageScale *self = FR_IMAGE_SCALE(o);
-
-  if (self->ctx) {
-
-    sys_clear_pointer(&self->ctx, sws_freeContext);
-  }
-
-  return true;
 }
 
 void fr_image_scale_setup_scale(FrImageScale *self) {
@@ -192,7 +181,7 @@ FrImageScale* fr_image_scale_new_I(FrImageScaleContext *info) {
   return o;
 }
 
-static void fr_image_scale_dispose(SysObject* o) {
+void fr_image_scale_dispose(SysObject* o) {
   FrImageScale *self = FR_IMAGE_SCALE(o);
 
   if (self->ctx) {
@@ -204,15 +193,13 @@ static void fr_image_scale_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->hw_accel, _sys_object_unref);
   }
-
-  SYS_OBJECT_CLASS(fr_image_scale_parent_class)->dispose(o);
 }
+
 
 static void fr_image_scale_class_init(FrImageScaleClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_image_scale_dispose;
-  ocls->destroy = fr_image_scale_destroy_i;
 }
 
 void fr_image_scale_init(FrImageScale* self) {

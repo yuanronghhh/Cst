@@ -22,7 +22,7 @@ static void mini_menubase_construct(CstComponent *o, CstComponentContext *c) {
 
 static void mini_menubase_dispose(SysObject *o) {
 
-  SYS_OBJECT_CLASS(mini_menubase_parent_class)->dispose(o);
+
 }
 
 static void mini_menubase_class_init(MiniMenuBaseClass *cls) {

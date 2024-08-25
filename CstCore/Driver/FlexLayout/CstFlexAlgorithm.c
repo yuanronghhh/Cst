@@ -70,7 +70,7 @@ CstAlgorithm* cst_flex_algorithm_new_I(void) {
 
 static void cst_flex_algorithm_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(cst_flex_algorithm_parent_class)->dispose(o);
+
 }
 
 static void cst_flex_algorithm_class_init(CstFlexAlgorithmClass* cls) {

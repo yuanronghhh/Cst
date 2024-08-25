@@ -40,7 +40,7 @@ FrEvent *fr_event_mousekey_new_I(FrWindow *window, SysInt button, SysInt action,
 
 static void fr_event_mousekey_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_event_mousekey_parent_class)->dispose(o);
+
 }
 
 static void fr_event_mousekey_class_init(FrEventMouseKeyClass* cls) {

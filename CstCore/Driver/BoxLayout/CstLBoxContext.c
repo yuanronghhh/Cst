@@ -22,7 +22,7 @@ static void cst_lbox_context_init(CstLBoxContext *o) {
 
 static void cst_lbox_context_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(cst_lbox_context_parent_class)->dispose(o);
+
 }
 
 static void cst_lbox_context_class_init(CstLBoxContextClass* cls) {

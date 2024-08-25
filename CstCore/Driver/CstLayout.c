@@ -121,7 +121,7 @@ static void cst_layout_dispose(SysObject* o) {
   sys_clear_pointer(&self->region, fr_region_destroy);
   sys_clear_pointer(&self->draw_context, _sys_object_unref);
 
-  SYS_OBJECT_CLASS(cst_layout_parent_class)->dispose(o);
+
 }
 
 static void cst_layout_class_init(CstLayoutClass* cls) {

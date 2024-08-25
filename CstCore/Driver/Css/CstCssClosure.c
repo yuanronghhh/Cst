@@ -37,7 +37,7 @@ static void cst_css_closure_dispose(SysObject* o) {
     }
   }
 
-  SYS_OBJECT_CLASS(cst_css_closure_parent_class)->dispose(o);
+
 }
 
 static void cst_css_closure_construct(CstCssClosure* self, SysPointer data, CstCssFunc calc, SysDestroyFunc free) {

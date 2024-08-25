@@ -17,7 +17,7 @@ struct _FrSdlWindowClass {
 struct _FrSdlWindow {
   FrWindow parent;
   /* <private> */
-  SDL_Window *gwindow;
+  SDL_Window *ctx;
   SysPointer native_ctx;
 };
 

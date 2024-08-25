@@ -86,7 +86,7 @@ FrAWatchMousePress* fr_awatch_mouse_press_new(void) {
 
 static void fr_awatch_mouse_press_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(fr_awatch_mouse_press_parent_class)->dispose(o);
+
 }
 
 static void fr_awatch_mouse_press_class_init(FrAWatchMousePressClass* cls) {

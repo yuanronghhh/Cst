@@ -112,7 +112,7 @@ static void fr_awatch_builder_dispose(SysObject* o) {
   self->key = -1;
   self->bound_func = NULL;
 
-  SYS_OBJECT_CLASS(fr_awatch_builder_parent_class)->dispose(o);
+
 }
 
 FrAWatchBuilder *fr_awatch_builder_new(void) {

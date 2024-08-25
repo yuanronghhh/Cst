@@ -86,8 +86,8 @@ void test_video_player(void) {
   FrMediaFile *mfile;
   FrAvPlayer *mplayer;
   FrAvRender *imrender;
-  FrDrawContext *video_render;
-  FrAudioStream *audio_render;
+  FrDrawContext *video_render = NULL;
+  FrAudioStream *audio_render = NULL;
   FrSurface* paint_surface;
 
   display = fr_display_new_I();
@@ -98,7 +98,10 @@ void test_video_player(void) {
   sys_return_if_fail(mfile != NULL);
 
   audio_device = (FrAudioDevice *)fr_audio_device_find_by_media_file(mfile);
-  audio_render = (FrAudioStream *)fr_audio_stream_new_out_by_device(audio_device);
+  if(audio_device) {
+
+    audio_render = (FrAudioStream *)fr_audio_stream_new_out_by_device(audio_device);
+  }
 
   video_render = fr_cairo_draw_context_new_I(video_device);
 
@@ -123,9 +126,19 @@ void test_video_player(void) {
 
   fr_av_player_run(mplayer);
 
-  sys_object_unref(mplayer);
-  sys_object_unref(mfile);
-  sys_object_unref(video_render);
+  sys_clear_pointer(&imrender, _sys_object_unref);
+  sys_clear_pointer(&mplayer, _sys_object_unref);
+  sys_clear_pointer(&mfile, _sys_object_unref);
+
+  if(video_render != NULL) {
+
+    sys_clear_pointer(&video_render, _sys_object_unref);
+  }
+
+  if(audio_render != NULL) {
+
+    sys_clear_pointer(&audio_render, _sys_object_unref);
+  }
 
   sys_clear_pointer(&video_device, _sys_object_unref);
   sys_clear_pointer(&display, _sys_object_unref);

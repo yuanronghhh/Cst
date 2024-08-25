@@ -18,7 +18,7 @@ static void cst_com_r_node_class_init(CstComRNodeClass* cls) {
 
 static void cst_com_r_node_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(cst_com_r_node_parent_class)->dispose(o);
+
 }
 
 static void cst_com_r_node_init(CstComRNode *self) {

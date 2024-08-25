@@ -27,7 +27,6 @@ struct _FrAudioStreamContext {
   SysInt format;
   SysInt sample_rate;
   SysInt channels;
-  SysBool is_in_stream;
 
   /* <private> */
   FrAudioDevice* dev;

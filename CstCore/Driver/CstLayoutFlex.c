@@ -28,7 +28,7 @@ static void cst_layout_flex_init(CstLayoutFlex *self) {
 static void cst_layout_flex_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
-  SYS_OBJECT_CLASS(cst_layout_flex_parent_class)->dispose(o);
+
 }
 
 static void cst_layout_flex_class_init(CstLayoutFlexClass* cls) {

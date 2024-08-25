@@ -224,7 +224,7 @@ static void cst_layout_node_init(CstLayoutNode *self) {
 static void cst_layout_node_dispose(SysObject* o) {
   sys_return_if_fail(o != NULL);
 
-  SYS_OBJECT_CLASS(cst_layout_node_parent_class)->dispose(o);
+
 }
 
 static void cst_layout_node_class_init(CstLayoutNodeClass* cls) {

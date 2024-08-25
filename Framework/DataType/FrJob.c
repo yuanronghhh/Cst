@@ -93,33 +93,21 @@ FrJob *fr_job_new_I(FrJobContext *info) {
   return o;
 }
 
-static SysBool fr_job_destroy_i(SysObject* o) {
+static void fr_job_dispose(SysObject* o) {
   FrJob *self = FR_JOB(o);
-  sys_return_val_if_fail(self->state == FR_JOB_STATE_STOP, false);
+  sys_return_if_fail(self->state == FR_JOB_STATE_STOP);
 
   sys_async_queue_clear_full(&self->queue);
 
   self->user_data = NULL;
   self->thread = NULL;
   sys_clear_pointer(&self->name, sys_free);
-
-  return true;
-}
-
-static void fr_job_dispose(SysObject* o) {
-
-  if(!fr_job_destroy_i(o)) {
-    return;
-  }
-
-  SYS_OBJECT_CLASS(fr_job_parent_class)->dispose(o);
 }
 
 static void fr_job_class_init(FrJobClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->dispose = fr_job_dispose;
-  ocls->destroy = fr_job_destroy_i;
 
   cls->construct = fr_job_construct_i;
 }

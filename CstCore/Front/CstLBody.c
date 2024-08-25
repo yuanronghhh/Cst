@@ -39,5 +39,4 @@ static void cst_lbody_class_init(CstLBodyClass* cls) {
 }
 
 static void cst_lbody_dispose(SysObject* o) {
-  SYS_OBJECT_CLASS(cst_lbody_parent_class)->dispose(o);
 }

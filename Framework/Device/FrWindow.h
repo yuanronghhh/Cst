@@ -67,12 +67,8 @@ SYS_API SysPointer fr_window_get_data(FrWindow * self);
 #define fr_window_audio_stream_put_data fr_i_window_audio_stream_put_data
 #define fr_window_audio_stream_free fr_i_window_audio_stream_free
 #define fr_window_audio_get_info fr_i_window_audio_get_info
-
-#if SYS_OS_WIN32
-  SYS_API HWND fr_window_get_win32_window(FrWindow* window);
-#elif SYS_OS_UNIX
-  SYS_API Window fr_window_get_x11_window(FrWindow* window);
-#endif
+#define fr_window_get_native_window(o) fr_i_window_get_native_window(o)
+#define fr_window_update_display(o, d) fr_i_window_update_display(o, d)
 
 #if defined(VK_VERSION_1_0)
 SYS_API void fr_window_create_vk_surface(FrWindow* window, VkInstance instance, VkSurfaceKHR* surfacekhr);

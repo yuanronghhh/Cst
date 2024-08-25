@@ -172,6 +172,11 @@ SysPointer fr_i_window_get_native_window (FrWindow* window) {
   return self.get_native_window(window);
 }
 
+void fr_i_window_update_display (FrWindow* window, FrDisplay *display) {
+
+  self.update_display(window, display);
+}
+
 SysPointer fr_i_window_get_native_display (FrDisplay *display) {
 
   return self.get_native_display(display);

@@ -17,7 +17,7 @@ static void cst_lgrid_init(CstLGrid *self) {
 
 static void cst_lgrid_dispose(SysObject* o) {
 
-  SYS_OBJECT_CLASS(cst_lgrid_parent_class)->dispose(o);
+
 }
 
 static void cst_lgrid_class_init(CstLGridClass* cls) {

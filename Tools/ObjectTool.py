@@ -58,16 +58,27 @@ def gen_interface_for_cairo():
     f.close()
 
 def gen_struct_result():
-    dst = Path("./Framework/Device").as_posix()
-    header_path = "Framework/Device"
+    dst = Path("./Framework/Media").as_posix()
+    header_path = "Framework/Media"
     common_path = "Framework//FrCommon.h"
 
     template_struct = """
-struct _FrRender {
-  SysObject parent;
+struct _FrAvPlayer {
+  FrPlayer parent;
 
   /* <private> */
-  SysPointer ctx;
+  FrMediaFile *file;
+  FrWindow *window;
+  FrMediaPipeline pipeline;
+
+  SysBool use_hwaccel;
+  SysInt64 seek_position;
+  FR_JOB_STATE_ENUM state;
+  FrMediaRender *render;
+  SysInt64 base_tsp;
+  SysInt64 vtsp;
+  SysDouble default_delay;
+  SysDouble delay;
 };
 """
     info = TemplateInfo(template_struct)

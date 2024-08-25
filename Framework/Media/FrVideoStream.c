@@ -26,7 +26,7 @@ static void fr_video_stream_dispose(SysObject* o) {
 
   UNUSED(self);
 
-  SYS_OBJECT_CLASS(fr_video_stream_parent_class)->dispose(o);
+
 }
 
 static void fr_video_stream_class_init(FrVideoStreamClass* cls) {

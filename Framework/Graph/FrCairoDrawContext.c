@@ -154,7 +154,7 @@ static cairo_surface_t* create_cairo_surface(FrWindow* window, SysInt width, Sys
     cairo_surface_t* surface;
 
 #if SYS_OS_WIN32
-    HWND hwd = fr_window_get_win32_window(window);
+    HWND hwd = (HWND)fr_window_get_native_window(window);
     HDC hdc = GetDC(hwd);
     surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
 

@@ -172,7 +172,7 @@ static SysInt sdl_flush_audio(FrAudioStream *self) {
 static FrSdlWindow *gwindow_get_data(SDL_Window *gwindow) {
   sys_return_val_if_fail(gwindow != NULL, NULL);
 
-  return SDL_GetProperty(
+  return SDL_GetPointerProperty(
     SDL_GetWindowProperties(gwindow),
     SDL_WINDOW_POINTER, NULL);
 }
@@ -188,7 +188,7 @@ static FrSdlWindow *gwindow_get_data_by_id(SysInt windowID) {
 static void gwindow_set_data(SDL_Window *gwindow, SysPointer user_data) {
   sys_return_if_fail(gwindow != NULL);
 
-  SDL_SetProperty(
+  SDL_SetPointerProperty(
       SDL_GetWindowProperties(gwindow),
       SDL_WINDOW_POINTER, user_data);
 }
@@ -287,10 +287,8 @@ static const SysChar *sdl_event_get_name(SysInt event_type) {
       return "SDL_EVENT_WINDOW_DISPLAY_CHANGED";
     case SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED:
       return "SDL_EVENT_WINDOW_DISPLAY_SCALE_CHANGED";
-    // case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
-    //   return "SDL_EVENT_WINDOW_SAFE_AREA_CHANGED";
-    case SDL_EVENT_WINDOW_TAKE_FOCUS:
-      return "SDL_EVENT_WINDOW_TAKE_FOCUS";
+    case SDL_EVENT_WINDOW_SAFE_AREA_CHANGED:
+      return "SDL_EVENT_WINDOW_SAFE_AREA_CHANGED";
     case SDL_EVENT_WINDOW_OCCLUDED:
       return "SDL_EVENT_WINDOW_OCCLUDED";
     case SDL_EVENT_WINDOW_ENTER_FULLSCREEN:

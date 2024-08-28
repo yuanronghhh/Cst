@@ -20,7 +20,9 @@ struct _FrHwAccel {
   /* <private> */
   SysInt accel_type;
   SysPointer ctx;
-  const SysChar *name;
+
+  const SysChar *default_name;
+  SysChar *name;
 };
 
 struct _FrHwAccelContext {

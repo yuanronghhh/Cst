@@ -29,14 +29,13 @@ static SysInt fr_video_decoder_open_i(FrDecoder *o) {
   info.out_height = info.in_height;
   info.out_pix_fmt = AV_PIX_FMT_BGRA;
 
-  if(self->hwaccel_name) {
+  if(self->use_hwaccel) {
     FrHwAccelContext hwinfo = {
-      .name = self->hwaccel_name,
+      .name = NULL,
       .decoder = FR_MEDIA_DECODER(self),
     };
-    UNUSED(hwinfo);
 
-    info.hw_accel = NULL;// fr_hw_accel_new_I(&hwinfo);
+    info.hw_accel = fr_hw_accel_new_I(&hwinfo);
   }
 
   fr_image_scale_construct(&self->scale, &info);
@@ -123,9 +122,5 @@ void fr_video_decoder_init(FrVideoDecoder* self) {
   FrMediaDecoder *o = FR_MEDIA_DECODER(self);
 
   fr_media_decoder_set_frame_type(o, FR_TYPE_VIDEO_FRAME);
-#if SYS_OS_WIN32
-  self->hwaccel_name = "d3d11va";
-#elif SYS_OS_UNIX
-  self->hwaccel_name = "vaapi";
-#endif
+  self->use_hwaccel = true;
 }

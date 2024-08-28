@@ -5,7 +5,9 @@ SYS_DEFINE_TYPE(FrHwAccel, fr_hw_accel, SYS_TYPE_OBJECT);
 
 /* object api */
 static void fr_hw_accel_construct_i(FrHwAccel *self, FrHwAccelContext *info) {
-  self->name = sys_strdup(info->name);
+  const SysChar *name = info->name == NULL ? self->default_name : info->name;
+
+  self->name = sys_strdup(name);
   self->ctx = info->ctx;
 }
 
@@ -34,8 +36,6 @@ static void fr_hw_accel_dispose(SysObject* o) {
 
   fr_hw_accel_free(self);
   sys_clear_pointer(&self->name, sys_free);
-
-
 }
 
 static void fr_hw_accel_class_init(FrHwAccelClass* cls) {
@@ -45,4 +45,9 @@ static void fr_hw_accel_class_init(FrHwAccelClass* cls) {
 }
 
 static void fr_hw_accel_init(FrHwAccel* self) {
+#if SYS_OS_WIN32
+  self->default_name = "d3d11va";
+#elif SYS_OS_UNIX
+  self->default_name = "vaapi";
+#endif
 }

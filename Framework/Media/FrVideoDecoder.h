@@ -23,7 +23,7 @@ struct _FrVideoDecoder {
   FrImageScale scale;
   SysUInt64 start_time;
 
-  SysChar *hwaccel_name;
+  SysBool use_hwaccel;
   FrHwAccel *hwaccel_ctx;
 };
 

@@ -229,11 +229,6 @@ static SysInt media_player_do(FrAvPlayer *self) {
 
     fr_delay(self->delay);
     fr_poll_events();
-
-    if(++gcount > 10) {
-
-      fr_av_player_set_state(self, 0);
-    }
   }
 
   fr_region_destroy(region);

@@ -80,7 +80,6 @@ SysInt fr_media_decoder_read_i(FrMediaDecoder *self, FrMediaPacket **pkt) {
   FrMediaPacket *npkt;
 
   npkt = sys_async_queue_try_pop(&self->queue);
-  int len = sys_async_queue_length(&self->queue);
   *pkt = npkt;
 
   return npkt != NULL;

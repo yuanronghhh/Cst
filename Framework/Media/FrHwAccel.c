@@ -5,9 +5,7 @@ SYS_DEFINE_TYPE(FrHwAccel, fr_hw_accel, SYS_TYPE_OBJECT);
 
 /* object api */
 static void fr_hw_accel_construct_i(FrHwAccel *self, FrHwAccelContext *info) {
-  const SysChar *name = info->name == NULL ? self->default_name : info->name;
-
-  self->name = sys_strdup(name);
+  self->name = sys_strdup(info->name);
   self->ctx = info->ctx;
 }
 
@@ -17,11 +15,11 @@ FrHwAccel* fr_hw_accel_new(void) {
 
 FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
-  sys_return_val_if_fail(info->name != NULL, NULL);
   sys_return_val_if_fail(info->decoder != NULL, NULL);
 
   FrHwAccel *o = fr_hw_accel_new();
 
+  info->name = o->name ? o->name : o->default_name;
   if(!fr_hw_accel_create(o, info)) {
     return NULL;
   }

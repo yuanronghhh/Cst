@@ -881,7 +881,7 @@ static void sdl_window_update_display (FrWindow* window, FrDisplay *display) {
       SDL_PROP_WINDOW_WIN32_HDC_POINTER, NULL);
 #elif SYS_OS_UNIX
 
-  display->native_ctx = (Display *)(SDL_GetProperty(
+  display->native_ctx = (Display *)(SDL_GetPointerProperty(
         SDL_GetWindowProperties(self->ctx),
         SDL_PROP_WINDOW_X11_DISPLAY_POINTER, 0));
 #endif

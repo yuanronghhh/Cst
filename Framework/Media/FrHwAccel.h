@@ -20,13 +20,12 @@ struct _FrHwAccel {
   /* <private> */
   SysInt accel_type;
   SysPointer ctx;
-
-  const SysChar *default_name;
   SysChar *name;
 };
 
 struct _FrHwAccelContext {
   const SysChar *name;
+  SysInt accel_type;
   FrMediaDecoder *decoder;
 
   /* <private> */

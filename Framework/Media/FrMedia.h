@@ -23,6 +23,11 @@ void fr_media_decoder_get_info(FrMediaDecoder *o,
     SysInt *height,
     SysInt *pix_fmt);
 
+SysBool fr_media_decoder_get_default_device(
+    FrMediaDecoder *self,
+    const SysChar **nname,
+    SysInt *ntype);
+
 SysInt fr_media_decoder_open(FrMediaDecoder* self);
 
 void fr_media_decoder_flush(FrMediaDecoder* self);

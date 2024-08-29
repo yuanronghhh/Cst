@@ -764,6 +764,7 @@ static enum AVPixelFormat get_hw_format(
 }
 
 void fr_hw_accel_free(FrHwAccel *self) {
+  if(self->ctx == NULL) { return; }
 
   av_buffer_unref((AVBufferRef **)&self->ctx);
 }
@@ -785,6 +786,29 @@ static SysBool media_decoder_get_hw_info(
       *hw_pix_format = config->pix_fmt;
       break;
     }
+  }
+
+  return true;
+}
+
+SysBool fr_media_decoder_get_default_device(
+    FrMediaDecoder *self,
+    const SysChar **nname,
+    SysInt *ntype) {
+
+  const AVCodecHWConfig *config;
+
+  for (SysInt i = 0; ; i++) {
+    config = avcodec_get_hw_config(self->codec, i);
+    if(config == NULL) { return false; }
+
+    SysInt type = config->device_type;
+    if(type <= 0) { return false; }
+
+    *nname = av_hwdevice_get_type_name(type);
+    *ntype = type;
+
+    break;
   }
 
   return true;

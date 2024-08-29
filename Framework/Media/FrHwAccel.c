@@ -6,6 +6,7 @@ SYS_DEFINE_TYPE(FrHwAccel, fr_hw_accel, SYS_TYPE_OBJECT);
 /* object api */
 static void fr_hw_accel_construct_i(FrHwAccel *self, FrHwAccelContext *info) {
   self->name = sys_strdup(info->name);
+  self->accel_type = info->accel_type;
   self->ctx = info->ctx;
 }
 
@@ -19,21 +20,36 @@ FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
 
   FrHwAccel *o = fr_hw_accel_new();
 
-  info->name = o->name ? o->name : o->default_name;
+  info->name = "dxva2";
+  if(info->name == NULL) {
+    if(!fr_media_decoder_get_default_device(info->decoder,
+          &info->name,
+          &info->accel_type)) {
+      goto fail;
+    }
+  }
+
   if(!fr_hw_accel_create(o, info)) {
-    return NULL;
+    goto fail;
   }
 
   fr_hw_accel_construct_i(o, info);
-
   return o;
+
+fail:
+  sys_object_unref(o);
+  return NULL;
 }
 
 static void fr_hw_accel_dispose(SysObject* o) {
   FrHwAccel *self = FR_HW_ACCEL(o);
 
   fr_hw_accel_free(self);
-  sys_clear_pointer(&self->name, sys_free);
+
+  if(self->name) {
+
+    sys_clear_pointer(&self->name, sys_free);
+  }
 }
 
 static void fr_hw_accel_class_init(FrHwAccelClass* cls) {
@@ -43,9 +59,4 @@ static void fr_hw_accel_class_init(FrHwAccelClass* cls) {
 }
 
 static void fr_hw_accel_init(FrHwAccel* self) {
-#if SYS_OS_WIN32
-  self->default_name = "d3d11va";
-#elif SYS_OS_UNIX
-  self->default_name = "vaapi";
-#endif
 }

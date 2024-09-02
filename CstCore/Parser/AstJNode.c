@@ -116,7 +116,7 @@ JNode* ast_jnode_clone_r(JNode* jnode) {
 
   switch (jnode->type) {
   case AstJInt:
-    nnode = sys_new0_N(JNode, 1);
+    nnode = sys_new0(JNode, 1);
     nnode->v.v_int = jnode->v.v_int;
     break;
   case AstJDouble:
@@ -208,7 +208,7 @@ SysValue *ast_jnode_to_value(JNode *jnode) {
 
 /* build */
 JSource* ast_jsource_new(SysChar* str) {
-  JSource* source = sys_new0_N(JSource, 1);
+  JSource* source = sys_new0(JSource, 1);
 
   source->string = str;
 
@@ -218,7 +218,7 @@ JSource* ast_jsource_new(SysChar* str) {
 JNode* ast_for_jsource(SysChar* str) {
   sys_return_val_if_fail(str != NULL, NULL);
 
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
   JSource* source = ast_jsource_new(str);
 
   node->type = AstJSource;
@@ -228,7 +228,7 @@ JNode* ast_for_jsource(SysChar* str) {
 }
 
 JNode* ast_for_jstring(SysChar* str) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJString;
   node->v.v_string = str;
@@ -257,7 +257,7 @@ JNode* ast_for_jproperty(JArray* array) {
 }
 
 JNode* ast_for_jarray(JArray* array) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJArray;
   node->v.v_array = array;
@@ -266,7 +266,7 @@ JNode* ast_for_jarray(JArray* array) {
 }
 
 JNode* ast_for_jnode_bool(bool bvalue) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJBool;
   node->v.v_bool = bvalue;
@@ -278,8 +278,8 @@ JNode* ast_for_jpair(SysChar* key, JNode* prop, JNode* value) {
   sys_return_val_if_fail(key != NULL, NULL);
   sys_return_val_if_fail(value != NULL, NULL);
 
-  JNode* node = sys_new0_N(JNode, 1);
-  JPair* pair = sys_new0_N(JPair, 1);
+  JNode* node = sys_new0(JNode, 1);
+  JPair* pair = sys_new0(JPair, 1);
 
   pair->key = key;
   pair->prop = prop;
@@ -292,7 +292,7 @@ JNode* ast_for_jpair(SysChar* key, JNode* prop, JNode* value) {
 }
 
 JNode* ast_for_jdouble(const SysDouble d) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJDouble;
   node->v.v_double = d;
@@ -301,7 +301,7 @@ JNode* ast_for_jdouble(const SysDouble d) {
 }
 
 JNode* ast_for_jbool(bool bvalue) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJBool;
   node->v.v_bool = bvalue;
@@ -310,7 +310,7 @@ JNode* ast_for_jbool(bool bvalue) {
 }
 
 JNode* ast_for_jnull(void) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJNull;
   node->v.v_node = NULL;
@@ -319,7 +319,7 @@ JNode* ast_for_jnull(void) {
 }
 
 JNode* ast_for_jint(const SysInt i) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJInt;
   node->v.v_int = i;
@@ -328,7 +328,7 @@ JNode* ast_for_jint(const SysInt i) {
 }
 
 JNode* ast_for_jnode(JNode* cnode) {
-  JNode* node = sys_new0_N(JNode, 1);
+  JNode* node = sys_new0(JNode, 1);
 
   node->type = AstJNode;
   node->v.v_node = cnode;
@@ -354,11 +354,11 @@ void ast_jnode_free(JNode* node) {
     }
     break;
   case AstJSource:
-    sys_free_N(node->v.v_source->string);
-    sys_free_N(node->v.v_source);
+    sys_free(node->v.v_source->string);
+    sys_free(node->v.v_source);
     break;
   case AstJString:
-    sys_free_N(node->v.v_string);
+    sys_free(node->v.v_string);
     break;
   case AstJNode:
     ast_jnode_free(node->v.v_node);
@@ -373,19 +373,19 @@ void ast_jnode_free(JNode* node) {
     break;
   }
 
-  sys_free_N(node);
+  sys_free(node);
 }
 
 void ast_jpair_free(JPair* pair) {
   sys_return_if_fail(pair != NULL);
   sys_return_if_fail(pair->key != NULL);
 
-  sys_free_N(pair->key);
+  sys_free(pair->key);
 
   if (pair->prop) {
     ast_jnode_free(pair->prop);
   }
 
   ast_jnode_free(pair->value);
-  sys_free_N(pair);
+  sys_free(pair);
 }

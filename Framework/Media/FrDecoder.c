@@ -148,9 +148,7 @@ FrDecoder* fr_decoder_new(void) {
 static void fr_decoder_dispose(SysObject* o) {
   FrDecoder *self = FR_DECODER(o);
 
-  sys_free_N(self->name);
-
-
+  sys_free(self->name);
 }
 
 static void fr_decoder_class_init(FrDecoderClass* cls) {

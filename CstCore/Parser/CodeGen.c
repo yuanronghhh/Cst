@@ -25,16 +25,16 @@ struct _CodeGen {
 };
 
 void codegen_free(CodeGen *cg) {
-  sys_free_N(cg->filename);
-  sys_free_N(cg->cwd);
-  sys_free_N(cg);
+  sys_free(cg->filename);
+  sys_free(cg->cwd);
+  sys_free(cg);
 }
 
 CodeGen *codegen_new(CstManager *manager, CstModule *module) {
   sys_return_val_if_fail(manager != NULL, NULL);
   sys_return_val_if_fail(module != NULL, NULL);
 
-  CodeGen *cg = sys_new_N(CodeGen, 1);
+  CodeGen *cg = sys_new(CodeGen, 1);
   SysChar *mname;
 
   cg->manager = manager;

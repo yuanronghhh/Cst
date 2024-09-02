@@ -48,13 +48,13 @@ SysBool fr_color_rgba_parse(const SysChar *rgba, FrColor *color) {
 }
 
 FrColor *fr_color_rgba_new(const SysChar *rgba) {
-  FrColor *color = sys_new_N(FrColor, 1);
+  FrColor *color = sys_new(FrColor, 1);
   fr_color_rgba_parse(rgba, color);
   return color;
 }
 
 FrColor *fr_color_clone(FrColor *oself) {
-  FrColor *nself = sys_new_N(FrColor, 1);
+  FrColor *nself = sys_new(FrColor, 1);
 
   nself->r = oself->r;
   nself->g = oself->g;
@@ -83,11 +83,11 @@ FrSInt4* fr_sint4_clone(FrSInt4 *m) {
 }
 
 FrSInt4* fr_sint4_new(void) {
-  FrSInt4* o = sys_new_N(FrSInt4, 1);
+  FrSInt4* o = sys_new(FrSInt4, 1);
 
   return o;
 }
 
 void fr_sint4_free(FrSInt4* o) {
-  sys_free_N(o);
+  sys_free(o);
 }

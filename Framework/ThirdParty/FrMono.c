@@ -12,14 +12,14 @@ void fr_mono_setup(SysChar *mono_home) {
 
   mono_set_dirs(lib_path, etc_path);
 
-  sys_free_N(lib_path);
-  sys_free_N(etc_path);
+  sys_free(lib_path);
+  sys_free(etc_path);
 
   mono_set_use_llvm(true);
 }
 
 void fr_mono_context_free(FrMonoContext *c) {
-  sys_free_N(c);
+  sys_free(c);
 }
 
 FrMonoContext *fr_mono_context_new (
@@ -29,7 +29,7 @@ FrMonoContext *fr_mono_context_new (
   sys_return_val_if_fail(domain_name != NULL, NULL);
   sys_return_val_if_fail(managed_path != NULL, NULL);
 
-  FrMonoContext *c = sys_new0_N(FrMonoContext, 1);
+  FrMonoContext *c = sys_new0(FrMonoContext, 1);
 
   c->g_domain = mono_jit_init(domain_name);
 

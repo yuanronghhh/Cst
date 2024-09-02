@@ -183,14 +183,14 @@ static void fr_vk_get_layer_extension(SysChar* ppExtensions[], uint32_t *count) 
 }
 
 static QueueFamilyIndices *fr_vk_find_queue_families(VkSurfaceKHR surface, VkPhysicalDevice device) {
-  QueueFamilyIndices *indices = sys_new0_N(QueueFamilyIndices, 1);
+  QueueFamilyIndices *indices = sys_new0(QueueFamilyIndices, 1);
 
   indices->graphicsFamily = -1;
   indices->presentFamily = -1;
 
   uint32_t queueFamilyCount = 0;
   vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, NULL);
-  VkQueueFamilyProperties *queueFamilies = sys_new0_N(VkQueueFamilyProperties, queueFamilyCount);
+  VkQueueFamilyProperties *queueFamilies = sys_new0(VkQueueFamilyProperties, queueFamilyCount);
   vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies);
 
   sys_array_foreach(VkQueueFamilyProperties, queueFamily, queueFamilies, queueFamilyCount) {
@@ -216,7 +216,7 @@ static QueueFamilyIndices *fr_vk_find_queue_families(VkSurfaceKHR surface, VkPhy
 static SysBool fr_vk_check_device_extension_support(VkPhysicalDevice device, SysChar **extNames, SysInt extCount) {
   uint32_t extensionCount;
   vkEnumerateDeviceExtensionProperties(device, NULL, &extensionCount, NULL);
-  VkExtensionProperties *availableExtensions = sys_new0_N(VkExtensionProperties, extensionCount);
+  VkExtensionProperties *availableExtensions = sys_new0(VkExtensionProperties, extensionCount);
   vkEnumerateDeviceExtensionProperties(device, NULL, &extensionCount, availableExtensions);
 
   sys_array_foreach(SysChar *, extName, extNames, extCount) {
@@ -239,7 +239,7 @@ static SysBool fr_vk_check_device_extension_support(VkPhysicalDevice device, Sys
 }
 
 static SwapChainSupportDetails *fr_vk_query_swap_chain_support(VkSurfaceKHR surface, VkPhysicalDevice device) {
-  SwapChainSupportDetails *details = sys_new0_N(SwapChainSupportDetails, 1);
+  SwapChainSupportDetails *details = sys_new0(SwapChainSupportDetails, 1);
 
   vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details->capabilities);
 
@@ -247,7 +247,7 @@ static SwapChainSupportDetails *fr_vk_query_swap_chain_support(VkSurfaceKHR surf
   vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, NULL);
 
   if (formatCount != 0) {
-    details->formats = sys_new0_N(VkSurfaceFormatKHR, formatCount);
+    details->formats = sys_new0(VkSurfaceFormatKHR, formatCount);
     vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details->formats);
   }
 
@@ -255,7 +255,7 @@ static SwapChainSupportDetails *fr_vk_query_swap_chain_support(VkSurfaceKHR surf
   vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, NULL);
 
   if (presentModeCount != 0) {
-    details->presentModes = sys_new0_N(VkPresentModeKHR, presentModeCount);
+    details->presentModes = sys_new0(VkPresentModeKHR, presentModeCount);
     vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details->presentModes);
   }
 
@@ -283,7 +283,7 @@ static VkPhysicalDevice fr_vk_pick_physical_device(VkInstance instance) {
     sys_abort_N("%s", SYS_("failed to find GPUs with Vulkan support!"));
   }
 
-  VkPhysicalDevice *devices = sys_new0_N(VkPhysicalDevice, deviceCount);
+  VkPhysicalDevice *devices = sys_new0(VkPhysicalDevice, deviceCount);
   vkEnumeratePhysicalDevices(instance, &deviceCount, devices);
 
   sys_array_foreach(VkPhysicalDevice, device, devices, deviceCount) {
@@ -627,16 +627,16 @@ static void fr_vkvg_create_swap_chain(FrVkvgInstanceT vinst) {
     &vinst->swapChain);
 
   fr_vk_check_result(vkGetSwapchainImagesKHR(vinst->logicDevice, vinst->swapChain, &imageCount, NULL));
-  vinst->swapChainImages = sys_new0_N(VkImage, imageCount);
+  vinst->swapChainImages = sys_new0(VkImage, imageCount);
   fr_vk_check_result(vkGetSwapchainImagesKHR(vinst->logicDevice, vinst->swapChain, &imageCount, vinst->swapChainImages));
 
   vinst->imageCount = imageCount;
   vinst->swapChainImageFormat = surfaceFormat.format;
   vinst->swapChainExtent = extent;
-  vinst->swapChainImageViews = sys_new0_N(VkImageView, imageCount);
+  vinst->swapChainImageViews = sys_new0(VkImageView, imageCount);
 
   // swap chain buffers
-  vinst->commandBuffers = sys_new0_N(VkCommandBuffer, imageCount);
+  vinst->commandBuffers = sys_new0(VkCommandBuffer, imageCount);
   sys_array_foreach(VkImage, image, vinst->swapChainImages, imageCount) {
 
     fr_vk_create_image_view(vinst->logicDevice,
@@ -980,11 +980,11 @@ static void fr_vkvg_free_instance(FrVkvgInstanceT vinst) {
   vkDestroyDevice(vinst->logicDevice, NULL);
 
   vkDestroyInstance(vinst->instance, NULL);
-  sys_free_N(vinst);
+  sys_free(vinst);
 }
 
 static FRRenderInstanceT fr_vkvg_create_instance(FrWindow *window) {
-  FrVkvgInstanceT vinst = sys_new0_N(FrVkvgInstance, 1);
+  FrVkvgInstanceT vinst = sys_new0(FrVkvgInstance, 1);
 
   vinst->appName = "FRApp";
   vinst->engineName = "FREngine";

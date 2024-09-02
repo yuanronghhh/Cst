@@ -50,7 +50,7 @@ void ast_iter_narray(SysPtrArray *array, AstNodeFunc func, SysPointer user_data)
 }
 
 AstNode* ast_for_root(JArray *array) {
-  AstNode *node = sys_new0_N(AstNode, 1);
+  AstNode *node = sys_new0(AstNode, 1);
 
   node->type = AstRoot;
   node->v.root = array;
@@ -61,9 +61,9 @@ AstNode* ast_for_root(JArray *array) {
 AstNode* ast_for_import(SysPtrArray *array, SysChar *path) {
   sys_return_val_if_fail(path != NULL, NULL);
 
-  AstNode *node = sys_new0_N(AstNode, 1);
+  AstNode *node = sys_new0(AstNode, 1);
 
-  Import *import = sys_new0_N(Import, 1);
+  Import *import = sys_new0(Import, 1);
   import->ids = array;
   import->path = path;
 
@@ -76,8 +76,8 @@ AstNode* ast_for_import(SysPtrArray *array, SysChar *path) {
 AstNode* ast_for_gstyle(JNode* prop_node, JNode *body_node) {
   sys_return_val_if_fail(body_node != NULL, NULL);
 
-  AstNode *node = sys_new0_N(AstNode, 1);
-  GStyle *gstyle = sys_new0_N(GStyle, 1);
+  AstNode *node = sys_new0(AstNode, 1);
+  GStyle *gstyle = sys_new0(GStyle, 1);
 
   node->type = AstGStyle;
 
@@ -93,10 +93,10 @@ AstNode* ast_for_component(JNode* prop_node, JNode *body_node) {
   sys_return_val_if_fail(prop_node != NULL, NULL);
   sys_return_val_if_fail(body_node != NULL, NULL);
 
-  AstNode *node = sys_new0_N(AstNode, 1);
+  AstNode *node = sys_new0(AstNode, 1);
 
   node->type = AstComponent;
-  Component *component = sys_new0_N(Component, 1);
+  Component *component = sys_new0(Component, 1);
 
   if(prop_node == NULL) {
     sys_abort_N("%s", "component id must be set before use");
@@ -116,9 +116,9 @@ AstNode* ast_for_source(const SysChar *str, SysInt rows) {
   SysChar *s;
   SysInt srows = 0;
 
-  AstNode *node = sys_new0_N(AstNode, 1);
+  AstNode *node = sys_new0(AstNode, 1);
   node->type = AstSource;
-  node->v.source = sys_new0_N(Source, 1);
+  node->v.source = sys_new0(Source, 1);
   node->v.source->string = (SysChar *)str;
 
   s = (SysChar *)str;
@@ -135,14 +135,14 @@ AstNode* ast_for_source(const SysChar *str, SysInt rows) {
 }
 
 void ast_source_free(Source* source) {
-  sys_free_N(source->string);
-  sys_free_N(source);
+  sys_free(source->string);
+  sys_free(source);
 }
 
 void ast_import_free(Import* imp) {
   sys_ptr_array_free(imp->ids, true);
-  sys_free_N(imp->path);
-  sys_free_N(imp);
+  sys_free(imp->path);
+  sys_free(imp);
 }
 
 void ast_node_free(AstNode* node) {
@@ -172,7 +172,7 @@ void ast_node_free(AstNode* node) {
       break;
   }
 
-  sys_free_N(node);
+  sys_free(node);
 }
 
 void ast_gstyle_free(GStyle* gstyle) {
@@ -180,7 +180,7 @@ void ast_gstyle_free(GStyle* gstyle) {
     ast_jnode_free(gstyle->property);
   }
   ast_jnode_free(gstyle->body);
-  sys_free_N(gstyle);
+  sys_free(gstyle);
 }
 
 void ast_component_free(Component* component) {
@@ -188,7 +188,7 @@ void ast_component_free(Component* component) {
     ast_jnode_free(component->property);
   }
   ast_jnode_free(component->body);
-  sys_free_N(component);
+  sys_free(component);
 }
 
 static SYS_INLINE SysBool ast_is_gstyle(AstNode *node, SysPointer user_data) {

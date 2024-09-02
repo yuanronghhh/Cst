@@ -38,14 +38,14 @@ SysBool data_save_to_png(
       PNG_COMPRESSION_TYPE_DEFAULT,
       PNG_FILTER_TYPE_DEFAULT);
 
-  png_byte** bptr = (png_byte **)sys_malloc_N(sizeof(png_byte *) * height);
+  png_byte** bptr = (png_byte **)sys_malloc(sizeof(png_byte *) * height);
   for(int i = 0; i < height; i++) {
     bptr[i] = (png_byte *)(data + i * linesize);
   }
 
   png_set_rows(png_ptr, info_ptr, bptr);
   png_write_png(png_ptr, info_ptr, PNG_TRANSFORM_IDENTITY, NULL);
-  sys_free_N(bptr);
+  sys_free(bptr);
 
   png_destroy_write_struct(&png_ptr, &info_ptr);
   fclose(fp);

@@ -21,12 +21,12 @@ struct _PipePass {
 
 SYS_DEFINE_TYPE(FrAvPlayer, fr_av_player, FR_TYPE_PLAYER);
 
-static SysElapse g_elapse = {0};
+static int gcount = 0;
 
 static void pipe_pass_free(PipePass *self) {
 
   sys_clear_pointer(&self->pkt, _sys_object_unref);
-  sys_free_N(self);
+  sys_free(self);
 }
 
 static PipePass* pipe_pass_new_by_type(
@@ -35,7 +35,7 @@ static PipePass* pipe_pass_new_by_type(
     FrPacket *pkt) {
   sys_return_val_if_fail(pipe != NULL, NULL);
 
-  PipePass *pass = sys_new0_N(PipePass, 1);
+  PipePass *pass = sys_new0(PipePass, 1);
 
   pass->pkt = pkt;
   pass->pipe = pipe;
@@ -60,7 +60,7 @@ static PipePass* pipe_pass_new_by_type(
   return pass;
 
 fail:
-  sys_free_N(pass);
+  pipe_pass_free(pass);
   return NULL;
 }
 
@@ -82,8 +82,8 @@ static SysPointer decode_frame(
   if(err < 0) { goto done; }
 
   nframe = (FrMediaPacket *)sys_object_dclone(mframe);
-  fr_media_decoder_write(mdec, nframe);
 
+  fr_media_decoder_write(mdec, nframe);
 done:
   sys_atomic_int_dec(&pass->pipe->pkt_count);
   pipe_pass_free(pass);
@@ -133,12 +133,11 @@ static void process(FrAvPlayer* self) {
   if (self->pkt_count > self->min_packet) {
     return;
   }
-  // sys_debug_N("wakeup %ld", self->pkt_count);
 
   for(int i = 0; i < self->max_packet; i++) {
 
-    fr_decoder_run_async(o, process_packet, self);
     sys_atomic_int_inc(&self->pkt_count);
+    fr_decoder_run_async(o, process_packet, self);
   }
 }
 
@@ -202,8 +201,6 @@ static void calc_video_delay (FrAvPlayer *self) {
   self->delay = self->default_delay = (1 / (rt.num / (double) rt.den)) * 1.0e6;
 }
 
-
-static int gcount = 0;
 static SysInt media_player_do(FrAvPlayer *self) {
   FrRegion* region;
   FrBound bound = { .width = 800, .height = 600 };
@@ -223,12 +220,18 @@ static SysInt media_player_do(FrAvPlayer *self) {
   region = fr_region_create_rectangle(&bound);
 
   while(self->state == FR_JOB_STATE_RUNNING) {
+    ++gcount;
     process(self);
 
     fr_av_player_render(self, self->render, region);
 
     fr_delay(self->delay);
     fr_poll_events();
+
+    if(gcount > 10) {
+
+      fr_av_player_set_state(self, 0);
+    }
   }
 
   fr_region_destroy(region);
@@ -390,8 +393,6 @@ static void fr_av_player_dispose(SysObject* o) {
   sys_clear_pointer(&self->file, _sys_object_unref);
   sys_clear_pointer(&self->window, _sys_object_unref);
   sys_clear_pointer(&self->render, _sys_object_unref);
-
-
 }
 
 static void fr_av_player_class_init(FrAvPlayerClass* cls) {
@@ -403,6 +404,6 @@ static void fr_av_player_class_init(FrAvPlayerClass* cls) {
 void fr_av_player_init(FrAvPlayer* self) {
   self->state = FR_JOB_STATE_RUNNING;
   self->seek_position = -1;
-  self->max_packet = 2;
+  self->max_packet = 1;
   self->min_packet = 1;
 }

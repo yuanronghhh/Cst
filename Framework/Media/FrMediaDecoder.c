@@ -255,5 +255,5 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
 
 void fr_media_decoder_init(FrMediaDecoder* self) {
 
-  sys_async_queue_init_full(&self->queue, (SysDestroyFunc)_sys_object_unref);
+  sys_async_queue_init_full(&self->queue, NULL);
 }

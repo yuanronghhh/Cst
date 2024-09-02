@@ -348,7 +348,7 @@ SysBool fr_media_scale_copy_gpu_frame(FrImageScale *scale, FrMediaFrame *frame) 
     goto done;
   }
 
-  fr_media_frame_free(frame);
+  fr_media_media_frame_free(frame);
   frame->ctx = nframe;
 
   return true;
@@ -373,7 +373,7 @@ SysBool fr_media_scale_media_frame(FrImageScale *scale, FrMediaFrame *frame) {
     av_frame_free(&nframe);
     return false;
   }
-  fr_media_frame_free(frame);
+  fr_media_media_frame_free(frame);
   frame->ctx = nframe;
 
   return 0;
@@ -491,7 +491,12 @@ SysInt fr_media_media_file_read_packet(FrMediaFile *self,
   return media_read_packet(self->ctx, pkt->ctx);
 }
 
-void fr_media_packet_ref(FrMediaPacket* nself, FrMediaPacket* oself) {
+void fr_media_media_packet_unref(FrMediaPacket* nself) {
+
+  av_packet_unref(nself->ctx);
+}
+
+void fr_media_media_packet_ref(FrMediaPacket* nself, FrMediaPacket* oself) {
 
   av_packet_ref(nself->ctx, oself->ctx);
 }
@@ -726,7 +731,7 @@ SysBool fr_media_file_create(
   self->is_realtime = format_context_is_realtime(ctx);
 
   self->n_streams = ctx->nb_streams;
-  self->streams = (FrMediaStream **)sgc_type_new(SYS_TYPE_POINTER, 
+  self->streams = (FrMediaStream **)sys_block_new(SYS_TYPE_POINTER,
       self->n_streams);
 
   stream = parse_stream_by_type(ctx, FR_MEDIA_VIDEO);
@@ -860,14 +865,19 @@ void fr_media_media_frame_create(FrMediaFrame *self) {
   self->ctx = av_frame_alloc();
 }
 
-void fr_media_frame_free(FrMediaFrame *self) {
+void fr_media_media_frame_free(FrMediaFrame *self) {
   sys_return_if_fail(self != NULL);
   sys_return_if_fail(self->ctx != NULL);
 
   av_frame_free((AVFrame **)&self->ctx);
 }
 
-void fr_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself) {
+void fr_media_media_frame_unref(FrMediaFrame *nself) {
+
+  av_frame_unref(nself->ctx);
+}
+
+void fr_media_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself) {
 
   av_frame_ref(nself->ctx, oself->ctx);
 }

@@ -26,13 +26,13 @@ struct _FrAvPlayer {
   FrDecoder* subtitle_decoder;
   FrDecoder* packet_decoder;
   FrDevice *audio_device;
+  FrRegion *region;
   SysInt max_packet;
   SysInt min_packet;
   SysInt pkt_count;
 
   SysBool use_hwaccel;
   SysInt64 seek_position;
-  FR_JOB_STATE_ENUM state;
   FrAvRender *render;
   SysInt64 base_tsp;
   SysInt64 vtsp;
@@ -56,9 +56,6 @@ SYS_API void fr_av_player_play(FrAvPlayer* self);
 SYS_API SysInt fr_av_player_render(FrAvPlayer *self,
     FrAvRender *render,
     FrRegion *region);
-
-SYS_API void fr_av_player_set_state(FrAvPlayer *self, FR_JOB_STATE_ENUM value);
-SYS_API FR_JOB_STATE_ENUM fr_av_player_get_state(FrAvPlayer *self);
 
 void fr_av_player_set_window(FrAvPlayer *self, FrWindow * window);
 FrWindow * fr_av_player_get_window(FrAvPlayer *self);

@@ -21,8 +21,6 @@ struct _PipePass {
 
 SYS_DEFINE_TYPE(FrAvPlayer, fr_av_player, FR_TYPE_PLAYER);
 
-static SysElapse g_elapse = {0};
-
 static void pipe_pass_free(PipePass *self) {
 
   sys_clear_pointer(&self->pkt, _sys_object_unref);
@@ -122,26 +120,6 @@ static SysPointer process_packet(
   return NULL;
 }
 
-
-static void process(FrAvPlayer* self) {
-  FrDecoder *o = FR_DECODER(self->packet_decoder);
-  if(fr_decoder_get_eof(o)) {
-    fr_av_player_set_state(self, FR_JOB_STATE_STOP);
-    return;
-  }
-
-  if (self->pkt_count > self->min_packet) {
-    return;
-  }
-  // sys_debug_N("wakeup %ld", self->pkt_count);
-
-  for(int i = 0; i < self->max_packet; i++) {
-
-    fr_decoder_run_async(o, process_packet, self);
-    sys_atomic_int_inc(&self->pkt_count);
-  }
-}
-
 static FrDecoder* create_media_decoder(FrMediaFile* file,
     FR_MEDIA_ENUM mediaType,
     FrAvPlayer *self) {
@@ -172,7 +150,7 @@ void av_player_get_video_size(FrAvPlayer *self, SysInt *width, SysInt *height) {
   fr_video_decoder_get_size(video_decoder, width, height);
 }
 
-static void av_player_run(FrAvPlayer *self, FrMediaFile *file) {
+static void av_player_create_decoder(FrAvPlayer *self, FrMediaFile *file) {
   FrVideoDecoder *video_dec;
 
   self->packet_decoder = fr_packet_decoder_new_I(file);
@@ -203,35 +181,55 @@ static void calc_video_delay (FrAvPlayer *self) {
 }
 
 
-static int gcount = 0;
-static SysInt media_player_do(FrAvPlayer *self) {
-  FrRegion* region;
-  FrBound bound = { .width = 800, .height = 600 };
+static int g_count = 0;
 
-  if(self->state != FR_JOB_STATE_RUNNING) {
-    return -1;
-  }
+static SysInt fr_av_player_init_i(FrPlayer *o) {
+  FrAvPlayer *self = FR_AV_PLAYER(o);
+  FrBound bound = { .width = 800, .height = 600 };
 
   if(fr_media_file_has_video(self->file)) {
     calc_video_delay(self);
   }
 
-  av_player_run(self, self->file);
   av_player_get_video_size(self, &bound.width, &bound.height);
   fr_window_set_size(self->window, bound.width, bound.height);
 
-  region = fr_region_create_rectangle(&bound);
+  av_player_create_decoder(self, self->file);
 
-  while(self->state == FR_JOB_STATE_RUNNING) {
-    process(self);
+  self->region = fr_region_create_rectangle(&bound);
 
-    fr_av_player_render(self, self->render, region);
+  return 0;
+}
 
-    fr_delay(self->delay);
-    fr_poll_events();
+static SysInt fr_av_player_process_i (FrPlayer *o) {
+  FrAvPlayer *self = FR_AV_PLAYER(o);
+  FrDecoder *dec = FR_DECODER(self->packet_decoder);
+
+  if(fr_decoder_get_eof(dec)) {
+
+    fr_player_set_state(o, FR_JOB_STATE_STOP);
+    return 0;
   }
 
-  fr_region_destroy(region);
+  if (self->pkt_count > self->min_packet) { return 0; }
+
+  for(int i = 0; i < self->max_packet; i++) {
+
+    fr_decoder_run_async(dec, process_packet, self);
+    sys_atomic_int_inc(&self->pkt_count);
+  }
+
+  fr_av_player_render(self, self->render, self->region);
+  fr_poll_events();
+  fr_delay(self->delay);
+
+  return 0;
+}
+
+static SysInt fr_av_player_stop_i (FrPlayer *o) {
+  FrAvPlayer *self = FR_AV_PLAYER(o);
+
+  fr_region_destroy(self->region);
 
   return 0;
 }
@@ -254,12 +252,6 @@ FrWindow * fr_av_player_get_window(FrAvPlayer *self) {
   return self->window;
 }
 
-SysInt fr_av_player_run(FrAvPlayer* self) {
-  sys_return_val_if_fail(self != NULL, -1);
-
-  return media_player_do(self);
-}
-
 static void media_player_calc_diff(FrAvPlayer *self) {
 #if 0
   SysInt64 diff = 0;
@@ -278,6 +270,11 @@ static void media_player_calc_diff(FrAvPlayer *self) {
   self->delay = diff <= 0 ? self->default_delay : diff / 1.0e3;
   sys_debug_N("%ld", self->delay);
 #endif
+}
+
+SysInt fr_av_player_sync(FrAvPlayer *self) {
+
+  return -1;
 }
 
 SysInt fr_av_player_render(FrAvPlayer *self,
@@ -330,18 +327,6 @@ void fr_av_player_play(FrAvPlayer* self) {
   fr_media_file_play(self->file);
 }
 
-void fr_av_player_set_state(FrAvPlayer *self, FR_JOB_STATE_ENUM value) {
-  sys_return_if_fail(self != NULL);
-
-  self->state = value;
-}
-
-FR_JOB_STATE_ENUM fr_av_player_get_state(FrAvPlayer *self) {
-  sys_return_val_if_fail(self != NULL, false);
-
-  return self->state;
-}
-
 /* object api */
 static void fr_av_player_construct(FrAvPlayer *self, FrAvPlayerContext *info) {
   self->file = sys_object_ref(info->file);
@@ -390,19 +375,22 @@ static void fr_av_player_dispose(SysObject* o) {
   sys_clear_pointer(&self->file, _sys_object_unref);
   sys_clear_pointer(&self->window, _sys_object_unref);
   sys_clear_pointer(&self->render, _sys_object_unref);
-
-
 }
 
 static void fr_av_player_class_init(FrAvPlayerClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+  FrPlayerClass *pcls = FR_PLAYER_GET_CLASS(cls);
+
+  pcls->init = fr_av_player_init_i;
+  pcls->process = fr_av_player_process_i;
+  pcls->stop = fr_av_player_stop_i;
 
   ocls->dispose = fr_av_player_dispose;
 }
 
 void fr_av_player_init(FrAvPlayer* self) {
-  self->state = FR_JOB_STATE_RUNNING;
   self->seek_position = -1;
-  self->max_packet = 2;
-  self->min_packet = 1;
+  self->max_packet = 8;
+  self->min_packet = 4;
+  self->region = NULL;
 }

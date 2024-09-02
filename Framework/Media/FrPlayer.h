@@ -12,18 +12,28 @@ SYS_BEGIN_DECLS
 
 struct _FrPlayerClass {
   SysObjectClass parent;
+
+  SysInt (*init) (FrPlayer *self);
+  SysInt (*started) (FrPlayer *self);
+  SysInt (*process) (FrPlayer *self);
+  SysInt (*stop) (FrPlayer *self);
 };
 
 struct _FrPlayer {
   SysObject parent;
 
   /* <private> */
+  FR_JOB_STATE_ENUM state;
 };
 
 SYS_API SysType fr_player_get_type(void);
 SYS_API FrPlayer *fr_player_new(void);
 
 SYS_API FrPlayer *fr_player_new_I(void);
+SYS_API SysInt fr_player_run(FrPlayer* self);
+
+void fr_player_set_state(FrPlayer *self, FR_JOB_STATE_ENUM state);
+FR_JOB_STATE_ENUM fr_player_get_state(FrPlayer *self);
 
 SYS_END_DECLS
 

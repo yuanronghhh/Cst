@@ -325,23 +325,25 @@ void fr_av_player_play(FrAvPlayer* self) {
 }
 
 /* object api */
-static void fr_av_player_construct(FrAvPlayer *self, FrAvPlayerContext *info) {
+static void fr_av_player_construct(FrPlayer *o, FrAvPlayerContext *info) {
+  FrAvPlayer *self = FR_AV_PLAYER(o);
+
   self->file = sys_object_ref(info->file);
   self->window = sys_object_ref(info->window);
   self->render = sys_object_ref(info->render);
 }
 
-FrAvPlayer* fr_av_player_new(void) {
+FrPlayer* fr_av_player_new(void) {
   return sys_object_new(FR_TYPE_AV_PLAYER, NULL);
 }
 
-FrAvPlayer *fr_av_player_new_I(FrAvPlayerContext *info) {
+FrPlayer *fr_av_player_new_I(FrAvPlayerContext *info) {
   sys_return_val_if_fail(info != NULL, NULL);
   sys_return_val_if_fail(info->file != NULL, NULL);
   sys_return_val_if_fail(info->window != NULL, NULL);
   sys_return_val_if_fail(info->render != NULL, NULL);
 
-  FrAvPlayer *o = fr_av_player_new();
+  FrPlayer *o = fr_av_player_new();
   fr_av_player_construct(o, info);
 
   return o;

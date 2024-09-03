@@ -47,11 +47,10 @@ struct _FrAvPlayerContext {
 };
 
 SYS_API SysType fr_av_player_get_type(void);
-SYS_API FrAvPlayer *fr_av_player_new(void);
+SYS_API FrPlayer* fr_av_player_new(void);
 
-SYS_API FrAvPlayer *fr_av_player_new_I(FrAvPlayerContext *info);
+SYS_API FrPlayer *fr_av_player_new_I(FrAvPlayerContext *info);
 SYS_API void fr_av_player_set_render(FrAvPlayer* self, FrAvRender *render);
-SYS_API SysInt fr_av_player_run(FrAvPlayer* self);
 SYS_API void fr_av_player_play(FrAvPlayer* self);
 SYS_API SysInt fr_av_player_render(FrAvPlayer *self,
     FrAvRender *render,

@@ -51,7 +51,7 @@
 } jobject jarray jproperty jpair jnode jnumber jsource
 
 %destructor {
-  sys_free_N($$);
+  sys_free($$);
 } string_token id_token source_token jkey
 
 %start program_unit

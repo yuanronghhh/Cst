@@ -84,7 +84,7 @@ void test_video_player(void) {
   FrDevice *video_device;
   FrAudioDevice *audio_device;
   FrMediaFile *mfile;
-  FrAvPlayer *mplayer;
+  FrPlayer *mplayer;
   FrAvRender *imrender;
   FrDrawContext *video_render = NULL;
   FrAudioStream *audio_render = NULL;
@@ -124,7 +124,7 @@ void test_video_player(void) {
     .render = imrender};
   mplayer = fr_av_player_new_I(&pinfo);
 
-  fr_av_player_run(mplayer);
+  fr_player_run(mplayer);
 
   sys_clear_pointer(&imrender, _sys_object_unref);
   sys_clear_pointer(&mplayer, _sys_object_unref);

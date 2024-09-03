@@ -73,7 +73,7 @@ void test_video_player(void) {
   FrDevice *device;
   FrDrawContext *video_render;
   FrMediaFile *mfile;
-  FrAvPlayer *mplayer;
+  FrPlayer *mplayer;
   FrAvRender *avrender;
   FrSurface* paint_surface;
 
@@ -100,8 +100,8 @@ void test_video_player(void) {
     .render = avrender};
   mplayer = fr_av_player_new_I(&pinfo);
 
-  fr_av_player_set_render(mplayer, avrender);
-  fr_av_player_run(mplayer);
+  fr_av_player_set_render(FR_AV_PLAYER(mplayer), avrender);
+  fr_player_run(mplayer);
 
   sys_object_unref(avrender);
   sys_object_unref(mplayer);

@@ -37,7 +37,7 @@ void fr_player_set_state(FrPlayer *self, FR_JOB_STATE_ENUM state) {
 }
 
 FR_JOB_STATE_ENUM fr_player_get_state(FrPlayer *self) {
-  sys_return_val_if_fail(self != NULL, NULL);
+  sys_return_val_if_fail(self != NULL, 0);
 
   return self->state;
 }

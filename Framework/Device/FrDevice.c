@@ -56,7 +56,7 @@ static void fr_device_dispose(SysObject* o) {
 
   UNUSED(self);
 
-
+  SYS_OBJECT_CLASS(fr_device_parent_class)->dispose(o);
 }
 
 static void fr_device_class_init(FrDeviceClass* cls) {

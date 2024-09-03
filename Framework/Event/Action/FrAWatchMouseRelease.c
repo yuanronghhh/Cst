@@ -81,7 +81,7 @@ FrAWatchMouseRelease* fr_awatch_mouse_release_new(void) {
 
 static void fr_awatch_mouse_release_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_awatch_mouse_release_parent_class)->dispose(o);
 }
 
 static void fr_awatch_mouse_release_class_init(FrAWatchMouseReleaseClass* cls) {

@@ -149,8 +149,9 @@ FrMain *fr_main_new_I(void) {
 
 static void fr_main_dispose(SysObject* o) {
   FrMain *self = FR_MAIN(o);
-
   sys_rec_mutex_clear(&self->mutex);
+
+  SYS_OBJECT_CLASS(fr_main_parent_class)->dispose(o);
 }
 
 static void fr_main_class_init(FrMainClass* cls) {

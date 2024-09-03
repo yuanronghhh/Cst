@@ -151,7 +151,7 @@ static void cst_component_context_dispose(SysObject* o) {
   sys_clear_pointer(&self->value_maps_env, _sys_object_unref);
   sys_clear_pointer(&self->css_env, _sys_object_unref);
 
-
+  SYS_OBJECT_CLASS(cst_component_context_parent_class)->dispose(o);
 }
 
 CstComponentContext *cst_component_context_new(void) {

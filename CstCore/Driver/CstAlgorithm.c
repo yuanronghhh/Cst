@@ -75,7 +75,7 @@ CstAlgorithm *cst_algorithm_new_I(void) {
 static void cst_algorithm_dispose(SysObject* o) {
   // CstAlgorithm *self = CST_ALGORITHM(o);
 
-
+  SYS_OBJECT_CLASS(cst_algorithm_parent_class)->dispose(o);
 }
 
 static void cst_algorithm_class_init(CstAlgorithmClass* cls) {

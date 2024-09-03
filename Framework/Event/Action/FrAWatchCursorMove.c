@@ -68,7 +68,7 @@ FrAWatchCursorMove* fr_awatch_cursor_move_new(void) {
 
 static void fr_awatch_cursor_move_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_awatch_cursor_move_parent_class)->dispose(o);
 }
 
 static void fr_awatch_cursor_move_class_init(FrAWatchCursorMoveClass* cls) {

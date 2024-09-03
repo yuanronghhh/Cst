@@ -70,7 +70,7 @@ CstLayerNode*cst_abs_node_new_I(CstLayer *layer) {
 
 static void cst_abs_node_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(cst_abs_node_parent_class)->dispose(o);
 }
 
 static void cst_abs_node_class_init(CstAbsNodeClass* cls) {

@@ -39,6 +39,8 @@ static void fr_pair_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->value, cls->value_destroy);
   }
+
+  SYS_OBJECT_CLASS(fr_pair_parent_class)->dispose(o);
 }
 
 static void fr_pair_class_init(FrPairClass* cls) {

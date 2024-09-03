@@ -129,7 +129,7 @@ static void fr_image_saver_dispose(SysObject* o) {
 
   UNUSED(self);
 
-
+  SYS_OBJECT_CLASS(fr_image_saver_parent_class)->dispose(o);
 }
 
 static void fr_image_saver_class_init(FrImageSaverClass* cls) {

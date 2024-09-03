@@ -33,7 +33,7 @@ static void mini_menubar_construct(CstComponent *o, CstComponentContext *c) {
 
 static void mini_menubar_dispose(SysObject *o) {
 
-
+  SYS_OBJECT_CLASS(mini_menubar_parent_class)->dispose(o);
 }
 
 static void mini_menubar_class_init(MiniMenuBarClass *cls) {

@@ -23,7 +23,7 @@ static void fr_render_dispose(SysObject* o) {
 
   UNUSED(self);
 
-
+  SYS_OBJECT_CLASS(fr_render_parent_class)->dispose(o);
 }
 
 static void fr_render_class_init(FrRenderClass* cls) {

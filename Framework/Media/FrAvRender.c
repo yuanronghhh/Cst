@@ -57,6 +57,7 @@ static void fr_av_render_dispose(SysObject* o) {
   }
 
 
+  SYS_OBJECT_CLASS(fr_av_render_parent_class)->dispose(o);
 }
 
 static void fr_av_render_class_init(FrAvRenderClass* cls) {

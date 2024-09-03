@@ -211,7 +211,7 @@ static void cst_css_group_dispose(SysObject* o) {
   sys_clear_pointer(&self->pairs, sys_harray_unref);
   sys_clear_pointer(&self->id, sys_free);
 
-
+  SYS_OBJECT_CLASS(cst_css_group_parent_class)->dispose(o);
 }
 
 static void cst_css_group_class_init(CstCssGroupClass* cls) {

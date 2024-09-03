@@ -35,6 +35,8 @@ FrAction *fr_amouse_key_new_I(FrActionContext *info) {
 }
 
 static void fr_amouse_key_dispose(SysObject* o) {
+
+  SYS_OBJECT_CLASS(fr_amouse_key_parent_class)->dispose(o);
 }
 
 static void fr_amouse_key_class_init(FrAMouseKeyClass* cls) {

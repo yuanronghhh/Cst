@@ -70,7 +70,7 @@ FrSource *fr_application_new_I(SysPointer app_data) {
 
 static void fr_application_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_application_parent_class)->dispose(o);
 }
 
 static void fr_application_class_init(FrApplicationClass* cls) {

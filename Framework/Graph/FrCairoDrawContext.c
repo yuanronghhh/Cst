@@ -367,7 +367,7 @@ FrDrawContext *fr_cairo_draw_context_new_I(FrDevice *device) {
 
 static void fr_cairo_draw_context_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_cairo_draw_context_parent_class)->dispose(o);
 }
 
 static void fr_cairo_draw_context_class_init(FrCairoDrawContextClass* cls) {

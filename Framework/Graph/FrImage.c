@@ -131,7 +131,7 @@ static void fr_image_dispose(SysObject* o) {
     sys_clear_pointer(&self->data, sgc_free);
   }
 
-
+  SYS_OBJECT_CLASS(fr_image_parent_class)->dispose(o);
 }
 
 static void fr_image_class_init(FrImageClass* cls) {

@@ -50,6 +50,8 @@ void fr_media_frame_dispose(SysObject *o) {
   FrMediaFrame* self = FR_MEDIA_FRAME(o);
 
   fr_media_frame_free(self);
+
+  SYS_OBJECT_CLASS(fr_media_frame_parent_class)->dispose(o);
 }
 
 static void fr_media_frame_class_init(FrMediaFrameClass* cls) {

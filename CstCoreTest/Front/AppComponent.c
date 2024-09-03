@@ -21,5 +21,5 @@ static void app_component_class_init(AppComponentClass *cls) {
 }
 
 static void app_component_dispose(SysObject *o) {
-
+  SYS_OBJECT_CLASS(app_component_parent_class)->dispose(o);
 }

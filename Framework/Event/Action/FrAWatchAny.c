@@ -38,7 +38,7 @@ SysObject *fr_awatch_any_clone_i(SysObject *o) {
 /* object api */
 static void fr_awatch_any_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_awatch_any_parent_class)->dispose(o);
 }
 
 void fr_awatch_any_construct_i(FrAWatch* o, FrAWatchBuilder *builder) {

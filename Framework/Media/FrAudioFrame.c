@@ -45,7 +45,7 @@ FrAudioFrame *fr_audio_frame_new_I(void) {
 static void fr_audio_frame_dispose(SysObject* o) {
   // FrAudioFrame *self = FR_AUDIO_FRAME(o);
 
-
+  SYS_OBJECT_CLASS(fr_audio_frame_parent_class)->dispose(o);
 }
 
 static void fr_audio_frame_class_init(FrAudioFrameClass* cls) {

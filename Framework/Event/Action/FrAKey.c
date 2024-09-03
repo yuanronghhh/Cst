@@ -27,7 +27,7 @@ FrAction* fr_akey_new(void) {
 
 static void fr_akey_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_akey_parent_class)->dispose(o);
 }
 
 static void fr_akey_class_init(FrAKeyClass* cls) {

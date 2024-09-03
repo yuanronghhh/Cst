@@ -120,7 +120,7 @@ FrNode *fr_node_new_I(void) {
 
 static void fr_node_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_node_parent_class)->dispose(o);
 }
 
 static void fr_node_class_init(FrNodeClass* cls) {

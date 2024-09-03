@@ -24,7 +24,7 @@ FrDisplay *fr_display_new_I(void) {
 
 static void fr_display_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_display_parent_class)->dispose(o);
 }
 
 static void fr_display_class_init(FrDisplayClass* cls) {

@@ -50,6 +50,8 @@ static void fr_hw_accel_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->name, sys_free);
   }
+
+  SYS_OBJECT_CLASS(fr_hw_accel_parent_class)->dispose(o);
 }
 
 static void fr_hw_accel_class_init(FrHwAccelClass* cls) {

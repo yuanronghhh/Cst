@@ -95,6 +95,8 @@ static void fr_action_dispose(SysObject* o) {
 
   sys_list_free_full(self->awatch_list, (SysDestroyFunc)_sys_object_unref);
   sys_clear_pointer(&self->name, sys_free);
+
+  SYS_OBJECT_CLASS(fr_action_parent_class)->dispose(o);
 }
 
 static void fr_action_class_init(FrActionClass* cls) {

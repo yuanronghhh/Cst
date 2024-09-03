@@ -375,6 +375,8 @@ static void fr_av_player_dispose(SysObject* o) {
   sys_clear_pointer(&self->file, _sys_object_unref);
   sys_clear_pointer(&self->window, _sys_object_unref);
   sys_clear_pointer(&self->render, _sys_object_unref);
+
+  SYS_OBJECT_CLASS(fr_av_player_parent_class)->dispose(o);
 }
 
 static void fr_av_player_class_init(FrAvPlayerClass* cls) {

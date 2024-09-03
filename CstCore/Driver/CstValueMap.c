@@ -86,7 +86,7 @@ static void cst_value_map_dispose(SysObject* o) {
   
   sys_clear_pointer(&self->key, sys_free);
 
-
+  SYS_OBJECT_CLASS(cst_value_map_parent_class)->dispose(o);
 }
 
 static void cst_value_map_class_init(CstValueMapClass* cls) {

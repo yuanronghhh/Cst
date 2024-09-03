@@ -55,7 +55,7 @@ FrAction *fr_acursor_move_new_I(FrActionContext *info) {
 
 static void fr_acursor_move_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_acursor_move_parent_class)->dispose(o);
 }
 
 static void fr_acursor_move_class_init(FrACursorMoveClass* cls) {

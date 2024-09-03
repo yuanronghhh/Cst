@@ -36,7 +36,7 @@ static void cst_layer_dispose(SysObject* o) {
   sys_queue_free_full(self->draw_queue, (SysDestroyFunc)_sys_object_unref);
   sys_clear_pointer(&self->name, sys_free);
 
-
+  SYS_OBJECT_CLASS(cst_layer_parent_class)->dispose(o);
 }
 
 CstLayer *cst_layer_new(void) {

@@ -34,7 +34,7 @@ static void fr_event_scroll_dispose(SysObject* o) {
   FrEventScrollPrivate* priv = self->priv;
 
 
-
+  SYS_OBJECT_CLASS(fr_event_scroll_parent_class)->dispose(o);
 }
 
 static void fr_event_scroll_class_init(FrEventScrollClass* cls) {

@@ -34,7 +34,7 @@ static void fr_event_pressed_dispose(SysObject* o) {
   FrEventPressedPrivate* priv = self->priv;
 
 
-
+  SYS_OBJECT_CLASS(fr_event_pressed_parent_class)->dispose(o);
 }
 
 static void fr_event_pressed_class_init(FrEventPressedClass* cls) {

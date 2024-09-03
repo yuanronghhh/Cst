@@ -983,6 +983,8 @@ static void fr_sdl_window_dispose(SysObject* o) {
   FrSdlWindow *self = FR_SDL_WINDOW(o);
 
   fr_sdl_window_destroy_i((FrWindow *)self);
+
+  SYS_OBJECT_CLASS(fr_sdl_window_parent_class)->dispose(o);
 }
 
 static void fr_sdl_window_class_init(FrSdlWindowClass* cls) {

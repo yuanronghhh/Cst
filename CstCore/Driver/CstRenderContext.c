@@ -276,7 +276,7 @@ static void cst_render_context_dispose(SysObject* o) {
   sys_clear_pointer(&self->width_calc, _sys_object_unref);
   sys_clear_pointer(&self->height_calc, _sys_object_unref);
 
-
+  SYS_OBJECT_CLASS(cst_render_context_parent_class)->dispose(o);
 }
 
 static void cst_render_context_class_init(CstRenderContextClass* cls) {

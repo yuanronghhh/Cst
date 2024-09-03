@@ -158,6 +158,8 @@ static void cst_com_node_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->values_ht, sys_hash_table_unref);
   }
+
+  SYS_OBJECT_CLASS(cst_com_node_parent_class)->dispose(o);
 }
 
 static void cst_com_node_init(CstComNode *self) {

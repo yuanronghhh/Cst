@@ -25,5 +25,5 @@ static void layout_component_class_init(LayoutComponentClass *cls) {
 }
 
 static void layout_component_dispose(SysObject *o) {
-
+  SYS_OBJECT_CLASS(layout_component_parent_class)->dispose(o);
 }

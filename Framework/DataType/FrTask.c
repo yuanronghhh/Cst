@@ -112,6 +112,8 @@ static void fr_task_dispose(SysObject* o) {
 
   sys_cond_clear(&self->cond);
   sys_mutex_clear(&self->mutex);
+
+  SYS_OBJECT_CLASS(fr_task_parent_class)->dispose(o);
 }
 
 static void fr_task_class_init(FrTaskClass* cls) {

@@ -38,7 +38,7 @@ FrMediaDecoder *fr_audio_decoder_new_I(FrAudioDecoderContext *info) {
 
 static void fr_audio_decoder_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_audio_decoder_parent_class)->dispose(o);
 }
 
 static void fr_audio_decoder_class_init(FrAudioDecoderClass* cls) {

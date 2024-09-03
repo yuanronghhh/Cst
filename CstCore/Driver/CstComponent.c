@@ -278,6 +278,8 @@ static void cst_component_dispose(SysObject* o) {
     sys_clear_pointer(&self->value_maps_env, _sys_object_unref);
   }
   sys_clear_pointer(&self->id, sys_free);
+
+  SYS_OBJECT_CLASS(cst_component_parent_class)->dispose(o);
 }
 
 static void cst_component_init(CstComponent *self) {

@@ -123,7 +123,7 @@ static void cst_text_dispose(SysObject* o) {
     sys_clear_pointer(&self->playout, g_object_unref);
   }
 
-
+  SYS_OBJECT_CLASS(cst_text_parent_class)->dispose(o);
 }
 
 static void cst_text_class_init(CstTextClass* cls) {

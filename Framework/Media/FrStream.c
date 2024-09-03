@@ -21,7 +21,7 @@ FrStream *fr_stream_new_I(FrStreamContext *info) {
 
 static void fr_stream_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_stream_parent_class)->dispose(o);
 }
 
 static void fr_stream_class_init(FrStreamClass* cls) {

@@ -116,6 +116,7 @@ static void fr_audio_device_dispose(SysObject* o) {
   FrAudioDevice *self = FR_AUDIO_DEVICE(o);
 
   self->ctx = NULL;
+  SYS_OBJECT_CLASS(fr_audio_device_parent_class)->dispose(o);
 }
 
 static void fr_audio_device_class_init(FrAudioDeviceClass* cls) {

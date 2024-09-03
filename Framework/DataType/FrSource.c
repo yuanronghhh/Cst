@@ -87,7 +87,7 @@ static void fr_source_dispose(SysObject* o) {
   FrSource *self = FR_SOURCE(o);
   sys_object_unref(self->main);
 
-
+  SYS_OBJECT_CLASS(fr_source_parent_class)->dispose(o);
 }
 
 static void fr_source_class_init(FrSourceClass* cls) {

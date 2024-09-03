@@ -23,7 +23,7 @@ static void cst_video_dispose(SysObject* o) {
 
   UNUSED(self);
 
-
+  SYS_OBJECT_CLASS(cst_video_parent_class)->dispose(o);
 }
 
 static void cst_video_class_init(CstVideoClass* cls) {

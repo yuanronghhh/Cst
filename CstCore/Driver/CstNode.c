@@ -430,6 +430,8 @@ static void cst_node_dispose(SysObject* o) {
 
   sys_clear_pointer(&self->id, sys_free);
   sys_clear_pointer(&self->name, sys_free);
+
+  SYS_OBJECT_CLASS(cst_node_parent_class)->dispose(o);
 }
 
 static void cst_node_init(CstNode *self) {

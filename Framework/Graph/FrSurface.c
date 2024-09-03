@@ -48,7 +48,7 @@ static void fr_surface_dispose(SysObject* o) {
 
   fr_i_draw_surface_destroy(self);
 
-
+  SYS_OBJECT_CLASS(fr_surface_parent_class)->dispose(o);
 }
 
 static void fr_surface_class_init(FrSurfaceClass* cls) {

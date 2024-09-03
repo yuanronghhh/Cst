@@ -61,6 +61,8 @@ void fr_awatch_refresh_dispatch_i (FrAWatch *o, FrEvent *e) {
 
 /* object api */
 static void fr_awatch_refresh_dispose(SysObject* o) {
+
+  SYS_OBJECT_CLASS(fr_awatch_refresh_parent_class)->dispose(o);
 }
 
 void fr_awatch_refresh_construct_i(FrAWatch* o, FrAWatchBuilder *builder) {
@@ -84,6 +86,5 @@ static void fr_awatch_refresh_class_init(FrAWatchRefreshClass* cls) {
 }
 
 static void fr_awatch_refresh_init(FrAWatchRefresh *self) {
-
   fr_awatch_set_action(FR_AWATCH(self), FR_ACTION_STATIC);
 }

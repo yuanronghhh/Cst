@@ -46,7 +46,7 @@ FrAWatch * fr_awatchkey_new_I(SysPointer user_data, FrEventFunc func) {
 
 static void fr_awatchkey_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_awatchkey_parent_class)->dispose(o);
 }
 
 static void fr_awatchkey_class_init(FrAWatchKeyClass* cls) {

@@ -130,7 +130,7 @@ static void fr_media_file_dispose(SysObject* o) {
 
   fr_media_file_free(self);
 
-
+  SYS_OBJECT_CLASS(fr_media_file_parent_class)->dispose(o);
 }
 
 static void fr_media_file_class_init(FrMediaFileClass* cls) {

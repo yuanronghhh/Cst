@@ -20,7 +20,7 @@ FrPipeline *fr_pipeline_new_I(void) {
 
 static void fr_pipeline_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_pipeline_parent_class)->dispose(o);
 }
 
 static void fr_pipeline_class_init(FrPipelineClass* cls) {

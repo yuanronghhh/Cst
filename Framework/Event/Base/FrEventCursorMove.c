@@ -40,7 +40,7 @@ FrEvent *fr_event_cursor_move_new_I(FrWindow *window, SysDouble xpos, SysDouble 
 
 static void fr_event_cursor_move_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_event_cursor_move_parent_class)->dispose(o);
 }
 
 static void fr_event_cursor_move_class_init(FrEventCursorMoveClass* cls) {

@@ -49,7 +49,7 @@ static void app_button_class_init(AppButtonClass *cls) {
 }
 
 static void app_button_dispose(SysObject *o) {
-
+  SYS_OBJECT_CLASS(app_button_parent_class)->dispose(o);
 }
 
 

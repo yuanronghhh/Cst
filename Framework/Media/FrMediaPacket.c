@@ -16,10 +16,12 @@ SysObject *fr_media_packet_dclone_i(SysObject *o) {
 }
 
 /* object api */
-void fr_media_packet_dispose(SysObject* o) {
+static void fr_media_packet_dispose(SysObject* o) {
   FrMediaPacket* self = FR_MEDIA_PACKET(o);
 
   fr_media_media_packet_free(self);
+
+  SYS_OBJECT_CLASS(fr_media_packet_parent_class)->dispose(o);
 }
 
 FrPacket* fr_media_packet_new(void) {

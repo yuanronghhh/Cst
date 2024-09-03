@@ -104,7 +104,7 @@ static void fr_video_decoder_dispose(SysObject* o) {
 
   sys_object_destroy(&self->scale);
 
-  
+  SYS_OBJECT_CLASS(fr_video_decoder_parent_class)->dispose(o);
 }
 
 static void fr_video_decoder_class_init(FrVideoDecoderClass* cls) {

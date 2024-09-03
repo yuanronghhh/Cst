@@ -99,7 +99,7 @@ static void cst_node_map_dispose(SysObject* o) {
   CstNodeMap *self = CST_NODE_MAP(o);
   sys_object_unref(self->value_map);
 
-
+  SYS_OBJECT_CLASS(cst_node_map_parent_class)->dispose(o);
 }
 
 static void cst_node_map_class_init(CstNodeMapClass* cls) {

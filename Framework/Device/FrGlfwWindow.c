@@ -429,6 +429,8 @@ void fr_glfw_window_iface_setup(FrIWindowInterface *iface) {
 static void fr_glfw_window_dispose(SysObject *o) {
 
   fr_glfw_window_destroy_i((FrWindow *)o);
+
+  SYS_OBJECT_CLASS(fr_glfw_window_parent_class)->dispose(o);
 }
 
 static void fr_glfw_window_class_init(FrGlfwWindowClass* cls) {

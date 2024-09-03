@@ -102,6 +102,8 @@ static void fr_job_dispose(SysObject* o) {
   self->user_data = NULL;
   self->thread = NULL;
   sys_clear_pointer(&self->name, sys_free);
+
+  SYS_OBJECT_CLASS(fr_job_parent_class)->dispose(o);
 }
 
 static void fr_job_class_init(FrJobClass* cls) {

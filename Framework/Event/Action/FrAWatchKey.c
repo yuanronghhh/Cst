@@ -54,7 +54,7 @@ SysInt fr_awatch_key_get_key(FrAWatchKey *self) {
 /* object api */
 static void fr_awatch_key_dispose(SysObject* o) {
 
-
+  SYS_OBJECT_CLASS(fr_awatch_key_parent_class)->dispose(o);
 }
 
 void fr_awatch_key_construct_i(FrAWatch* o, FrAWatchBuilder *builder) {

@@ -217,7 +217,7 @@ FrDecoder* fr_media_decoder_create_by_media_type(
 }
 
 
-static void cst_css_node_dispose(SysObject* o) {
+static void fr_media_decoder_dispose(SysObject* o) {
   FrMediaDecoder *self = FR_MEDIA_DECODER(o);
   FrDecoder *decoder = FR_DECODER(o);
 
@@ -235,7 +235,7 @@ static void cst_css_node_dispose(SysObject* o) {
     sys_clear_pointer(&self->frame, _sys_object_unref);
   }
 
-  
+  SYS_OBJECT_CLASS(fr_media_decoder_parent_class)->dispose(o);
 }
 
 static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
@@ -249,7 +249,7 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
   dcls->open = fr_media_decoder_open_i;
   dcls->close = fr_media_decoder_close_i;
 
-  ocls->dispose = cst_css_node_dispose;
+  ocls->dispose = fr_media_decoder_dispose;
 }
 
 void fr_media_decoder_init(FrMediaDecoder* self) {

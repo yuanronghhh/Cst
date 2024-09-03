@@ -83,7 +83,8 @@ SysInt fr_media_media_file_read_packet(FrMediaFile *self,
 
 void fr_media_media_packet_create(FrMediaPacket *self);
 void fr_media_media_packet_free(FrMediaPacket *self);
-void fr_media_packet_ref(FrMediaPacket* nself, FrMediaPacket* oself);
+void fr_media_media_packet_ref(FrMediaPacket* nself, FrMediaPacket* oself);
+void fr_media_media_packet_unref(FrMediaPacket* nself);
 SysInt fr_media_packet_get_stream_index(FrMediaPacket *self);
 
 /* image */
@@ -100,8 +101,9 @@ SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info);
 
 SysBool fr_media_stream_get_rational(FrMediaStream* self, FrRational* rt);
 void fr_media_media_frame_create(FrMediaFrame *self);
-void fr_media_frame_free(FrMediaFrame *self);
-void fr_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself);
+void fr_media_media_frame_free(FrMediaFrame *self);
+void fr_media_media_frame_ref(FrMediaFrame *nself, FrMediaFrame *oself);
+void fr_media_media_frame_unref(FrMediaFrame *nself);
 void fr_media_frame_get_data(FrMediaFrame *self, uint8_t *data[]);
 void fr_media_frame_get_linesize(FrMediaFrame *self, SysInt linesize[]);
 

@@ -33,7 +33,7 @@ FrImage* fr_image_new_from_avframe(AVFrame *frame) {
 
   if(err < 0) {
 
-    sys_free_N(info.data);
+    sys_free(info.data);
     return NULL;
   }
 
@@ -128,7 +128,7 @@ static void fr_image_dispose(SysObject* o) {
 
   if(self->data_size > 0) {
 
-    sys_clear_pointer(&self->data, sgc_free);
+    sys_clear_pointer(&self->data, sys_free);
   }
 
   SYS_OBJECT_CLASS(fr_image_parent_class)->dispose(o);

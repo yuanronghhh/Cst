@@ -272,7 +272,7 @@ FrEventFunc cst_module_get_event_function(CstModule *self, const SysChar *func_n
 
   new_func_name = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
   func = (FrEventFunc)cst_module_get_function(self, new_func_name);
-  sys_free_N(new_func_name);
+  sys_free(new_func_name);
 
   return func;
 }

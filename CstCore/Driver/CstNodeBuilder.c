@@ -41,7 +41,7 @@ SysChar* cst_builder_node_extract_index(const SysChar* str, SysInt slen) {
     return NULL;
   }
 
-  nsp = sys_new0_N(SysChar, slen - 3);
+  nsp = sys_new0(SysChar, slen - 3);
   sp = nsp;
 
   str += 2;
@@ -109,7 +109,7 @@ SysBool cst_node_builder_parse_value_bind(
   }
 
   vmap = cst_component_get_value_map(v_component, index_name);
-  sys_free_N(index_name);
+  sys_free(index_name);
 
   if (vmap == NULL) {
     return false;
@@ -147,7 +147,7 @@ SysBool cst_node_builder_parse_action_bind(
   if (pmap == NULL) {
     sys_error_N("Not found props in component: %s, %s", cst_component_get_id(comp), index_name);
     *bind_var = NULL;
-    sys_free_N(index_name);
+    sys_free(index_name);
     return false;
   }
 
@@ -183,7 +183,7 @@ SysBool cst_node_builder_parse_action(
 
     fname = sys_strdup_printf("%s%s", FR_FUNC_EVENT_PREFIX, func_name);
     watch_func = (FrEventFunc)cst_module_get_function(v_module, fname);
-    sys_free_N(fname);
+    sys_free(fname);
 
     if (watch_func == NULL) {
       sys_warning_N("Not found function: \"%s\" in \"%s\" component",
@@ -219,7 +219,7 @@ fail:
   }
 
   if (bind_var != NULL) {
-    sys_free_N(bind_var);
+    sys_free(bind_var);
   }
   return false;
 }

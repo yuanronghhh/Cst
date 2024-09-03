@@ -468,7 +468,7 @@ void ast_parser_import_handle(AstNode * node, AstParser *self) {
   cwd = sys_path_dirname(mpath);
   fullpath= sys_path_join(cwd, import->path);
 
-  sys_free_N(cwd);
+  sys_free(cwd);
 
   if (fullpath == NULL || !sys_path_exists(fullpath)) {
     sys_error_N("import path not found: %s", fullpath);
@@ -479,7 +479,7 @@ void ast_parser_import_handle(AstNode * node, AstParser *self) {
     abort();
   }
 
-  sys_free_N(fullpath);
+  sys_free(fullpath);
 }
 
 /* GStyle Ast */
@@ -542,7 +542,7 @@ static SysBool ast_string_array_flatten (SysPtrArray *v_array,
   SysUInt *o_len) {
 
   JNode *tnode;
-  SysChar **base = sys_new0_N(SysChar *, v_array->len);
+  SysChar **base = sys_new0(SysChar *, v_array->len);
 
   for (SysUInt i = 0; i < v_array->len; i++) {
     tnode = v_array->pdata[i];
@@ -554,7 +554,7 @@ static SysBool ast_string_array_flatten (SysPtrArray *v_array,
 
     if (tnode->type != AstJString) {
       sys_warning_N("Node property must be a string: %s", key);
-      sys_free_N(base);
+      sys_free(base);
       return false;
     }
 
@@ -624,7 +624,7 @@ static SysBool node_parse_prop_func(JNode *jnode, AstNodePass *pass) {
         return false;
       }
 
-      sys_free_N(o_base);
+      sys_free(o_base);
 
       break;
     case CST_NODE_PROP_VALUE:
@@ -877,7 +877,7 @@ SysBool ast_css_value_parse(JNode *jnode, CstCssNode *css_node, CstCssValue *val
         break;
       }
 
-      v_m4 = sys_new0_N(FrSInt4, 1);
+      v_m4 = sys_new0(FrSInt4, 1);
       SysInt tm4[4];
       for (SysUInt i = 0; i < jnode->v.v_array->len; i++) {
         JNode *node = jnode->v.v_array->pdata[i];
@@ -922,7 +922,7 @@ SysBool ast_css_value_parse(JNode *jnode, CstCssNode *css_node, CstCssValue *val
 SysBool ast_css_value_color_parse(SysChar *s, CstCssValue *value) {
   sys_return_val_if_fail(s != NULL, false);
 
-  FrColor *color = sys_new0_N(FrColor, 1);
+  FrColor *color = sys_new0(FrColor, 1);
 
   if (!fr_color_rgba_parse(s, color)) {
     sys_warning_N("Faild to parse %s.", s);

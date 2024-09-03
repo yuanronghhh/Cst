@@ -24,7 +24,7 @@ SYS_DEFINE_TYPE(FrAvPlayer, fr_av_player, FR_TYPE_PLAYER);
 static void pipe_pass_free(PipePass *self) {
 
   sys_clear_pointer(&self->pkt, _sys_object_unref);
-  sys_free_N(self);
+  sys_free(self);
 }
 
 static PipePass* pipe_pass_new_by_type(
@@ -33,7 +33,7 @@ static PipePass* pipe_pass_new_by_type(
     FrPacket *pkt) {
   sys_return_val_if_fail(pipe != NULL, NULL);
 
-  PipePass *pass = sys_new0_N(PipePass, 1);
+  PipePass *pass = sys_new0(PipePass, 1);
 
   pass->pkt = pkt;
   pass->pipe = pipe;
@@ -58,7 +58,7 @@ static PipePass* pipe_pass_new_by_type(
   return pass;
 
 fail:
-  sys_free_N(pass);
+  sys_free(pass);
   return NULL;
 }
 
@@ -179,9 +179,6 @@ static void calc_video_delay (FrAvPlayer *self) {
   fr_media_stream_get_rational(vs, &rt);
   self->delay = self->default_delay = (1 / (rt.num / (double) rt.den)) * 1.0e6;
 }
-
-
-static int g_count = 0;
 
 static SysInt fr_av_player_init_i(FrPlayer *o) {
   FrAvPlayer *self = FR_AV_PLAYER(o);

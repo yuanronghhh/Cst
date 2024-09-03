@@ -10,7 +10,7 @@ SysObject *fr_media_packet_dclone_i(SysObject *o) {
   FrMediaPacket* nself = FR_MEDIA_PACKET(n);
   FrMediaPacket* oself = FR_MEDIA_PACKET(o);
 
-  fr_media_packet_ref(nself, oself);
+  fr_media_media_packet_ref(nself, oself);
 
   return n;
 }
@@ -28,8 +28,15 @@ FrPacket* fr_media_packet_new(void) {
   return sys_object_new(FR_TYPE_MEDIA_PACKET, NULL);
 }
 
+static void fr_media_packet_unref_i(SysObject *o) {
+
+  fr_media_media_packet_unref((FrMediaPacket *)o);
+}
+
 static void fr_media_packet_class_init(FrMediaPacketClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
+
+  ocls->unref = fr_media_packet_unref_i;
 
   ocls->dclone = fr_media_packet_dclone_i;
   ocls->dispose = fr_media_packet_dispose;

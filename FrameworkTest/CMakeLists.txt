@@ -7,7 +7,7 @@ set(INC
 
 set(EXTERNAL_LIBS
   "System"
-  "unity"
+  "Unity"
   "pthread"
   "openssl"
   "vld"

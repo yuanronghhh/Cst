@@ -226,6 +226,7 @@ static void fr_media_decoder_dispose(SysObject* o) {
     fr_media_decoder_close_i(decoder);
   }
   sys_object_unref(self->stream);
+
   sys_async_queue_clear_full(&self->queue);
 
   fr_media_decoder_free(self);
@@ -254,5 +255,5 @@ static void fr_media_decoder_class_init(FrMediaDecoderClass* cls) {
 
 void fr_media_decoder_init(FrMediaDecoder* self) {
 
-  sys_async_queue_init_full(&self->queue, (SysDestroyFunc)_sys_object_unref);
+  sys_async_queue_init_full(&self->queue, NULL);
 }

@@ -3,7 +3,7 @@
 
 #include <FrameworkTest/FrTestConfig.h>
 #include <Framework/FrCore.h>
-#include <unity.h>
+#include <Unity/unity.h>
 
 SYS_BEGIN_DECLS
 

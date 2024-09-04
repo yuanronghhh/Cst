@@ -380,7 +380,7 @@ static void fr_av_player_dispose(SysObject* o) {
 
 static void fr_av_player_class_init(FrAvPlayerClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
-  FrPlayerClass *pcls = FR_PLAYER_GET_CLASS(cls);
+  FrPlayerClass *pcls = FR_PLAYER_CLASS(cls);
 
   pcls->init = fr_av_player_init_i;
   pcls->process = fr_av_player_process_i;

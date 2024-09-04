@@ -115,16 +115,6 @@ FrMediaFile *fr_media_file_new_I(const SysChar *filename) {
 static void fr_media_file_dispose(SysObject* o) {
   FrMediaFile *self = FR_MEDIA_FILE(o);
 
-  for (SysUInt i = 0; i < self->n_streams; i++) {
-
-    if(self->streams[i]) {
-
-      sys_clear_pointer(&self->streams[i], _sys_object_unref);
-    }
-  }
-  self->n_streams = 0;
-  sys_clear_pointer(&self->streams, sys_free);
-
   sys_assert(self->ctx != NULL);
   sys_object_destroy(&self->mpkt);
 

@@ -686,6 +686,15 @@ SysInt fr_media_file_play(FrMediaFile* self) {
 }
 
 void fr_media_file_free(FrMediaFile *self) {
+  for (SysUInt i = 0; i < self->n_streams; i++) {
+    if(self->streams[i]) {
+
+      sys_clear_pointer(&self->streams[i], _sys_object_unref);
+    }
+  }
+
+  self->n_streams = 0;
+  sys_clear_pointer(&self->streams, sys_free);
 
   avformat_close_input((AVFormatContext **)&self->ctx);
 }
@@ -731,8 +740,7 @@ SysBool fr_media_file_create(
   self->is_realtime = format_context_is_realtime(ctx);
 
   self->n_streams = ctx->nb_streams;
-  self->streams = (FrMediaStream **)sys_block_new(SYS_TYPE_POINTER,
-      self->n_streams);
+  self->streams = (FrMediaStream **)sys_new0(SysPointer, self->n_streams);
 
   stream = parse_stream_by_type(ctx, FR_MEDIA_VIDEO);
   if(stream) { self->streams[FR_MEDIA_VIDEO] = stream; }

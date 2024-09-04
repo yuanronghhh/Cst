@@ -162,9 +162,9 @@ void test_fr_window_leak(void) {
 void test_video_init(int argc, const SysChar * argv[]) {
   UNITY_BEGIN();
   {
+    RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_sdl_basic);
     // RUN_TEST(test_avformat_leak);
-    RUN_TEST(test_video_player);
     // RUN_TEST(test_fr_draw_context);
     // RUN_TEST(test_fr_basic);
     // RUN_TEST(test_fr_window_leak);

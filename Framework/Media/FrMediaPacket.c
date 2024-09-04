@@ -16,10 +16,15 @@ SysObject *fr_media_packet_dclone_i(SysObject *o) {
 }
 
 /* object api */
-static void fr_media_packet_dispose(SysObject* o) {
+
+static void fr_media_packet_destroy(SysObject* o) {
   FrMediaPacket* self = FR_MEDIA_PACKET(o);
 
   fr_media_media_packet_free(self);
+}
+
+static void fr_media_packet_dispose(SysObject* o) {
+  fr_media_packet_destroy(o);
 
   SYS_OBJECT_CLASS(fr_media_packet_parent_class)->dispose(o);
 }
@@ -37,6 +42,7 @@ static void fr_media_packet_class_init(FrMediaPacketClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
   ocls->unref = fr_media_packet_unref_i;
+  ocls->destroy = fr_media_packet_destroy;
 
   ocls->dclone = fr_media_packet_dclone_i;
   ocls->dispose = fr_media_packet_dispose;

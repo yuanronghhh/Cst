@@ -24,6 +24,7 @@ struct _FrPlayer {
 
   /* <private> */
   FR_JOB_STATE_ENUM state;
+  SysUInt64 loop_count;
 };
 
 SYS_API SysType fr_player_get_type(void);

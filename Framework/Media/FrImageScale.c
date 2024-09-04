@@ -181,7 +181,7 @@ FrImageScale* fr_image_scale_new_I(FrImageScaleContext *info) {
   return o;
 }
 
-void fr_image_scale_dispose(SysObject* o) {
+void fr_image_scale_destroy(SysObject* o) {
   FrImageScale *self = FR_IMAGE_SCALE(o);
 
   if (self->ctx) {
@@ -193,6 +193,10 @@ void fr_image_scale_dispose(SysObject* o) {
 
     sys_clear_pointer(&self->hw_accel, _sys_object_unref);
   }
+}
+
+void fr_image_scale_dispose(SysObject* o) {
+  fr_image_scale_destroy(o);
 
   SYS_OBJECT_CLASS(fr_image_scale_parent_class)->dispose(o);
 }
@@ -200,6 +204,7 @@ void fr_image_scale_dispose(SysObject* o) {
 static void fr_image_scale_class_init(FrImageScaleClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
 
+  ocls->destroy = fr_image_scale_destroy;
   ocls->dispose = fr_image_scale_dispose;
 }
 

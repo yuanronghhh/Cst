@@ -184,6 +184,8 @@ static SysInt fr_av_player_init_i(FrPlayer *o) {
   FrAvPlayer *self = FR_AV_PLAYER(o);
   FrBound bound = { .width = 800, .height = 600 };
 
+  fr_player_set_state(o, FR_JOB_STATE_RUNNING);
+
   if(fr_media_file_has_video(self->file)) {
     calc_video_delay(self);
   }

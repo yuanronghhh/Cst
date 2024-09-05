@@ -33,10 +33,10 @@ SysInt media_file_read_packet_i(FrIStream *o, FrPacket **pkt) {
 
   err = fr_media_media_file_read_packet(self, &self->mpkt);
   if(err < 0) { return err; }
-
   self->serial++;
   fr_packet_set_serial(npkt, self->serial);
-  *pkt = npkt;
+
+  *pkt = (FrPacket *)sys_object_dclone(&self->mpkt);
 
   return err;
 }

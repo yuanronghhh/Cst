@@ -10,8 +10,11 @@
 #include <Framework/Media/FrVideoFrame.h>
 
 static void i_draw_imp(FrIDrawInterface *iface);
+static void i_media_render_imp(FrIMediaRenderInterface *iface);
 
-SYS_DEFINE_TYPE(FrCairoDrawContext, fr_cairo_draw_context, FR_TYPE_DRAW_CONTEXT);
+SYS_DEFINE_WITH_CODE(FrCairoDrawContext,
+    fr_cairo_draw_context, FR_TYPE_DRAW_CONTEXT,
+    SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_MEDIA_RENDER, i_media_render_imp));
 
 static void cairo_overlay_i(cairo_t *cr, cairo_surface_t *surface, SysInt x, SysInt y) {
 
@@ -138,13 +141,17 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
   fr_surface_flush(draw_context->device_surface);
 }
 
-void fr_cairo_draw_context_render_video(FrDrawContext *self, FrVideoFrame *frame, FrRegion *region) {
-  sys_return_if_fail(self != NULL);
+void fr_cairo_draw_context_render(FrIMediaRender *o, FrMediaFrame *frame, SysPointer user_data) {
+  sys_return_if_fail(o != NULL);
   sys_return_if_fail(frame != NULL);
+
+  FrDrawContext *self = FR_DRAW_CONTEXT(o);
+  FrRegion *region = user_data;
+  FrVideoFrame *vframe = FR_VIDEO_FRAME(frame);
 
   fr_draw_context_frame_begin(self, region);
 
-  render_video_frame(self, frame);
+  render_video_frame(self, vframe);
 
   fr_draw_context_frame_end(self, region);
 }
@@ -339,7 +346,11 @@ static void i_draw_imp(FrIDrawInterface *iface) {
   iface->surface_get_data = fr_surface_get_data;
   iface->image_surface_get_stride = fr_image_surface_get_stride;
   iface->surface_save_to_png = fr_surface_save_to_png;
-  iface->render_video = fr_cairo_draw_context_render_video;
+}
+
+static void i_media_render_imp(FrIMediaRenderInterface *iface) {
+
+  iface->render = fr_cairo_draw_context_render;
 }
 
 static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {

@@ -82,7 +82,6 @@ struct _FrIDrawInterface {
   void (*surface_unmap_image) (FrSurface* surface,FrSurface* image);
   SysUInt8 * (*surface_get_data) (FrSurface *surface);
   SysBool (*surface_save_to_png) (FrSurface *surface, const SysChar *filename);
-  void (*render_video) (FrDrawContext *self, FrVideoFrame *frame, FrRegion *region);
   void (*update_layout) (FrContext* cr, PangoLayout* layout);
   void (*overlay) (FrContext* cr, FrSurface *surface, SysInt x, SysInt y);
   void (*show_layout) (FrContext* cr, PangoLayout* layout);
@@ -162,7 +161,6 @@ void fr_i_draw_surface_unmap_image (FrSurface* surface,FrSurface* image);
 SysUInt8* fr_i_draw_surface_get_data (FrSurface* surface);
 SysBool fr_i_draw_surface_save_to_png (FrSurface* surface, const SysChar *filename);
 void fr_i_draw_update_layout(FrContext* cr, PangoLayout* layout);
-void fr_i_draw_context_render_video(FrDrawContext *self, FrVideoFrame *frame, FrRegion *region);
 void fr_i_draw_show_layout(FrContext* cr, PangoLayout* layout);
 SysInt fr_i_draw_rounded_rectangle(FrContext* cr, SysDouble x, SysDouble y, SysDouble w, SysDouble h, SysDouble radius);
 void fr_i_draw_context_overlay (FrContext* cr, FrSurface *surface, SysInt x, SysInt y);

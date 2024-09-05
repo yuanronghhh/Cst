@@ -58,7 +58,7 @@ SysInt fr_media_decoder_open_i(FrDecoder* o) {
   return fr_media_decoder_open(self);
 }
 
-void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt) {
+void fr_media_decoder_write(FrMediaDecoder *self, FrPacket *pkt) {
   sys_return_if_fail(self != NULL);
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
@@ -67,7 +67,7 @@ void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt) {
   cls->write(self, pkt);
 }
 
-SysInt fr_media_decoder_read(FrMediaDecoder *self, FrMediaPacket **pkt) {
+SysInt fr_media_decoder_read(FrMediaDecoder *self, FrPacket **pkt) {
   sys_return_val_if_fail(self != NULL, -1);
 
   FrMediaDecoderClass* cls = FR_MEDIA_DECODER_GET_CLASS(self);
@@ -76,8 +76,8 @@ SysInt fr_media_decoder_read(FrMediaDecoder *self, FrMediaPacket **pkt) {
   return cls->read(self, pkt);
 }
 
-SysInt fr_media_decoder_read_i(FrMediaDecoder *self, FrMediaPacket **pkt) {
-  FrMediaPacket *npkt;
+SysInt fr_media_decoder_read_i(FrMediaDecoder *self, FrPacket **pkt) {
+  FrPacket *npkt;
 
   npkt = sys_async_queue_try_pop(&self->queue);
   *pkt = npkt;
@@ -85,7 +85,7 @@ SysInt fr_media_decoder_read_i(FrMediaDecoder *self, FrMediaPacket **pkt) {
   return npkt != NULL;
 }
 
-SysInt fr_media_decoder_write_i(FrMediaDecoder *self, FrMediaPacket *pkt) {
+SysInt fr_media_decoder_write_i(FrMediaDecoder *self, FrPacket *pkt) {
 
   sys_async_queue_push(&self->queue, pkt);
 

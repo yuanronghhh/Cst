@@ -85,7 +85,6 @@ void test_video_player(void) {
   FrAudioDevice *audio_device;
   FrMediaFile *mfile;
   FrPlayer *mplayer;
-  FrAvRender *imrender;
   FrDrawContext *video_render = NULL;
   FrAudioStream *audio_render = NULL;
   FrSurface* paint_surface;
@@ -105,12 +104,6 @@ void test_video_player(void) {
 
   video_render = fr_cairo_draw_context_new_I(video_device);
 
-  FrAvRenderContext mrinfo = {
-    .video_render = video_render,
-    .audio_render = audio_render
-  };
-  imrender = fr_av_render_new_I(&mrinfo);
-
   FrSurfaceContext sinfo = {
     .width = 800,
     .height= 600};
@@ -121,12 +114,13 @@ void test_video_player(void) {
   FrAvPlayerContext pinfo = {
     .file = mfile,
     .window = window,
-    .render = imrender};
+    .video_render = FR_I_MEDIA_RENDER(video_render),
+    .audio_render = FR_I_MEDIA_RENDER(audio_render)
+  };
   mplayer = fr_av_player_new_I(&pinfo);
 
   fr_player_run(mplayer);
 
-  sys_clear_pointer(&imrender, _sys_object_unref);
   sys_clear_pointer(&mplayer, _sys_object_unref);
   sys_clear_pointer(&mfile, _sys_object_unref);
 
@@ -148,14 +142,14 @@ static void test_avformat_leak(void) {
   FrMediaFile *mfile;
 
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
+  FrMediaPacket *nmpkt = NULL;
 
-  AVPacket *ctx = av_packet_alloc();
-  AVPacket *ctx2 = av_packet_alloc();
+  FrMediaPacket *mpkt;
 
-  av_packet_ref(ctx2, ctx);
-
-  av_packet_free(&ctx2);
-  av_packet_free(&ctx);
+  mpkt = NULL;
+  fr_media_file_read_packet(mfile, &mpkt);
+  nmpkt = (FrMediaPacket *)sys_object_dclone(mpkt);
+  sys_clear_pointer(&nmpkt, _sys_object_unref);
 
   sys_clear_pointer(&mfile, _sys_object_unref);
 }

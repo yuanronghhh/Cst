@@ -6,19 +6,16 @@
 SYS_DEFINE_TYPE(FrPacketDecoder, fr_packet_decoder, FR_TYPE_DECODER);
 
 SysInt fr_packet_decoder_decode_i(FrDecoder *o, FrPacket **npkt) {
-  FrMediaPacket* mpkt;
   FrPacketDecoder *self;
 
-  mpkt = NULL;
   self = FR_PACKET_DECODER(o);
 
-  fr_media_file_read_packet(self->file, &mpkt);
-  if(mpkt == NULL) {
+  fr_media_file_read_packet(self->file, (FrMediaPacket **)npkt);
+  if(*npkt == NULL) {
 
     fr_decoder_set_eof(o, true);
     return -1;
   }
-  *npkt = (FrPacket *)sys_object_dclone(mpkt);
 
   return FR_MEDIA_ERROR_SUCCESS;
 }

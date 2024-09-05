@@ -134,10 +134,6 @@ typedef struct _FrMediaStreamContext FrMediaStreamContext;
 typedef struct _FrMediaStream FrMediaStream;
 typedef struct _FrMediaStreamClass FrMediaStreamClass;
 
-typedef struct _FrAvRenderContext FrAvRenderContext;
-typedef struct _FrAvRender FrAvRender;
-typedef struct _FrAvRenderClass FrAvRenderClass;
-
 typedef struct _FrAvPlayerContext FrAvPlayerContext;
 typedef struct _FrAvPlayer FrAvPlayer;
 typedef struct _FrAvPlayerClass FrAvPlayerClass;

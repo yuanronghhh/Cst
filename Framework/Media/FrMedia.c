@@ -652,7 +652,7 @@ SysInt fr_media_decoder_receive_frame(
   }
 
   fr_media_frame_init_frame(frame, self->stream);
-  *nframe = frame;
+  *nframe = (FrMediaFrame *)sys_object_dclone(frame);
 
   return err;
 }

@@ -33,7 +33,8 @@ struct _FrAvPlayer {
 
   SysBool use_hwaccel;
   SysInt64 seek_position;
-  FrAvRender *render;
+  FrIMediaRender *video_render;
+  FrIMediaRender *audio_render;
   SysInt64 base_tsp;
   SysInt64 vtsp;
   SysDouble default_delay;
@@ -43,18 +44,15 @@ struct _FrAvPlayer {
 struct _FrAvPlayerContext {
   FrMediaFile *file;
   FrWindow *window;
-  FrAvRender *render;
+  FrIMediaRender *video_render;
+  FrIMediaRender *audio_render;
 };
 
 SYS_API SysType fr_av_player_get_type(void);
 SYS_API FrPlayer* fr_av_player_new(void);
 
 SYS_API FrPlayer *fr_av_player_new_I(FrAvPlayerContext *info);
-SYS_API void fr_av_player_set_render(FrAvPlayer* self, FrAvRender *render);
 SYS_API void fr_av_player_play(FrAvPlayer* self);
-SYS_API SysInt fr_av_player_render(FrAvPlayer *self,
-    FrAvRender *render,
-    FrRegion *region);
 
 void fr_av_player_set_window(FrAvPlayer *self, FrWindow * window);
 FrWindow * fr_av_player_get_window(FrAvPlayer *self);

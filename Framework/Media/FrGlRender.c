@@ -41,12 +41,11 @@ static void clear_frame_buffer(FrGlRender *self) {
   glMatrixMode(GL_MODELVIEW);
 }
 
-static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegion *region) {
+static void i_media_render_video(FrIMediaRender *o, FrMediaFrame *mframe, SysPointer user_data) {
   FrGlRender *self = FR_GL_RENDER(o);
   GLuint tex_id = self->tex_id;
 
   SysUInt8 *data[AV_NUM_DATA_POINTERS] = {0};
-  FrMediaFrame *mframe = FR_MEDIA_FRAME(frame);
 
   fr_media_frame_get_data(mframe, data);
 
@@ -73,13 +72,9 @@ static void i_media_render_video(FrIMediaRender *o, FrVideoFrame *frame, FrRegio
   glDisable(GL_TEXTURE_2D);
 }
 
-static void i_media_render_audio(FrIMediaRender *o, FrAudioFrame *frame) {
-  // FrGlRender *self = FR_GL_RENDER(o);
-}
-
 static void i_media_render_imp(FrIMediaRenderInterface *iface) {
-  iface->render_video = i_media_render_video;
-  iface->render_audio = i_media_render_audio;
+
+  iface->render = i_media_render_video;
 }
 
 void init_window(GLFWwindow *window) {

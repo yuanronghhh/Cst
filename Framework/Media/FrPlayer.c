@@ -26,11 +26,6 @@ SysInt fr_player_run(FrPlayer* self) {
     }
 
     cls->process(self);
-
-    if(self->loop_count > 20) {
-
-      fr_player_set_state(self, FR_JOB_STATE_STOP);
-    }
   }
 
   cls->stop(self);

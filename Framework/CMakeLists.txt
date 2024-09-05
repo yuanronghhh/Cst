@@ -1,6 +1,6 @@
 set(INC
   ../
-  ${CMAKE_SOURCE_DIR}/../CstDemo/
+  # ${CMAKE_SOURCE_DIR}/../CstDemo/
 )
 
 set(EXTERNAL_LIBS
@@ -128,8 +128,6 @@ set(SRC
   ./Media/FrIMedia.h
   ./Media/FrIMediaRender.c
   ./Media/FrIMediaRender.h
-  ./Media/FrAvRender.c
-  ./Media/FrAvRender.h
   ./Media/FrIStream.c
   ./Media/FrIStream.h
   ./Media/FrMedia.c

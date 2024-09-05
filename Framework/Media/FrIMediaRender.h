@@ -12,14 +12,12 @@ SYS_BEGIN_DECLS
 struct _FrIMediaRenderInterface  {
   SysTypeInterface unowned;
 
-  void (*render_video) (FrIMediaRender *self,  FrVideoFrame *vframe, FrRegion *region);
-  void (*render_audio) (FrIMediaRender *self,  FrAudioFrame *aframe);
+  void (*render) (FrIMediaRender *self, FrMediaFrame *frame, SysPointer user_data);
 };
 
 SysType fr_i_media_render_get_type(void);
 
-void fr_i_media_render_render_video (FrIMediaRender *self,  FrVideoFrame *vframe, FrRegion *region);
-void fr_i_media_render_render_audio (FrIMediaRender *self,  FrAudioFrame *aframe);
+void fr_i_media_render_render (FrIMediaRender *self, FrMediaFrame *frame, SysPointer user_data);
 
 
 SYS_END_DECLS

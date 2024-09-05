@@ -15,8 +15,8 @@ struct _FrMediaDecoderClass {
   FrDecoderClass parent;
 
    SysInt (*decode_frame) (FrMediaDecoder* o, FrMediaFrame **frame);
-   SysInt (*read) (FrMediaDecoder *stream, FrMediaPacket **pkt);
-   SysInt (*write) (FrMediaDecoder *stream, FrMediaPacket *pkt);
+   SysInt (*read) (FrMediaDecoder *stream, FrPacket **pkt);
+   SysInt (*write) (FrMediaDecoder *stream, FrPacket *pkt);
 };
 
 struct _FrMediaDecoder {
@@ -65,8 +65,8 @@ SysInt fr_media_decoder_receive_frame(
     FrMediaDecoder* self,
     FrMediaFrame **nframe);
 
-SysInt fr_media_decoder_read(FrMediaDecoder *self, FrMediaPacket **pkt);
-void fr_media_decoder_write(FrMediaDecoder *self, FrMediaPacket *pkt);
+SysInt fr_media_decoder_read(FrMediaDecoder *self, FrPacket **pkt);
+void fr_media_decoder_write(FrMediaDecoder *self, FrPacket *pkt);
 
 void fr_media_decoder_set_frame_type(FrMediaDecoder* self, SysType tp);
 

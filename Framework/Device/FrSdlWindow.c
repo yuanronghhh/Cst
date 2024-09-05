@@ -145,6 +145,12 @@ static void sdl_audio_render(FrAudioStream *self, FrAudioFrame *frame) {
   };
 }
 
+
+static void sdl_audio_stream_free(FrAudioStream *self) {
+
+  SDL_DestroyAudioStream(self->ctx);
+}
+
 static void sdl_audio_stream_create(FrAudioStream *self,
     FrAudioStreamContext *info) {
   sys_return_if_fail(self != NULL);
@@ -960,6 +966,7 @@ static void i_window_imp(FrIWindowInterface *iface) {
   iface->audio_close = sdl_audio_close;
   iface->audio_resume = sdl_audio_resume;
   iface->audio_stream_create = sdl_audio_stream_create;
+  iface->audio_stream_free = sdl_audio_stream_free;
 }
 
 void fr_sdl_window_iface_setup(FrIWindowInterface *iface) {

@@ -31,7 +31,6 @@ struct _FrDrawContext {
 void fr_draw_setup(void);
 void fr_draw_teardown(void);
 
-SYS_API void fr_draw_context_set_type(SysType type);
 SYS_API SysType fr_draw_context_get_type(void);
 SYS_API FrDrawContext *fr_draw_context_new(void);
 

@@ -20,7 +20,7 @@ SysObject *fr_media_packet_dclone_i(SysObject *o) {
 static void fr_media_packet_destroy(SysObject* o) {
   FrMediaPacket* self = FR_MEDIA_PACKET(o);
 
-  fr_media_media_packet_unref((FrMediaPacket *)self);
+  fr_media_media_packet_free((FrMediaPacket *)self);
 }
 
 static void fr_media_packet_dispose(SysObject* o) {

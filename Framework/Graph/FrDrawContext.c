@@ -7,6 +7,8 @@
 #include <Framework/Device/FrRender.h>
 #include <Framework/Graph/FrIDraw.h>
 
+static SysType g_type = 0;
+
 SYS_DEFINE_TYPE(FrDrawContext, fr_draw_context, SYS_TYPE_OBJECT);
 
 SysBool fr_draw_context_frame_need_draw(FrDrawContext* self) {
@@ -180,7 +182,7 @@ void fr_draw_setup(void) {
   fr_i_draw_setup();
 
 #if USE_CAIRO
-  fr_draw_context_set_type(FR_TYPE_CAIRO_DRAW_CONTEXT);
+  g_type = FR_TYPE_CAIRO_DRAW_CONTEXT;
 
 #elif USE_OPENGL_ES
 #endif
@@ -198,7 +200,7 @@ static void fr_draw_context_construct_i(FrDrawContext *self, FrDevice *device) {
 }
 
 FrDrawContext* fr_draw_context_new(void) {
-  return sys_object_new(FR_TYPE_DRAW_CONTEXT, NULL);
+  return sys_object_new(g_type, NULL);
 }
 
 static void fr_draw_context_dispose(SysObject* o) {

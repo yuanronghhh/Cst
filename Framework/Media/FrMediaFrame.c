@@ -49,15 +49,22 @@ FrMediaFrame* fr_media_frame_new(void) {
 void fr_media_frame_dispose(SysObject *o) {
   FrMediaFrame* self = FR_MEDIA_FRAME(o);
 
-  fr_media_media_frame_unref(self);
+  fr_media_media_frame_free(self);
 
   SYS_OBJECT_CLASS(fr_media_frame_parent_class)->dispose(o);
+}
+
+static void fr_media_frame_unref_i(SysObject *o) {
+  FrMediaFrame* self = FR_MEDIA_FRAME(o);
+
+  fr_media_media_frame_unref(self);
 }
 
 static void fr_media_frame_class_init(FrMediaFrameClass* cls) {
   SysObjectClass *ocls = SYS_OBJECT_CLASS(cls);
   FrMediaFrameClass *mcls = FR_MEDIA_FRAME_CLASS(cls);
 
+  ocls->unref = fr_media_frame_unref_i;
   ocls->dispose = fr_media_frame_dispose;
   ocls->dclone = fr_media_frame_dclone_i;
 

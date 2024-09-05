@@ -12,8 +12,7 @@
 static void i_draw_imp(FrIDrawInterface *iface);
 static void i_media_render_imp(FrIMediaRenderInterface *iface);
 
-SYS_DEFINE_WITH_CODE(FrCairoDrawContext,
-    fr_cairo_draw_context, FR_TYPE_DRAW_CONTEXT,
+SYS_DEFINE_WITH_CODE(FrCairoDrawContext, fr_cairo_draw_context, FR_TYPE_DRAW_CONTEXT,
     SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_MEDIA_RENDER, i_media_render_imp));
 
 static void cairo_overlay_i(cairo_t *cr, cairo_surface_t *surface, SysInt x, SysInt y) {
@@ -76,7 +75,8 @@ static SysUInt8 * fr_surface_get_data (FrSurface *surface) {
   return cairo_image_surface_get_data(surface->ctx);
 }
 
-static SysBool cairo_save_to_png(cairo_surface_t* surface, const SysChar *filename) {
+static SysBool cairo_save_to_png(cairo_surface_t* surface,
+    const SysChar *filename) {
   cairo_status_t err;
   err = cairo_surface_write_to_png(surface, filename);
   if (err != CAIRO_STATUS_SUCCESS) {
@@ -87,13 +87,15 @@ static SysBool cairo_save_to_png(cairo_surface_t* surface, const SysChar *filena
   return true;
 }
 
-static SysBool fr_surface_save_to_png(FrSurface* self, const SysChar *filename) {
+static SysBool fr_surface_save_to_png(FrSurface* self,
+    const SysChar *filename) {
   sys_return_val_if_fail(self != NULL, false);
 
   return cairo_save_to_png(self->ctx, filename);
 }
 
-static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame) {
+static void render_video_frame(FrDrawContext *draw_context,
+    FrVideoFrame *frame) {
   cairo_surface_t *paint_surface;
   cairo_t *window_cr;
   cairo_t *paint_cr;
@@ -141,7 +143,9 @@ static void render_video_frame(FrDrawContext *draw_context, FrVideoFrame *frame)
   fr_surface_flush(draw_context->device_surface);
 }
 
-void fr_cairo_draw_context_render(FrIMediaRender *o, FrMediaFrame *frame, SysPointer user_data) {
+static void fr_cairo_draw_context_render(FrIMediaRender *o,
+    FrMediaFrame *frame, 
+    SysPointer user_data) {
   sys_return_if_fail(o != NULL);
   sys_return_if_fail(frame != NULL);
 
@@ -157,13 +161,16 @@ void fr_cairo_draw_context_render(FrIMediaRender *o, FrMediaFrame *frame, SysPoi
 }
 
 /* surface */
-static cairo_surface_t* create_cairo_surface(FrWindow* window, SysInt width, SysInt height) {
+static cairo_surface_t* create_cairo_surface(FrWindow* window,
+    SysInt width, 
+    SysInt height) {
     cairo_surface_t* surface;
 
 #if SYS_OS_WIN32
     HWND hwd = (HWND)fr_window_get_native_window(window);
     HDC hdc = GetDC(hwd);
-    surface = cairo_win32_surface_create_with_format(hdc, CAIRO_FORMAT_ARGB32);
+    surface = cairo_win32_surface_create_with_format(hdc, 
+        CAIRO_FORMAT_ARGB32);
 
 #elif SYS_OS_UNIX
     FrDisplay* display = fr_window_get_display(window);
@@ -190,7 +197,9 @@ static void fr_surface_create(FrSurface* o, FrSurfaceContext *info) {
   cairo_surface_t* draw_surface;
 
   if (info->device) {
-    draw_surface = create_cairo_surface(FR_WINDOW(info->device), info->width, info->height);
+    draw_surface = create_cairo_surface(FR_WINDOW(info->device),
+        info->width, 
+        info->height);
 
   } else {
     draw_surface = cairo_image_surface_create(CAIRO_FORMAT_ARGB32,
@@ -202,7 +211,9 @@ static void fr_surface_create(FrSurface* o, FrSurfaceContext *info) {
   o->ctx = draw_surface;
 }
 
-static FrSurface* fr_surface_create_similar_image(FrSurface *surface, SysInt width, SysInt height) {
+static FrSurface* fr_surface_create_similar_image(FrSurface *surface,
+    SysInt width, 
+    SysInt height) {
   FrSurface* o = fr_surface_new();
 
   o->ctx = cairo_surface_create_similar_image(surface->ctx,
@@ -244,12 +255,19 @@ static SysInt fr_context_rounded_rectangle(FrContext* self,
   return cairo_rounded_rectangle_i(cr, x, y, w, h, radius);
 }
 
-static void fr_context_set_source_surface (FrContext* self, FrSurface* surface, SysDouble x, SysDouble y) {
+static void fr_context_set_source_surface (FrContext* self,
+    FrSurface* surface, 
+    SysDouble x, 
+    SysDouble y) {
 
   cairo_set_source_surface(self->ctx, surface->ctx, x, y);
 }
 
-static void fr_context_rectangle (FrContext* self, SysDouble x,SysDouble y,SysDouble width,SysDouble height) {
+static void fr_context_rectangle (FrContext* self,
+    SysDouble x,
+    SysDouble y,
+    SysDouble width,
+    SysDouble height) {
   sys_return_if_fail(self != NULL);
 
   cairo_rectangle(self->ctx, x, y, width, height);
@@ -306,7 +324,10 @@ static void fr_context_show_layout(FrContext* self, PangoLayout *layout) {
   pango_cairo_show_layout(self->ctx, layout);
 }
 
-static void fr_context_overlay(FrContext *self, FrSurface *surface, SysInt x, SysInt y) {
+static void fr_context_overlay(FrContext *self,
+    FrSurface *surface, 
+    SysInt x, 
+    SysInt y) {
 
   cairo_overlay_i(self->ctx, surface->ctx, 0, 0);
 }
@@ -355,7 +376,8 @@ static void i_media_render_imp(FrIMediaRenderInterface *iface) {
 
 static void fr_cairo_context_construct_i(FrDrawContext* o, FrDevice* device) {
 
-  FR_DRAW_CONTEXT_CLASS(fr_cairo_draw_context_parent_class)->construct(o, device);
+  FR_DRAW_CONTEXT_CLASS(fr_cairo_draw_context_parent_class)->construct(o,
+      device);
 }
 
 void fr_cairo_draw_context_iface_setup(FrIDrawInterface *iface) {

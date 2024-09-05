@@ -1,9 +1,13 @@
 #include <Framework/Media/FrAudioStream.h>
 #include <Framework/Media/FrMediaPacket.h>
+#include <Framework/Media/FrIMediaRender.h>
 #include <Framework/Device/FrAudioDevice.h>
 #include <Framework/Device/FrWindow.h>
 
-SYS_DEFINE_TYPE(FrAudioStream, fr_audio_stream, FR_TYPE_MEDIA_STREAM);
+static void i_media_render_imp(FrIMediaRenderInterface *iface);
+
+SYS_DEFINE_WITH_CODE(FrAudioStream, fr_audio_stream, FR_TYPE_MEDIA_STREAM,
+    SYS_IMPLEMENT_INTERFACE(FR_TYPE_I_MEDIA_RENDER, i_media_render_imp));
 
 FrMediaStream *fr_audio_stream_new_out_by_device(FrAudioDevice *dev) {
   FrAudioStreamContext info = {0};
@@ -15,6 +19,16 @@ FrMediaStream *fr_audio_stream_new_out_by_device(FrAudioDevice *dev) {
   info.dev = dev;
 
   return fr_audio_stream_new_I(&info);
+}
+
+static void fr_audio_stream_render(FrIMediaRender *o,
+    FrMediaFrame *frame, 
+    SysPointer user_data) {
+}
+
+static void i_media_render_imp(FrIMediaRenderInterface *iface) {
+
+  iface->render = fr_audio_stream_render;
 }
 
 /* object api */
@@ -46,7 +60,7 @@ FrMediaStream *fr_audio_stream_new_I(FrAudioStreamContext *info) {
 static void fr_audio_stream_dispose(SysObject* o) {
   FrAudioStream *self = FR_AUDIO_STREAM(o);
 
-  UNUSED(self);
+  fr_window_audio_stream_free(self);
 
   SYS_OBJECT_CLASS(fr_audio_stream_parent_class)->dispose(o);
 }

@@ -2,13 +2,14 @@
 #include <FrameworkTest/tests/TestVideo.h>
 #include <FrameworkTest/tests/TestJob.h>
 
-#define CHECK_TYPE SYS_TYPE_OBJECT
+#define CHECK_TYPE FR_TYPE_PACKET
 
 void setUp(void) {
 }
 
 void tearDown(void) {
 }
+
 static SysInt i = 0;
 
 static void object_new_debug(SysObject *o, const SysChar *name, SysInt ref_count) {

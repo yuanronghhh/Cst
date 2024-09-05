@@ -149,6 +149,14 @@ static void test_avformat_leak(void) {
 
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
 
+  AVPacket *ctx = av_packet_alloc();
+  AVPacket *ctx2 = av_packet_alloc();
+
+  av_packet_ref(ctx2, ctx);
+
+  av_packet_free(&ctx2);
+  av_packet_free(&ctx);
+
   sys_clear_pointer(&mfile, _sys_object_unref);
 }
 

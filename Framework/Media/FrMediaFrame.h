@@ -11,14 +11,14 @@ SYS_BEGIN_DECLS
 #define FR_MEDIA_FRAME_GET_CLASS(o) sys_instance_get_class(o, FrMediaFrameClass)
 
 struct _FrMediaFrameClass {
-  FrMediaPacketClass parent;
+  FrPacketClass parent;
 
   /* init after receive_frame decode */
   void (*init_frame) (FrMediaFrame *self, FrMediaStream *stream);
 };
 
 struct _FrMediaFrame {
-  FrMediaPacket parent;
+  FrPacket parent;
 
   /* <private> */
   SysPointer ctx;

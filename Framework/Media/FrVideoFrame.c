@@ -83,6 +83,12 @@ FrVideoFrame *fr_video_frame_new_I(void) {
 }
 
 static void fr_video_frame_dispose(SysObject* o) {
+  FrVideoFrame *self = FR_VIDEO_FRAME(o);
+
+  if(self->window) {
+
+    sys_clear_pointer(&self->window, _sys_object_unref);
+  }
 
   SYS_OBJECT_CLASS(fr_video_frame_parent_class)->dispose(o);
 }

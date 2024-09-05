@@ -1,11 +1,11 @@
 set(INC
   ../
-  # ${CMAKE_SOURCE_DIR}/../CstDemo/
+  ${CMAKE_SOURCE_DIR}/../CstDemo/
 )
 
 set(EXTERNAL_LIBS
   "System"
-  "unity"
+  "Unity"
   "pthread"
   "openssl"
   "vld"

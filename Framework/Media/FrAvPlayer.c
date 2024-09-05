@@ -210,12 +210,12 @@ static SysInt fr_av_player_process_i (FrPlayer *o) {
     return 0;
   }
 
-  if (self->pkt_count > self->min_packet) { return 0; }
+  if (self->pkt_count <= self->min_packet) {
+    for(int i = 0; i < self->max_packet; i++) {
 
-  for(int i = 0; i < self->max_packet; i++) {
-
-    fr_decoder_run_async(dec, process_packet, self);
-    sys_atomic_int_inc(&self->pkt_count);
+      fr_decoder_run_async(dec, process_packet, self);
+      sys_atomic_int_inc(&self->pkt_count);
+    }
   }
 
   fr_av_player_render(self, self->render, self->region);

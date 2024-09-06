@@ -1,0 +1,10 @@
+[submodule "CstCmake"]
+	path = CstCmake
+	url = file://F:/Git/CstCmake
+	branch = master
+  update = merge
+[submodule "System"]
+	path = System
+	branch = dev
+	url = file://F:/Git/System
+	update = merge

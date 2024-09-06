@@ -74,7 +74,6 @@ void test_video_player(void) {
   FrDrawContext *video_render;
   FrMediaFile *mfile;
   FrPlayer *mplayer;
-  FrAvRender *avrender;
   FrSurface* paint_surface;
 
   display = fr_display_new_I();
@@ -86,24 +85,18 @@ void test_video_player(void) {
   video_render = fr_cairo_draw_context_new_I(device);
   fr_draw_context_add_surface(video_render, paint_surface);
 
-  FrAvRenderContext mrinfo = {
-    .video_render = video_render,
-    .audio_render = NULL
-  };
-  avrender = fr_av_render_new_I(&mrinfo);
-
   mfile = fr_media_file_new_I(TEST_VIDEO_FILE);
   TEST_ASSERT_NOT_NULL(mfile);
 
   FrAvPlayerContext pinfo = {.file = mfile,
     .window = window, 
-    .render = avrender};
+    .video_render = FR_I_MEDIA_RENDER(video_render)
+  };
   mplayer = fr_av_player_new_I(&pinfo);
 
-  fr_av_player_set_render(FR_AV_PLAYER(mplayer), avrender);
   fr_player_run(mplayer);
 
-  sys_object_unref(avrender);
+  sys_object_unref(video_render);
   sys_object_unref(mplayer);
   sys_object_unref(mfile);
 

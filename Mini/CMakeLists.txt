@@ -1,10 +1,10 @@
 set(INC
   ../
-  ${CMAKE_SOURCE_DIR}/../CstDemo/
 )
 
 set(EXTERNAL_LIBS
-  "unity"
+  "System"
+  "Unity"
   "pthread"
   "openssl"
   "vld"
@@ -21,7 +21,6 @@ set(EXTERNAL_LIBS
 )
 
 set(INNER_LIBS
-  "System"
   "Framework"
   "CstCore"
 )

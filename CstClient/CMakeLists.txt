@@ -1,7 +1,7 @@
 # TEST
 include_dep_dirs(
   ./
-  ../system
+  ../System
   ${NANOMSG_INCLUDE_DIRS}
   ${VLD_INCLUDE_DIRS}
   ${GCORUTINE_INCLUDE_DIRS}
@@ -39,7 +39,7 @@ configure_file(${CMAKE_CURRENT_LIST_DIR}/Config.h.in
                ${CMAKE_CURRENT_LIST_DIR}/Config.h)
 
 target_link_libraries(CstClient
-  system
+  System
   ${NANOMSG_LIBRARIES}
   ${VLD_LIBRARIES}
   ${GTK_LIBRARIES}

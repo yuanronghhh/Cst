@@ -13,7 +13,7 @@ include(${INIT_HOME}/init.cmake)
 project(Cst)
 enable_language(C)
 
-add_subdirectory(System)
+# add_subdirectory(System)
 add_subdirectory(Framework)
 add_subdirectory(FrameworkTest)
 # add_subdirectory(CstCore)

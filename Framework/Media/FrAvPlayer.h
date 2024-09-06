@@ -37,8 +37,6 @@ struct _FrAvPlayer {
   FrIMediaRender *audio_render;
   SysInt64 base_tsp;
   SysInt64 vtsp;
-  SysDouble default_delay;
-  SysDouble delay;
 };
 
 struct _FrAvPlayerContext {

@@ -1,4 +1,5 @@
 #include <Framework/Media/FrPlayer.h>
+#include <Framework/Device/FrWindow.h>
 
 SYS_DEFINE_TYPE(FrPlayer, fr_player, SYS_TYPE_OBJECT);
 
@@ -50,14 +51,42 @@ static SysInt fr_player_stop_i(FrPlayer *self) {
   return 0;
 }
 
+void fr_player_set_base_delay(FrPlayer *self, SysUInt64 delay_ms) {
+
+  self->base_delay = delay_ms;
+}
 
 static SysInt fr_player_process_i(FrPlayer *self) {
+  if(self->base_delay == -1) {
+
+    sys_error_N("%d", "Must call fr_player_set_base_delay before run player");
+  }
+
+  SysUInt64 current = sys_get_monotonic_time();
+  SysInt64 diff = current - self->frame_clock.last;
+  SysInt64 ndiff = self->base_delay - diff;
+  SysInt64 delay;
+
+  if(ndiff > 0) {
+
+    delay = ndiff;
+    fr_delay(delay);
+  } else {
+
+    delay = self->base_delay;
+  }
+  self->frame_clock.last = current;
+
+  fr_poll_events();
 
   return 0;
 }
 
 static SysInt fr_player_init_i(FrPlayer *self) {
-
+  self->frame_clock.start = sys_get_monotonic_time();
+  self->frame_clock.last = -1;
+  self->frame_clock.frame_count = 0;
+  
   return 0;
 }
 
@@ -105,4 +134,5 @@ static void fr_player_class_init(FrPlayerClass* cls) {
 void fr_player_init(FrPlayer* self) {
   self->state = -1;
   self->loop_count = 0;
+  self->base_delay = -1;
 }

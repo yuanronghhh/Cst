@@ -25,6 +25,13 @@ struct _FrPlayer {
   /* <private> */
   FR_JOB_STATE_ENUM state;
   SysUInt64 loop_count;
+  SysDouble base_delay;
+
+  struct {
+    SysInt64 frame_count;
+    SysUInt64 start;
+    SysUInt64 last;
+  } frame_clock;
 };
 
 SYS_API SysType fr_player_get_type(void);
@@ -33,6 +40,7 @@ SYS_API FrPlayer *fr_player_new(void);
 SYS_API FrPlayer *fr_player_new_I(void);
 SYS_API SysInt fr_player_run(FrPlayer* self);
 
+void fr_player_set_base_delay(FrPlayer *self, SysUInt64 delay_ms);
 void fr_player_set_state(FrPlayer *self, FR_JOB_STATE_ENUM state);
 FR_JOB_STATE_ENUM fr_player_get_state(FrPlayer *self);
 

@@ -16,7 +16,8 @@ static void ffp_log_callback_brief(void *ptr,
     return;
   }
 
-  sys_vlog(SYS_LOG_ARGS(ffp_log_callback_brief, format) stderr, SYS_LOG_WARNING, format, vl);
+  sys_vlog(SYS_LOG_ARGS(ffp_log_callback_brief, format) stderr, 
+      SYS_LOG_WARNING, format, vl);
 }
 
 void fr_ffmpeg_setup(void) {

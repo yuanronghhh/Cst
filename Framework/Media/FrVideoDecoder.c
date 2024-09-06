@@ -55,8 +55,8 @@ static SysInt fr_video_decoder_decode_frame_i(
   FrMediaFrame *omframe = NULL;
   SysInt format;
 
-  err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)
-    ->decode_frame(o, (FrMediaFrame **)&omframe);
+  err = FR_MEDIA_DECODER_CLASS(fr_video_decoder_parent_class)->decode_frame(o,
+      (FrMediaFrame **)&omframe);
   if(err < 0) { return err; }
   vframe = FR_VIDEO_FRAME(omframe);
   format = fr_media_frame_get_format(omframe);

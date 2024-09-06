@@ -20,7 +20,6 @@ FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
 
   FrHwAccel *o = fr_hw_accel_new();
 
-  info->name = "dxva2";
   if(info->name == NULL) {
     if(!fr_media_decoder_get_default_device(info->decoder,
           &info->name,

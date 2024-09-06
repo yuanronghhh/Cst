@@ -218,11 +218,18 @@ static void av_player_create_decoder(FrAvPlayer *self, FrMediaFile *file) {
 
 static void calc_video_delay (FrAvPlayer *self) {
   FrMediaStream* vs;
+  SysUInt64 delay;
   FrRational rt = { .num = 2997, .den = 100 };
 
-  vs = fr_media_file_stream_by_type(self->file, FR_MEDIA_VIDEO);
-  fr_media_stream_get_rational(vs, &rt);
-  self->delay = self->default_delay = (1 / (rt.num / (double) rt.den)) * 1.0e6;
+  if(fr_media_file_has_video(self->file)) {
+    vs = fr_media_file_stream_by_type(self->file,
+        FR_MEDIA_VIDEO);
+
+    fr_media_stream_get_rational(vs, &rt);
+    delay = (1 / (rt.num / (double) rt.den)) * 1.0e6;
+
+    fr_player_set_base_delay(FR_PLAYER(self), delay);
+  }
 }
 
 static SysInt fr_av_player_init_i(FrPlayer *o) {
@@ -274,6 +281,8 @@ static SysInt fr_av_player_process_i (FrPlayer *o) {
     return 0;
   }
 
+  FR_PLAYER_CLASS(fr_av_player_parent_class)->process(o);
+
   mpkt = process_packet(self, NULL);
   if(mpkt == NULL) { return -1;}
 
@@ -285,9 +294,6 @@ static SysInt fr_av_player_process_i (FrPlayer *o) {
 
   pipe_pass_render(pass, frame);
   sys_clear_pointer(&frame, _sys_object_unref);
-
-  fr_delay(self->delay);
-  fr_poll_events();
 
 done:
   if(pass != NULL) {
@@ -318,26 +324,6 @@ FrWindow * fr_av_player_get_window(FrAvPlayer *self) {
   sys_return_val_if_fail(self != NULL, NULL);
 
   return self->window;
-}
-
-static void media_player_calc_diff(FrAvPlayer *self) {
-#if 0
-  SysInt64 diff = 0;
-
-  if(fr_media_file_has_audio(self->file)) {
-
-    if(fr_media_file_has_video(self->file)) {
-
-       diff = self->vtsp - self->base_tsp;
-    }
-  } else if(fr_media_file_has_audio(self->file)) {
-
-  } else {
-  }
-
-  self->delay = diff <= 0 ? self->default_delay : diff / 1.0e3;
-  sys_debug_N("%ld", self->delay);
-#endif
 }
 
 SysInt fr_av_player_sync(FrAvPlayer *self) {

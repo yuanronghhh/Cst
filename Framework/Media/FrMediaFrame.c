@@ -42,7 +42,7 @@ SysInt64 fr_media_frame_get_timestamp(FrMediaFrame *self) {
 }
 
 /* object api */
-FrMediaFrame* fr_media_frame_new(void) {
+FrPacket* fr_media_frame_new(void) {
   return sys_object_new(FR_TYPE_MEDIA_FRAME, NULL);
 }
 

@@ -468,27 +468,24 @@ void fr_media_frame_get_frame_rate (
   *den = rational.den;
 }
 
-static SysInt media_read_packet(AVFormatContext *ctx, AVPacket *p) {
-  sys_return_val_if_fail(ctx != NULL, -1);
-  sys_return_val_if_fail(p != NULL, -1);
-  SysInt err;
+SysInt fr_media_media_file_read_packet(FrMediaFile *self,
+    FrMediaPacket **pkt) {
+  sys_return_val_if_fail(self != NULL, -1);
+  sys_return_val_if_fail(*pkt == NULL, -1);
 
-  err = av_read_frame(ctx, p);
+  SysInt err;
+  FrMediaPacket *npkt = (FrMediaPacket *)fr_media_packet_new();
+
+  err = av_read_frame(self->ctx, npkt->ctx);
   if(err < 0) {
-    av_packet_unref(p);
+    sys_object_unref(npkt);
 
     // sys_warning_N("error reading packet: %s", fr_media_error_string(err));
   }
+  *pkt = npkt;
+  self->pkt = npkt;
 
   return err;
-}
-
-SysInt fr_media_media_file_read_packet(FrMediaFile *self,
-    FrMediaPacket *pkt) {
-  sys_return_val_if_fail(self != NULL, -1);
-  sys_return_val_if_fail(pkt != NULL, -1);
-
-  return media_read_packet(self->ctx, pkt->ctx);
 }
 
 void fr_media_media_packet_unref(FrMediaPacket* nself) {
@@ -637,12 +634,13 @@ SysInt fr_media_decoder_receive_frame(
   sys_return_val_if_fail(*nframe == NULL, -1);
 
   SysInt err;
-  FrMediaFrame* frame = self->frame;
+  FrMediaFrame* frame = (FrMediaFrame *)sys_object_new(self->frame_type, NULL);
 
   err = media_avcodec_try_receive_frame(self->ctx,
       frame->ctx);
 
   if (err < 0) {
+    sys_object_unref(frame);
     if(err == FR_MEDIA_ERROR_EOF) {
       fr_decoder_set_eof(FR_DECODER(self), true);
       avcodec_flush_buffers(self->ctx);
@@ -652,7 +650,7 @@ SysInt fr_media_decoder_receive_frame(
   }
 
   fr_media_frame_init_frame(frame, self->stream);
-  *nframe = (FrMediaFrame *)sys_object_dclone(frame);
+  *nframe = frame;
 
   return err;
 }
@@ -693,6 +691,7 @@ void fr_media_file_free(FrMediaFile *self) {
     }
   }
 
+  self->pkt = NULL;
   self->n_streams = 0;
   sys_clear_pointer(&self->streams, sys_free);
 
@@ -782,75 +781,105 @@ void fr_hw_accel_free(FrHwAccel *self) {
   av_buffer_unref((AVBufferRef **)&self->ctx);
 }
 
-static SysBool media_decoder_get_hw_info(
-    FrMediaDecoder *self,
-    SysInt hw_dtype,
-    SysInt *hw_pix_format) {
+static SysBool is_supported_hw_config(const AVCodecHWConfig *config) {
+  if(config == NULL) { return false; }
+  const AVPixFmtDescriptor *desc = av_pix_fmt_desc_get(config->pix_fmt);
 
-  SysInt i;
-  const AVCodecHWConfig *config;
+  SysInt type = config->device_type;
+  if(type <= 0) { return false; }
 
-  for (i = 0; ;i++) {
-    config = avcodec_get_hw_config(self->codec, i);
-    if(config == NULL) { return false; }
+  if (!(desc->flags & AV_PIX_FMT_FLAG_HWACCEL)) {
+    return false;
+  }
 
-    if ((config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX)
-        && config->device_type == hw_dtype) {
-      *hw_pix_format = config->pix_fmt;
-      break;
-    }
+  if (!(config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_DEVICE_CTX)) {
+    return false;
+  }
+
+  if (!(config->methods & AV_CODEC_HW_CONFIG_METHOD_HW_FRAMES_CTX)) {
+    return false;
+  }
+
+  if (!(config->methods & AV_CODEC_HW_CONFIG_METHOD_AD_HOC)) {
+    return false;
   }
 
   return true;
 }
 
-SysBool fr_media_decoder_get_default_device(
-    FrMediaDecoder *self,
-    const SysChar **nname,
-    SysInt *ntype) {
+static const AVCodecHWConfig *codec_get_hw_config(
+    const AVCodec *codec,
+    enum AVHWDeviceType device_type) {
 
   const AVCodecHWConfig *config;
 
   for (SysInt i = 0; ; i++) {
-    config = avcodec_get_hw_config(self->codec, i);
-    if(config == NULL) { return false; }
+    config = avcodec_get_hw_config(codec, i);
+    if(config == NULL) {
+      continue;
+    }
 
-    SysInt type = config->device_type;
-    if(type <= 0) { return false; }
+    if(!is_supported_hw_config(config)) {
+      continue;
+    }
 
-    *nname = av_hwdevice_get_type_name(type);
-    *ntype = type;
+    if(device_type == AV_HWDEVICE_TYPE_NONE) {
+      return config;
+    }
 
-    break;
+    if(config->device_type == device_type) {
+      return config;
+    }
   }
 
-  return true;
+  return NULL;
+}
+
+static const AVCodecHWConfig *codec_get_hw_config_by_name(
+    const AVCodec *codec,
+    const SysChar *name) {
+  sys_return_val_if_fail(codec != NULL, NULL);
+  sys_return_val_if_fail(name != NULL, NULL);
+
+  enum AVHWDeviceType device_type = av_hwdevice_find_type_by_name(name);
+  if(device_type == AV_HWDEVICE_TYPE_NONE) { return NULL; }
+
+  return codec_get_hw_config(codec, device_type);
 }
 
 SysBool fr_hw_accel_create(FrHwAccel *self, FrHwAccelContext *info) {
   AVBufferRef *ctx = NULL;
+  const AVCodecHWConfig *config = NULL;
   FrMediaDecoder *dec = info->decoder;
 
-  SysInt type = av_hwdevice_find_type_by_name(info->name);
-  if(type == 0) {
+  if(info->name == NULL) {
+    config = codec_get_hw_config(dec->codec, AV_HWDEVICE_TYPE_NONE);
+    if(config == NULL) {
+      sys_info_N("Failed to get hardware accel info: %s",
+          fr_decoder_get_name(FR_DECODER(dec)));
+      return false;
+    }
 
-    sys_warning_N("not support hardware device %s,%s",
-        info->name,
-        av_hwdevice_get_type_name(type));
-    return false;
+  } else {
+
+    config = codec_get_hw_config_by_name(dec->codec, info->name);
+    if(config == NULL) {
+
+      sys_warning_N("Not support hardware device %s",
+          info->name);
+      return false;
+    }
   }
 
-  if(!media_decoder_get_hw_info(dec, type, &hw_pix_format)) {
-    sys_info_N("Failed to get hw info: %s, %s",
-        fr_decoder_get_name(FR_DECODER(dec)),
-        av_hwdevice_get_type_name(type));
-    return false;
-  }
+  hw_pix_format = config->pix_fmt;
+  info->device_type = config->device_type;
+  info->name = av_hwdevice_get_type_name(config->device_type);
+  info->hw_pix_format = config->pix_fmt;
 
   /* TODO: copy from example  */
   AVCodecContext *cctx = dec->ctx;
   cctx->get_format  = get_hw_format;
-  if(av_hwdevice_ctx_create(&ctx, type, NULL, NULL, 0) < 0) {
+  if(av_hwdevice_ctx_create(&ctx, config->device_type, NULL, NULL, 0) < 0) {
 
     sys_warning_N("%s", "Failed to create specified HW device.");
     return false;

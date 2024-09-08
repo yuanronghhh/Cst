@@ -29,14 +29,13 @@ SysInt media_file_read_packet_i(FrIStream *o, FrPacket **pkt) {
   sys_return_val_if_fail(*pkt == NULL, -1);
 
   SysInt err;
-  FrPacket *npkt = FR_PACKET(&self->mpkt);
+  FrPacket *mpkt = NULL;
 
-  err = fr_media_media_file_read_packet(self, &self->mpkt);
+  err = fr_media_media_file_read_packet(self, (FrMediaPacket **)&mpkt);
   if(err < 0) { return err; }
   self->serial++;
-  fr_packet_set_serial(npkt, self->serial);
-
-  *pkt = (FrPacket *)sys_object_dclone(&self->mpkt);
+  fr_packet_set_serial(mpkt, self->serial);
+  *pkt = mpkt;
 
   return err;
 }
@@ -116,7 +115,6 @@ static void fr_media_file_dispose(SysObject* o) {
   FrMediaFile *self = FR_MEDIA_FILE(o);
 
   sys_assert(self->ctx != NULL);
-  sys_object_destroy(&self->mpkt);
 
   fr_media_file_free(self);
 
@@ -132,5 +130,4 @@ static void fr_media_file_class_init(FrMediaFileClass* cls) {
 void fr_media_file_init(FrMediaFile* self) {
   self->show_mode = SHOW_MODE_VIDEO;
   self->serial = -1;
-  fr_media_packet_create(&self->mpkt);
 }

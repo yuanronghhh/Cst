@@ -34,7 +34,7 @@ struct _FrMediaFile {
     SysInt64 seek_rel;
   } seek;
 
-  FrMediaPacket mpkt;
+  FrMediaPacket *pkt;
   SysInt serial;
 };
 

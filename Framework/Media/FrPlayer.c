@@ -70,14 +70,14 @@ static SysInt fr_player_process_i(FrPlayer *self) {
   if(ndiff > 0) {
 
     delay = ndiff;
-    fr_delay(delay);
   } else {
 
-    delay = self->base_delay;
+    delay = 0;
   }
   self->frame_clock.last = current;
 
   fr_poll_events();
+  fr_delay(delay);
 
   return 0;
 }
@@ -86,7 +86,7 @@ static SysInt fr_player_init_i(FrPlayer *self) {
   self->frame_clock.start = sys_get_monotonic_time();
   self->frame_clock.last = -1;
   self->frame_clock.frame_count = 0;
-  
+
   return 0;
 }
 

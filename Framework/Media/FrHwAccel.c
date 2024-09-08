@@ -6,8 +6,9 @@ SYS_DEFINE_TYPE(FrHwAccel, fr_hw_accel, SYS_TYPE_OBJECT);
 /* object api */
 static void fr_hw_accel_construct_i(FrHwAccel *self, FrHwAccelContext *info) {
   self->name = sys_strdup(info->name);
-  self->accel_type = info->accel_type;
+  self->device_type = info->device_type;
   self->ctx = info->ctx;
+  self->hw_pix_format = info->hw_pix_format;
 }
 
 FrHwAccel* fr_hw_accel_new(void) {
@@ -19,14 +20,6 @@ FrHwAccel *fr_hw_accel_new_I(FrHwAccelContext *info) {
   sys_return_val_if_fail(info->decoder != NULL, NULL);
 
   FrHwAccel *o = fr_hw_accel_new();
-
-  if(info->name == NULL) {
-    if(!fr_media_decoder_get_default_device(info->decoder,
-          &info->name,
-          &info->accel_type)) {
-      goto fail;
-    }
-  }
 
   if(!fr_hw_accel_create(o, info)) {
     goto fail;

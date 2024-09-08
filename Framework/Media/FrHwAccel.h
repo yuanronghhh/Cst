@@ -18,21 +18,22 @@ struct _FrHwAccel {
   SysObject parent;
 
   /* <private> */
-  SysInt accel_type;
+  SysInt device_type;
   SysPointer ctx;
+  SysInt hw_pix_format;
   SysChar *name;
 };
 
 struct _FrHwAccelContext {
   const SysChar *name;
-  SysInt accel_type;
+  SysInt device_type;
   FrMediaDecoder *decoder;
 
   /* <private> */
 
   /* AVBufferRef * */
   SysPointer ctx;
-  SysInt hw_format;
+  SysInt hw_pix_format;
 };
 
 SYS_API SysType fr_hw_accel_get_type(void);

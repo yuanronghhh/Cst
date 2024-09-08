@@ -23,11 +23,6 @@ void fr_media_decoder_get_info(FrMediaDecoder *o,
     SysInt *height,
     SysInt *pix_fmt);
 
-SysBool fr_media_decoder_get_default_device(
-    FrMediaDecoder *self,
-    const SysChar **nname,
-    SysInt *ntype);
-
 SysInt fr_media_decoder_open(FrMediaDecoder* self);
 
 void fr_media_decoder_flush(FrMediaDecoder* self);
@@ -79,7 +74,7 @@ void fr_media_file_free(FrMediaFile *self);
 const SysChar *fr_media_file_get_url(FrMediaFile *self);
 
 SysInt fr_media_media_file_read_packet(FrMediaFile *self,
-    FrMediaPacket *pkt);
+    FrMediaPacket **mpkt);
 
 void fr_media_media_packet_create(FrMediaPacket *self);
 void fr_media_media_packet_free(FrMediaPacket *self);

@@ -26,12 +26,6 @@ static void pipe_pass_free(PipePass *self) {
   sys_free(self);
 }
 
-static void pipe_pass_render(PipePass *self, FrMediaFrame *frame) {
-  FrIMediaRender *render = self->render;
-
-  fr_i_media_render_render(render, frame, self->user_data);
-}
-
 static PipePass* pipe_pass_new_by_type(
     FrAvPlayer *player,
     FR_MEDIA_ENUM type,
@@ -196,20 +190,12 @@ void av_player_get_video_size(FrAvPlayer *self, SysInt *width, SysInt *height) {
 }
 
 static void av_player_create_decoder(FrAvPlayer *self, FrMediaFile *file) {
-  FrVideoDecoder *video_dec;
-
   self->packet_decoder = fr_packet_decoder_new_I(file);
   fr_decoder_set_user_data(self->packet_decoder, self);
 
   self->video_decoder = create_media_decoder(file,
       FR_MEDIA_VIDEO,
       self);
-
-  video_dec = FR_VIDEO_DECODER(self->video_decoder);
-  if(video_dec) {
-
-    fr_video_decoder_resize(video_dec, 800, 600);
-  }
 
   self->audio_decoder = create_media_decoder(file,
       FR_MEDIA_AUDIO,
@@ -268,12 +254,45 @@ static PipePass* create_pass(FrAvPlayer *self, FrMediaPacket *mpkt) {
   return pass;
 }
 
+SysInt fr_av_player_render(FrAvPlayer *self) {
+  sys_return_val_if_fail(self != NULL, -1);
+
+  FrMediaFrame *frame = NULL;
+  FrVideoFrame *vframe = NULL;
+  FrMediaDecoder *mdec;
+
+#if 0
+  FrAudioFrame *aframe = NULL;
+  frame = fr_media_pipeline_get_sample_frame(&self->pipeline);
+  if (frame != NULL) {
+    aframe = FR_AUDIO_FRAME(frame);
+    self->base_tsp = fr_media_frame_get_timestamp(frame);
+
+    fr_av_render_render_audio(render, aframe);
+    sys_object_unref(aframe);
+  }
+#endif
+
+  mdec = FR_MEDIA_DECODER(self->video_decoder);
+  fr_media_decoder_read(mdec, (FrPacket **)&frame);
+  if (frame != NULL) {
+    self->vtsp = fr_media_frame_get_timestamp(frame);
+
+    if(!fr_media_file_has_audio(self->file)) {
+
+      self->base_tsp = self->vtsp;
+    }
+
+    fr_i_media_render_render(self->video_render, frame, self->region);
+    sys_object_unref(vframe);
+  }
+
+  return FR_MEDIA_ERROR_EOF;
+}
+
 static SysInt fr_av_player_process_i (FrPlayer *o) {
   FrAvPlayer *self = FR_AV_PLAYER(o);
   FrDecoder *dec = FR_DECODER(self->packet_decoder);
-  FrMediaPacket *mpkt;
-  PipePass *pass;
-  FrMediaFrame *frame;
 
   if(fr_decoder_get_eof(dec)) {
 
@@ -281,27 +300,17 @@ static SysInt fr_av_player_process_i (FrPlayer *o) {
     return 0;
   }
 
+  if (self->pkt_count <= self->min_packet) {
+    for(int i = 0; i < self->max_packet; i++) {
+
+     fr_decoder_run_async(dec, process_packet_async, self);
+     sys_atomic_int_inc(&self->pkt_count);
+   }
+ }
+
+  fr_av_player_render(self);
+
   FR_PLAYER_CLASS(fr_av_player_parent_class)->process(o);
-
-  mpkt = process_packet(self, NULL);
-  if(mpkt == NULL) { return -1;}
-
-  pass = create_pass(self, mpkt);
-  if(pass == NULL) { goto done; }
-
-  frame = process_frame(pass);
-  if(frame == NULL) { goto done; }
-
-  pipe_pass_render(pass, frame);
-  sys_clear_pointer(&frame, _sys_object_unref);
-
-done:
-  if(pass != NULL) {
-
-    sys_clear_pointer(&pass, pipe_pass_free);
-  }
-
-  sys_clear_pointer(&mpkt, _sys_object_unref);
 
   return 0;
 }

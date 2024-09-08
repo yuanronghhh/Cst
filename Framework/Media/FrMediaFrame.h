@@ -27,7 +27,7 @@ struct _FrMediaFrame {
 };
 
 SYS_API SysType fr_media_frame_get_type(void);
-SYS_API FrMediaFrame *fr_media_frame_new(void);
+SYS_API FrPacket* fr_media_frame_new(void);
 
 void fr_media_frame_init_frame(FrMediaFrame *self, FrMediaStream *stream) ;
 #define fr_media_frame_create(o) sys_object_create((o), FR_TYPE_MEDIA_FRAME)

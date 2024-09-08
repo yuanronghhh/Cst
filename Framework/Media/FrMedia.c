@@ -468,6 +468,19 @@ void fr_media_frame_get_frame_rate (
   *den = rational.den;
 }
 
+static SysUInt64 pts_to_timestamp(SysInt64 pts, AVRational base) {
+  guint64 out;
+
+  if (pts == AV_NOPTS_VALUE) {
+    out = 0;
+  } else {
+    AVRational bq = { 1, 1e6 };
+    out = av_rescale_q (pts, base, bq);
+  }
+
+  return out;
+}
+
 SysInt fr_media_media_file_read_packet(FrMediaFile *self,
     FrMediaPacket **pkt) {
   sys_return_val_if_fail(self != NULL, -1);
